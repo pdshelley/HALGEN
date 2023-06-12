@@ -166,12 +166,24 @@ func doThis() {
         <interrupt index="24" name="TWI" caption="Two-wire Serial Interface"/>
         <interrupt index="25" name="SPM_Ready" caption="Store Program Memory Read"/>
       </interrupts>
-    
-          <interfaces>
-          </interfaces>
-    
-          <property-groups>
-          </property-groups>
+      <interfaces>
+        <interface name="ISP" type="isp"/>
+        <interface name="HVPP" type="hvpp"/>
+        <interface name="debugWIRE" type="dw"/>
+      </interfaces>
+      <property-groups>
+        <property-group name="SIGNATURES">
+          <property name="JTAGID" value="0x950F"/>
+          <property name="SIGNATURE0" value="0x1e"/>
+          <property name="SIGNATURE1" value="0x95"/>
+          <property name="SIGNATURE2" value="0x0f"/>
+        </property-group>
+        <property-group name="OCD">
+          <property name="OCD_REVISION" value="1"/>
+          <property name="OCD_DATAREG" value="0x31"/>
+          <property name="PROGBASE" value="0x0000"/>
+        </property-group>
+      </property-groups>
 
         </device>
       </devices>
@@ -209,8 +221,8 @@ func doThis() {
                 let addressSpaces: AddressSpaces
                 let peripherals: Peripherals
                 let interrupts: Interrupts
-                let interfaces: String
-                let propertyGroups: String
+                let interfaces: Interfaces
+                let propertyGroups: PropertyGroups
                 
                 enum CodingKeys: String, CodingKey {
                     case name
@@ -317,8 +329,37 @@ func doThis() {
                         @Attribute var caption: String
                     }
                 }
+                
+                struct Interfaces: Codable {
+                    let interface: [Interface]
+                    
+                    struct Interface: Codable {
+                        @Attribute var name: String
+                        @Attribute var type: String
+                    }
+                }
+                
+                struct PropertyGroups: Codable {
+                    let propertyGroup: [PropertyGroup]
+                    
+                    enum CodingKeys: String, CodingKey {
+                        case propertyGroup = "property-group"
+                    }
+                    
+                    struct PropertyGroup: Codable {
+                        @Attribute var name: String
+                        let property: [Property]
+                        
+                        struct Property: Codable {
+                            @Attribute var name: String
+                            @Attribute var value: String
+                        }
+                    }
+                }
             }
         }
+        
+        
     }
     
     
