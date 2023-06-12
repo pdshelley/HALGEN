@@ -184,16 +184,107 @@ func doThis() {
           <property name="PROGBASE" value="0x0000"/>
         </property-group>
       </property-groups>
-
-        </device>
-      </devices>
+    </device>
+    </devices>
+    <modules>
+      <module caption="Fuses" name="FUSE">
+        <register-group caption="Fuses" name="FUSE">
+          <register name="EXTENDED" offset="0x02" size="1" initval="0xFF">
+            <bitfield caption="Brown-out Detector trigger level" mask="0x07" name="BODLEVEL" values="ENUM_BODLEVEL"/>
+          </register>
+          <register name="HIGH" offset="0x01" size="1" initval="0xD9">
+            <bitfield caption="Reset Disabled (Enable PC6 as i/o pin)" mask="0x80" name="RSTDISBL"/>
+            <bitfield caption="Debug Wire enable" mask="0x40" name="DWEN"/>
+            <bitfield caption="Serial program downloading (SPI) enabled" mask="0x20" name="SPIEN"/>
+            <bitfield caption="Watch-dog Timer always on" mask="0x10" name="WDTON"/>
+            <bitfield caption="Preserve EEPROM through the Chip Erase cycle" mask="0x08" name="EESAVE"/>
+            <bitfield caption="Select boot size" mask="0x06" name="BOOTSZ" values="ENUM_BOOTSZ"/>
+            <bitfield caption="Boot Reset vector Enabled" mask="0x01" name="BOOTRST"/>
+          </register>
+          <register name="LOW" offset="0x00" size="1" initval="0x62">
+            <bitfield caption="Divide clock by 8 internally" mask="0x80" name="CKDIV8"/>
+            <bitfield caption="Clock output on PORTB0" mask="0x40" name="CKOUT"/>
+            <bitfield caption="Select Clock Source" mask="0x3F" name="SUT_CKSEL" values="ENUM_SUT_CKSEL"/>
+          </register>
+        </register-group>
+        <value-group name="ENUM_SUT_CKSEL">
+          <value caption="Ext. Clock; Start-up time PWRDWN/RESET: 6 CK/14 CK + 0 ms" name="EXTCLK_6CK_14CK_0MS" value="0x00"/>
+          <value caption="Ext. Clock; Start-up time PWRDWN/RESET: 6 CK/14 CK + 4.1 ms" name="EXTCLK_6CK_14CK_4MS1" value="0x10"/>
+          <value caption="Ext. Clock; Start-up time PWRDWN/RESET: 6 CK/14 CK + 65 ms" name="EXTCLK_6CK_14CK_65MS" value="0x20"/>
+          <value caption="Int. RC Osc. 8 MHz; Start-up time PWRDWN/RESET: 6 CK/14 CK + 0 ms" name="INTRCOSC_8MHZ_6CK_14CK_0MS" value="0x02"/>
+          <value caption="Int. RC Osc. 8 MHz; Start-up time PWRDWN/RESET: 6 CK/14 CK + 4.1 ms" name="INTRCOSC_8MHZ_6CK_14CK_4MS1" value="0x12"/>
+          <value caption="Int. RC Osc. 8 MHz; Start-up time PWRDWN/RESET: 6 CK/14 CK + 65 ms" name="INTRCOSC_8MHZ_6CK_14CK_65MS" value="0x22"/>
+          <value caption="Int. RC Osc. 128kHz; Start-up time PWRDWN/RESET: 6 CK/14 CK + 0 ms" name="INTRCOSC_128KHZ_6CK_14CK_0MS" value="0x03"/>
+          <value caption="Int. RC Osc. 128kHz; Start-up time PWRDWN/RESET: 6 CK/14 CK + 4.1 ms" name="INTRCOSC_128KHZ_6CK_14CK_4MS1" value="0x13"/>
+          <value caption="Int. RC Osc. 128kHz; Start-up time PWRDWN/RESET: 6 CK/14 CK + 65 ms" name="INTRCOSC_128KHZ_6CK_14CK_65MS" value="0x23"/>
+          <value caption="Ext. Low-Freq. Crystal; Start-up time PWRDWN/RESET: 1K CK/14 CK + 0 ms" name="EXTLOFXTAL_1KCK_14CK_0MS" value="0x04"/>
+          <value caption="Ext. Low-Freq. Crystal; Start-up time PWRDWN/RESET: 1K CK/14 CK + 4.1 ms" name="EXTLOFXTAL_1KCK_14CK_4MS1" value="0x14"/>
+          <value caption="Ext. Low-Freq. Crystal; Start-up time PWRDWN/RESET: 1K CK/14 CK + 65 ms" name="EXTLOFXTAL_1KCK_14CK_65MS" value="0x24"/>
+          <value caption="Ext. Low-Freq. Crystal; Start-up time PWRDWN/RESET: 32K CK/14 CK + 0 ms" name="EXTLOFXTAL_32KCK_14CK_0MS" value="0x05"/>
+          <value caption="Ext. Low-Freq. Crystal; Start-up time PWRDWN/RESET: 32K CK/14 CK + 4.1 ms" name="EXTLOFXTAL_32KCK_14CK_4MS1" value="0x15"/>
+          <value caption="Ext. Low-Freq. Crystal; Start-up time PWRDWN/RESET: 32K CK/14 CK + 65 ms" name="EXTLOFXTAL_32KCK_14CK_65MS" value="0x25"/>
+          <value caption="Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 258 CK/14 CK + 4.1 ms" name="EXTFSXTAL_258CK_14CK_4MS1" value="0x06"/>
+          <value caption="Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 258 CK/14 CK + 65 ms" name="EXTFSXTAL_258CK_14CK_65MS" value="0x16"/>
+          <value caption="Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 1K CK /14 CK + 0 ms" name="EXTFSXTAL_1KCK_14CK_0MS" value="0x26"/>
+          <value caption="Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 1K CK /14 CK + 4.1 ms" name="EXTFSXTAL_1KCK_14CK_4MS1" value="0x36"/>
+          <value caption="Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 1K CK /14 CK + 65 ms" name="EXTFSXTAL_1KCK_14CK_65MS" value="0x07"/>
+          <value caption="Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 16K CK/14 CK + 0 ms" name="EXTFSXTAL_16KCK_14CK_0MS" value="0x17"/>
+          <value caption="Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 16K CK/14 CK + 4.1 ms" name="EXTFSXTAL_16KCK_14CK_4MS1" value="0x27"/>
+          <value caption="Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 16K CK/14 CK + 65 ms" name="EXTFSXTAL_16KCK_14CK_65MS" value="0x37"/>
+          <value caption="Ext. Crystal Osc. 0.4-0.9 MHz; Start-up time PWRDWN/RESET: 258 CK/14 CK + 4.1 ms" name="EXTXOSC_0MHZ4_0MHZ9_258CK_14CK_4MS1" value="0x08"/>
+          <value caption="Ext. Crystal Osc. 0.4-0.9 MHz; Start-up time PWRDWN/RESET: 258 CK/14 CK + 65 ms" name="EXTXOSC_0MHZ4_0MHZ9_258CK_14CK_65MS" value="0x18"/>
+          <value caption="Ext. Crystal Osc. 0.4-0.9 MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 0 ms" name="EXTXOSC_0MHZ4_0MHZ9_1KCK_14CK_0MS" value="0x28"/>
+          <value caption="Ext. Crystal Osc. 0.4-0.9 MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 4.1 ms" name="EXTXOSC_0MHZ4_0MHZ9_1KCK_14CK_4MS1" value="0x38"/>
+          <value caption="Ext. Crystal Osc. 0.4-0.9 MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 65 ms" name="EXTXOSC_0MHZ4_0MHZ9_1KCK_14CK_65MS" value="0x09"/>
+          <value caption="Ext. Crystal Osc. 0.4-0.9 MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 0 ms" name="EXTXOSC_0MHZ4_0MHZ9_16KCK_14CK_0MS" value="0x19"/>
+          <value caption="Ext. Crystal Osc. 0.4-0.9 MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 4.1 ms" name="EXTXOSC_0MHZ4_0MHZ9_16KCK_14CK_4MS1" value="0x29"/>
+          <value caption="Ext. Crystal Osc. 0.4-0.9 MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 65 ms" name="EXTXOSC_0MHZ4_0MHZ9_16KCK_14CK_65MS" value="0x39"/>
+          <value caption="Ext. Crystal Osc. 0.9-3.0 MHz; Start-up time PWRDWN/RESET: 258 CK/14 CK + 4.1 ms" name="EXTXOSC_0MHZ9_3MHZ_258CK_14CK_4MS1" value="0x0A"/>
+          <value caption="Ext. Crystal Osc. 0.9-3.0 MHz; Start-up time PWRDWN/RESET: 258 CK/14 CK + 65 ms" name="EXTXOSC_0MHZ9_3MHZ_258CK_14CK_65MS" value="0x1A"/>
+          <value caption="Ext. Crystal Osc. 0.9-3.0 MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 0 ms" name="EXTXOSC_0MHZ9_3MHZ_1KCK_14CK_0MS" value="0x2A"/>
+          <value caption="Ext. Crystal Osc. 0.9-3.0 MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 4.1 ms" name="EXTXOSC_0MHZ9_3MHZ_1KCK_14CK_4MS1" value="0x3A"/>
+          <value caption="Ext. Crystal Osc. 0.9-3.0 MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 65 ms" name="EXTXOSC_0MHZ9_3MHZ_1KCK_14CK_65MS" value="0x0B"/>
+          <value caption="Ext. Crystal Osc. 0.9-3.0 MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 0 ms" name="EXTXOSC_0MHZ9_3MHZ_16KCK_14CK_0MS" value="0x1B"/>
+          <value caption="Ext. Crystal Osc. 0.9-3.0 MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 4.1 ms" name="EXTXOSC_0MHZ9_3MHZ_16KCK_14CK_4MS1" value="0x2B"/>
+          <value caption="Ext. Crystal Osc. 0.9-3.0 MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 65 ms" name="EXTXOSC_0MHZ9_3MHZ_16KCK_14CK_65MS" value="0x3B"/>
+          <value caption="Ext. Crystal Osc. 3.0-8.0 MHz; Start-up time PWRDWN/RESET: 258 CK/14 CK + 4.1 ms" name="EXTXOSC_3MHZ_8MHZ_258CK_14CK_4MS1" value="0x0C"/>
+          <value caption="Ext. Crystal Osc. 3.0-8.0 MHz; Start-up time PWRDWN/RESET: 258 CK/14 CK + 65 ms" name="EXTXOSC_3MHZ_8MHZ_258CK_14CK_65MS" value="0x1C"/>
+          <value caption="Ext. Crystal Osc. 3.0-8.0 MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 0 ms" name="EXTXOSC_3MHZ_8MHZ_1KCK_14CK_0MS" value="0x2C"/>
+          <value caption="Ext. Crystal Osc. 3.0-8.0 MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 4.1 ms" name="EXTXOSC_3MHZ_8MHZ_1KCK_14CK_4MS1" value="0x3C"/>
+          <value caption="Ext. Crystal Osc. 3.0-8.0 MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 65 ms" name="EXTXOSC_3MHZ_8MHZ_1KCK_14CK_65MS" value="0x0D"/>
+          <value caption="Ext. Crystal Osc. 3.0-8.0 MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 0 ms" name="EXTXOSC_3MHZ_8MHZ_16KCK_14CK_0MS" value="0x1D"/>
+          <value caption="Ext. Crystal Osc. 3.0-8.0 MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 4.1 ms" name="EXTXOSC_3MHZ_8MHZ_16KCK_14CK_4MS1" value="0x2D"/>
+          <value caption="Ext. Crystal Osc. 3.0-8.0 MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 65 ms" name="EXTXOSC_3MHZ_8MHZ_16KCK_14CK_65MS" value="0x3D"/>
+          <value caption="Ext. Crystal Osc. 8.0-    MHz; Start-up time PWRDWN/RESET: 258 CK/14 CK + 4.1 ms" name="EXTXOSC_8MHZ_XX_258CK_14CK_4MS1" value="0x0E"/>
+          <value caption="Ext. Crystal Osc. 8.0-    MHz; Start-up time PWRDWN/RESET: 258 CK/14 CK + 65 ms" name="EXTXOSC_8MHZ_XX_258CK_14CK_65MS" value="0x1E"/>
+          <value caption="Ext. Crystal Osc. 8.0-    MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 0 ms" name="EXTXOSC_8MHZ_XX_1KCK_14CK_0MS" value="0x2E"/>
+          <value caption="Ext. Crystal Osc. 8.0-    MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 4.1 ms" name="EXTXOSC_8MHZ_XX_1KCK_14CK_4MS1" value="0x3E"/>
+          <value caption="Ext. Crystal Osc. 8.0-    MHz; Start-up time PWRDWN/RESET: 1K CK /14 CK + 65 ms" name="EXTXOSC_8MHZ_XX_1KCK_14CK_65MS" value="0x0F"/>
+          <value caption="Ext. Crystal Osc. 8.0-    MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 0 ms" name="EXTXOSC_8MHZ_XX_16KCK_14CK_0MS" value="0x1F"/>
+          <value caption="Ext. Crystal Osc. 8.0-    MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 4.1 ms" name="EXTXOSC_8MHZ_XX_16KCK_14CK_4MS1" value="0x2F"/>
+          <value caption="Ext. Crystal Osc. 8.0-    MHz; Start-up time PWRDWN/RESET: 16K CK/14 CK + 65 ms" name="EXTXOSC_8MHZ_XX_16KCK_14CK_65MS" value="0x3F"/>
+        </value-group>
+        <value-group name="ENUM_BODLEVEL">
+          <value caption="Brown-out detection at VCC=4.3 V" name="4V3" value="0x04"/>
+          <value caption="Brown-out detection at VCC=2.7 V" name="2V7" value="0x05"/>
+          <value caption="Brown-out detection at VCC=1.8 V" name="1V8" value="0x06"/>
+          <value caption="Brown-out detection disabled" name="DISABLED" value="0x07"/>
+        </value-group>
+        <value-group name="ENUM_BOOTSZ">
+          <value caption="Boot Flash size=256 words start address=$3F00" name="256W_3F00" value="0x03"/>
+          <value caption="Boot Flash size=512 words start address=$3E00" name="512W_3E00" value="0x02"/>
+          <value caption="Boot Flash size=1024 words start address=$3C00" name="1024W_3C00" value="0x01"/>
+          <value caption="Boot Flash size=2048 words start address=$3800" name="2048W_3800" value="0x00"/>
+        </value-group>
+      </module>
+    </modules>
         </avr-tools-device-file>
     """
     
     struct AVTToolsDeviceFile: Codable {
         let variants: Variants
         let devices: Devices
-//        let modules: Modules
+        let modules: Modules
 //        let pinouts: Pinouts
         
         struct Variants: Codable {
@@ -212,7 +303,7 @@ func doThis() {
         }
         
         struct Devices: Codable {
-            let device: [Device]
+            let device: Device
             
             struct Device: Codable {
                 @Attribute var name: String
@@ -359,7 +450,55 @@ func doThis() {
             }
         }
         
-        
+        struct Modules: Codable {
+            let module: [Module]
+
+            struct Module: Codable {
+                @Attribute var caption: String
+                @Attribute var name: String
+                let registerGroup: RegisterGroup
+                let valueGroup: [ValueGroup]
+
+                enum CodingKeys: String, CodingKey {
+                    case name
+                    case caption
+                    case registerGroup = "register-group"
+                    case valueGroup = "value-group"
+                }
+
+                struct RegisterGroup: Codable {
+                    @Attribute var name: String
+                    @Attribute var caption: String
+                    let register: [Register]
+
+                    struct Register: Codable {
+                        @Attribute var name: String
+                        @Attribute var offset: String
+                        @Attribute var size: String
+                        @Attribute var initval: String
+                        let bitfield: [Bitfield]
+
+                        struct Bitfield: Codable {
+                            @Attribute var caption: String
+                            @Attribute var mask: String
+                            @Attribute var name: String
+                            @Attribute var values: String?
+                        }
+                    }
+                }
+                
+                struct ValueGroup: Codable {
+                    @Attribute var name: String
+                    let value: [Value]
+                    
+                    struct Value: Codable {
+                        @Attribute var caption: String
+                        @Attribute var name: String
+                        @Attribute var value: String
+                    }
+                }
+            }
+        }
     }
     
     
