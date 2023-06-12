@@ -38,41 +38,6 @@ struct ContentView_Previews: PreviewProvider {
 
 
 func doThis() {
-    
-//    let sourceJSON = """
-//    {
-//      "variants": [
-//        {
-//          "name": "Apples",
-//          "code": "345"
-//        },
-//        {
-//          "name": "Bananas",
-//          "code": "237"
-//        }
-//      ]
-//    }
-//    """
-//
-//    struct JSONFruit: Codable {
-//        let variants: [Variant]
-//
-//        struct Variant: Codable {
-//            let code: String
-//            let name: String
-//        }
-//    }
-    
-//        let sourceXML = """
-//        <fruit>
-//            <variants>
-//                <variant code="345" name="Apples" />
-//                <variant code="237" name="Bananas" />
-//            </variants>
-//        </fruit>
-//    """
-    
-    
     let sourceXML = """
     <avr-tools-device-file xmlns:xalan="http://xml.apache.org/xalan" xmlns:NumHelper="NumHelper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
       <variants>
@@ -501,93 +466,7 @@ func doThis() {
         }
     }
     
-    
-//    let apple = XMLFruit.Variants.Variant(code: "345", name: "Apples")
-//    let banana = XMLFruit.Variants.Variant(code: "237", name: "Bananas")
-//
-//    let variant: [XMLFruit.Variants.Variant] = [apple, banana]
-//
-//    let variants: XMLFruit.Variants = XMLFruit.Variants(variant: variant)
-//
-//    let xFruit: XMLFruit = XMLFruit(variants: variants)
-    
-//    struct XMLFruit: Codable {
-//      @Element var variants: Variants
-//
-//      struct Variants: Codable {
-//        @Element var variant: [Variant]
-//      }
-//
-//      struct Variant: Codable {
-//          @Attribute var code: String
-//          @Attribute var name: String
-//      }
-//    }
-    
-//    struct XMLFruit: Codable {
-//        let variants: [Variant]
-//
-//        struct Variant: Codable {
-//            @Attribute var code: String
-//            @Attribute var name: String
-//        }
-//    }
-
-//    struct ToolsFile: Codable {
-//        let variants: [Variants]
-//
-//        struct Variants: Codable, Equatable {
-//            var variant: [String]
-//        }
-//    }
-    
-    
-//    let sourceXML = """
-//    <book>
-//        <title>Cat in the Hat</title>
-//            <category>Kids</category>
-//            <category>Wildlife</category>
-//    </book>
-//    """
-//
-//    struct Book: Codable {
-//        let title: String
-//        let categories: [Category]
-//
-//        enum CodingKeys: String, CodingKey {
-//            case title
-//            case categories = "category"
-//        }
-//
-//        struct Category: Codable { }
-//    }
-    
-    
-    
-    
-
-    
-    let note = try! XMLDecoder().decode(AVTToolsDeviceFile.self, from: Data(sourceXML.utf8))
-
-    let encodedXML = try! XMLEncoder().encode(note, withRootKey: "avr-tools-device-file")  // "book"
-    
-//    let note = try! JSONDecoder().decode(JSONFruit.self, from: Data(sourceJSON.utf8))
-//    let fruit = JSONFruit(variants: [
-//        JSONFruit.Variant(code: "345", name: "Apples"),
-//        JSONFruit.Variant(code: "237", name: "Bananas")
-//    ])
-    
-    
-//    let encodedJSON = try! JSONEncoder().encode(note)
-
-//    let encodedXML = try! XMLEncoder().encode(note, withRootKey: "fruit")  // "book"
-
-//    let note = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: Data(sourceXML.utf8))
-//
-//    let encodedXML = try! XMLEncoder().encode(note, withRootKey: "avr-tools-device-file")
-    
-//    let jsonEncoder = JSONEncoder()
-//    let jsonData = try! jsonEncoder.encode(note)
-    
+    let ATDFObject = try! XMLDecoder().decode(AVTToolsDeviceFile.self, from: Data(sourceXML.utf8))
+    let encodedXML = try! XMLEncoder().encode(ATDFObject, withRootKey: "avr-tools-device-file")
     print(String(data: encodedXML, encoding: .utf8)!)
 }
