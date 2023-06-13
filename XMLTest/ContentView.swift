@@ -10,20 +10,26 @@ import Foundation
 import SwiftUI
 
 struct ContentView: View {
+    @State var urls: [URL] = []
+    @State var showFileChooser = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        HStack {
+            Button("Select Files") {
+                let panel = NSOpenPanel()
+                panel.allowsMultipleSelection = true
+                panel.canChooseDirectories = false
+                if panel.runModal() == .OK {
+                    self.urls = panel.urls
+                }
+            }
             Button {
-                doThis()
+                decodeATDF(urls: urls)
             } label: {
                 Text("Do the thing")
             }
-
         }
-        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -34,97 +40,40 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 
+func decodeATDF(urls: [URL]) {
+    var counter: Int = 0
+    
+    for url in urls {
+        do {
+            let data = try Data(contentsOf: url)
+            print()
+            print(url.lastPathComponent)
+            decodeATDF(data: data)
+        } catch {
+            print("Did not work.")
+        }
+    }
+}
 
 
 
-func doThis() {
-    
-//    let sourceJSON = """
-//    {
-//      "variants": [
-//        {
-//          "name": "Apples",
-//          "code": "345"
-//        },
-//        {
-//          "name": "Bananas",
-//          "code": "237"
-//        }
-//      ]
-//    }
-//    """
-//
-//    struct JSONFruit: Codable {
-//        let variants: [Variant]
-//
-//        struct Variant: Codable {
-//            let code: String
-//            let name: String
-//        }
-//    }
-    
-//        let sourceXML = """
-//        <fruit>
-//            <variants>
-//                <variant code="345" name="Apples" />
-//                <variant code="237" name="Bananas" />
-//            </variants>
-//        </fruit>
-//    """
-    
-    
-    let sourceXML = """
-        <avr-tools-device-file xmlns:xalan="http://xml.apache.org/xalan" xmlns:NumHelper="NumHelper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
-          <variants>
-            <variant ordercode="ATmega328P-AU" tempmin="-40" tempmax="85" speedmax="20000000" pinout="TQFP32" package="TQFP32" vccmin="1.8" vccmax="5.5"/>
-            <variant ordercode="ATmega328P-MMH" tempmin="-40" tempmax="85" speedmax="20000000" pinout="QFN28" package="QFN28" vccmin="1.8" vccmax="5.5"/>
-          </variants>
-      <devices>
-        <device name="ATmega328P" architecture="AVR8" family="megaAVR">
-    
-          <address-spaces>
-            
-            <address-space endianness="little" name="prog" id="prog" start="0x0000" size="0x8000">
-              <memory-segment start="0x0000" size="0x8000" type="flash" rw="RW" exec="1" name="FLASH" pagesize="0x80"/>
-              <memory-segment start="0x7c00" size="0x0400" type="flash" rw="RW" exec="1" name="BOOT_SECTION_2" pagesize="0x80"/>
-            </address-space>
-    
-            <address-space endianness="little" name="signatures" id="signatures" start="0" size="3">
-              <memory-segment start="0" size="3" type="signatures" rw="R" exec="0" name="SIGNATURES"/>
-            </address-space>
-    
-          </address-spaces>
-    
-          <peripherals>
-          </peripherals>
-    
-          <interrupts>
-          </interrupts>
-    
-          <interfaces>
-          </interfaces>
-    
-          <property-groups>
-          </property-groups>
-
-        </device>
-      </devices>
-        </avr-tools-device-file>
-    """
+func decodeATDF(data: Data) {
     
     struct AVTToolsDeviceFile: Codable {
         let variants: Variants
         let devices: Devices
+        let modules: Modules
+        let pinouts: Pinouts?
         
         struct Variants: Codable {
-            var variant: [Variant]
+            let variant: [Variant]
             
             struct Variant: Codable {
                 @Attribute var ordercode: String
                 @Attribute var tempmin: String
                 @Attribute var tempmax: String
                 @Attribute var speedmax: String
-                @Attribute var pinout: String
+                @Attribute var pinout: String?
                 @Attribute var package: String
                 @Attribute var vccmin: String
                 @Attribute var vccmax: String
@@ -132,18 +81,17 @@ func doThis() {
         }
         
         struct Devices: Codable {
-            var device: [Device]
+            let device: Device
             
             struct Device: Codable {
                 @Attribute var name: String
                 @Attribute var architecture: String
                 @Attribute var family: String
                 let addressSpaces: AddressSpaces
-                let peripherals: String
-                let interrupts: String
-                let interfaces: String
-                let propertyGroups: String
-                
+                let peripherals: Peripherals
+                let interrupts: Interrupts
+                let interfaces: Interfaces
+                let propertyGroups: PropertyGroups
                 
                 enum CodingKeys: String, CodingKey {
                     case name
@@ -157,7 +105,7 @@ func doThis() {
                 }
                 
                 struct AddressSpaces: Codable {
-                    var addressSpace: [AddressSpace]
+                    let addressSpace: [AddressSpace]
                     
                     enum CodingKeys: String, CodingKey {
                         case addressSpace = "address-space"
@@ -184,104 +132,169 @@ func doThis() {
                             @Attribute var start: String
                             @Attribute var size: String
                             @Attribute var type: String
-                            @Attribute var rw: String
-                            @Attribute var exec: String
+                            @Attribute var rw: String?
+                            @Attribute var exec: String?
                             @Attribute var name: String
                             @Attribute var pagesize: String?
                         }
                     }
                 }
+                
+                struct Peripherals: Codable {
+                    let module: [Module]
+                     
+                    struct Module: Codable {
+                        @Attribute var name: String
+                        let instance: Instance
+                        
+                        struct Instance: Codable {
+                            @Attribute var name: String
+                            @Attribute var caption: String?
+                            let registerGroup: RegisterGroup?
+                            let signals: Signals?
+                            
+                            enum CodingKeys: String, CodingKey {
+                                case name
+                                case caption
+                                case registerGroup = "register-group"
+                                case signals
+                            }
+                            
+                            struct RegisterGroup: Codable {
+                                @Attribute var name: String
+                                @Attribute var nameInModule: String
+                                @Attribute var offset: String
+                                @Attribute var addressSpace: String
+                                @Attribute var caption: String?
+                                
+                                enum CodingKeys: String, CodingKey {
+                                    case name
+                                    case nameInModule  = "name-in-module"
+                                    case offset
+                                    case addressSpace = "address-space"
+                                    case caption
+                                }
+                            }
+                            
+                            struct Signals: Codable {
+                                let signal: [Signal]
+                                
+                                struct Signal: Codable {
+                                    @Attribute var group: String
+                                    @Attribute var function: String
+                                    @Attribute var pad: String
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                struct Interrupts: Codable {
+                    let interrupt: [Interrupt]
+                    
+                    struct Interrupt: Codable {
+                        @Attribute var index: String
+                        @Attribute var name: String
+                        @Attribute var caption: String?
+                    }
+                }
+                
+                struct Interfaces: Codable {
+                    let interface: [Interface]
+                    
+                    struct Interface: Codable {
+                        @Attribute var name: String
+                        @Attribute var type: String
+                    }
+                }
+                
+                struct PropertyGroups: Codable {
+                    let propertyGroup: [PropertyGroup]
+                    
+                    enum CodingKeys: String, CodingKey {
+                        case propertyGroup = "property-group"
+                    }
+                    
+                    struct PropertyGroup: Codable {
+                        @Attribute var name: String
+                        let property: [Property]
+                        
+                        struct Property: Codable {
+                            @Attribute var name: String
+                            @Attribute var value: String
+                        }
+                    }
+                }
+            }
+        }
+        
+        struct Modules: Codable {
+            let module: [Module]
+
+            struct Module: Codable {
+                @Attribute var caption: String?
+                @Attribute var name: String
+                let registerGroup: RegisterGroup?
+                let valueGroup: [ValueGroup]
+
+                enum CodingKeys: String, CodingKey {
+                    case name
+                    case caption
+                    case registerGroup = "register-group"
+                    case valueGroup = "value-group"
+                }
+
+                struct RegisterGroup: Codable {
+                    @Attribute var name: String
+                    @Attribute var caption: String?
+                    let register: [Register]
+
+                    struct Register: Codable {
+                        @Attribute var name: String
+                        @Attribute var offset: String
+                        @Attribute var size: String
+                        @Attribute var initval: String?
+                        let bitfield: [Bitfield]
+
+                        struct Bitfield: Codable {
+                            @Attribute var caption: String?
+                            @Attribute var mask: String
+                            @Attribute var name: String
+                            @Attribute var values: String?
+                        }
+                    }
+                }
+                
+                struct ValueGroup: Codable {
+                    @Attribute var name: String
+                    let value: [Value]
+                    
+                    struct Value: Codable {
+                        @Attribute var caption: String
+                        @Attribute var name: String
+                        @Attribute var value: String
+                    }
+                }
+            }
+        }
+        
+        struct Pinouts: Codable {
+            var pinout: [Pinout]
+            
+            struct Pinout: Codable {
+                @Attribute var name: String
+                @Attribute var caption: String?
+                let pin: [Pin]
+                
+                struct Pin:Codable {
+                    @Attribute var position: String
+                    @Attribute var pad: String
+                }
             }
         }
     }
     
-    
-//    let apple = XMLFruit.Variants.Variant(code: "345", name: "Apples")
-//    let banana = XMLFruit.Variants.Variant(code: "237", name: "Bananas")
-//
-//    let variant: [XMLFruit.Variants.Variant] = [apple, banana]
-//
-//    let variants: XMLFruit.Variants = XMLFruit.Variants(variant: variant)
-//
-//    let xFruit: XMLFruit = XMLFruit(variants: variants)
-    
-//    struct XMLFruit: Codable {
-//      @Element var variants: Variants
-//
-//      struct Variants: Codable {
-//        @Element var variant: [Variant]
-//      }
-//
-//      struct Variant: Codable {
-//          @Attribute var code: String
-//          @Attribute var name: String
-//      }
-//    }
-    
-//    struct XMLFruit: Codable {
-//        let variants: [Variant]
-//
-//        struct Variant: Codable {
-//            @Attribute var code: String
-//            @Attribute var name: String
-//        }
-//    }
-
-//    struct ToolsFile: Codable {
-//        let variants: [Variants]
-//
-//        struct Variants: Codable, Equatable {
-//            var variant: [String]
-//        }
-//    }
-    
-    
-//    let sourceXML = """
-//    <book>
-//        <title>Cat in the Hat</title>
-//            <category>Kids</category>
-//            <category>Wildlife</category>
-//    </book>
-//    """
-//
-//    struct Book: Codable {
-//        let title: String
-//        let categories: [Category]
-//
-//        enum CodingKeys: String, CodingKey {
-//            case title
-//            case categories = "category"
-//        }
-//
-//        struct Category: Codable { }
-//    }
-    
-    
-    
-    
-
-    
-    let note = try! XMLDecoder().decode(AVTToolsDeviceFile.self, from: Data(sourceXML.utf8))
-
-    let encodedXML = try! XMLEncoder().encode(note, withRootKey: "avr-tools-device-file")  // "book"
-    
-//    let note = try! JSONDecoder().decode(JSONFruit.self, from: Data(sourceJSON.utf8))
-//    let fruit = JSONFruit(variants: [
-//        JSONFruit.Variant(code: "345", name: "Apples"),
-//        JSONFruit.Variant(code: "237", name: "Bananas")
-//    ])
-    
-    
-//    let encodedJSON = try! JSONEncoder().encode(note)
-
-//    let encodedXML = try! XMLEncoder().encode(note, withRootKey: "fruit")  // "book"
-
-//    let note = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: Data(sourceXML.utf8))
-//
-//    let encodedXML = try! XMLEncoder().encode(note, withRootKey: "avr-tools-device-file")
-    
-//    let jsonEncoder = JSONEncoder()
-//    let jsonData = try! jsonEncoder.encode(note)
-    
+    let ATDFObject = try! XMLDecoder().decode(AVTToolsDeviceFile.self, from: data)
+    let encodedXML = try! XMLEncoder().encode(ATDFObject, withRootKey: "avr-tools-device-file")
     print(String(data: encodedXML, encoding: .utf8)!)
 }
