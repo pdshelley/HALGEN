@@ -10,28 +10,21 @@ import Foundation
 import SwiftUI
 
 struct ContentView: View {
-    @State var url: URL?
+    @State var urls: [URL] = []
     @State var showFileChooser = false
     
     var body: some View {
         HStack {
-            Text(url?.absoluteString ?? "None")
-            Button("Select File") {
+            Button("Select Files") {
                 let panel = NSOpenPanel()
-                panel.allowsMultipleSelection = false
+                panel.allowsMultipleSelection = true
                 panel.canChooseDirectories = false
                 if panel.runModal() == .OK {
-                    self.url = panel.url
+                    self.urls = panel.urls
                 }
             }
             Button {
-                guard let url = url else { print("Your guard is down."); return }
-                do {
-                    let data = try Data(contentsOf: url)
-                    decodeATDF(data: data)
-                } catch {
-                    print("Did not work.")
-                }
+                decodeATDF(urls: urls)
             } label: {
                 Text("Do the thing")
             }
@@ -47,6 +40,20 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 
+func decodeATDF(urls: [URL]) {
+    var counter: Int = 0
+    
+    for url in urls {
+        do {
+            let data = try Data(contentsOf: url)
+            print()
+            print(url.lastPathComponent)
+            decodeATDF(data: data)
+        } catch {
+            print("Did not work.")
+        }
+    }
+}
 
 
 
@@ -56,7 +63,7 @@ func decodeATDF(data: Data) {
         let variants: Variants
         let devices: Devices
         let modules: Modules
-        let pinouts: Pinouts
+        let pinouts: Pinouts?
         
         struct Variants: Codable {
             let variant: [Variant]
@@ -66,7 +73,7 @@ func decodeATDF(data: Data) {
                 @Attribute var tempmin: String
                 @Attribute var tempmax: String
                 @Attribute var speedmax: String
-                @Attribute var pinout: String
+                @Attribute var pinout: String?
                 @Attribute var package: String
                 @Attribute var vccmin: String
                 @Attribute var vccmax: String
@@ -142,8 +149,8 @@ func decodeATDF(data: Data) {
                         
                         struct Instance: Codable {
                             @Attribute var name: String
-                            @Attribute var caption: String
-                            let registerGroup: RegisterGroup
+                            @Attribute var caption: String?
+                            let registerGroup: RegisterGroup?
                             let signals: Signals?
                             
                             enum CodingKeys: String, CodingKey {
@@ -158,7 +165,7 @@ func decodeATDF(data: Data) {
                                 @Attribute var nameInModule: String
                                 @Attribute var offset: String
                                 @Attribute var addressSpace: String
-                                @Attribute var caption: String
+                                @Attribute var caption: String?
                                 
                                 enum CodingKeys: String, CodingKey {
                                     case name
@@ -188,7 +195,7 @@ func decodeATDF(data: Data) {
                     struct Interrupt: Codable {
                         @Attribute var index: String
                         @Attribute var name: String
-                        @Attribute var caption: String
+                        @Attribute var caption: String?
                     }
                 }
                 
@@ -225,9 +232,9 @@ func decodeATDF(data: Data) {
             let module: [Module]
 
             struct Module: Codable {
-                @Attribute var caption: String
+                @Attribute var caption: String?
                 @Attribute var name: String
-                let registerGroup: RegisterGroup
+                let registerGroup: RegisterGroup?
                 let valueGroup: [ValueGroup]
 
                 enum CodingKeys: String, CodingKey {
@@ -239,7 +246,7 @@ func decodeATDF(data: Data) {
 
                 struct RegisterGroup: Codable {
                     @Attribute var name: String
-                    @Attribute var caption: String
+                    @Attribute var caption: String?
                     let register: [Register]
 
                     struct Register: Codable {
@@ -276,7 +283,7 @@ func decodeATDF(data: Data) {
             
             struct Pinout: Codable {
                 @Attribute var name: String
-                @Attribute var caption: String
+                @Attribute var caption: String?
                 let pin: [Pin]
                 
                 struct Pin:Codable {
