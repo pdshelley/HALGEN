@@ -598,25 +598,55 @@
     </module>
     <module name="PORT" caption="I/O Port">
       <register-group name="PORTA" caption="I/O Port">
-        <register name="PORTA" offset="0x22" size="1" />
-        <register name="DDRA" offset="0x21" size="1" />
-        <register name="PINA" offset="0x20" size="1" />
+        <register name="PORTA" offset="0x22" size="1" caption="Port A Data Register" mask="0xFF" />
+        <register name="DDRA" offset="0x21" size="1" caption="Port A Data Direction Register" mask="0xFF" />
+        <register name="PINA" offset="0x20" size="1" caption="Port A Input Pins" mask="0xFF" ocd-rw="R" />
+      </register-group>
+      <register-group name="PORTB" caption="I/O Port">
+        <register name="PORTB" offset="0x25" size="1" caption="Port B Data Register" mask="0xFF" />
+        <register name="DDRB" offset="0x24" size="1" caption="Port B Data Direction Register" mask="0xFF" />
+        <register name="PINB" offset="0x23" size="1" caption="Port B Input Pins" mask="0xFF" ocd-rw="R" />
+      </register-group>
+      <register-group name="PORTC" caption="I/O Port">
+        <register name="PORTC" offset="0x28" size="1" caption="Port C Data Register" mask="0xFF" />
+        <register name="DDRC" offset="0x27" size="1" caption="Port C Data Direction Register" mask="0xFF" />
+        <register name="PINC" offset="0x26" size="1" caption="Port C Input Pins" mask="0xFF" ocd-rw="R" />
+      </register-group>
+      <register-group name="PORTD" caption="I/O Port">
+        <register name="PORTD" offset="0x2B" size="1" caption="Port D Data Register" mask="0xFF" />
+        <register name="DDRD" offset="0x2A" size="1" caption="Port D Data Direction Register" mask="0xFF" />
+        <register name="PIND" offset="0x29" size="1" caption="Port D Input Pins" mask="0xFF" ocd-rw="R" />
+      </register-group>
+      <register-group name="PORTE" caption="I/O Port">
+        <register name="PORTE" offset="0x2E" size="1" caption="Data Register, Port E" mask="0xFF" />
+        <register name="DDRE" offset="0x2D" size="1" caption="Data Direction Register, Port E" mask="0xFF" />
+        <register name="PINE" offset="0x2C" size="1" caption="Input Pins, Port E" mask="0xFF" ocd-rw="R" />
+      </register-group>
+      <register-group name="PORTF" caption="I/O Port">
+        <register name="PORTF" offset="0x31" size="1" caption="Data Register, Port F" mask="0xFF" />
+        <register name="DDRF" offset="0x30" size="1" caption="Data Direction Register, Port F" mask="0xFF" />
+        <register name="PINF" offset="0x2F" size="1" caption="Input Pins, Port F" mask="0xFF" ocd-rw="R" />
+      </register-group>
+      <register-group name="PORTG" caption="I/O Port">
+        <register name="PORTG" offset="0x34" size="1" caption="Data Register, Port G" mask="0x1F" />
+        <register name="DDRG" offset="0x33" size="1" caption="Data Direction Register, Port G" mask="0x1F" />
+        <register name="PING" offset="0x32" size="1" caption="Input Pins, Port G" mask="0x1F" ocd-rw="R" />
       </register-group>
     </module>
     <module name="JTAG" caption="JTAG Interface">
       <register-group name="JTAG" caption="JTAG Interface">
-        <register name="OCDR" offset="0x51" size="1" />
-        <register name="MCUCR" offset="0x55" size="1">
+        <register name="OCDR" offset="0x51" size="1" caption="On-Chip Debug Related Register in I/O Memory" mask="0xFF" ocd-rw="" />
+        <register name="MCUCR" offset="0x55" size="1" caption="MCU Control Register">
           <bitfield caption="JTAG Interface Disable" mask="0x80" name="JTD" />
         </register>
-        <register name="MCUSR" offset="0x54" size="1">
+        <register name="MCUSR" offset="0x54" size="1" caption="MCU Status Register" ocd-rw="R">
           <bitfield caption="JTAG Reset Flag" mask="0x10" name="JTRF" />
         </register>
       </register-group>
     </module>
     <module name="SPI" caption="Serial Peripheral Interface">
       <register-group name="SPI" caption="Serial Peripheral Interface">
-        <register name="SPCR" offset="0x4C" size="1">
+        <register name="SPCR" offset="0x4C" size="1" caption="SPI Control Register">
           <bitfield caption="SPI Interrupt Enable" mask="0x80" name="SPIE" />
           <bitfield caption="SPI Enable" mask="0x40" name="SPE" />
           <bitfield caption="Data Order" mask="0x20" name="DORD" />
@@ -625,12 +655,12 @@
           <bitfield caption="Clock Phase" mask="0x04" name="CPHA" />
           <bitfield caption="SPI Clock Rate Selects" mask="0x03" name="SPR" values="COMM_SCK_RATE_3BIT" />
         </register>
-        <register name="SPSR" offset="0x4D" size="1">
+        <register name="SPSR" offset="0x4D" size="1" caption="SPI Status Register" ocd-rw="R">
           <bitfield caption="SPI Interrupt Flag" mask="0x80" name="SPIF" />
           <bitfield caption="Write Collision Flag" mask="0x40" name="WCOL" />
           <bitfield caption="Double SPI Speed Bit" mask="0x01" name="SPI2X" />
         </register>
-        <register name="SPDR" offset="0x4E" size="1">
+        <register name="SPDR" offset="0x4E" size="1" caption="SPI Data Register" mask="0xFF" ocd-rw="">
           <bitfield caption="SPI Data Register" mask="0xFF" name="SPD" />
         </register>
       </register-group>
@@ -647,8 +677,8 @@
     </module>
     <module name="TWI" caption="Two Wire Serial Interface">
       <register-group name="TWI" caption="Two Wire Serial Interface">
-        <register name="TWBR" offset="0xB8" size="1" />
-        <register name="TWCR" offset="0xBC" size="1">
+        <register name="TWBR" offset="0xB8" size="1" caption="TWI Bit Rate register" mask="0xFF" />
+        <register name="TWCR" offset="0xBC" size="1" caption="TWI Control Register" ocd-rw="R">
           <bitfield caption="TWI Interrupt Flag" mask="0x80" name="TWINT" />
           <bitfield caption="TWI Enable Acknowledge Bit" mask="0x40" name="TWEA" />
           <bitfield caption="TWI Start Condition Bit" mask="0x20" name="TWSTA" />
@@ -657,12 +687,12 @@
           <bitfield caption="TWI Enable Bit" mask="0x04" name="TWEN" />
           <bitfield caption="TWI Interrupt Enable" mask="0x01" name="TWIE" />
         </register>
-        <register name="TWSR" offset="0xB9" size="1">
-          <bitfield caption="TWI Status" mask="0xF8" name="TWS" />
+        <register name="TWSR" offset="0xB9" size="1" caption="TWI Status Register">
+          <bitfield caption="TWI Status" mask="0xF8" name="TWS" lsb="3" />
           <bitfield caption="TWI Prescaler" mask="0x03" name="TWPS" values="COMM_TWI_PRESACLE" />
         </register>
-        <register name="TWDR" offset="0xBB" size="1" />
-        <register name="TWAR" offset="0xBA" size="1">
+        <register name="TWDR" offset="0xBB" size="1" caption="TWI Data register" mask="0xFF" />
+        <register name="TWAR" offset="0xBA" size="1" caption="TWI (Slave) Address register">
           <bitfield caption="TWI (Slave) Address register Bits" mask="0xFE" name="TWA" />
           <bitfield caption="TWI General Call Recognition Enable Bit" mask="0x01" name="TWGCE" />
         </register>
@@ -676,8 +706,8 @@
     </module>
     <module name="USART" caption="USART">
       <register-group name="USART0" caption="USART">
-        <register name="UDR0" offset="0xC6" size="1" />
-        <register name="UCSR0A" offset="0xC0" size="1">
+        <register name="UDR0" offset="0xC6" size="1" caption="USART I/O Data Register" mask="0xFF" ocd-rw="" />
+        <register name="UCSR0A" offset="0xC0" size="1" caption="USART Control and Status Register A" ocd-rw="R">
           <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0" />
           <bitfield caption="USART Transmitt Complete" mask="0x40" name="TXC0" />
           <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0" />
@@ -687,7 +717,7 @@
           <bitfield caption="Double the USART transmission speed" mask="0x02" name="U2X0" />
           <bitfield caption="Multi-processor Communication Mode" mask="0x01" name="MPCM0" />
         </register>
-        <register name="UCSR0B" offset="0xC1" size="1">
+        <register name="UCSR0B" offset="0xC1" size="1" caption="USART Control and Status Register B">
           <bitfield caption="RX Complete Interrupt Enable" mask="0x80" name="RXCIE0" />
           <bitfield caption="TX Complete Interrupt Enable" mask="0x40" name="TXCIE0" />
           <bitfield caption="USART Data register Empty Interrupt Enable" mask="0x20" name="UDRIE0" />
@@ -697,14 +727,45 @@
           <bitfield caption="Receive Data Bit 8" mask="0x02" name="RXB80" />
           <bitfield caption="Transmit Data Bit 8" mask="0x01" name="TXB80" />
         </register>
-        <register name="UCSR0C" offset="0xC2" size="1">
+        <register name="UCSR0C" offset="0xC2" size="1" caption="USART Control and Status Register C">
           <bitfield caption="USART Mode Select" mask="0x40" name="UMSEL0" values="COMM_USART_MODE" />
           <bitfield caption="Parity Mode Bits" mask="0x30" name="UPM0" values="COMM_UPM_PARITY_MODE" />
           <bitfield caption="Stop Bit Select" mask="0x08" name="USBS0" values="COMM_STOP_BIT_SEL" />
           <bitfield caption="Character Size" mask="0x06" name="UCSZ0" />
           <bitfield caption="Clock Polarity" mask="0x01" name="UCPOL0" />
         </register>
-        <register name="UBRR0" offset="0xC4" size="2" />
+        <register name="UBRR0" offset="0xC4" size="2" caption="USART Baud Rate Register t Bytes" mask="0x0FFF" />
+      </register-group>
+      <register-group name="USART1" caption="USART">
+        <register name="UDR1" offset="0xCE" size="1" caption="USART I/O Data Register" mask="0xFF" ocd-rw="" />
+        <register name="UCSR1A" offset="0xC8" size="1" caption="USART Control and Status Register A" ocd-rw="R">
+          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC1" />
+          <bitfield caption="USART Transmitt Complete" mask="0x40" name="TXC1" />
+          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE1" />
+          <bitfield caption="Framing Error" mask="0x10" name="FE1" />
+          <bitfield caption="Data overRun" mask="0x08" name="DOR1" />
+          <bitfield caption="Parity Error" mask="0x04" name="UPE1" />
+          <bitfield caption="Double the USART transmission speed" mask="0x02" name="U2X1" />
+          <bitfield caption="Multi-processor Communication Mode" mask="0x01" name="MPCM1" />
+        </register>
+        <register name="UCSR1B" offset="0xC9" size="1" caption="USART Control and Status Register B">
+          <bitfield caption="RX Complete Interrupt Enable" mask="0x80" name="RXCIE1" />
+          <bitfield caption="TX Complete Interrupt Enable" mask="0x40" name="TXCIE1" />
+          <bitfield caption="USART Data register Empty Interrupt Enable" mask="0x20" name="UDRIE1" />
+          <bitfield caption="Receiver Enable" mask="0x10" name="RXEN1" />
+          <bitfield caption="Transmitter Enable" mask="0x08" name="TXEN1" />
+          <bitfield caption="Character Size" mask="0x04" name="UCSZ12" />
+          <bitfield caption="Receive Data Bit 8" mask="0x02" name="RXB81" />
+          <bitfield caption="Transmit Data Bit 8" mask="0x01" name="TXB81" />
+        </register>
+        <register name="UCSR1C" offset="0xCA" size="1" caption="USART Control and Status Register C">
+          <bitfield caption="USART Mode Select" mask="0x40" name="UMSEL1" values="COMM_USART_MODE" />
+          <bitfield caption="Parity Mode Bits" mask="0x30" name="UPM1" values="COMM_UPM_PARITY_MODE" />
+          <bitfield caption="Stop Bit Select" mask="0x08" name="USBS1" values="COMM_STOP_BIT_SEL" />
+          <bitfield caption="Character Size" mask="0x06" name="UCSZ1" />
+          <bitfield caption="Clock Polarity" mask="0x01" name="UCPOL1" />
+        </register>
+        <register name="UBRR1" offset="0xCC" size="2" caption="USART Baud Rate Register t Bytes" mask="0x0FFF" />
       </register-group>
       <value-group name="COMM_USART_MODE">
         <value caption="Asynchronous Operation" name="ASYNCHRONOUS_OPERATION" value="0x00" />
@@ -723,7 +784,7 @@
     </module>
     <module name="CPU" caption="CPU Registers">
       <register-group name="CPU" caption="CPU Registers">
-        <register name="SREG" offset="0x5F" size="1">
+        <register name="SREG" offset="0x5F" size="1" caption="Status Register">
           <bitfield caption="Global Interrupt Enable" mask="0x80" name="I" />
           <bitfield caption="Bit Copy Storage" mask="0x40" name="T" />
           <bitfield caption="Half Carry Flag" mask="0x20" name="H" />
@@ -733,50 +794,50 @@
           <bitfield caption="Zero Flag" mask="0x02" name="Z" />
           <bitfield caption="Carry Flag" mask="0x01" name="C" />
         </register>
-        <register name="SP" offset="0x5D" size="2" />
-        <register name="MCUCR" offset="0x55" size="1">
+        <register name="SP" offset="0x5D" size="2" caption="Stack Pointer " mask="0xFFFF" />
+        <register name="MCUCR" offset="0x55" size="1" caption="MCU Control Register">
           <bitfield caption="Pull-up disable" mask="0x10" name="PUD" />
           <bitfield caption="Interrupt Vector Select" mask="0x02" name="IVSEL" />
           <bitfield caption="Interrupt Vector Change Enable" mask="0x01" name="IVCE" />
         </register>
-        <register name="MCUSR" offset="0x54" size="1">
+        <register name="MCUSR" offset="0x54" size="1" caption="MCU Status Register">
           <bitfield caption="JTAG Reset Flag" mask="0x10" name="JTRF" />
           <bitfield caption="Watchdog Reset Flag" mask="0x08" name="WDRF" />
           <bitfield caption="Brown-out Reset Flag" mask="0x04" name="BORF" />
           <bitfield caption="External Reset Flag" mask="0x02" name="EXTRF" />
           <bitfield caption="Power-on reset flag" mask="0x01" name="PORF" />
         </register>
-        <register name="XMCRA" offset="0x74" size="1">
+        <register name="XMCRA" offset="0x74" size="1" caption="External Memory Control Register A">
           <bitfield caption="External SRAM Enable" mask="0x80" name="SRE" />
           <bitfield caption="Wait state page limit" mask="0x70" name="SRL" values="CPU_SECTOR_LIMITS_XMEM" />
           <bitfield caption="Wait state select bit upper page" mask="0x0C" name="SRW1" values="CPU_WAIT_STATES" />
           <bitfield caption="Wait state select bit lower page" mask="0x03" name="SRW0" values="CPU_WAIT_STATES" />
         </register>
-        <register name="XMCRB" offset="0x75" size="1">
+        <register name="XMCRB" offset="0x75" size="1" caption="External Memory Control Register B">
           <bitfield caption="External Memory Bus Keeper Enable" mask="0x80" name="XMBK" />
           <bitfield caption="External Memory High Mask" mask="0x07" name="XMM" />
         </register>
-        <register name="OSCCAL" offset="0x66" size="1">
+        <register name="OSCCAL" offset="0x66" size="1" caption="Oscillator Calibration Value" mask="0x7F">
           <bitfield caption="Oscillator Calibration " mask="0xFF" name="OSCCAL" />
         </register>
-        <register name="CLKPR" offset="0x61" size="1">
+        <register name="CLKPR" offset="0x61" size="1" caption="Clock Prescale Register">
           <bitfield mask="0x80" name="CLKPCE" />
           <bitfield mask="0x0F" name="CLKPS" values="CPU_CLK_PRESCALE_4_BITS_SMALL" />
         </register>
-        <register name="SMCR" offset="0x53" size="1">
+        <register name="SMCR" offset="0x53" size="1" caption="Sleep Mode Control Register">
           <bitfield caption="Sleep Mode Select bits" mask="0x0E" name="SM" values="CPU_SLEEP_MODE_3BITS2" />
           <bitfield caption="Sleep Enable" mask="0x01" name="SE" />
         </register>
-        <register name="RAMPZ" offset="0x5B" size="1">
+        <register name="RAMPZ" offset="0x5B" size="1" caption="RAM Page Z Select Register - Not used.">
           <bitfield caption="RAM Page Z Select Register Bit 0" mask="0x01" name="RAMPZ0" />
         </register>
-        <register name="GPIOR2" offset="0x4B" size="1">
-          <bitfield caption="General Purpose IO Register 2 bis" mask="0xFF" name="GPIOR" />
+        <register name="GPIOR2" offset="0x4B" size="1" caption="General Purpose IO Register 2">
+          <bitfield caption="General Purpose IO Register 2 bis" mask="0xFF" name="GPIOR" lsb="20" />
         </register>
-        <register name="GPIOR1" offset="0x4A" size="1">
-          <bitfield caption="General Purpose IO Register 1 bis" mask="0xFF" name="GPIOR" />
+        <register name="GPIOR1" offset="0x4A" size="1" caption="General Purpose IO Register 1">
+          <bitfield caption="General Purpose IO Register 1 bis" mask="0xFF" name="GPIOR" lsb="10" />
         </register>
-        <register name="GPIOR0" offset="0x3E" size="1">
+        <register name="GPIOR0" offset="0x3E" size="1" caption="General Purpose IO Register 0">
           <bitfield caption="General Purpose IO Register 0 bit 7" mask="0x80" name="GPIOR07" />
           <bitfield caption="General Purpose IO Register 0 bit 6" mask="0x40" name="GPIOR06" />
           <bitfield caption="General Purpose IO Register 0 bit 5" mask="0x20" name="GPIOR05" />
@@ -830,7 +891,7 @@
     </module>
     <module name="BOOT_LOAD" caption="Bootloader">
       <register-group name="BOOT_LOAD" caption="Bootloader">
-        <register name="SPMCSR" offset="0x57" size="1">
+        <register name="SPMCSR" offset="0x57" size="1" caption="Store Program Memory Control Register">
           <bitfield caption="SPM Interrupt Enable" mask="0x80" name="SPMIE" />
           <bitfield caption="Read While Write Section Busy" mask="0x40" name="RWWSB" />
           <bitfield caption="Read While Write section read enable" mask="0x10" name="RWWSRE" />
@@ -843,22 +904,22 @@
     </module>
     <module name="EXINT" caption="External Interrupts">
       <register-group name="EXINT" caption="External Interrupts">
-        <register name="EICRA" offset="0x69" size="1">
+        <register name="EICRA" offset="0x69" size="1" caption="External Interrupt Control Register A">
           <bitfield caption="External Interrupt Sense Control Bit" mask="0xC0" name="ISC3" values="INTERRUPT_SENSE_CONTROL" />
           <bitfield caption="External Interrupt Sense Control Bit" mask="0x30" name="ISC2" values="INTERRUPT_SENSE_CONTROL" />
           <bitfield caption="External Interrupt Sense Control Bit" mask="0x0C" name="ISC1" values="INTERRUPT_SENSE_CONTROL" />
           <bitfield caption="External Interrupt Sense Control Bit" mask="0x03" name="ISC0" values="INTERRUPT_SENSE_CONTROL" />
         </register>
-        <register name="EICRB" offset="0x6A" size="1">
+        <register name="EICRB" offset="0x6A" size="1" caption="External Interrupt Control Register B">
           <bitfield caption="External Interrupt 7-4 Sense Control Bit" mask="0xC0" name="ISC7" values="INTERRUPT_SENSE_CONTROL" />
           <bitfield caption="External Interrupt 7-4 Sense Control Bit" mask="0x30" name="ISC6" values="INTERRUPT_SENSE_CONTROL" />
           <bitfield caption="External Interrupt 7-4 Sense Control Bit" mask="0x0C" name="ISC5" values="INTERRUPT_SENSE_CONTROL" />
           <bitfield caption="External Interrupt 7-4 Sense Control Bit" mask="0x03" name="ISC4" values="INTERRUPT_SENSE_CONTROL" />
         </register>
-        <register name="EIMSK" offset="0x3D" size="1">
+        <register name="EIMSK" offset="0x3D" size="1" caption="External Interrupt Mask Register">
           <bitfield caption="External Interrupt Request 7 Enable" mask="0xFF" name="INT" />
         </register>
-        <register name="EIFR" offset="0x3C" size="1">
+        <register name="EIFR" offset="0x3C" size="1" caption="External Interrupt Flag Register" ocd-rw="R">
           <bitfield caption="External Interrupt Flags" mask="0xFF" name="INTF" />
         </register>
       </register-group>
@@ -871,13 +932,13 @@
     </module>
     <module name="EEPROM" caption="EEPROM">
       <register-group name="EEPROM" caption="EEPROM">
-        <register name="EEAR" offset="0x41" size="2">
+        <register name="EEAR" offset="0x41" size="2" caption="EEPROM Read/Write Access Bytes" mask="0x0FFF">
           <bitfield caption="EEPROM Address bits" mask="0x0FFF" name="EEAR" />
         </register>
-        <register name="EEDR" offset="0x40" size="1">
+        <register name="EEDR" offset="0x40" size="1" caption="EEPROM Data Register">
           <bitfield caption="EEPROM Data bits" mask="0xFF" name="EEDR" />
         </register>
-        <register name="EECR" offset="0x3F" size="1">
+        <register name="EECR" offset="0x3F" size="1" caption="EEPROM Control Register">
           <bitfield caption="EEPROM Ready Interrupt Enable" mask="0x08" name="EERIE" />
           <bitfield caption="EEPROM Master Write Enable" mask="0x04" name="EEMWE" />
           <bitfield caption="EEPROM Write Enable" mask="0x02" name="EEWE" />
@@ -887,26 +948,26 @@
     </module>
     <module name="TC8" caption="Timer/Counter, 8-bit">
       <register-group name="TC0" caption="Timer/Counter, 8-bit">
-        <register name="TCCR0A" offset="0x44" size="1">
+        <register name="TCCR0A" offset="0x44" size="1" caption="Timer/Counter0 Control Register">
           <bitfield caption="Force Output Compare" mask="0x80" name="FOC0A" />
           <bitfield caption="Waveform Generation Mode 0" mask="0x40" name="WGM00" values="WAVEFORM_GEN_MODE" />
           <bitfield caption="Compare Match Output Modes" mask="0x30" name="COM0A" />
           <bitfield caption="Waveform Generation Mode 1" mask="0x08" name="WGM01" />
           <bitfield caption="Clock Selects" mask="0x07" name="CS0" values="CLK_SEL_3BIT_EXT" />
         </register>
-        <register name="TCNT0" offset="0x46" size="1" />
-        <register name="OCR0A" offset="0x47" size="1">
+        <register name="TCNT0" offset="0x46" size="1" caption="Timer/Counter0" mask="0xFF" />
+        <register name="OCR0A" offset="0x47" size="1" caption="Timer/Counter0 Output Compare Register" mask="0xFF">
           <bitfield caption="Output Compare A bits" mask="0xFF" name="OCR0A" />
         </register>
-        <register name="TIMSK0" offset="0x6E" size="1">
+        <register name="TIMSK0" offset="0x6E" size="1" caption="Timer/Counter0 Interrupt Mask Register">
           <bitfield caption="Timer/Counter0 Output Compare Match Interrupt Enable" mask="0x02" name="OCIE0A" />
           <bitfield caption="Timer/Counter0 Overflow Interrupt Enable" mask="0x01" name="TOIE0" />
         </register>
-        <register name="TIFR0" offset="0x35" size="1">
+        <register name="TIFR0" offset="0x35" size="1" caption="Timer/Counter0 Interrupt Flag register" ocd-rw="R">
           <bitfield caption="Timer/Counter0 Output Compare Flag 0" mask="0x02" name="OCF0A" />
           <bitfield caption="Timer/Counter0 Overflow Flag" mask="0x01" name="TOV0" />
         </register>
-        <register name="GTCCR" offset="0x43" size="1">
+        <register name="GTCCR" offset="0x43" size="1" caption="General Timer/Control Register">
           <bitfield caption="Timer/Counter Synchronization Mode" mask="0x80" name="TSM" />
           <bitfield caption="Prescaler Reset Timer/Counter1 and Timer/Counter0" mask="0x01" name="PSR310" />
         </register>
@@ -930,41 +991,79 @@
     </module>
     <module name="TC16" caption="Timer/Counter, 16-bit">
       <register-group name="TC1" caption="Timer/Counter, 16-bit">
-        <register name="TCCR1A" offset="0x80" size="1">
+        <register name="TCCR1A" offset="0x80" size="1" caption="Timer/Counter1 Control Register A">
           <bitfield caption="Compare Output Mode 1A, bits" mask="0xC0" name="COM1A" />
           <bitfield caption="Compare Output Mode 1B, bits" mask="0x30" name="COM1B" />
           <bitfield caption="Compare Output Mode 1C, bits" mask="0x0C" name="COM1C" />
           <bitfield caption="Waveform Generation Mode" mask="0x03" name="WGM1" />
         </register>
-        <register name="TCCR1B" offset="0x81" size="1">
+        <register name="TCCR1B" offset="0x81" size="1" caption="Timer/Counter1 Control Register B">
           <bitfield caption="Input Capture 1 Noise Canceler" mask="0x80" name="ICNC1" />
           <bitfield caption="Input Capture 1 Edge Select" mask="0x40" name="ICES1" />
-          <bitfield caption="Waveform Generation Mode" mask="0x18" name="WGM1" />
+          <bitfield caption="Waveform Generation Mode" mask="0x18" name="WGM1" lsb="2" />
           <bitfield caption="Prescaler source of Timer/Counter 1" mask="0x07" name="CS1" values="CLK_SEL_3BIT_EXT" />
         </register>
-        <register name="TCCR1C" offset="0x82" size="1">
+        <register name="TCCR1C" offset="0x82" size="1" caption="Timer/Counter 1 Control Register C">
           <bitfield caption="Force Output Compare 1A" mask="0x80" name="FOC1A" />
           <bitfield caption="Force Output Compare 1B" mask="0x40" name="FOC1B" />
           <bitfield caption="Force Output Compare 1C" mask="0x20" name="FOC1C" />
         </register>
-        <register name="TCNT1" offset="0x84" size="2" />
-        <register name="OCR1A" offset="0x88" size="2" />
-        <register name="OCR1B" offset="0x8A" size="2" />
-        <register name="OCR1C" offset="0x8C" size="2" />
-        <register name="ICR1" offset="0x86" size="2" />
-        <register name="TIMSK1" offset="0x6F" size="1">
+        <register name="TCNT1" offset="0x84" size="2" caption="Timer/Counter1  Bytes" mask="0xFFFF" />
+        <register name="OCR1A" offset="0x88" size="2" caption="Timer/Counter1 Output Compare Register  Bytes" mask="0xFFFF" />
+        <register name="OCR1B" offset="0x8A" size="2" caption="Timer/Counter1 Output Compare Register  Bytes" mask="0xFFFF" />
+        <register name="OCR1C" offset="0x8C" size="2" caption="Timer/Counter1 Output Compare Register  Bytes" mask="0xFFFF" />
+        <register name="ICR1" offset="0x86" size="2" caption="Timer/Counter1 Input Capture Register  Bytes" mask="0xFFFF" />
+        <register name="TIMSK1" offset="0x6F" size="1" caption="Timer/Counter Interrupt Mask Register">
           <bitfield caption="Timer/Counter1 Input Capture Interrupt Enable" mask="0x20" name="ICIE1" />
           <bitfield caption="Timer/Counter1 Output CompareC Match Interrupt Enable" mask="0x08" name="OCIE1C" />
           <bitfield caption="Timer/Counter1 Output CompareB Match Interrupt Enable" mask="0x04" name="OCIE1B" />
           <bitfield caption="Timer/Counter1 Output CompareA Match Interrupt Enable" mask="0x02" name="OCIE1A" />
           <bitfield caption="Timer/Counter1 Overflow Interrupt Enable" mask="0x01" name="TOIE1" />
         </register>
-        <register name="TIFR1" offset="0x36" size="1">
+        <register name="TIFR1" offset="0x36" size="1" caption="Timer/Counter Interrupt Flag register" ocd-rw="R">
           <bitfield caption="Input Capture Flag 1" mask="0x20" name="ICF1" />
           <bitfield caption="Output Compare Flag 1C" mask="0x08" name="OCF1C" />
           <bitfield caption="Output Compare Flag 1B" mask="0x04" name="OCF1B" />
           <bitfield caption="Output Compare Flag 1A" mask="0x02" name="OCF1A" />
           <bitfield caption="Timer/Counter1 Overflow Flag" mask="0x01" name="TOV1" />
+        </register>
+      </register-group>
+      <register-group name="TC3" caption="Timer/Counter, 16-bit">
+        <register name="TCCR3A" offset="0x90" size="1" caption="Timer/Counter3 Control Register A">
+          <bitfield caption="Compare Output Mode 3A, bits" mask="0xC0" name="COM3A" />
+          <bitfield caption="Compare Output Mode 3B, bits" mask="0x30" name="COM3B" />
+          <bitfield caption="Compare Output Mode 3C, bits" mask="0x0C" name="COM3C" />
+          <bitfield caption="Waveform Generation Mode" mask="0x03" name="WGM3" />
+        </register>
+        <register name="TCCR3B" offset="0x91" size="1" caption="Timer/Counter3 Control Register B">
+          <bitfield caption="Input Capture 3 Noise Canceler" mask="0x80" name="ICNC3" />
+          <bitfield caption="Input Capture 3 Edge Select" mask="0x40" name="ICES3" />
+          <bitfield caption="Waveform Generation Mode" mask="0x18" name="WGM3" lsb="2" />
+          <bitfield caption="Prescaler source of Timer/Counter 3" mask="0x07" name="CS3" values="CLK_SEL_3BIT_EXT" />
+        </register>
+        <register name="TCCR3C" offset="0x92" size="1" caption="Timer/Counter 3 Control Register C">
+          <bitfield caption="Force Output Compare 3A" mask="0x80" name="FOC3A" />
+          <bitfield caption="Force Output Compare 3B" mask="0x40" name="FOC3B" />
+          <bitfield caption="Force Output Compare 3C" mask="0x20" name="FOC3C" />
+        </register>
+        <register name="TCNT3" offset="0x94" size="2" caption="Timer/Counter3  Bytes" mask="0xFFFF" />
+        <register name="OCR3A" offset="0x98" size="2" caption="Timer/Counter3 Output Compare Register  Bytes" mask="0xFFFF" />
+        <register name="OCR3B" offset="0x9A" size="2" caption="Timer/Counter3 Output Compare Register  Bytes" mask="0xFFFF" />
+        <register name="OCR3C" offset="0x9C" size="2" caption="Timer/Counter3 Output Compare Register  Bytes" mask="0xFFFF" />
+        <register name="ICR3" offset="0x96" size="2" caption="Timer/Counter3 Input Capture Register  Bytes" mask="0xFFFF" />
+        <register name="TIMSK3" offset="0x71" size="1" caption="Timer/Counter Interrupt Mask Register">
+          <bitfield caption="Timer/Counter3 Input Capture Interrupt Enable" mask="0x20" name="ICIE3" />
+          <bitfield caption="Timer/Counter3 Output CompareC Match Interrupt Enable" mask="0x08" name="OCIE3C" />
+          <bitfield caption="Timer/Counter3 Output CompareB Match Interrupt Enable" mask="0x04" name="OCIE3B" />
+          <bitfield caption="Timer/Counter3 Output CompareA Match Interrupt Enable" mask="0x02" name="OCIE3A" />
+          <bitfield caption="Timer/Counter3 Overflow Interrupt Enable" mask="0x01" name="TOIE3" />
+        </register>
+        <register name="TIFR3" offset="0x38" size="1" caption="Timer/Counter Interrupt Flag register" ocd-rw="R">
+          <bitfield caption="Input Capture Flag 3" mask="0x20" name="ICF3" />
+          <bitfield caption="Output Compare Flag 3C" mask="0x08" name="OCF3C" />
+          <bitfield caption="Output Compare Flag 3B" mask="0x04" name="OCF3B" />
+          <bitfield caption="Output Compare Flag 3A" mask="0x02" name="OCF3A" />
+          <bitfield caption="Timer/Counter3 Overflow Flag" mask="0x01" name="TOV3" />
         </register>
       </register-group>
       <value-group name="CLK_SEL_3BIT_EXT">
@@ -980,27 +1079,27 @@
     </module>
     <module name="TC8_ASYNC" caption="Timer/Counter, 8-bit Async">
       <register-group name="TC2" caption="Timer/Counter, 8-bit Async">
-        <register name="TCCR2A" offset="0xB0" size="1">
+        <register name="TCCR2A" offset="0xB0" size="1" caption="Timer/Counter2 Control Register">
           <bitfield caption="Force Output Compare" mask="0x80" name="FOC2A" />
           <bitfield caption="Waveform Genration Mode" mask="0x40" name="WGM20" values="WAVEFORM_GEN_MODE" />
           <bitfield caption="Compare Output Mode bits" mask="0x30" name="COM2A" />
           <bitfield caption="Waveform Generation Mode" mask="0x08" name="WGM21" />
           <bitfield caption="Clock Select bits" mask="0x07" name="CS2" values="CLK_SEL_3BIT" />
         </register>
-        <register name="TCNT2" offset="0xB2" size="1" />
-        <register name="OCR2A" offset="0xB3" size="1" />
-        <register name="TIMSK2" offset="0x70" size="1">
+        <register name="TCNT2" offset="0xB2" size="1" caption="Timer/Counter2" mask="0xFF" />
+        <register name="OCR2A" offset="0xB3" size="1" caption="Timer/Counter2 Output Compare Register" mask="0xFF" />
+        <register name="TIMSK2" offset="0x70" size="1" caption="Timer/Counter Interrupt Mask register">
           <bitfield caption="Timer/Counter2 Output Compare Match Interrupt Enable" mask="0x02" name="OCIE2A" />
           <bitfield caption="Timer/Counter2 Overflow Interrupt Enable" mask="0x01" name="TOIE2" />
         </register>
-        <register name="TIFR2" offset="0x37" size="1">
+        <register name="TIFR2" offset="0x37" size="1" caption="Timer/Counter Interrupt Flag Register" ocd-rw="R">
           <bitfield caption="Output Compare Flag 2" mask="0x02" name="OCF2A" />
           <bitfield caption="Timer/Counter2 Overflow Flag" mask="0x01" name="TOV2" />
         </register>
-        <register name="GTCCR" offset="0x43" size="1">
+        <register name="GTCCR" offset="0x43" size="1" caption="General Timer/Counter Control Register">
           <bitfield caption="Prescaler Reset Timer/Counter2" mask="0x02" name="PSR2" />
         </register>
-        <register name="ASSR" offset="0xB6" size="1">
+        <register name="ASSR" offset="0xB6" size="1" caption="Asynchronous Status Register">
           <bitfield caption="Enable External Clock Interrupt" mask="0x10" name="EXCLK" />
           <bitfield caption="AS2: Asynchronous Timer/Counter2" mask="0x08" name="AS2" />
           <bitfield caption="TCN2UB: Timer/Counter2 Update Busy" mask="0x04" name="TCN2UB" />
@@ -1027,7 +1126,7 @@
     </module>
     <module name="WDT" caption="Watchdog Timer">
       <register-group name="WDT" caption="Watchdog Timer">
-        <register name="WDTCR" offset="0x60" size="1">
+        <register name="WDTCR" offset="0x60" size="1" caption="Watchdog Timer Control Register">
           <bitfield caption="Watchdog Change Enable" mask="0x10" name="WDCE" />
           <bitfield caption="Watch Dog Enable" mask="0x08" name="WDE" />
           <bitfield caption="Watch Dog Timer Prescaler bits" mask="0x07" name="WDP" values="WDOG_TIMER_PRESCALE_3BITS" />
@@ -1046,12 +1145,12 @@
     </module>
     <module name="ADC" caption="Analog-to-Digital Converter">
       <register-group name="ADC" caption="Analog-to-Digital Converter">
-        <register name="ADMUX" offset="0x7C" size="1">
+        <register name="ADMUX" offset="0x7C" size="1" caption="The ADC multiplexer Selection Register">
           <bitfield caption="Reference Selection Bits" mask="0xC0" name="REFS" values="ANALOG_ADC_V_REF2" />
           <bitfield caption="Left Adjust Result" mask="0x20" name="ADLAR" />
           <bitfield caption="Analog Channel and Gain Selection Bits" mask="0x1F" name="MUX" />
         </register>
-        <register name="ADCSRA" offset="0x7A" size="1">
+        <register name="ADCSRA" offset="0x7A" size="1" caption="The ADC Control and Status register" ocd-rw="R">
           <bitfield caption="ADC Enable" mask="0x80" name="ADEN" />
           <bitfield caption="ADC Start Conversion" mask="0x40" name="ADSC" />
           <bitfield caption="ADC Auto Trigger Enable" mask="0x20" name="ADATE" />
@@ -1059,12 +1158,12 @@
           <bitfield caption="ADC Interrupt Enable" mask="0x08" name="ADIE" />
           <bitfield caption="ADC  Prescaler Select Bits" mask="0x07" name="ADPS" values="ANALOG_ADC_PRESCALER" />
         </register>
-        <register name="ADC" offset="0x78" size="2" />
-        <register name="ADCSRB" offset="0x7B" size="1">
+        <register name="ADC" offset="0x78" size="2" caption="ADC Data Register  Bytes" mask="0xFFFF" />
+        <register name="ADCSRB" offset="0x7B" size="1" caption="ADC Control and Status Register B">
           <bitfield caption="ADC High Speed Mode" mask="0x80" name="ADHSM" />
           <bitfield caption="ADC Auto Trigger Sources" mask="0x07" name="ADTS" values="ANALOG_ADC_AUTO_TRIGGER2" />
         </register>
-        <register name="DIDR0" offset="0x7E" size="1">
+        <register name="DIDR0" offset="0x7E" size="1" caption="Digital Input Disable Register 1">
           <bitfield caption="ADC7 Digital input Disable" mask="0x80" name="ADC7D" />
           <bitfield caption="ADC6 Digital input Disable" mask="0x40" name="ADC6D" />
           <bitfield caption="ADC5 Digital input Disable" mask="0x20" name="ADC5D" />
@@ -1104,10 +1203,10 @@
     </module>
     <module name="AC" caption="Analog Comparator">
       <register-group name="AC" caption="Analog Comparator">
-        <register name="ADCSRB" offset="0x7B" size="1">
+        <register name="ADCSRB" offset="0x7B" size="1" caption="ADC Control and Status Register B">
           <bitfield caption="Analog Comparator Multiplexer Enable" mask="0x40" name="ACME" />
         </register>
-        <register name="ACSR" offset="0x50" size="1">
+        <register name="ACSR" offset="0x50" size="1" caption="Analog Comparator Control And Status Register" ocd-rw="R">
           <bitfield caption="Analog Comparator Disable" mask="0x80" name="ACD" />
           <bitfield caption="Analog Comparator Bandgap Select" mask="0x40" name="ACBG" />
           <bitfield caption="Analog Compare Output" mask="0x20" name="ACO" />
@@ -1130,7 +1229,7 @@
     </module>
     <module name="CAN" caption="Controller Area Network">
       <register-group name="CAN" caption="Controller Area Network">
-        <register name="CANGCON" offset="0xD8" size="1">
+        <register name="CANGCON" offset="0xD8" size="1" caption="CAN General Control Register">
           <bitfield caption="Abort Request" mask="0x80" name="ABRQ" />
           <bitfield caption="Overload Frame Request" mask="0x40" name="OVRQ" />
           <bitfield caption="Time Trigger Communication" mask="0x20" name="TTC" />
@@ -1140,7 +1239,7 @@
           <bitfield caption="Enable / Standby" mask="0x02" name="ENASTB" />
           <bitfield caption="Software Reset Request" mask="0x01" name="SWRES" />
         </register>
-        <register name="CANGSTA" offset="0xD9" size="1">
+        <register name="CANGSTA" offset="0xD9" size="1" caption="CAN General Status Register" ocd-rw="R">
           <bitfield caption="Overload Frame Flag" mask="0x40" name="OVRG" />
           <bitfield caption="Transmitter Busy" mask="0x10" name="TXBSY" />
           <bitfield caption="Receiver Busy" mask="0x08" name="RXBSY" />
@@ -1148,7 +1247,7 @@
           <bitfield caption="Bus Off Mode" mask="0x02" name="BOFF" />
           <bitfield caption="Error Passive Mode" mask="0x01" name="ERRP" />
         </register>
-        <register name="CANGIT" offset="0xDA" size="1">
+        <register name="CANGIT" offset="0xDA" size="1" caption="CAN General Interrupt Register" ocd-rw="R">
           <bitfield caption="General Interrupt Flag" mask="0x80" name="CANIT" />
           <bitfield caption="Bus Off Interrupt Flag" mask="0x40" name="BOFFIT" />
           <bitfield caption="Overrun CAN Timer" mask="0x20" name="OVRTIM" />
@@ -1158,7 +1257,7 @@
           <bitfield caption="Form Error General" mask="0x02" name="FERG" />
           <bitfield caption="Ackknowledgement Error General" mask="0x01" name="AERG" />
         </register>
-        <register name="CANGIE" offset="0xDB" size="1">
+        <register name="CANGIE" offset="0xDB" size="1" caption="CAN General Interrupt Enable Register">
           <bitfield caption="Enable all Interrupts" mask="0x80" name="ENIT" />
           <bitfield caption="Enable Bus Off INterrupt" mask="0x40" name="ENBOFF" />
           <bitfield caption="Enable Receive Interrupt" mask="0x20" name="ENRX" />
@@ -1168,61 +1267,61 @@
           <bitfield caption="Enable General Error Interrupt" mask="0x02" name="ENERG" />
           <bitfield caption="Enable CAN Timer Overrun Interrupt" mask="0x01" name="ENOVRT" />
         </register>
-        <register name="CANEN2" offset="0xDC" size="1">
+        <register name="CANEN2" offset="0xDC" size="1" caption="Enable MOb Register" mask="0xFF" ocd-rw="R">
           <bitfield caption="Enable MOb" mask="0xFF" name="ENMOB" />
         </register>
-        <register name="CANEN1" offset="0xDD" size="1">
-          <bitfield caption="Enable MOb" mask="0x7F" name="ENMOB" />
+        <register name="CANEN1" offset="0xDD" size="1" caption="Enable MOb Register" mask="0x7F" ocd-rw="R">
+          <bitfield caption="Enable MOb" mask="0x7F" name="ENMOB" lsb="8" />
         </register>
-        <register name="CANIE2" offset="0xDE" size="1">
+        <register name="CANIE2" offset="0xDE" size="1" caption="Enable Interrupt MOb Register" mask="0xFF">
           <bitfield caption="Interrupt Enable by MOb" mask="0xFF" name="IEMOB" />
         </register>
-        <register name="CANIE1" offset="0xDF" size="1">
-          <bitfield caption="Interrupt Enable by MOb" mask="0x7F" name="IEMOB" />
+        <register name="CANIE1" offset="0xDF" size="1" caption="Enable Interrupt MOb Register" mask="0x7F">
+          <bitfield caption="Interrupt Enable by MOb" mask="0x7F" name="IEMOB" lsb="8" />
         </register>
-        <register name="CANSIT2" offset="0xE0" size="1">
+        <register name="CANSIT2" offset="0xE0" size="1" caption="CAN Status Interrupt MOb Register" mask="0xFF" ocd-rw="R">
           <bitfield caption="Status of Interrupt by MOb" mask="0xFF" name="SIT" />
         </register>
-        <register name="CANSIT1" offset="0xE1" size="1">
-          <bitfield caption="Status of Interrupt by MOb" mask="0x7F" name="SIT" />
+        <register name="CANSIT1" offset="0xE1" size="1" caption="CAN Status Interrupt MOb Register" mask="0x7F" ocd-rw="R">
+          <bitfield caption="Status of Interrupt by MOb" mask="0x7F" name="SIT" lsb="8" />
         </register>
-        <register name="CANBT1" offset="0xE2" size="1">
+        <register name="CANBT1" offset="0xE2" size="1" caption="Bit Timing Register 1">
           <bitfield caption="Baud Rate Prescaler bits" mask="0x7E" name="BRP" />
         </register>
-        <register name="CANBT2" offset="0xE3" size="1">
+        <register name="CANBT2" offset="0xE3" size="1" caption="Bit Timing Register 2">
           <bitfield caption="Re-Sync Jump Width" mask="0x60" name="SJW" />
           <bitfield caption="Propagation Time Segment" mask="0x0E" name="PRS" />
         </register>
-        <register name="CANBT3" offset="0xE4" size="1">
+        <register name="CANBT3" offset="0xE4" size="1" caption="Bit Timing Register 3">
           <bitfield caption="Phase Segments" mask="0x70" name="PHS2" />
           <bitfield caption="Phase Segment 1" mask="0x0E" name="PHS1" />
           <bitfield caption="Sample Type" mask="0x01" name="SMP" />
         </register>
-        <register name="CANTCON" offset="0xE5" size="1">
+        <register name="CANTCON" offset="0xE5" size="1" caption="Timer Control Register" mask="0xFF">
           <bitfield caption="CAN Timer Prescaler" mask="0xFF" name="TPRSC" />
         </register>
-        <register name="CANTIM" offset="0xE6" size="2">
+        <register name="CANTIM" offset="0xE6" size="2" caption="Timer Register" ocd-rw="R">
           <bitfield caption="CAN Timer Count" mask="0xFFFF" name="CANTIM" />
         </register>
-        <register name="CANTTC" offset="0xE8" size="2">
+        <register name="CANTTC" offset="0xE8" size="2" caption="TTC Timer Register" ocd-rw="R">
           <bitfield caption="TTC Timer Count" mask="0xFFFF" name="TIMTTC" />
         </register>
-        <register name="CANTEC" offset="0xEA" size="1">
+        <register name="CANTEC" offset="0xEA" size="1" caption="Transmit Error Counter Register" mask="0xFF" ocd-rw="R">
           <bitfield caption="Trasnmit Error Count" mask="0xFF" name="TEC" />
         </register>
-        <register name="CANREC" offset="0xEB" size="1">
+        <register name="CANREC" offset="0xEB" size="1" caption="Receive Error Counter Register" mask="0xFF" ocd-rw="R">
           <bitfield caption="Receive Error Count" mask="0xFF" name="REC" />
         </register>
-        <register name="CANHPMOB" offset="0xEC" size="1">
+        <register name="CANHPMOB" offset="0xEC" size="1" caption="Highest Priority MOb Register">
           <bitfield caption="Highest Priority MOb number" mask="0xF0" name="HPMOB" />
-          <bitfield caption="CAN General purpose bits" mask="0x0F" name="CGP" />
+          <bitfield caption="CAN General purpose bits" mask="0x0F" name="CGP" rw="R" />
         </register>
-        <register name="CANPAGE" offset="0xED" size="1">
+        <register name="CANPAGE" offset="0xED" size="1" caption="Page MOb Register">
           <bitfield caption="MOb Number Bits" mask="0xF0" name="MOBNB" />
           <bitfield caption="MOb Data Buffer Auto Increment" mask="0x08" name="AINC" />
           <bitfield caption="Data Buffer Index Bits" mask="0x07" name="INDX" />
         </register>
-        <register name="CANSTMOB" offset="0xEE" size="1">
+        <register name="CANSTMOB" offset="0xEE" size="1" caption="MOb Status Register">
           <bitfield caption="Data Length Code Warning" mask="0x80" name="DLCW" />
           <bitfield caption="Transmit OK" mask="0x40" name="TXOK" />
           <bitfield caption="Receive OK" mask="0x20" name="RXOK" />
@@ -1232,45 +1331,45 @@
           <bitfield caption="Form Error" mask="0x02" name="FERR" />
           <bitfield caption="Ackknowledgement Error" mask="0x01" name="AERR" />
         </register>
-        <register name="CANCDMOB" offset="0xEF" size="1">
+        <register name="CANCDMOB" offset="0xEF" size="1" caption="MOb Control and DLC Register">
           <bitfield caption="MOb Config Bits" mask="0xC0" name="CONMOB" />
           <bitfield caption="Reply Valid" mask="0x20" name="RPLV" />
           <bitfield caption="Identifier Extension" mask="0x10" name="IDE" />
           <bitfield caption="Data Length Code Bits" mask="0x0F" name="DLC" />
         </register>
-        <register name="CANIDT4" offset="0xF0" size="1">
+        <register name="CANIDT4" offset="0xF0" size="1" caption="Identifier Tag Register 4" mask="0xFF">
           <bitfield caption="Identifier Tag" mask="0xF8" name="IDT" />
           <bitfield caption="Remote Trasnmission Request Tag" mask="0x04" name="RTRTAG" />
           <bitfield caption="Reserved Bit 1 Tag" mask="0x02" name="RB1TAG" />
           <bitfield caption="Reserved Bit 0 Tag" mask="0x01" name="RB0TAG" />
         </register>
-        <register name="CANIDT3" offset="0xF1" size="1">
-          <bitfield caption="Identifier Tag" mask="0xFF" name="IDT" />
+        <register name="CANIDT3" offset="0xF1" size="1" caption="Identifier Tag Register 3" mask="0xFF">
+          <bitfield caption="Identifier Tag" mask="0xFF" name="IDT" lsb="5" />
         </register>
-        <register name="CANIDT2" offset="0xF2" size="1">
-          <bitfield caption="Identifier Tag" mask="0xFF" name="IDT" />
+        <register name="CANIDT2" offset="0xF2" size="1" caption="Identifier Tag Register 2" mask="0xFF">
+          <bitfield caption="Identifier Tag" mask="0xFF" name="IDT" lsb="13" />
         </register>
-        <register name="CANIDT1" offset="0xF3" size="1">
-          <bitfield caption="Identifier Tag" mask="0xFF" name="IDT" />
+        <register name="CANIDT1" offset="0xF3" size="1" caption="Identifier Tag Register 1" mask="0xFF">
+          <bitfield caption="Identifier Tag" mask="0xFF" name="IDT" lsb="21" />
         </register>
-        <register name="CANIDM4" offset="0xF4" size="1">
+        <register name="CANIDM4" offset="0xF4" size="1" caption="Identifier Mask Register 4">
           <bitfield caption="Identifier Mask" mask="0xF8" name="IDMSK" />
           <bitfield caption="Remote Transmission Request Mask" mask="0x04" name="RTRMSK" />
           <bitfield caption="Identifier Extension Mask" mask="0x01" name="IDEMSK" />
         </register>
-        <register name="CANIDM3" offset="0xF5" size="1">
-          <bitfield caption="Identifier Mask" mask="0xFF" name="IDMSK" />
+        <register name="CANIDM3" offset="0xF5" size="1" caption="Identifier Mask Register 3">
+          <bitfield caption="Identifier Mask" mask="0xFF" name="IDMSK" lsb="5" />
         </register>
-        <register name="CANIDM2" offset="0xF6" size="1">
-          <bitfield caption="Identifier Mask" mask="0xFF" name="IDMSK" />
+        <register name="CANIDM2" offset="0xF6" size="1" caption="Identifier Mask Register 2">
+          <bitfield caption="Identifier Mask" mask="0xFF" name="IDMSK" lsb="13" />
         </register>
-        <register name="CANIDM1" offset="0xF7" size="1">
-          <bitfield caption="Identifier Mask" mask="0xFF" name="IDMSK" />
+        <register name="CANIDM1" offset="0xF7" size="1" caption="Identifier Mask Register 1">
+          <bitfield caption="Identifier Mask" mask="0xFF" name="IDMSK" lsb="21" />
         </register>
-        <register name="CANSTM" offset="0xF8" size="2">
+        <register name="CANSTM" offset="0xF8" size="2" caption="Time Stamp Register" mask="0xFFFF" ocd-rw="R">
           <bitfield caption="Time Stamp Count" mask="0xFFFF" name="TIMSTM" />
         </register>
-        <register name="CANMSG" offset="0xFA" size="1">
+        <register name="CANMSG" offset="0xFA" size="1" caption="Message Data Register" mask="0xFF">
           <bitfield caption="Message Data" mask="0xFF" name="MSG" />
         </register>
       </register-group>

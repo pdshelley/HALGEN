@@ -251,7 +251,7 @@ func decodeATDF(data: Data) {
             struct Module: Codable {
                 @Attribute var caption: String?
                 @Attribute var name: String
-                let registerGroup: RegisterGroup?
+                let registerGroup: [RegisterGroup]
                 let valueGroup: [ValueGroup]
 
                 enum CodingKeys: String, CodingKey {
@@ -271,19 +271,36 @@ func decodeATDF(data: Data) {
                         @Attribute var offset: String
                         @Attribute var size: String
                         @Attribute var initval: String?
+                        @Attribute var caption: String?
+                        @Attribute var mask: String?
+                        @Attribute var ocdRW: String?
                         let bitfield: [Bitfield]
+                        
+                        enum CodingKeys: String, CodingKey {
+                            case name
+                            case offset
+                            case size
+                            case initval
+                            case caption
+                            case mask
+                            case ocdRW = "ocd-rw"
+                            case bitfield
+                        }
 
                         struct Bitfield: Codable {
                             @Attribute var caption: String?
                             @Attribute var mask: String
                             @Attribute var name: String
                             @Attribute var values: String?
+                            @Attribute var lsb: String?
+                            @Attribute var rw: String?
                         }
                     }
                 }
                 
                 struct ValueGroup: Codable {
                     @Attribute var name: String
+                    @Attribute var caption: String?
                     let value: [Value]
                     
                     struct Value: Codable {
