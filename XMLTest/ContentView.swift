@@ -136,6 +136,7 @@ func decodeATDF(data: Data) {
                             @Attribute var exec: String?
                             @Attribute var name: String
                             @Attribute var pagesize: String?
+                            @Attribute var external: String?
                         }
                     }
                 }
@@ -145,19 +146,21 @@ func decodeATDF(data: Data) {
                      
                     struct Module: Codable {
                         @Attribute var name: String
-                        let instance: Instance
+                        let instance: [Instance]
                         
                         struct Instance: Codable {
                             @Attribute var name: String
                             @Attribute var caption: String?
                             let registerGroup: RegisterGroup?
                             let signals: Signals?
+                            let parameters: Parameters?
                             
                             enum CodingKeys: String, CodingKey {
                                 case name
                                 case caption
                                 case registerGroup = "register-group"
                                 case signals
+                                case parameters
                             }
                             
                             struct RegisterGroup: Codable {
@@ -183,6 +186,20 @@ func decodeATDF(data: Data) {
                                     @Attribute var group: String
                                     @Attribute var function: String
                                     @Attribute var pad: String
+                                    @Attribute var index: String?
+                                }
+                            }
+                            
+                            struct Parameters: Codable {
+                                let parameter: [Parameter]
+                                
+                                enum CodingKeys: String, CodingKey {
+                                    case parameter = "param"
+                                }
+                                
+                                struct Parameter: Codable {
+                                    @Attribute var name: String
+                                    @Attribute var value: String
                                 }
                             }
                         }

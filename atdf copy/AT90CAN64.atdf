@@ -1,23 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<avr-tools-device-file
-  xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:NumHelper="NumHelper"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
+<avr-tools-device-file xmlns:xalan="http://xml.apache.org/xalan" xmlns:NumHelper="NumHelper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
   <variants>
-    <variant ordercode="AT90CAN32-16AI" tempmin="-40" tempmax="85" speedmax="16000000" pinout="TQFP64" package="TQFP64" vccmin="2.7" vccmax="5.5"/>
-    <variant ordercode="AT90CAN32-16MI" tempmin="-40" tempmax="85" speedmax="16000000" pinout="QFN64" package="QFN64" vccmin="2.7" vccmax="5.5"/>
-    <variant ordercode="AT90CAN32-16AU" tempmin="-40" tempmax="85" speedmax="16000000" pinout="TQFP64" package="TQFP64" vccmin="2.7" vccmax="5.5"/>
-    <variant ordercode="AT90CAN32-16MU" tempmin="-40" tempmax="85" speedmax="16000000" pinout="QFN64" package="QFN64" vccmin="2.7" vccmax="5.5"/>
+    <variant ordercode="AT90CAN64-16AI" tempmin="-40" tempmax="85" speedmax="16000000" pinout="TQFP64" package="TQFP64" vccmin="2.7" vccmax="5.5"/>
+    <variant ordercode="AT90CAN64-16MI" tempmin="-40" tempmax="85" speedmax="16000000" pinout="QFN64" package="QFN64" vccmin="2.7" vccmax="5.5"/>
+    <variant ordercode="AT90CAN64-16AU" tempmin="-40" tempmax="85" speedmax="16000000" pinout="TQFP64" package="TQFP64" vccmin="2.7" vccmax="5.5"/>
+    <variant ordercode="AT90CAN64-16MU" tempmin="-40" tempmax="85" speedmax="16000000" pinout="QFN64" package="QFN64" vccmin="2.7" vccmax="5.5"/>
   </variants>
   <devices>
-    <device name="AT90CAN32" architecture="AVR8" family="megaAVR">
+    <device name="AT90CAN64" architecture="AVR8" family="megaAVR">
       <address-spaces>
-        <address-space endianness="little" name="prog" id="prog" start="0x0000" size="0x8000">
-          <memory-segment start="0x0000" size="0x8000" type="flash" rw="RW" exec="1" name="FLASH" pagesize="0x100"/>
-          <memory-segment start="0x7c00" size="0x0400" type="flash" rw="RW" exec="1" name="BOOT_SECTION_1" pagesize="0x100"/>
-          <memory-segment start="0x7800" size="0x0800" type="flash" rw="RW" exec="1" name="BOOT_SECTION_2" pagesize="0x100"/>
-          <memory-segment start="0x7000" size="0x1000" type="flash" rw="RW" exec="1" name="BOOT_SECTION_3" pagesize="0x100"/>
-          <memory-segment start="0x6000" size="0x2000" type="flash" rw="RW" exec="1" name="BOOT_SECTION_4" pagesize="0x100"/>
+        <address-space endianness="little" name="prog" id="prog" start="0x0000" size="0x10000">
+          <memory-segment start="0x0000" size="0x10000" type="flash" rw="RW" exec="1" name="FLASH" pagesize="0x100"/>
+          <memory-segment start="0xfc00" size="0x0400" type="flash" rw="RW" exec="1" name="BOOT_SECTION_1" pagesize="0x100"/>
+          <memory-segment start="0xf800" size="0x0800" type="flash" rw="RW" exec="1" name="BOOT_SECTION_2" pagesize="0x100"/>
+          <memory-segment start="0xf000" size="0x1000" type="flash" rw="RW" exec="1" name="BOOT_SECTION_3" pagesize="0x100"/>
+          <memory-segment start="0xe000" size="0x2000" type="flash" rw="RW" exec="1" name="BOOT_SECTION_4" pagesize="0x100"/>
         </address-space>
         <address-space endianness="little" name="signatures" id="signatures" start="0" size="3">
           <memory-segment start="0" size="3" type="signatures" rw="R" exec="0" name="SIGNATURES"/>
@@ -31,11 +28,11 @@
         <address-space endianness="little" name="data" id="data" start="0x0000" size="0x10000">
           <memory-segment external="false" type="regs" size="0x0020" start="0x0000" name="REGISTERS"/>
           <memory-segment name="MAPPED_IO" start="0x0020" size="0x00e0" type="io" external="false"/>
-          <memory-segment name="IRAM" start="0x0100" size="0x0800" type="ram" external="false"/>
-          <memory-segment name="XRAM" start="0x0900" size="0xf700" type="ram" external="true"/>
+          <memory-segment name="IRAM" start="0x0100" size="0x1000" type="ram" external="false"/>
+          <memory-segment name="XRAM" start="0x1100" size="0xef00" type="ram" external="true"/>
         </address-space>
-        <address-space endianness="little" name="eeprom" id="eeprom" start="0x0000" size="0x0400">
-          <memory-segment start="0x0000" size="0x0400" type="eeprom" rw="RW" exec="0" name="EEPROM" pagesize="0x08"/>
+        <address-space endianness="little" name="eeprom" id="eeprom" start="0x0000" size="0x0800">
+          <memory-segment start="0x0000" size="0x0800" type="eeprom" rw="RW" exec="0" name="EEPROM" pagesize="0x08"/>
         </address-space>
         <address-space size="0x40" start="0x00" endianness="little" name="io" id="io"/>
         <address-space endianness="little" name="osccal" id="osccal" start="0" size="1">
@@ -191,10 +188,9 @@
             <signals>
               <signal group="CLKO" index="0" function="default" pad="PC7"/>
             </signals>
-            <parameters>
-              <param name="CORE_VERSION" value="V2E"/>
-            </parameters>
-          </instance>
+          <parameters>
+        <param name="CORE_VERSION" value="V2E"/>
+      </parameters></instance>
         </module>
         <module name="BOOT_LOAD">
           <instance name="BOOT_LOAD" caption="Bootloader">
@@ -357,9 +353,9 @@
       </interfaces>
       <property-groups>
         <property-group name="SIGNATURES">
-          <property name="JTAGID" value="0x0958103F"/>
+          <property name="JTAGID" value="0x0968103F"/>
           <property name="SIGNATURE0" value="0x1e"/>
-          <property name="SIGNATURE1" value="0x95"/>
+          <property name="SIGNATURE1" value="0x96"/>
           <property name="SIGNATURE2" value="0x81"/>
         </property-group>
         <property-group name="OCD">
@@ -558,20 +554,20 @@
         <value caption="Ext. Crystal Osc. 8.0-16.0 MHz; Start-up time: 1K CK + 65 ms" name="EXTXOSC_8MHZ_16MHZ_1KCK_65MS" value="0x0F"/>
       </value-group>
       <value-group name="ENUM_BOOTSZ">
-        <value caption="Boot Flash size=512 words start address=$3E00" name="512W_3E00" value="0x03"/>
-        <value caption="Boot Flash size=1024 words start address=$3C00" name="1024W_3C00" value="0x02"/>
-        <value caption="Boot Flash size=2048 words start address=$3800" name="2048W_3800" value="0x01"/>
-        <value caption="Boot Flash size=4096 words start address=$3000" name="4096W_3000" value="0x00"/>
+        <value caption="Boot Flash size=512 words start address=$7E00" name="512W_7E00" value="0x03"/>
+        <value caption="Boot Flash size=1024 words start address=$7C00" name="1024W_7C00" value="0x02"/>
+        <value caption="Boot Flash size=2048 words start address=$7800" name="2048W_7800" value="0x01"/>
+        <value caption="Boot Flash size=4096 words start address=$7000" name="4096W_7000" value="0x00"/>
       </value-group>
       <value-group name="ENUM_BODLEVEL">
         <value caption="Brown-out detection disabled" name="DISABLED" value="0x07"/>
-        <value caption="Brown-out detection at VCC=4.1 V" name="4V1" value="0x06"/>
-        <value caption="Brown-out detection at VCC=4.0 V" name="4V0" value="0x05"/>
-        <value caption="Brown-out detection at VCC=3.9 V" name="3V9" value="0x04"/>
-        <value caption="Brown-out detection at VCC=3.8 V" name="3V8" value="0x03"/>
-        <value caption="Brown-out detection at VCC=2.7 V" name="2V7" value="0x02"/>
-        <value caption="Brown-out detection at VCC=2.6 V" name="2V6" value="0x01"/>
-        <value caption="Brown-out detection at VCC=2.5 V" name="2V5" value="0x00"/>
+        <value caption="Brown-out detection level at VCC=4.1 V" name="4V1" value="0x06"/>
+        <value caption="Brown-out detection level at VCC=4.0 V" name="4V0" value="0x05"/>
+        <value caption="Brown-out detection level at VCC=3.9 V" name="3V9" value="0x04"/>
+        <value caption="Brown-out detection level at VCC=3.8 V" name="3V8" value="0x03"/>
+        <value caption="Brown-out detection level at VCC=2.7 V" name="2V7" value="0x02"/>
+        <value caption="Brown-out detection level at VCC=2.6 V" name="2V6" value="0x01"/>
+        <value caption="Brown-out detection level at VCC=2.5 V" name="2V5" value="0x00"/>
       </value-group>
     </module>
     <module caption="Lockbits" name="LOCKBIT">
@@ -892,6 +888,7 @@
       <value-group caption="Oscillator Calibration Values" name="OSCCAL_VALUE_ADDRESSES">
         <value value="0x00" caption="8.0 MHz" name="8_0_MHz"/>
       </value-group>
+      
     </module>
     <module caption="Bootloader" name="BOOT_LOAD">
       <register-group caption="Bootloader" name="BOOT_LOAD">
@@ -936,7 +933,7 @@
     </module>
     <module caption="EEPROM" name="EEPROM">
       <register-group caption="EEPROM" name="EEPROM">
-        <register caption="EEPROM Read/Write Access Bytes" name="EEAR" offset="0x41" size="2" mask="0x0FFF">
+        <register caption="EEPROM Read/Write Access Bytes - Only bit 10..8 are used in AT90CAN64 - Only bit 9..8 are used in AT90CAN32" name="EEAR" offset="0x41" size="2" mask="0x0FFF">
           <bitfield caption="EEPROM Address bits" mask="0x0FFF" name="EEAR"/>
         </register>
         <register caption="EEPROM Data Register" name="EEDR" offset="0x40" size="1">
@@ -1160,7 +1157,7 @@
           <bitfield caption="ADC Auto Trigger Enable" mask="0x20" name="ADATE"/>
           <bitfield caption="ADC Interrupt Flag" mask="0x10" name="ADIF"/>
           <bitfield caption="ADC Interrupt Enable" mask="0x08" name="ADIE"/>
-          <bitfield caption="ADC  Prescaler Select Bits" mask="0x07" name="ADPS" values="ANALOG_ADC_PRESCALER"/>
+          <bitfield caption="ADC Prescaler Select Bits" mask="0x07" name="ADPS" values="ANALOG_ADC_PRESCALER"/>
         </register>
         <register caption="ADC Data Register  Bytes" name="ADC" offset="0x78" size="2" mask="0xFFFF"/>
         <register caption="ADC Control and Status Register B" name="ADCSRB" offset="0x7B" size="1">
