@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		476CFF482A3A701E00217EC2 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 476CFF472A3A701E00217EC2 /* XMLCoder */; };
 		DAE992DE2A22A6F4007656B5 /* XMLTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992DD2A22A6F4007656B5 /* XMLTestApp.swift */; };
 		DAE992E02A22A6F4007656B5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992DF2A22A6F4007656B5 /* ContentView.swift */; };
 		DAE992E22A22A6F5007656B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DAE992E12A22A6F5007656B5 /* Assets.xcassets */; };
@@ -14,7 +15,6 @@
 		DAE992F02A22A6F5007656B5 /* XMLTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992EF2A22A6F5007656B5 /* XMLTestTests.swift */; };
 		DAE992FA2A22A6F6007656B5 /* XMLTestUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992F92A22A6F6007656B5 /* XMLTestUITests.swift */; };
 		DAE992FC2A22A6F6007656B5 /* XMLTestUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992FB2A22A6F6007656B5 /* XMLTestUITestsLaunchTests.swift */; };
-		DAE9930A2A22A735007656B5 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = DAE993092A22A735007656B5 /* XMLCoder */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,7 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DAE9930A2A22A735007656B5 /* XMLCoder in Frameworks */,
+				476CFF482A3A701E00217EC2 /* XMLCoder in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,7 +148,7 @@
 			);
 			name = XMLTest;
 			packageProductDependencies = (
-				DAE993092A22A735007656B5 /* XMLCoder */,
+				476CFF472A3A701E00217EC2 /* XMLCoder */,
 			);
 			productName = XMLTest;
 			productReference = DAE992DA2A22A6F4007656B5 /* XMLTest.app */;
@@ -223,7 +223,7 @@
 			);
 			mainGroup = DAE992D12A22A6F4007656B5;
 			packageReferences = (
-				DAE993082A22A735007656B5 /* XCRemoteSwiftPackageReference "XMLCoder" */,
+				476CFF462A3A701D00217EC2 /* XCRemoteSwiftPackageReference "XMLCoder" */,
 			);
 			productRefGroup = DAE992DB2A22A6F4007656B5 /* Products */;
 			projectDirPath = "";
@@ -628,9 +628,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		DAE993082A22A735007656B5 /* XCRemoteSwiftPackageReference "XMLCoder" */ = {
+		476CFF462A3A701D00217EC2 /* XCRemoteSwiftPackageReference "XMLCoder" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/CoreOffice/XMLCoder.git";
+			repositoryURL = "git@github.com:CoreOffice/XMLCoder.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.17.1;
@@ -639,9 +639,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		DAE993092A22A735007656B5 /* XMLCoder */ = {
+		476CFF472A3A701E00217EC2 /* XMLCoder */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DAE993082A22A735007656B5 /* XCRemoteSwiftPackageReference "XMLCoder" */;
+			package = 476CFF462A3A701D00217EC2 /* XCRemoteSwiftPackageReference "XMLCoder" */;
 			productName = XMLCoder;
 		};
 /* End XCSwiftPackageProductDependency section */
