@@ -369,7 +369,7 @@ func decodeATDF(data: Data) {
                             
                             struct RegisterGroup: Codable {
                                 @Attribute var name: Name
-                                @Attribute var nameInModule: String
+                                @Attribute var nameInModule: NameInModule // Should be the same as the Instance.Name but is not exactly
                                 @Attribute var offset: String
                                 @Attribute var addressSpace: String
                                 @Attribute var caption: String?
@@ -460,6 +460,84 @@ func decodeATDF(data: Data) {
                                     case vportA = "VPORTA"
                                     case vref = "VREF"
                                 }
+                            }
+                            
+                            // Should be the same as the Instance.Name but is not exactly
+                            enum NameInModule: String, Codable {
+                                case portA = "PORTA"
+                                case jtag = "JTAG"
+                                case spi = "SPI"
+                                case twi = "TWI"
+                                case usart0 = "USART0"
+                                case cpu = "CPU"
+                                case bootLoad = "BOOT_LOAD"
+                                case exint = "EXINT"
+                                case eeprom = "EEPROM"
+                                case tc0 = "TC0"
+                                case tc1 = "TC1"
+                                case tc2 = "TC2"
+                                case wdt = "WDT"
+                                case adc = "ADC"
+                                case ac = "AC"
+                                case can = "CAN"
+                                case fuse = "FUSE"
+                                case lockbit = "LOCKBIT"
+                                case portB = "PORTB"
+                                case psc0 = "PSC0"
+                                case eusart = "EUSART"
+                                case dac = "DAC"
+                                case usart = "USART"
+                                case pll = "PLL"
+                                case usbDevice = "USB_DEVICE"
+                                case ps2 = "PS2"
+                                case usart1 = "USART1"
+                                case usbGlobal = "USB_GLOBAL"
+                                case usbHost = "USB_HOST"
+                                case tc3 = "TC3"
+                                case bandgap = "BANDGAP"
+                                case portC = "PORTC"
+                                case fet = "FET"
+                                case batteryProtection = "BATTERY_PROTECTION"
+                                case coulombCounter = "COULOMB_COUNTER"
+                                case voltageRegulator = "VOLTAGE_REGULATOR"
+                                case cellBalancing = "CELL_BALANCING"
+                                case chargerDetect = "CHARGER_DETECT"
+                                case linuart = "LINUART"
+                                case psc = "PSC"
+                                case tc4 = "TC4"
+                                case deviceID = "DEVICEID"
+                                case misc = "MISC"
+                                case wakeupTimer = "WAKEUP_TIMER"
+                                case tc5 = "TC5"
+                                case trx24 = "TRX24"
+                                case symcnt = "SYMCNT"
+                                case flash = "FLASH"
+                                case pwrctrl = "PWRCTRL"
+                                case usi = "USI"
+                                case lcd = "LCD"
+                                case spi0 = "SPI0"
+                                case twi0 = "TWI0"
+                                case cfd = "CFD"
+                                case bod = "BOD"
+                                case ccl = "CCL"
+                                case clkctrl = "CLKCTRL"
+                                case cpuint = "CPUINT"
+                                case crcscan = "CRCSCAN"
+                                case evsys = "EVSYS"
+                                case gpio = "GPIO"
+                                case nvmctrl = "NVMCTRL"
+                                case port = "PORT"
+                                case portmux = "PORTMUX"
+                                case rstctrl = "RSTCTRL"
+                                case rtc = "RTC"
+                                case sigrow = "SIGROW"
+                                case slpctrl = "SLPCTRL"
+                                case syscfg = "SYSCFG"
+                                case tca = "TCA"
+                                case tcb = "TCB"
+                                case userrow = "USERROW"
+                                case vport = "VPORT"
+                                case vref = "VREF"
                             }
                             
                             struct Signals: Codable {
@@ -614,7 +692,7 @@ func decodeATDF(data: Data) {
     let ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
     
     for module in ATDFObject.devices.device.peripherals.module {
-        listOfValues.append(module.instance.registerGroup?.name.rawValue ?? "" )
+        listOfValues.append(module.instance.registerGroup?.nameInModule.rawValue ?? "")
     }
 //    print("ATDFObject.devices.device.name = \(ATDFObject.devices.device.peripherals.module.name)")
 //    let encodedXML = try! XMLEncoder().encode(ATDFObject, withRootKey: "avr-tools-device-file")
