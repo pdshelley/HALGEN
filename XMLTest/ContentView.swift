@@ -371,7 +371,6 @@ func decodeATDF(data: Data) {
                                 case clockFailureDetection = "Clock Failure Detection"
                             }
                             
-                            
                             struct RegisterGroup: Codable {
                                 @Attribute var name: Name
                                 @Attribute var nameInModule: NameInModule // Should be the same as the Instance.Name but is not exactly
@@ -903,8 +902,19 @@ func decodeATDF(data: Data) {
                                 }
                                 
                                 struct Parameter: Codable {
-                                    @Attribute var name: String
-                                    @Attribute var value: String
+                                    @Attribute var name: Name
+                                    @Attribute var value: Value
+                                    
+                                    enum Name: String, Codable {
+                                        case coreVersion = "CORE_VERSION"
+                                    }
+                                    
+                                    enum Value: String, Codable {
+                                        case v2e = "V2E"
+                                        case v2 = "V2"
+                                        case v3 = "V3"
+                                        case v4 = "V4"
+                                    }
                                 }
                             }
                         }
@@ -1038,9 +1048,9 @@ func decodeATDF(data: Data) {
     print("ATDFObject.devices.device.name = \(ATDFObject.devices.device.name)")
     
     for module in ATDFObject.devices.device.peripherals.module {
-        guard let signals = module.instance.signals?.signal else { continue }
-        for signal in signals {
-            listOfValues.append(signal.index?.rawValue ?? "")
+        guard let list = module.instance.parameters?.parameter else { continue }
+        for param in list {
+            listOfValues.append(param.value.rawValue)
         }
     }
     
