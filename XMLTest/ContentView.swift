@@ -710,16 +710,9 @@ func decodeATDF(data: Data) {
                                         case xdir = "XDIR"
                                     }
                                     
-//                                    enum function: String, Codable {
+//                                    enum Function: String, Codable {
+//                                        case <#case#>
 //                                    }
-//
-//                                    enum pad: String, Codable {
-//                                    }
-//
-//                                    enum index: String, Codable {
-//                                    }
-                                    
-                                    }
                                 }
                             }
                             
