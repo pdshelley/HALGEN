@@ -27,6 +27,11 @@ struct ContentView: View {
             } label: {
                 Text("Do the thing")
             }
+            Button {
+                printValues()
+            } label: {
+                Text("Show the Stuff")
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -48,14 +53,14 @@ func decodeATDF(urls: [URL]) {
             print("Did not work.")
         }
     }
-    
-    let uniqueNames = listOfValues.unique()
-    for name in uniqueNames {
-        print(name)
-    }
 }
 
 var listOfValues: [String] = []
+
+func printValues() {
+    let uniqueNames = listOfValues.unique()
+    for name in uniqueNames { print(name) }
+}
 
 func decodeATDF(data: Data) {
     
@@ -586,9 +591,9 @@ func decodeATDF(data: Data) {
                                 
                                 struct Signal: Codable {
                                     @Attribute var group: Signal.Group
-                                    @Attribute var function: String
-                                    @Attribute var pad: String
-                                    @Attribute var index: String?
+                                    @Attribute var function: Function
+                                    @Attribute var pad: Pad
+                                    @Attribute var index: Index? // TODO: This is optional because at least one file is missing an index. Is this an error that needs fixing?
                                     
                                     enum Group: String, Codable {
                                         case p = "P"
@@ -710,9 +715,183 @@ func decodeATDF(data: Data) {
                                         case xdir = "XDIR"
                                     }
                                     
-//                                    enum Function: String, Codable {
-//                                        case <#case#>
-//                                    }
+                                    enum Function: String, Codable {
+                                        case DEFAULT = "default"
+                                        case IOPORT = "IOPORT"
+                                        case AC = "AC"
+                                        case DAC = "DAC"
+                                        case TC0 = "TC0"
+                                        case TC1 = "TC1"
+                                        case ADC = "ADC"
+                                        case LIN = "LIN"
+                                        case SPI = "SPI"
+                                        case SPI_ALT = "SPI_ALT"
+                                        case EXINT = "EXINT"
+                                        case PSC = "PSC"
+                                        case AC0 = "AC0"
+                                        case AIN0 = "AIN0"
+                                        case CCL = "CCL"
+                                        case CCL_ALT = "CCL_ALT"
+                                        case CLKCTRL = "CLKCTRL"
+                                        case EVSYS = "EVSYS"
+                                        case EVSYS_ALT = "EVSYS_ALT"
+                                        case OTHER = "OTHER"
+                                        case TCA = "TCA"
+                                        case TCA_ALT2 = "TCA_ALT2"
+                                        case TCA_ALT3 = "TCA_ALT3"
+                                        case TCA_ALT5 = "TCA_ALT5"
+                                        case TCB0 = "TCB0"
+                                        case TCB0_ALT = "TCB0_ALT"
+                                        case I2C = "I2C"
+                                        case I2C_ALT = "I2C_ALT"
+                                        case I2C_ALT2 = "I2C_ALT2"
+                                        case USART0 = "USART0"
+                                        case USART0_ALT = "USART0_ALT"
+                                        case SPI_ALT2 = "SPI_ALT2"
+                                        case TCA_ALT = "TCA_ALT"
+                                        case TCA_ALT4 = "TCA_ALT4"
+                                    }
+                                    
+                                    enum Pad: String, Codable {
+                                        case PA0 = "PA0"
+                                        case PA1 = "PA1"
+                                        case PA2 = "PA2"
+                                        case PA3 = "PA3"
+                                        case PA4 = "PA4"
+                                        case PA5 = "PA5"
+                                        case PA6 = "PA6"
+                                        case PA7 = "PA7"
+                                        
+                                        case PB0 = "PB0"
+                                        case PB1 = "PB1"
+                                        case PB2 = "PB2"
+                                        case PB3 = "PB3"
+                                        case PB4 = "PB4"
+                                        case PB5 = "PB5"
+                                        case PB6 = "PB6"
+                                        case PB7 = "PB7"
+                                        
+                                        case PC0 = "PC0"
+                                        case PC1 = "PC1"
+                                        case PC2 = "PC2"
+                                        case PC3 = "PC3"
+                                        case PC4 = "PC4"
+                                        case PC5 = "PC5"
+                                        case PC6 = "PC6"
+                                        case PC7 = "PC7"
+                                        
+                                        case PD0 = "PD0"
+                                        case PD1 = "PD1"
+                                        case PD2 = "PD2"
+                                        case PD3 = "PD3"
+                                        case PD4 = "PD4"
+                                        case PD5 = "PD5"
+                                        case PD6 = "PD6"
+                                        case PD7 = "PD7"
+                                        
+                                        case PE0 = "PE0"
+                                        case PE1 = "PE1"
+                                        case PE2 = "PE2"
+                                        case PE3 = "PE3"
+                                        case PE4 = "PE4"
+                                        case PE5 = "PE5"
+                                        case PE6 = "PE6"
+                                        case PE7 = "PE7"
+                                        
+                                        case PF0 = "PF0"
+                                        case PF1 = "PF1"
+                                        case PF3 = "PF3"
+                                        case PF2 = "PF2"
+                                        case PF4 = "PF4"
+                                        case PF5 = "PF5"
+                                        case PF6 = "PF6"
+                                        case PF7 = "PF7"
+                                        
+                                        case PG0 = "PG0"
+                                        case PG1 = "PG1"
+                                        case PG2 = "PG2"
+                                        case PG3 = "PG3"
+                                        case PG4 = "PG4"
+                                        case PG5 = "PG5"
+                                        
+                                        case PH6 = "PH6"
+                                        
+                                        case PJ0 = "PJ0"
+                                        case PJ1 = "PJ1"
+                                        case PJ2 = "PJ2"
+                                        case PJ3 = "PJ3"
+                                        case PJ4 = "PJ4"
+                                        case PJ5 = "PJ5"
+                                        case PJ6 = "PJ6"
+                                        
+                                        case PK0 = "PK0"
+                                        case PK1 = "PK1"
+                                        case PK2 = "PK2"
+                                        case PK3 = "PK3"
+                                        case PK4 = "PK4"
+                                        case PK5 = "PK5"
+                                        case PK6 = "PK6"
+                                        case PK7 = "PK7"
+                                        
+                                        case PL1 = "PL1"
+                                        case PL2 = "PL2"
+                                        case PL3 = "PL3"
+                                        case PL4 = "PL4"
+                                        case PL5 = "PL5"
+                                        
+                                        case ADC6 = "ADC6"
+                                        case ADC7 = "ADC7"
+                                        
+                                        case XTAL1 = "XTAL1"
+                                        case XTAL2 = "XTAL2"
+                                    }
+                                    
+                                    enum Index: String, Codable {
+                                        case zero = "0"
+                                        case one = "1"
+                                        case two = "2"
+                                        case three = "3"
+                                        case four = "4"
+                                        case five = "5"
+                                        case six = "6"
+                                        case seven = "7"
+                                        case eight = "8"
+                                        case nine = "9"
+                                        case ten = "10"
+                                        case eleven = "11"
+                                        case twelve = "12"
+                                        case thirteen = "13"
+                                        case fourteen = "14"
+                                        case fifteen = "15"
+                                        case sixteen = "16"
+                                        case seventeen = "17"
+                                        case eightteen = "18"
+                                        case nineteen = "19"
+                                        case twenty = "20"
+                                        case twentyOne = "21"
+                                        case twentyTwo = "22"
+                                        case twentyThree = "23"
+                                        case otwentyFour = "24"
+                                        case otwentyFive = "25"
+                                        case otwentySix = "26"
+                                        case otwentySeven = "27"
+                                        case otwentyEight = "28"
+                                        case otwentyNine = "29"
+                                        case thirty = "30"
+                                        case thirtyone = "31"
+                                        case thirtyTwo = "32"
+                                        case thirtyThree = "33"
+                                        case zero0 = "00" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                        case zero1 = "01" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                        case zero2 = "02" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                        case zero3 = "03" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                        case zero4 = "04" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                        case zero5 = "05" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                        case zero6 = "06" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                        case zero7 = "07" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                        case zero8 = "08" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                        case zero9 = "09" // TODO: This is probably an incosistancy in naming, Should we standardize it?
+                                    }
                                 }
                             }
                             
@@ -859,11 +1038,10 @@ func decodeATDF(data: Data) {
     print("ATDFObject.devices.device.name = \(ATDFObject.devices.device.name)")
     
     for module in ATDFObject.devices.device.peripherals.module {
-        guard let signals = module.instance.signals?.signal else { return }
+        guard let signals = module.instance.signals?.signal else { continue }
         for signal in signals {
-            listOfValues.append(signal.group.rawValue)
+            listOfValues.append(signal.index?.rawValue ?? "")
         }
-        
     }
     
     
