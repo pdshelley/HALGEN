@@ -70,12 +70,12 @@ func decodeATDF(data: Data) {
         let modules: Modules
         let pinouts: Pinouts?
         
-        enum CodingKeys: String, CodingKey {
-            case variants
-            case devices
-            case modules
-            case pinouts
-        }
+//        enum CodingKeys: String, CodingKey { // TODO: I don't think this is needed
+//            case variants
+//            case devices
+//            case modules
+//            case pinouts
+//        }
         
         struct Variants: Codable {
             let variant: [Variant]
@@ -96,14 +96,16 @@ func decodeATDF(data: Data) {
             let device: Device
             
             struct Device: Codable {
-                @Attribute var name: String
-                @Attribute var architecture: String
-                @Attribute var family: String
+                @Attribute var name: String // Always unique, should stay a string
+                @Attribute var architecture: Architecture
+                @Attribute var family: Family
                 let addressSpaces: AddressSpaces
                 let peripherals: Peripherals
                 let interrupts: Interrupts
                 let interfaces: Interfaces
                 let propertyGroups: PropertyGroups
+                
+                
                 
                 enum CodingKeys: String, CodingKey {
                     case name
@@ -116,6 +118,16 @@ func decodeATDF(data: Data) {
                     case propertyGroups = "property-groups"
                 }
                 
+                enum Architecture: String, Codable {
+                    case avr8 = "AVR8"
+                    case avr8X = "AVR8X"
+                }
+                
+                enum Family: String, Codable {
+                    case megaAVR = "megaAVR"
+                    case avrMEGA = "AVR MEGA"
+                }
+                
                 struct AddressSpaces: Codable {
                     let addressSpace: [AddressSpace]
                     
@@ -124,11 +136,11 @@ func decodeATDF(data: Data) {
                     }
 
                     struct AddressSpace: Codable {
-                        @Attribute var endianness: String
-                        @Attribute var name: String
-                        @Attribute var id: String
-                        @Attribute var start: String
-                        @Attribute var size: String
+                        @Attribute var endianness: Endianness
+                        @Attribute var name: Name
+                        @Attribute var id: ID
+                        @Attribute var start: Start
+                        @Attribute var size: Size
                         let memorySegment: [MemorySegment]
                         
                         enum CodingKeys: String, CodingKey {
@@ -140,15 +152,188 @@ func decodeATDF(data: Data) {
                             case memorySegment = "memory-segment"
                         }
                         
+                        enum Endianness: String, Codable {
+                            case little
+                        }
+                        
+                        enum Name: String, Codable {
+                            case prog
+                            case signatures
+                            case fuses
+                            case lockbits
+                            case data
+                            case eeprom
+                            case io
+                            case osccal
+                            case userSignatures = "user_signatures"
+                        }
+                        
+                        enum ID: String, Codable { // Exactly the same as AddressSpace.Name This is duplicated but I guess it could change or be different.
+                            case prog
+                            case signatures
+                            case fuses
+                            case lockbits
+                            case data
+                            case eeprom
+                            case io
+                            case osccal
+                            case userSignatures = "user_signatures"
+                        }
+                        
+                        enum Start: String, Codable {
+                            case zeroX0000 = "0x0000"
+                            case zero = "0"
+                            case zeroX00 = "0x00"
+                            case zeroX0100 = "0x0100"
+                        }
+                        
+                        enum Size: String, Codable {
+                            case one = "1"
+                            case two = "2"
+                            case three = "3"
+                            case four = "4"
+                            case zeroX40 = "0x40"
+                            case zeroX8000 = "0x8000"
+                            case zeroX0003 = "0x0003"
+                            case zeroX0001 = "0x0001"
+                            case zeroX0400 = "0x0400"
+                            case zeroX0800 = "0x0800"
+                            case zeroX1000 = "0x1000"
+                            case zeroX2000 = "0x2000"
+                            case zeroX0300 = "0x0300"
+                            case zeroX0200 = "0x0200"
+                            case zeroX4000 = "0x4000"
+                            case zeroX0500 = "0x0500"
+                            case zeroX0002 = "0x0002"
+                            case zeroX0460 = "0x0460"
+                            case zeroX0100 = "0x0100"
+                            case zeroX0600 = "0x0600"
+                            case zeroX0860 = "0x0860"
+                            case zeroX0900 = "0x0900"
+                            case zeroX0b00 = "0x0b00"
+                            case zeroX1100 = "0x1100"
+                            case zeroX2200 = "0x2200"
+                            case zeroX4200 = "0x4200"
+                            case zeroX8200 = "0x8200"
+                            case zeroXa000 = "0xa000"
+                            case zeroX4100 = "0x4100"
+                            case zeroXC000 = "0xC000"
+                            case zeroX0260 = "0x0260"
+                            case zeroX10000 = "0x10000"
+                            case zeroX20000 = "0x20000"
+                            case zeroX40000 = "0x40000"
+                        }
+                        
                         struct MemorySegment: Codable {
-                            @Attribute var start: String
-                            @Attribute var size: String
+                            @Attribute var start: Start
+                            @Attribute var size: Size
                             @Attribute var type: String
                             @Attribute var rw: String?
                             @Attribute var exec: String?
                             @Attribute var name: String
                             @Attribute var pagesize: String?
                             @Attribute var external: String?
+                            
+                            enum Start: String, Codable {
+                                case zero = "0"
+                                case zeroX00 = "0x00"
+                                case zeroX0000 = "0x0000"
+                                case zeroX7c00 = "0x7c00"
+                                case zeroX7800 = "0x7800"
+                                case zeroX7000 = "0x7000"
+                                case zeroX6000 = "0x6000"
+                                case zeroX0020 = "0x0020"
+                                case zeroX0100 = "0x0100"
+                                case zeroX0900 = "0x0900"
+                                case zeroXfc00 = "0xfc00"
+                                case zeroXf800 = "0xf800"
+                                case zeroXf000 = "0xf000"
+                                case zeroXe000 = "0xe000"
+                                case zeroX1100 = "0x1100"
+                                case zeroX1f00 = "0x1f00"
+                                case zeroX1e00 = "0x1e00"
+                                case zeroX1c00 = "0x1c00"
+                                case zeroX1800 = "0x1800"
+                                case zeroX3f00 = "0x3f00"
+                                case zeroX3e00 = "0x3e00"
+                                case zeroX3c00 = "0x3c00"
+                                case zeroX3800 = "0x3800"
+                                case zeroX3000 = "0x3000"
+                                case zeroX1000 = "0x1000"
+                                case zeroX2200 = "0x2200"
+                                case zeroX0060 = "0x0060"
+                                case zeroX7e00 = "0x7e00"
+                                case zeroX0200 = "0x0200"
+                                case zeroX0500 = "0x0500"
+                                case zeroX9e00 = "0x9e00"
+                                case zeroX9c00 = "0x9c00"
+                                case zeroX9800 = "0x9800"
+                                case zeroX9000 = "0x9000"
+                                case zeroX1103 = "0x1103"
+                                case zeroX1280 = "0x1280"
+                                case zeroX128A = "0x128A"
+                                case zeroX1300 = "0x1300"
+                                case zeroX1400 = "0x1400"
+                                case zeroX3C00 = "0x3C00"
+                                case zeroX4000 = "0x4000"
+                                case zeroX2800 = "0x2800"
+                                case zeroX0260 = "0x0260"
+                                case zeroX1fc00 = "0x1fc00"
+                                case zeroX1f800 = "0x1f800"
+                                case zeroX1f000 = "0x1f000"
+                                case zeroX1e000 = "0x1e000"
+                                case zeroX3fc00 = "0x3fc00"
+                                case zeroX3f800 = "0x3f800"
+                                case zeroX3f000 = "0x3f000"
+                                case zeroX3e000 = "0x3e000"
+                            }
+                            
+                            enum Size: String, Codable {
+                                case one = "1"
+                                case two = "2"
+                                case three = "3"
+                                case four = "4"
+                                case zeroX03 = "0x03"
+                                case zeroX3D = "0x3D"
+                                case zeroX0A = "0x0A"
+                                case zeroX01 = "0x01"
+                                case zeroX20 = "0x20"
+                                case zeroX7D = "0x7D"
+                                case zeroX40 = "0x40"
+                                case zeroX100 = "0x100"
+                                case zeroX400 = "0x400"
+                                case zeroX800 = "0x800"
+                                case zeroX8000 = "0x8000"
+                                case zeroX0400 = "0x0400"
+                                case zeroX0800 = "0x0800"
+                                case zeroX1000 = "0x1000"
+                                case zeroX2000 = "0x2000"
+                                case zeroX0003 = "0x0003"
+                                case zeroX0001 = "0x0001"
+                                case zeroX0020 = "0x0020"
+                                case zeroX00e0 = "0x00e0"
+                                case zeroXf700 = "0xf700"
+                                case zeroXef00 = "0xef00"
+                                case zeroX0100 = "0x0100"
+                                case zeroX0200 = "0x0200"
+                                case zeroX4000 = "0x4000"
+                                case zeroXde00 = "0xde00"
+                                case zeroX0002 = "0x0002"
+                                case zeroX0040 = "0x0040"
+                                case zeroX0500 = "0x0500"
+                                case zeroX0a00 = "0x0a00"
+                                case zeroX0300 = "0x0300"
+                                case zeroX01e0 = "0x01e0"
+                                case zeroXfb00 = "0xfb00"
+                                case zeroXa000 = "0xa000"
+                                case zeroX1100 = "0x1100"
+                                case zeroX1800 = "0x1800"
+                                case zeroXC000 = "0xC000"
+                                case zeroXfda0 = "0xfda0"
+                                case zeroX10000 = "0x10000"
+                                case zeroX20000 = "0x20000"
+                                case zeroX40000 = "0x40000"
+                            }
                         }
                     }
                 }
@@ -927,9 +1112,9 @@ func decodeATDF(data: Data) {
                     struct Interrupt: Codable {
                         @Attribute var index: Int // TODO: This should probably be a number. Is there a nice way to have the index type be an Int and still have the simple auto fill and constraint of an enum? Also is this worth it?
                         @Attribute var name: Name
-                        @Attribute var caption: String?
+                        @Attribute var caption: Caption?
                         
-                        // Note: Leavign this here for now but it probably makes sense that we use an Int and not this enum. We loose the advantage of having a constrained list, however I don't think this is that important.
+                        // Note: Leaving this here for now but it probably makes sense that we use an Int and not this enum. We loose the advantage of having a constrained list, however I don't think this is that important.
                         enum Index: String, Codable {
                             case zero = "0"
                             case one = "1"
@@ -1217,6 +1402,224 @@ func decodeATDF(data: Data) {
                             case EE = "EE"
                             case NOT_USED = "NOT_USED"
                         }
+                        
+                        enum Caption: String, Codable {
+                            case externalPinPowerOnResetBrownOutResetWatchdogResetAndJTAGAVRReset = "External Pin, Power-on Reset, Brown-out Reset, Watchdog Reset and JTAG AVR Reset"
+                            case externalInterruptRequest0 = "External Interrupt Request 0"
+                            case externalInterruptRequest1 = "External Interrupt Request 1"
+                            case externalInterruptRequest2 = "External Interrupt Request 2"
+                            case externalInterruptRequest3 = "External Interrupt Request 3"
+                            case externalInterruptRequest4 = "External Interrupt Request 4"
+                            case externalInterruptRequest5 = "External Interrupt Request 5"
+                            case externalInterruptRequest6 = "External Interrupt Request 6"
+                            case externalInterruptRequest7 = "External Interrupt Request 7"
+                            case timerCounter2CompareMatch = "Timer/Counter2 Compare Match"
+                            case timerCounter2Overflow = "Timer/Counter2 Overflow"
+                            case timerCounter1CaptureEvent = "Timer/Counter1 Capture Event"
+                            case timerCounter1CompareMatchA = "Timer/Counter1 Compare Match A"
+                            case timerCounterCompareMatchB = "Timer/Counter Compare Match B"
+                            case timerCounter1CompareMatchC = "Timer/Counter1 Compare Match C"
+                            case timerCounter1Overflow = "Timer/Counter 1 Overflow"
+                            case timerCounter1Overflow2 = "Timer/Counter1 Overflow"
+                            case timerCounter0CompareMatch = "Timer/Counter0 Compare Match"
+                            case timerCounter0CompareMatch2 = "TimerCounter0 Compare Match"
+                            case timerCounter0Overflow = "Timer/Counter0 Overflow"
+                            case canTransferCompleteOrError = "CAN Transfer Complete or Error"
+                            case canTimerOverrun = "CAN Timer Overrun"
+                            case spiSerialTransferComplete = "SPI Serial Transfer Complete"
+                            case usart0DataRegisterEmpty = "USART0, Data Register Empty"
+                            case usart0DataRegisterEmpty2 = "USART0 Data Register Empty"
+                            case usart0DataregisterEmpty3 = "USART0 Data register Empty"
+                            case usart0TxComplete = "USART0, Tx Complete"
+                            case usart0TxComplete2 = "USART0 Tx Complete"
+                            case analogComparator = "Analog Comparator"
+                            case adcConversionComplete = "ADC Conversion Complete"
+                            case eepromReady = "EEPROM Ready"
+                            case timerCounter3CaptureEvent = "Timer/Counter3 Capture Event"
+                            case timerCounter3CompareMatchA = "Timer/Counter3 Compare Match A"
+                            case timerCounter3CompareMatchB = "Timer/Counter3 Compare Match B"
+                            case timerCounter3CompareMatchC = "Timer/Counter3 Compare Match C"
+                            case timerCounter3Overflow = "Timer/Counter3 Overflow"
+                            case usart1RxComplete = "USART1, Rx Complete"
+                            case usart1RxComplete2 = "USART1 Rx Complete"
+                            case usart1RXComplete3 = "USART1 RX complete"
+                            case usart1TxComplete = "USART1, Tx Complete"
+                            case usart1TxComplete2 = "USART1 Tx Complete"
+                            case usart1TXComplete3 = "USART1 TX complete"
+                            case twoWireSerialInterface = "2-wire Serial Interface"
+                            case twoWireSerialInterface2 = "Two-wire Serial Interface" // Duplicate
+                            case twoWireSerialInterface3 = "Two-Wire Serial Interface" // Duplicate
+                            case twoWireSerialInterface4 = "2-wire Serial Interface        " // Duplicate
+                            case storeProgramMemoryRead = "Store Program Memory Read"
+                            case psc2CaptureEvent = "PSC2 Capture Event"
+                            case psc2EndCycle = "PSC2 End Cycle"
+                            case psc1CaptureEvent = "PSC1 Capture Event"
+                            case psc1EndCycle = "PSC1 End Cycle"
+                            case psc0CaptureEvent = "PSC0 Capture Event"
+                            case psc0EndCycle = "PSC0 End Cycle"
+                            case analogComparator0 = "Analog Comparator 0"
+                            case analogComparator1 = "Analog Comparator 1"
+                            case analogComparator2 = "Analog Comparator 2"
+                            case timerCounter0CompareMatchA = "Timer/Counter0 Compare Match A"
+                            case timerCounter0CompareMatchA2 = "TimerCounter0 Compare Match A" // Looks like a duplicate
+                            case usartRxComplete = "USART, Rx Complete"
+                            case usartRXComplete2 = "USART, RX Complete" // Looks like a duplicate
+                            case usartRxComplete3 = "USART Rx Complete" // Looks like a duplicate
+                            case usartDataRegisterEmpty = "USART Data Register Empty"  // Looks like a duplicate
+                            case usartDataRegisterEmpty2 = "USART Data register Empty"  // Looks like a duplicate
+                            case usartDataRegisterEmpty3 = "USART, Data Register Empty"  // Looks like a duplicate
+                            case usartTxComplete = "USART, Tx Complete"
+                            case usartTxComplete2 = "USART Tx Complete"
+                            case usartTXComplete3 = "USART, TX Complete"
+                            case watchdogTimeoutInterrupt = "Watchdog Timeout Interrupt"
+                            case watchdogTimeOutInterrupt2 = "Watchdog Time-out Interrupt" // Looks like a duplicate
+                            case watchdogTimeOutInterrupt3 = "Watchdog Time-Out Interrupt" // Looks like a duplicate
+                            case timerCounter0CompareMatchB2 = "Timer Counter 0 Compare Match B" // Looks like a duplicate
+                            case timerCounter0CompareMatchB3 = "TimerCounter0 Compare Match B" // Looks like a duplicate
+                            case psc2EndOfEnhancedCycle = "PSC2 End Of Enhanced Cycle"
+                            case psc0EndOfEnhancedCycle = "PSC0 End Of Enhanced Cycle"
+                            case analogComparator3 = "Analog Comparator 3"
+                            case spiSerialTransferComplet = "SPI Serial Transfer Complet"
+                            case externalPinPowerOnResetBrownOutResetWatchdogResetAndJTAGAVRResetSeeDatasheet = "External Pin,Power-on Reset,Brown-out Reset,Watchdog Reset,and JTAG AVR Reset. See Datasheet."
+                            case externalPinPowerOnResetBrownOutResetWatchdogResetAndJTAGAVRResetSeeDatasheet2 = "External Pin,Power-on Reset,Brown-out Reset,Watchdog Reset,and JTAG AVR Reset. See Datasheet.     "
+                            case pinChangeInterruptRequest0 = "Pin Change Interrupt Request 0"
+                            case pinChangeInterruptRequest1 = "Pin Change Interrupt Request 1"
+                            case usbGeneralInterruptRequest = "USB General Interrupt Request"
+                            case usbEndpointPipeInterruptCommunicationRequest = "USB Endpoint/Pipe Interrupt Communication Request"
+                            case timerCounter2CaptureEvent = "Timer/Counter2 Capture Event"
+                            case timerCounter2CompareMatchB = "Timer/Counter2 Compare Match B"
+                            case timerCounter2CompareMatchC = "Timer/Counter2 Compare Match C"
+                            case timerCounter0CompareMatchB = "Timer/Counter0 Compare Match B"
+                            case usart1DataRegisterEmpty = "USART1 Data register Empty"
+                            case usart1DataRegisterEmpty2 = "USART1, Data Register Empty" // Looks like a duplicate
+                            case usart1DataRegisterEmpty3 = "USART1, Data register Empty" // Looks like a duplicate
+                            case usart1DataRegisterEmpty4 = "USART1 Data Register Empty" // Looks like a duplicate
+                            case timerCounter2CompareMatchA = "Timer/Counter2 Compare Match A"
+                            case timerCounter1CompareMatchB = "Timer/Counter1 Compare Match B"
+                            case timerCounter1CompareMatchB2 = "Timer/Counter1 Compare MatchB" // Looks like a duplicate
+                            case externalPinPowerOnResetBrownOutResetAndWatchdogReset = "External Pin, Power-on Reset, Brown-out Reset and Watchdog Reset"
+                            case externalPinPowerOnResetBrownOutResetAndWatchdogReset2 = "External Pin, Power-on Reset, Brown-out Reset  and Watchdog Reset" // Looks like a duplicate
+                            case serialTransferComplete = "Serial Transfer Complete"
+                            case storeProgramMemoryReady = "Store Program Memory Ready"
+                            case batteryProtectionInterrupt = "Battery Protection Interrupt"
+                            case voltageRegulatorMonitorInterrupt = "Voltage regulator monitor interrupt"
+                            case timer1InputCapture = "Timer 1 Input capture"
+                            case timer1CompareMatchA = "Timer 1 Compare Match A"
+                            case timer1CompareMatchB = "Timer 1 Compare Match B"
+                            case timer1Overflow = "Timer 1 overflow"
+                            case timer0InputCapture = "Timer 0 Input Capture"
+                            case timer0ComapreMatchA = "Timer 0 Comapre Match A"
+                            case timer0CompareMatchB = "Timer 0 Compare Match B"
+                            case timer0Overflow = "Timer 0 Overflow"
+                            case spiSerialTransferComplete2 = "SPI Serial transfer complete" // Duplicate, Slight spelling change
+                            case voltageADCConversionComplete = "Voltage ADC Conversion Complete"
+                            case coulombCounterADCConversionComplete = "Coulomb Counter ADC Conversion Complete"
+                            case coloumbCounterADCRegularCurrent = "Coloumb Counter ADC Regular Current"
+                            case coloumbCounterADCAccumulator = "Coloumb Counter ADC Accumulator"
+                            case pinChangeInterrupt0 = "Pin Change Interrupt 0"
+                            case pinChangeInterrupt1 = "Pin Change Interrupt 1"
+                            case bandgapBufferShortCircuitDetected = "Bandgap Buffer Short Circuit Detected"
+                            case chargerDetect = "Charger Detect"
+                            case twoWireBusConnectDisconnect = "Two-Wire Bus Connect/Disconnect"
+                            case spmReady = "SPM Ready"
+                            case pscFault = "PSC Fault"
+                            case pscEndOfCycle = "PSC End of Cycle"
+                            case timer1Counter1Overflow = "Timer1/Counter1 Overflow"
+                            case canMOBBurstGeneralErrors = "CAN MOB, Burst, General Errors"
+                            case canTimerOverflow = "CAN Timer Overflow"
+                            case linTransferComplete = "LIN Transfer Complete"
+                            case linError = "LIN Error"
+                            case pinChangeInterruptRequest2 = "Pin Change Interrupt Request 2"
+                            case pinChangeInterruptRequest3 = "Pin Change Interrupt Request 3"
+                            case reserved1 = "Reserved1"
+                            case reserved2 = "Reserved2"
+                            case reserved3 = "Reserved3"
+                            case reserved4 = "Reserved4"
+                            case reserved5 = "Reserved5"
+                            case reserved6 = "Reserved6"
+                            case timerCounter4CompareMatchA = "Timer/Counter4 Compare Match A"
+                            case timerCounter4CompareMatchB = "Timer/Counter4 Compare Match B"
+                            case timerCounter4CompareMatchD = "Timer/Counter4 Compare Match D"
+                            case timerCounter4Overflow = "Timer/Counter4 Overflow"
+                            case timerCounter4FaultProtectionInterrupt = "Timer/Counter4 Fault Protection Interrupt"
+                            case timerCouner0Overflow = "Timer/Couner0 Overflow"
+                            case usartStartEdgeInterrupt = "USART Start Edge Interrupt"
+                            case externalInterrupt0 = "External Interrupt 0"
+                            case wakeupTimerOverflow = "Wakeup Timer Overflow"
+                            case wakeupTimerOverflow2 = "Wakeup timer overflow"
+                            case linStatusInterrupt = "LIN Status Interrupt"
+                            case linErrorInterrupt = "LIN Error Interrupt"
+                            case voltageADCInstantaneousConversionComplete = "Voltage ADC Instantaneous Conversion Complete"
+                            case voltageADCAccumulatedConversionComplete = "Voltage ADC Accumulated Conversion Complete"
+                            case cADCInstantaneousConversionComplete = "C-ADC Instantaneous Conversion Complete"
+                            case cADCRegularCurrent = "C-ADC Regular Current"
+                            case cADCAccumulatedConversionComplete = "C-ADC Accumulated Conversion Complete"
+                            case pllLockChangeInterrupt = "PLL Lock Change Interrupt"
+                            case timerCounter4CaptureEvent = "Timer/Counter4 Capture Event"
+                            case timerCounter4CompareMatchC = "Timer/Counter4 Compare Match C"
+                            case timerCounter5CaptureEvent = "Timer/Counter5 Capture Event"
+                            case timerCounter5CompareMatchA = "Timer/Counter5 Compare Match A"
+                            case timerCounter5CompareMatchB = "Timer/Counter5 Compare Match B"
+                            case timerCounter5CompareMatchC = "Timer/Counter5 Compare Match C"
+                            case timerCounter5Overflow = "Timer/Counter5 Overflow"
+                            case trx24PLLLockInterrupt = "TRX24 - PLL lock interrupt"
+                            case trx24PLLUnlockInterrupt = "TRX24 - PLL unlock interrupt"
+                            case trx24ReceiveStartInterrupt = "TRX24 - Receive start interrupt"
+                            case trx24RXEndInterrupt = "TRX24 - RX_END interrupt"
+                            case trx24CCAEDDoneInterrupt = "TRX24 - CCA/ED done interrupt"
+                            case trx24XAHAMI = "TRX24 - XAH - AMI"
+                            case trx24TXEndInterrupt = "TRX24 - TX_END interrupt"
+                            case trx24AwakeTranceiverIsReachingStateTRXOffF = "TRX24 AWAKE - tranceiver is reaching state TRX_OFF"
+                            case symbolCounterCompareMatch1Interrupt = "Symbol counter - compare match 1 interrupt"
+                            case symbolCounterCompareMatch2Interrupt = "Symbol counter - compare match 2 interrupt"
+                            case symbolCounterCompareMatch3Interrupt = "Symbol counter - compare match 3 interrupt"
+                            case symbolCounterOverflowInterrupt = "Symbol counter - overflow interrupt"
+                            case symbolCounterBackoffInterrupt = "Symbol counter - backoff interrupt"
+                            case aesEngineReadyInterrupt = "AES engine ready interrupt"
+                            case batteryMonitorIndicatesSupplyVoltageBelowThreshold = "Battery monitor indicates supply voltage below threshold"
+                            case trx24TXStartInterrupt = "TRX24 TX start interrupt"
+                            case addressMatchInterruptOfAddressFilter0 = "Address match interrupt of address filter 0"
+                            case addressMatchInterruptOfAddressFilter1 = "Address match interrupt of address filter 1"
+                            case addressMatchInterruptOfAddressFilter2 = "Address match interrupt of address filter 2"
+                            case addressMatchInterruptOfAddressFilter3 = "Address match interrupt of address filter 3"
+                            case usart2RxComplete = "USART2, Rx Complete"
+                            case usart2RxComplete2 = "USART2 Rx Complete"
+                            case usart2DataRegisterEmpty = "USART2 Data register Empty"
+                            case usart2TxComplete = "USART2, Tx Complete"
+                            case usart2TxComplete2 = "USART2 Tx Complete"
+                            case usart3RxComplete = "USART3, Rx Complete"
+                            case usart3DataRegisterEmpty = "USART3 Data register Empty"
+                            case usart3TxComplete = "USART3, Tx Complete"
+                            case usiStartCondition = "USI Start Condition"
+                            case usiOverflow = "USI Overflow"
+                            case lcdStartOfFrame = "LCD Start of Frame"
+                            case spi0SerialTransferComplete = "SPI0 Serial Transfer Complete"
+                            case usart0RxComplete = "USART0, Rx Complete"
+                            case usart0RxComplete2 = "USART0 Rx Complete"
+                            case twoWireSerialInterface0 = "2-wire Serial Interface 0"
+                            case usart0RXStartEdgeDetect = "USART0 RX start edge detect"
+                            case usart1RXStartEdgeDetect = "USART1 RX start edge detect"
+                            case pinChangeInterruptRequest4 = "Pin Change Interrupt Request 4"
+                            case crystalFailureDetect = "Crystal failure detect"
+                            case ptcEndOfConversion = "PTC end of conversion"
+                            case ptcEndOfConversion2 = "PTC End of conversion"
+                            case ptcWindowComparatorInterrupt = "PTC window comparator interrupt"
+                            case spi1SerialTransferComplete = "SPI1 Serial Transfer Complete"
+                            case twoWireSerialInterface1 = "2-wire Serial Interface 1"
+                            case usart2RXStartEdgeDetect = "USART2 RX start edge detect"
+                            case usart0StartFrameDetection = "USART0 Start frame detection"
+                            case usart1StartFrameDetection = "USART1 Start frame detection"
+                            case clockFailureDetectionInterrupt = "Clock failure detection interrupt"
+                            case ptcWindowComparatorMode = "PTC Window comparator mode"
+                            case twiTransferComplete = "TWI Transfer Complete"
+                            case timerCounter1CompareMatch = "Timer/Counter 1 Compare Match"
+                            case timerCounter0CompareAMatch = "Timer/Counter0 Compare A Match"
+                            case timerCounter0CompareBMatch = "Timer/Counter0 Compare B Match"
+                            case reserved = "RESERVED"
+                            case externalResetPowerOnResetAndWatchdogReset = "External Reset, Power-on Reset and Watchdog Reset"
+                            case timer0CompareMatch = "Timer 0 Compare Match"
+                            case externalInterrupt1 = "External Interrupt 1"
+                        }
                     }
                 }
                 
@@ -1224,8 +1627,26 @@ func decodeATDF(data: Data) {
                     let interface: [Interface]
                     
                     struct Interface: Codable {
-                        @Attribute var name: String
-                        @Attribute var type: String
+                        @Attribute var name: Name
+                        @Attribute var type: InterfaceType
+                        
+                        enum Name: String, Codable {
+                            case isp = "ISP"
+                            case hvpp = "HVPP"
+                            case jtag = "JTAG"
+                            case debugWIRE = "debugWIRE"
+                            case hvsp = "HVSP"
+                            case updi = "UPDI"
+                        }
+                        
+                        enum InterfaceType: String, Codable {
+                            case isp
+                            case hvpp
+                            case megajtag
+                            case dw
+                            case hvsp
+                            case updi
+                        }
                     }
                 }
                 
@@ -1336,14 +1757,16 @@ func decodeATDF(data: Data) {
     
     print("ATDFObject.devices.device.name = \(ATDFObject.devices.device.name)")
     
-    for interupt in ATDFObject.devices.device.interrupts.interrupt {
-        
-        listOfValues.append(interupt.name.rawValue)
+//    listOfValues.append(ATDFObject.devices.device.family)
+    
+    for addressSpace in ATDFObject.devices.device.addressSpaces.addressSpace {
 
-//        guard let list = module.instance.parameters?.parameter else { continue }
-//        for param in list {
-//            listOfValues.append(param.value.rawValue)
-//        }
+//        listOfValues.append(addressSpace.size.rawValue)
+
+//        guard let list = addressSpace.memorySegment else { continue }
+        for segment in addressSpace.memorySegment {
+            listOfValues.append(segment.size.rawValue)
+        }
     }
     
     
