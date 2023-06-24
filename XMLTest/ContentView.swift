@@ -70,13 +70,6 @@ func decodeATDF(data: Data) {
         let modules: Modules
         let pinouts: Pinouts?
         
-//        enum CodingKeys: String, CodingKey { // TODO: I don't think this is needed
-//            case variants
-//            case devices
-//            case modules
-//            case pinouts
-//        }
-        
         struct Variants: Codable {
             let variant: [Variant]
             
@@ -96,7 +89,7 @@ func decodeATDF(data: Data) {
             let device: Device
             
             struct Device: Codable {
-                @Attribute var name: String // Always unique, should stay a string
+                @Attribute var name: String // Always unique, should stay a String?
                 @Attribute var architecture: Architecture
                 @Attribute var family: Family
                 let addressSpaces: AddressSpaces
@@ -104,8 +97,6 @@ func decodeATDF(data: Data) {
                 let interrupts: Interrupts
                 let interfaces: Interfaces
                 let propertyGroups: PropertyGroups
-                
-                
                 
                 enum CodingKeys: String, CodingKey {
                     case name
@@ -227,12 +218,12 @@ func decodeATDF(data: Data) {
                         struct MemorySegment: Codable {
                             @Attribute var start: Start
                             @Attribute var size: Size
-                            @Attribute var type: String
-                            @Attribute var rw: String?
-                            @Attribute var exec: String?
-                            @Attribute var name: String
-                            @Attribute var pagesize: String?
-                            @Attribute var external: String?
+                            @Attribute var type: MemorySegmentType
+                            @Attribute var rw: ReadWrite?
+                            @Attribute var exec: Exec?
+                            @Attribute var name: Name
+                            @Attribute var pagesize: PageSize?
+                            @Attribute var external: Bool?
                             
                             enum Start: String, Codable {
                                 case zero = "0"
@@ -333,6 +324,62 @@ func decodeATDF(data: Data) {
                                 case zeroX10000 = "0x10000"
                                 case zeroX20000 = "0x20000"
                                 case zeroX40000 = "0x40000"
+                            }
+                            
+                            enum MemorySegmentType: String, Codable { // I think this is the same as another Type
+                                case flash
+                                case signatures
+                                case fuses
+                                case lockbits
+                                case regs
+                                case io
+                                case ram
+                                case eeprom
+                                case osccal
+                                case userSignatures = "user_signatures"
+                                case other
+                            }
+                            
+                            enum ReadWrite: String, Codable {
+                                case readWrite = "RW"
+                                case read = "R"
+                            }
+                            
+                            enum Exec: String, Codable { // Should this be an Int or Bool?
+                                case zero = "0"
+                                case one = "1"
+                            }
+                            
+                            enum Name: String, Codable {
+                                case flash = "FLASH"
+                                case bootSection1 = "BOOT_SECTION_1"
+                                case bootSection2 = "BOOT_SECTION_2"
+                                case bootSection3 = "BOOT_SECTION_3"
+                                case bootSection4 = "BOOT_SECTION_4"
+                                case signatures = "SIGNATURES"
+                                case fuses = "FUSES"
+                                case lockbits = "LOCKBITS"
+                                case registers = "REGISTERS"
+                                case mappedIO = "MAPPED_IO"
+                                case iRAM = "IRAM"
+                                case xRAM = "XRAM"
+                                case eeprom = "EEPROM"
+                                case osccal = "OSCCAL"
+                                case userSignatures = "USER_SIGNATURES"
+                                case io = "IO"
+                                case prodSignatures = "PROD_SIGNATURES"
+                                case internalSRAM = "INTERNAL_SRAM"
+                                case mappedProgramMemory = "MAPPED_PROGMEM"
+                                case programMemory = "PROGMEM"
+                            }
+                            
+                            enum PageSize: String, Codable {
+                                case zeroX100 = "0x100"
+                                case zeroX08 = "0x08"
+                                case zeroX40 = "0x40"
+                                case zeroX04 = "0x04"
+                                case zeroX80 = "0x80"
+                                case zeroX20 = "0x20"
                             }
                         }
                     }
@@ -1674,8 +1721,8 @@ func decodeATDF(data: Data) {
             let module: [Module]
 
             struct Module: Codable {
-                @Attribute var caption: String?
-                @Attribute var name: String
+                @Attribute var caption: Caption?
+                @Attribute var name: Name
                 let registerGroup: [RegisterGroup]
                 let valueGroup: [ValueGroup]
 
@@ -1684,6 +1731,149 @@ func decodeATDF(data: Data) {
                     case caption
                     case registerGroup = "register-group"
                     case valueGroup = "value-group"
+                }
+                
+                enum Caption: String, Codable {
+                    case Fuses = "Fuses"
+                    case Lockbits = "Lockbits"
+                    case ioPort = "I/O Port"
+                    case JTAGInterface = "JTAG Interface"
+                    case SerialPeripheralInterface = "Serial Peripheral Interface"
+                    case TwoWireSerialInterface = "Two Wire Serial Interface"
+                    case USART = "USART"
+                    case CPURegisters = "CPU Registers"
+                    case Bootloader = "Bootloader"
+                    case ExternalInterrupts = "External Interrupts"
+                    case EEPROM = "EEPROM"
+                    case TimerCounter8bit = "Timer/Counter, 8-bit"
+                    case TimerCounter16bit = "Timer/Counter, 16-bit"
+                    case TimerCounter8bitAsync = "Timer/Counter, 8-bit Async"
+                    case WatchdogTimer = "Watchdog Timer"
+                    case AnalogToDigitalConverter = "Analog-to-Digital Converter"
+                    case AnalogToDigitalConverter2 = "Analog to Digital Converter"
+                    case AnalogComparator = "Analog Comparator"
+                    case ControllerAreaNetwork = "Controller Area Network"
+                    case PowerStageController = "Power Stage Controller"
+                    case ExtendedUSART = "Extended USART"
+                    case DigitalToAnalogConverter = "Digital-to-Analog Converter"
+                    case PhaseLockedLoop = "Phase Locked Loop"
+                    case USBDeviceRegisters = "USB Device Registers"
+                    case PS2Controller = "PS/2 Controller"
+                    case USBController = "USB Controller"
+                    case USBHostRegisters = "USB Host Registers"
+                    case Bandgap = "Bandgap"
+                    case FETControl = "FET Control"
+                    case BatteryProtection = "Battery Protection"
+                    case CoulombCounter = "Coulomb Counter"
+                    case VoltageRegulator = "Voltage Regulator"
+                    case CellBalancing = "Cell Balancing"
+                    case ChargerDetect = "Charger Detect"
+                    case LocalInterconnectNetwork = "Local Interconnect Network"
+                    case TimerCounter10bit = "Timer/Counter, 10-bit"
+                    case DeviceID = "Device ID"
+                    case OtherRegisters = "Other Registers"
+                    case WakeupTimer = "Wakeup Timer"
+                    case LowPower24GHzTransceiver = "Low-Power 2.4 GHz Transceiver"
+                    case MACSymbolCounter = "MAC Symbol Counter"
+                    case FLASHController = "FLASH Controller"
+                    case PowerController = "Power Controller"
+                    case UniversalSerialInterface = "Universal Serial Interface"
+                    case LiquidCrystalDisplay = "Liquid Crystal Display"
+                    case ClockFailureDetection = "Clock Failure Detection"
+                    case PeripheralTouchController = "Peripheral Touch Controller"
+                    case BodInterface = "Bod interface"
+                    case ConfigurableCustomLogic = "Configurable Custom Logic"
+                    case ClockController = "Clock controller"
+                    case CPU = "CPU"
+                    case InterruptController = "Interrupt Controller"
+                    case CRCSCAN = "CRCSCAN"
+                    case EventSystem = "Event System"
+                    case GeneralPurposeIO = "General Purpose IO"
+                    case Lockbit = "Lockbit"
+                    case NonVolatileMemoryController = "Non-volatile Memory Controller"
+                    case IOPorts = "I/O Ports"
+                    case PortMultiplexer = "Port Multiplexer"
+                    case ResetController = "Reset controller"
+                    case RealTimeCounter = "Real-Time Counter"
+                    case SignatureRow = "Signature row"
+                    case SleepController = "Sleep Controller"
+                    case SystemConfigurationRegisters = "System Configuration Registers"
+                    case sixteenBitTimerCounterTypeA = "16-bit Timer/Counter Type A"
+                    case sixteenBitTimerTypeB = "16-bit Timer Type B"
+                    case TwoWireInterface = "Two-Wire Interface"
+                    case UniversalSynchronousAndAsynchronousReceiverAndTransmitter = "Universal Synchronous and Asynchronous Receiver and Transmitter"
+                    case UserRow = "User Row"
+                    case VirtualPorts = "Virtual Ports"
+                    case VoltageReference = "Voltage reference"
+                    case WatchDogTimer = "Watch-Dog Timer"
+                }
+                
+                enum Name: String, Codable { // I think this might be identical to other "Name" lists
+                    case fuse = "FUSE"
+                    case lockbit = "LOCKBIT"
+                    case port = "PORT"
+                    case jtag = "JTAG"
+                    case spi = "SPI"
+                    case twi = "TWI"
+                    case usart = "USART"
+                    case cpu = "CPU"
+                    case bootLoad = "BOOT_LOAD"
+                    case exInt = "EXINT"
+                    case eeprom = "EEPROM"
+                    case tc8 = "TC8"
+                    case tc16 = "TC16"
+                    case tc8Async = "TC8_ASYNC"
+                    case wdt = "WDT"
+                    case adc = "ADC"
+                    case ac = "AC"
+                    case can = "CAN"
+                    case psc = "PSC"
+                    case eusart = "EUSART"
+                    case dac = "DAC"
+                    case pll = "PLL"
+                    case usbDeivce = "USB_DEVICE"
+                    case ps2 = "PS2"
+                    case usbGlobal = "USB_GLOBAL"
+                    case usbHost = "USB_HOST"
+                    case bandgap = "BANDGAP"
+                    case fet = "FET"
+                    case batteryProtection = "BATTERY_PROTECTION"
+                    case coulombCounter = "COULOMB_COUNTER"
+                    case voltageRegulator = "VOLTAGE_REGULATOR"
+                    case cellBallancing = "CELL_BALANCING"
+                    case chargerDetect = "CHARGER_DETECT"
+                    case linUART = "LINUART"
+                    case tc10 = "TC10"
+                    case deviceID = "DEVICEID"
+                    case misc = "MISC"
+                    case wakeupTimer = "WAKEUP_TIMER"
+                    case trx24 = "TRX24"
+                    case symcnt = "SYMCNT"
+                    case flash = "FLASH"
+                    case pwrctrl = "PWRCTRL"
+                    case usi = "USI"
+                    case lcd = "LCD"
+                    case cfd = "CFD"
+                    case ptc = "PTC"
+                    case bod = "BOD"
+                    case ccl = "CCL"
+                    case clkctrl = "CLKCTRL"
+                    case cpuInt = "CPUINT"
+                    case crcscan = "CRCSCAN"
+                    case evsys = "EVSYS"
+                    case gpio = "GPIO"
+                    case nvmctrl = "NVMCTRL"
+                    case portMUX = "PORTMUX"
+                    case rstctrl = "RSTCTRL"
+                    case rtc = "RTC"
+                    case sigrow = "SIGROW"
+                    case slpctrl = "SLPCTRL"
+                    case syscfg = "SYSCFG"
+                    case tca = "TCA"
+                    case tcb = "TCB"
+                    case userrow = "USERROW"
+                    case vport = "VPORT"
+                    case vREF = "VREF"
                 }
 
                 struct RegisterGroup: Codable {
@@ -1759,14 +1949,14 @@ func decodeATDF(data: Data) {
     
 //    listOfValues.append(ATDFObject.devices.device.family)
     
-    for addressSpace in ATDFObject.devices.device.addressSpaces.addressSpace {
+    for module in ATDFObject.modules.module {
 
-//        listOfValues.append(addressSpace.size.rawValue)
+        listOfValues.append(module.caption?.rawValue ?? "")
 
 //        guard let list = addressSpace.memorySegment else { continue }
-        for segment in addressSpace.memorySegment {
-            listOfValues.append(segment.size.rawValue)
-        }
+//        for segment in addressSpace.memorySegment {
+//            listOfValues.append(segment.external?.description ?? "")
+//        }
     }
     
     
