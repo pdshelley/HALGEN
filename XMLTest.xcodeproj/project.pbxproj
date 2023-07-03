@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		476CFF482A3A701E00217EC2 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 476CFF472A3A701E00217EC2 /* XMLCoder */; };
+		DA3BB73E2A51E85500C464C3 /* GPIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BB73D2A51E85500C464C3 /* GPIO.swift */; };
+		DA3BB7402A51E8F600C464C3 /* AVRToolsDeviceFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BB73F2A51E8F600C464C3 /* AVRToolsDeviceFile.swift */; };
 		DAE992DE2A22A6F4007656B5 /* XMLTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992DD2A22A6F4007656B5 /* XMLTestApp.swift */; };
 		DAE992E02A22A6F4007656B5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992DF2A22A6F4007656B5 /* ContentView.swift */; };
 		DAE992E22A22A6F5007656B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DAE992E12A22A6F5007656B5 /* Assets.xcassets */; };
@@ -35,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DA3BB73D2A51E85500C464C3 /* GPIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPIO.swift; sourceTree = "<group>"; };
+		DA3BB73F2A51E8F600C464C3 /* AVRToolsDeviceFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRToolsDeviceFile.swift; sourceTree = "<group>"; };
 		DAE992DA2A22A6F4007656B5 /* XMLTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XMLTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAE992DD2A22A6F4007656B5 /* XMLTestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLTestApp.swift; sourceTree = "<group>"; };
 		DAE992DF2A22A6F4007656B5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -99,6 +103,8 @@
 			children = (
 				DAE992DD2A22A6F4007656B5 /* XMLTestApp.swift */,
 				DAE992DF2A22A6F4007656B5 /* ContentView.swift */,
+				DA3BB73F2A51E8F600C464C3 /* AVRToolsDeviceFile.swift */,
+				DA3BB73D2A51E85500C464C3 /* GPIO.swift */,
 				DAE992E12A22A6F5007656B5 /* Assets.xcassets */,
 				DAE992E32A22A6F5007656B5 /* XMLTest.entitlements */,
 				DAE992E42A22A6F5007656B5 /* Preview Content */,
@@ -268,7 +274,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				DAE992E02A22A6F4007656B5 /* ContentView.swift in Sources */,
+				DA3BB7402A51E8F600C464C3 /* AVRToolsDeviceFile.swift in Sources */,
 				DAE992DE2A22A6F4007656B5 /* XMLTestApp.swift in Sources */,
+				DA3BB73E2A51E85500C464C3 /* GPIO.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
