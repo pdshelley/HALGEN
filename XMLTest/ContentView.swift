@@ -59,6 +59,7 @@ var listOfValues: [String] = []
 
 func printValues() {
     let uniqueNames = listOfValues.unique()
+    print()
     for name in uniqueNames {
         let okayChars = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLKMNOPQRSTUVWXYZ1234567890")
         let enumValue = name.filter {okayChars.contains($0) }
@@ -69,21 +70,47 @@ func printValues() {
 func decodeATDF(data: Data) {
     
     let ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
+
     
     print("ATDFObject.devices.device.name = \(ATDFObject.devices.device.name)")
-    
+    print()
     print(buildGPIO(file: ATDFObject))
     
-//    listOfValues.append(ATDFObject.devices.device.family)
-    
-//    if let pinouts = ATDFObject.pinouts {
-//        for pinout in pinouts.pinout {
-//            for pin in pinout.pin {
-//                listOfValues.append(pin.pad.rawValue)
+//    for module in ATDFObject.devices.device.peripherals.module {
+//        if module.name == .port {
+//            for instance in module.instance {
+//                guard let signals = instance.signals else { break }
+//                print()
+//                for signal in signals.signal {
+//                    print(signal.pad)
+//                }
 //            }
 //        }
 //    }
+    
+//    listOfValues.append(ATDFObject.devices.device.family.rawValue)
+    
+//    if let pinouts = ATDFObject.pinouts {
+//    for module in ATDFObject.devices.device.peripherals.module {
+////        if module.name == .port {
+//            print("ATDFObject.devices.device.name = \(ATDFObject.devices.device.name)")
+//            for instance in module.instance {
+////                guard let registerGroup = instance.registerGroup else { break }
+//
+////                listOfValues.append(registerGroup.offset.rawValue)
+//                guard let signals = instance.signals else { break }
+//                for signal in signals.signal {
+//                    listOfValues.append(signal.function.rawValue)
+//                }
+//            }
+////        }
+////        for pin in module {
+////                listOfValues.append(pin.pad.rawValue)
+////            }
+//        }
+//    }
 }
+
 
 
 
