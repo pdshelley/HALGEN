@@ -49,11 +49,11 @@ func buildGPIO(file: AVRToolsDeviceFile) -> String {
 }
 
 // TODO: Maybe make A Generic Function where it can accept any array of anything, send it to a function that returns a string, and adds it to the middle? Would need to account for line indentations
-func buildPort(port: AVRToolsDeviceFile.Modules.Module.RegisterGroup) -> String {
+func buildPort(port: AVRModules.Module.RegisterGroup) -> String {
     var code: String = """
     
     
-        enum \(port.name.rawValue): Port {
+        public enum \(port.name.rawValue): Port {
     """
     
     for register in port.register {
@@ -80,7 +80,7 @@ func buildPadsForPort(file: AVRToolsDeviceFile) -> String {
                 
                 for signal in signal.signal {
                     guard let index = signal.index else { break }
-                    code.append("    typealias \(signal.pad) = DigitalPin<\(portName.rawValue),Bit\(index.rawValue)>\n")
+                    code.append("    public typealias \(signal.pad) = DigitalPin<\(portName.rawValue),Bit\(index.rawValue)>\n")
                 }
                 code.append("\n")
             }
@@ -125,7 +125,7 @@ func buildPadsForPort(file: AVRToolsDeviceFile) -> String {
 
 // TODO: typealias pa0 = DigitalPin<PortA,Bit0>
 
-func buildPortRegister(register: AVRToolsDeviceFile.Modules.Module.RegisterGroup.Register) -> String {
+func buildPortRegister(register: AVRModules.Module.RegisterGroup.Register) -> String {
     switch register.name {
     case .PORTA, .PORTB, .PORTC, .PORTD, .PORTE, .PORTF, .PORTG, .PORTH, .PORTJ, .PORTK, .PORTL:
         let variableName = "dataRegister"
@@ -137,7 +137,7 @@ func buildPortRegister(register: AVRToolsDeviceFile.Modules.Module.RegisterGroup
             // multiple things but could maintain naming consistancy.
             @inlinable
             @inline(__always)
-            static var \(variableName): UInt8 { get { _rawPointerRead(address: \(register.offset.rawValue)) } set { _rawPointerWrite(address: \(register.offset.rawValue), value: newValue) } }
+            public static var \(variableName): UInt8 { get { _volatileRegisterReadUInt8(\(register.offset.rawValue)) } set { _volatileRegisterWriteUInt8(\(register.offset.rawValue), newValue) } }
     """
     case .DDRA, .DDRB, .DDRC, .DDRD, .DDRE, .DDRF, .DDRG, .DDRH, .DDRJ, .DDRK, .DDRL:
         let variableName = "dataDirection"
@@ -147,7 +147,7 @@ func buildPortRegister(register: AVRToolsDeviceFile.Modules.Module.RegisterGroup
             /// AKA: \(register.name.rawValue). See ATMega328p Datasheet section 14.4.3. // TODO: How should we make the Datasheet refrence more generic? Include more of this documentation directly in the code?
             @inlinable
             @inline(__always)
-            static var \(variableName): UInt8 { get { _rawPointerRead(address: \(register.offset.rawValue)) } set { _rawPointerWrite(address: \(register.offset.rawValue), value: newValue) } }
+            public static var \(variableName): UInt8 { get { _volatileRegisterReadUInt8(\(register.offset.rawValue)) } set { _volatileRegisterWriteUInt8(\(register.offset.rawValue), newValue) } }
     """
     case .PINA, .PINB, .PINC, .PIND, .PINE, .PINF, .PING, .PINH, .PINJ, .PINK, .PINL:
         let variableName = "inputAddress"
@@ -157,7 +157,7 @@ func buildPortRegister(register: AVRToolsDeviceFile.Modules.Module.RegisterGroup
             /// AKA: \(register.name.rawValue). See ATMega328p Datasheet section 14.4.4. // TODO: How should we make the Datasheet refrence more generic? Include more of this documentation directly in the code?
             @inlinable
             @inline(__always)
-            static var \(variableName): UInt8 { get { _rawPointerRead(address: \(register.offset.rawValue)) } set { _rawPointerWrite(address: \(register.offset.rawValue), value: newValue) } }\n
+            public static var \(variableName): UInt8 { get { _volatileRegisterReadUInt8(\(register.offset.rawValue)) } set { _volatileRegisterWriteUInt8(\(register.offset.rawValue), newValue) } }\n
     """
     default:
         return ""

@@ -12,6 +12,10 @@
 		47E43F872A57572C00A2D5C9 /* Timers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E43F862A57572C00A2D5C9 /* Timers.swift */; };
 		DA3BB73E2A51E85500C464C3 /* GPIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BB73D2A51E85500C464C3 /* GPIO.swift */; };
 		DA3BB7402A51E8F600C464C3 /* AVRToolsDeviceFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BB73F2A51E8F600C464C3 /* AVRToolsDeviceFile.swift */; };
+		DA53268C2AF7578B00D7D526 /* AVRVariants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA53268B2AF7578B00D7D526 /* AVRVariants.swift */; };
+		DA53268E2AF757D800D7D526 /* AVRDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA53268D2AF757D800D7D526 /* AVRDevices.swift */; };
+		DA5326902AF7588600D7D526 /* AVRModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA53268F2AF7588600D7D526 /* AVRModules.swift */; };
+		DA5326922AF759EB00D7D526 /* AVRPinouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5326912AF759EB00D7D526 /* AVRPinouts.swift */; };
 		DAE992DE2A22A6F4007656B5 /* XMLTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992DD2A22A6F4007656B5 /* XMLTestApp.swift */; };
 		DAE992E02A22A6F4007656B5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992DF2A22A6F4007656B5 /* ContentView.swift */; };
 		DAE992E22A22A6F5007656B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DAE992E12A22A6F5007656B5 /* Assets.xcassets */; };
@@ -43,6 +47,10 @@
 		47E43F862A57572C00A2D5C9 /* Timers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timers.swift; sourceTree = "<group>"; };
 		DA3BB73D2A51E85500C464C3 /* GPIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPIO.swift; sourceTree = "<group>"; };
 		DA3BB73F2A51E8F600C464C3 /* AVRToolsDeviceFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRToolsDeviceFile.swift; sourceTree = "<group>"; };
+		DA53268B2AF7578B00D7D526 /* AVRVariants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRVariants.swift; sourceTree = "<group>"; };
+		DA53268D2AF757D800D7D526 /* AVRDevices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRDevices.swift; sourceTree = "<group>"; };
+		DA53268F2AF7588600D7D526 /* AVRModules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRModules.swift; sourceTree = "<group>"; };
+		DA5326912AF759EB00D7D526 /* AVRPinouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRPinouts.swift; sourceTree = "<group>"; };
 		DAE992DA2A22A6F4007656B5 /* XMLTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XMLTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAE992DD2A22A6F4007656B5 /* XMLTestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLTestApp.swift; sourceTree = "<group>"; };
 		DAE992DF2A22A6F4007656B5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -82,6 +90,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DA5326932AF75A1700D7D526 /* AVRToolsDeviceFile */ = {
+			isa = PBXGroup;
+			children = (
+				DA3BB73F2A51E8F600C464C3 /* AVRToolsDeviceFile.swift */,
+				DA53268B2AF7578B00D7D526 /* AVRVariants.swift */,
+				DA53268D2AF757D800D7D526 /* AVRDevices.swift */,
+				DA53268F2AF7588600D7D526 /* AVRModules.swift */,
+				DA5326912AF759EB00D7D526 /* AVRPinouts.swift */,
+			);
+			path = AVRToolsDeviceFile;
+			sourceTree = "<group>";
+		};
 		DAE992D12A22A6F4007656B5 = {
 			isa = PBXGroup;
 			children = (
@@ -107,7 +127,7 @@
 			children = (
 				DAE992DD2A22A6F4007656B5 /* XMLTestApp.swift */,
 				DAE992DF2A22A6F4007656B5 /* ContentView.swift */,
-				DA3BB73F2A51E8F600C464C3 /* AVRToolsDeviceFile.swift */,
+				DA5326932AF75A1700D7D526 /* AVRToolsDeviceFile */,
 				4709CA642A68A11300AD7343 /* AVRToolsDeviceFileExtention.swift */,
 				DA3BB73D2A51E85500C464C3 /* GPIO.swift */,
 				47E43F862A57572C00A2D5C9 /* Timers.swift */,
@@ -281,10 +301,14 @@
 			files = (
 				DAE992E02A22A6F4007656B5 /* ContentView.swift in Sources */,
 				DA3BB7402A51E8F600C464C3 /* AVRToolsDeviceFile.swift in Sources */,
+				DA53268C2AF7578B00D7D526 /* AVRVariants.swift in Sources */,
 				4709CA652A68A11300AD7343 /* AVRToolsDeviceFileExtention.swift in Sources */,
 				DAE992DE2A22A6F4007656B5 /* XMLTestApp.swift in Sources */,
+				DA5326902AF7588600D7D526 /* AVRModules.swift in Sources */,
+				DA5326922AF759EB00D7D526 /* AVRPinouts.swift in Sources */,
 				DA3BB73E2A51E85500C464C3 /* GPIO.swift in Sources */,
 				47E43F872A57572C00A2D5C9 /* Timers.swift in Sources */,
+				DA53268E2AF757D800D7D526 /* AVRDevices.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

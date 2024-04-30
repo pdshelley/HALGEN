@@ -7,36 +7,90 @@
 
 import Foundation
 
-
-
-//func buildTimer(file: AVRToolsDeviceFile) -> String {
-//    var code: String = """
-//    // Note: The ATMegaN8 comes in 4 different packages, a 28 pin DIP, a 28 pin QFN, a 32 pin QFP, and a 23 pin QFN. The two 32 pin chips have extra pins and thus have two extra ADC pins (ADC6 and ADC7).
-//    // See ATMega328p Datasheet Figure 1-1.
-//    struct GPOI { // TODO: I think I want to rename this struct to AVR5 or something similar. This will probably be the HAL layer for the avr5 core and I'll make a wrapper with a common HAL API that wraps this.
-//    """
+// file.devices.device.peripherals.module.name == .TC8
 //
-//    // Filter for Modules named "PORT" // TODO: Find a better way to filter.
-//    for module in file.modules.module {
-//        if module.name == .port {
-//            for registerGroup in module.registerGroup {
-//                code.append(buildPort(port: registerGroup))
-//            }
-//        }
-//    }
-//
-//    code.append("""
-//
-//    }
-//    """)
-//
-//    return code
-//}
+//  <module name="TC8">
+//    <instance name="TC0" caption="Timer/Counter, 8-bit">
+//      <register-group name="TC0" name-in-module="TC0" offset="0x00" address-space="data" caption="Timer/Counter, 8-bit"/>
+//      <signals>
+//        <signal group="T" function="default" pad="PD4"/>
+//        <signal group="OCB" function="default" pad="PD5"/>
+//        <signal group="OCA" function="default" pad="PD6"/>
+//      </signals>
+//    </instance>
+//  </module>
 
 
-func _rawPointerRead(address: UInt16) -> UInt8 { return 0 }
 
-func _rawPointerWrite(address: UInt16, value: UInt8) { }
+
+// file.modules.module.name = .TC8
+// 
+//    <module caption="Timer/Counter, 8-bit" name="TC8">
+//      <register-group caption="Timer/Counter, 8-bit" name="TC0">
+//        <register caption="Timer/Counter0 Output Compare Register" name="OCR0B" offset="0x48" size="1" mask="0xFF"/>
+//        <register caption="Timer/Counter0 Output Compare Register" name="OCR0A" offset="0x47" size="1" mask="0xFF"/>
+//        <register caption="Timer/Counter0" name="TCNT0" offset="0x46" size="1" mask="0xFF"/>
+//        <register caption="Timer/Counter Control Register B" name="TCCR0B" offset="0x45" size="1">
+//          <bitfield caption="Force Output Compare A" mask="0x80" name="FOC0A"/>
+//          <bitfield caption="Force Output Compare B" mask="0x40" name="FOC0B"/>
+//          <bitfield mask="0x08" name="WGM02"/>
+//          <bitfield caption="Clock Select" mask="0x07" name="CS0" values="CLK_SEL_3BIT_EXT"/>
+//        </register>
+//        <register caption="Timer/Counter  Control Register A" name="TCCR0A" offset="0x44" size="1">
+//          <bitfield caption="Compare Output Mode, Phase Correct PWM Mode" mask="0xC0" name="COM0A"/>
+//          <bitfield caption="Compare Output Mode, Fast PWm" mask="0x30" name="COM0B"/>
+//          <bitfield caption="Waveform Generation Mode" mask="0x03" name="WGM0"/>
+//        </register>
+//        <register caption="Timer/Counter0 Interrupt Mask Register" name="TIMSK0" offset="0x6E" size="1">
+//          <bitfield caption="Timer/Counter0 Output Compare Match B Interrupt Enable" mask="0x04" name="OCIE0B"/>
+//          <bitfield caption="Timer/Counter0 Output Compare Match A Interrupt Enable" mask="0x02" name="OCIE0A"/>
+//          <bitfield caption="Timer/Counter0 Overflow Interrupt Enable" mask="0x01" name="TOIE0"/>
+//        </register>
+//        <register caption="Timer/Counter0 Interrupt Flag register" name="TIFR0" offset="0x35" size="1" ocd-rw="R">
+//          <bitfield caption="Timer/Counter0 Output Compare Flag 0B" mask="0x04" name="OCF0B"/>
+//          <bitfield caption="Timer/Counter0 Output Compare Flag 0A" mask="0x02" name="OCF0A"/>
+//          <bitfield caption="Timer/Counter0 Overflow Flag" mask="0x01" name="TOV0"/>
+//        </register>
+//        <register caption="General Timer/Counter Control Register" name="GTCCR" offset="0x43" size="1">
+//          <bitfield caption="Timer/Counter Synchronization Mode" mask="0x80" name="TSM"/>
+//          <bitfield caption="Prescaler Reset Timer/Counter1 and Timer/Counter0" mask="0x01" name="PSRSYNC"/>
+//        </register>
+//      </register-group>
+//      <value-group name="CLK_SEL_3BIT_EXT">
+//        <value caption="No Clock Source (Stopped)" name="NO_CLOCK_SOURCE_STOPPED" value="0x00"/>
+//        <value caption="Running, No Prescaling" name="RUNNING_NO_PRESCALING" value="0x01"/>
+//        <value caption="Running, CLK/8" name="RUNNING_CLK_8" value="0x02"/>
+//        <value caption="Running, CLK/64" name="RUNNING_CLK_64" value="0x03"/>
+//        <value caption="Running, CLK/256" name="RUNNING_CLK_256" value="0x04"/>
+//        <value caption="Running, CLK/1024" name="RUNNING_CLK_1024" value="0x05"/>
+//        <value caption="Running, ExtClk Tn Falling Edge" name="RUNNING_EXTCLK_TN_FALLING_EDGE" value="0x06"/>
+//        <value caption="Running, ExtClk Tn Rising Edge" name="RUNNING_EXTCLK_TN_RISING_EDGE" value="0x07"/>
+//      </value-group>
+//    </module>
+
+
+func buildTimer(file: AVRToolsDeviceFile) -> String {
+    var code: String = ""
+    
+    
+    
+    
+    // Filter for Modules named "PORT" // TODO: Find a better way to filter.
+    for module in file.modules.module {
+        if module.name == .tc8 {
+            for registerGroup in module.registerGroup {
+                code.append(buildPort(port: registerGroup))
+            }
+        }
+    }
+    
+    return code
+}
+
+// Note: These are only here for being able to build as these symbols are not linked like they would be in a true HAL project.
+func _volatileRegisterReadUInt8(_: UInt16) -> UInt8 { return 0 }
+
+func _volatileRegisterWriteUInt8(_: UInt16, _: UInt8) { }
 
 //===----------------------------------------------------------------------===//
 //
@@ -284,74 +338,74 @@ typealias timer0 = AVRTimer0
 struct Timer0: AVRTimer0 {
     static var timerCounterControlRegisterA: UInt8 {
         get {
-            _rawPointerRead(address: 0x44)
+            _volatileRegisterReadUInt8(0x44)
         }
         set {
-            _rawPointerWrite(address: 0x44, value: newValue)
+            _volatileRegisterWriteUInt8(0x44, newValue)
         }
     }
     static var timerCounterControlRegisterB: UInt8 {
         get {
-            _rawPointerRead(address: 0x45)
+            _volatileRegisterReadUInt8(0x45)
         }
         set {
-            _rawPointerWrite(address: 0x45, value: newValue)
+            _volatileRegisterWriteUInt8(0x45, newValue)
         }
     }
     static var timerCounterNumber: UInt8 {
         get {
-            return _rawPointerRead(address: 0x46)
+            return _volatileRegisterReadUInt8(0x46)
         }
         set {
-            _rawPointerWrite(address: 0x46, value: newValue)
+            _volatileRegisterWriteUInt8(0x46, newValue)
         }
     }
     static var outputCompareRegisterA: UInt8 {
         get {
-            return _rawPointerRead(address: 0x47)
+            return _volatileRegisterReadUInt8(0x47)
         }
         set {
-            _rawPointerWrite(address: 0x47, value: newValue)
+            _volatileRegisterWriteUInt8(0x47, newValue)
         }
     }
     static var outputCompareRegisterB: UInt8 {
         get {
-            return _rawPointerRead(address: 0x48)
+            return _volatileRegisterReadUInt8(0x48)
         }
         set {
-            _rawPointerWrite(address: 0x48, value: newValue)
+            _volatileRegisterWriteUInt8(0x48, newValue)
         }
     }
     static var timerInterruptMaskRegister: UInt8 {
         get {
-            return _rawPointerRead(address: 0x6E)
+            return _volatileRegisterReadUInt8(0x6E)
         }
         set {
-            _rawPointerWrite(address: 0x6E, value: newValue)
+            _volatileRegisterWriteUInt8(0x6E, newValue)
         }
     }
     static var timerInterruptFlagRegister: UInt8 {
         get {
-            return _rawPointerRead(address: 0x35)
+            return _volatileRegisterReadUInt8(0x35)
         }
         set {
-            _rawPointerWrite(address: 0x35, value: newValue)
+            _volatileRegisterWriteUInt8(0x35, newValue)
         }
     }
     static var asynchronousStatusRegister: UInt8 {
         get {
-            return _rawPointerRead(address: 0xB6) // TODO: is this register address shared by all timers?
+            return _volatileRegisterReadUInt8(0xB6) // TODO: is this register address shared by all timers?
         }
         set {
-            _rawPointerWrite(address: 0xB6, value: newValue) // TODO: is this register address shared by all timers?
+            _volatileRegisterWriteUInt8(0xB6, newValue) // TODO: is this register address shared by all timers?
         }
     }
     static var generalTimerCounterControlRegister: UInt8 {
         get {
-            return _rawPointerRead(address: 0x43)
+            return _volatileRegisterReadUInt8(0x43)
         }
         set {
-            _rawPointerWrite(address: 0x43, value: newValue)
+            _volatileRegisterWriteUInt8(0x43, newValue)
         }
     }
 }
@@ -422,26 +476,26 @@ typealias timer1 = AVRTimer1
 struct Timer1: AVRTimer1 {
     static var timerCounterControlRegisterA: UInt8 {
         get {
-            _rawPointerRead(address: 0x80)
+            _volatileRegisterReadUInt8(0x80)
         }
         set {
-            _rawPointerWrite(address: 0x80, value: newValue)
+            _volatileRegisterWriteUInt8(0x80, newValue)
         }
     }
     static var timerCounterControlRegisterB: UInt8 {
         get {
-            _rawPointerRead(address: 0x81)
+            _volatileRegisterReadUInt8(0x81)
         }
         set {
-            _rawPointerWrite(address: 0x81, value: newValue)
+            _volatileRegisterWriteUInt8(0x81, newValue)
         }
     }
     static var timerCounterControlRegisterC: UInt8 {
         get {
-            _rawPointerRead(address: 0x82)
+            _volatileRegisterReadUInt8(0x82)
         }
         set {
-            _rawPointerWrite(address: 0x82, value: newValue)
+            _volatileRegisterWriteUInt8(0x82, newValue)
         }
     }
     static var timerCounterNumber: UInt16 {
@@ -455,18 +509,18 @@ struct Timer1: AVRTimer1 {
     }
     static var TCNT1L: UInt8 { //TCNT1L
         get {
-            return _rawPointerRead(address: 0x84)
+            return _volatileRegisterReadUInt8(0x84)
         }
         set {
-            _rawPointerWrite(address: 0x84, value: newValue)
+            _volatileRegisterWriteUInt8(0x84, newValue)
         }
     }
     static var TCNT1H: UInt8 { //TCNT1H
         get {
-            return _rawPointerRead(address: 0x85)
+            return _volatileRegisterReadUInt8(0x85)
         }
         set {
-            _rawPointerWrite(address: 0x85, value: newValue)
+            _volatileRegisterWriteUInt8(0x85, newValue)
         }
     }
     static var outputCompareRegisterA: UInt16 {
@@ -480,18 +534,18 @@ struct Timer1: AVRTimer1 {
     }
     static var OCR1AL: UInt8 {
         get {
-            return _rawPointerRead(address: 0x88)
+            return _volatileRegisterReadUInt8(0x88)
         }
         set {
-            _rawPointerWrite(address: 0x88, value: newValue)
+            _volatileRegisterWriteUInt8(0x88, newValue)
         }
     }
     static var OCR1AH: UInt8 {
         get {
-            return _rawPointerRead(address: 0x89)
+            return _volatileRegisterReadUInt8(0x89)
         }
         set {
-            _rawPointerWrite(address: 0x89, value: newValue)
+            _volatileRegisterWriteUInt8(0x89, newValue)
         }
     }
     static var outputCompareRegisterB: UInt16 {
@@ -505,34 +559,34 @@ struct Timer1: AVRTimer1 {
     }
     static var OCR1BL: UInt8 {
         get {
-            return _rawPointerRead(address: 0x8A)
+            return _volatileRegisterReadUInt8(0x8A)
         }
         set {
-            _rawPointerWrite(address: 0x8A, value: newValue)
+            _volatileRegisterWriteUInt8(0x8A, newValue)
         }
     }
     static var OCR1BH: UInt8 {
         get {
-            return _rawPointerRead(address: 0x8B)
+            return _volatileRegisterReadUInt8(0x8B)
         }
         set {
-            _rawPointerWrite(address: 0x8B, value: newValue)
+            _volatileRegisterWriteUInt8(0x8B, newValue)
         }
     }
     static var timerInterruptMaskRegister: UInt8 {
         get {
-            return _rawPointerRead(address: 0x6F)
+            return _volatileRegisterReadUInt8(0x6F)
         }
         set {
-            _rawPointerWrite(address: 0x6F, value: newValue)
+            _volatileRegisterWriteUInt8(0x6F, newValue)
         }
     }
     static var timerInterruptFlagRegister: UInt8 {
         get {
-            return _rawPointerRead(address: 0x36)
+            return _volatileRegisterReadUInt8(0x36)
         }
         set {
-            _rawPointerWrite(address: 0x36, value: newValue)
+            _volatileRegisterWriteUInt8(0x36, newValue)
         }
     }
 }
@@ -584,15 +638,15 @@ typealias timer2 = Timer2
 /// Timer 2 implementation for ATmega48A/PA/88A/PA/168A/PA/328/P
 // NOTE: PRTIM2 needs to be written to zero to enable Timer/Counter2 module. See Datasheet section 18.2
 struct Timer2: TimerPort {
-    static var TCCR2A: UInt8 { get { _rawPointerRead(address: 0xB0) } set { _rawPointerWrite(address: 0xB0, value: newValue) } }
-    static var TCCR2B: UInt8 { get { _rawPointerRead(address: 0xB1) } set { _rawPointerWrite(address: 0xB1, value: newValue) } }
-    static var TCNT2: UInt8 { get { _rawPointerRead(address: 0xB2) } set { _rawPointerWrite(address: 0xB2, value: newValue) } }
-    static var OCR2A: UInt8 { get { _rawPointerRead(address: 0xB3) } set { _rawPointerWrite(address: 0xB3, value: newValue) } }
-    static var OCR2B: UInt8 { get { _rawPointerRead(address: 0xB4) } set { _rawPointerWrite(address: 0xB4, value: newValue) } }
-    static var TIMSK2: UInt8 { get { _rawPointerRead(address: 0x70) } set { _rawPointerWrite(address: 0x70, value: newValue) } }
-    static var TIFR2: UInt8 { get { _rawPointerRead(address: 0x37) } set { _rawPointerWrite(address: 0x37, value: newValue) } }
-    static var ASSR: UInt8 { get { _rawPointerRead(address: 0xB6) } set { _rawPointerWrite(address: 0xB6, value: newValue) } }
-    static var GTCCR: UInt8 { get { _rawPointerRead(address: 0x43) } set { _rawPointerWrite(address: 0x43, value: newValue) } }
+    static var TCCR2A: UInt8 { get { _volatileRegisterReadUInt8(0xB0) } set { _volatileRegisterWriteUInt8(0xB0, newValue) } }
+    static var TCCR2B: UInt8 { get { _volatileRegisterReadUInt8(0xB1) } set { _volatileRegisterWriteUInt8(0xB1, newValue) } }
+    static var TCNT2: UInt8 { get { _volatileRegisterReadUInt8(0xB2) } set { _volatileRegisterWriteUInt8(0xB2, newValue) } }
+    static var OCR2A: UInt8 { get { _volatileRegisterReadUInt8(0xB3) } set { _volatileRegisterWriteUInt8(0xB3, newValue) } }
+    static var OCR2B: UInt8 { get { _volatileRegisterReadUInt8(0xB4) } set { _volatileRegisterWriteUInt8(0xB4, newValue) } }
+    static var TIMSK2: UInt8 { get { _volatileRegisterReadUInt8(0x70) } set { _volatileRegisterWriteUInt8(0x70, newValue) } }
+    static var TIFR2: UInt8 { get { _volatileRegisterReadUInt8(0x37) } set { _volatileRegisterWriteUInt8(0x37, newValue) } }
+    static var ASSR: UInt8 { get { _volatileRegisterReadUInt8(0xB6) } set { _volatileRegisterWriteUInt8(0xB6, newValue) } }
+    static var GTCCR: UInt8 { get { _volatileRegisterReadUInt8(0x43) } set { _volatileRegisterWriteUInt8(0x43, newValue) } }
 }
 
 protocol TimerPort {
