@@ -13,7 +13,7 @@ func buildGPIO(file: AVRToolsDeviceFile) -> String {
     var code: String = """
     // Note: The ATMegaN8 comes in 4 different packages, a 28 pin DIP, a 28 pin QFN, a 32 pin QFP, and a 23 pin QFN. The two 32 pin chips have extra pins and thus have two extra ADC pins (ADC6 and ADC7).
     // See ATMega328p Datasheet Figure 1-1.
-    struct GPIO { // TODO: I think I want to rename this struct to AVR5 or something similar. This will probably be the HAL layer for the avr5 core and I'll make a wrapper with a common HAL API that wraps this.
+    public struct GPIO { // TODO: I think I want to rename this struct to AVR5 or something similar. This will probably be the HAL layer for the avr5 core and I'll make a wrapper with a common HAL API that wraps this.
     """
     
     // Filter for Modules named "PORT" // TODO: Find a better way to filter.
