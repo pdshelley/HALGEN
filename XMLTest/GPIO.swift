@@ -9,7 +9,8 @@ import Foundation
 
 
 // TODO: Make A Generic Function where it can accept any array of anything, send it to a function that returns a string, and adds it to the middle.
-func buildGPIO(file: AVRToolsDeviceFile) -> String {
+func buildGPIO(file: AVRToolsDeviceFile) -> GeneratedCodeFile {
+    let fileName = "GPIO.swift"
     var code: String = """
     // Note: The ATMegaN8 comes in 4 different packages, a 28 pin DIP, a 28 pin QFN, a 32 pin QFP, and a 23 pin QFN. The two 32 pin chips have extra pins and thus have two extra ADC pins (ADC6 and ADC7).
     // See ATMega328p Datasheet Figure 1-1.
@@ -45,7 +46,7 @@ func buildGPIO(file: AVRToolsDeviceFile) -> String {
     }
     """)
     
-    return code
+    return GeneratedCodeFile(fileName: fileName, content: code)
 }
 
 // TODO: Maybe make A Generic Function where it can accept any array of anything, send it to a function that returns a string, and adds it to the middle? Would need to account for line indentations

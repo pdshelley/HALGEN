@@ -11,6 +11,7 @@ import SwiftUI
 struct ContentView: View {
     @State var urls: [URL] = []
     @State var showFileChooser = false
+//    @State var saveLocationURL: URL? = nil
     
     var body: some View {
         HStack {
@@ -25,12 +26,25 @@ struct ContentView: View {
             Button {
                 decodeATDF(urls: urls)
             } label: {
-                Text("Do the thing")
+                Text("Decode ATDF Files")
             }
             Button {
                 printValues()
             } label: {
-                Text("Show the Stuff")
+                Text("Display in Console")
+            }
+            Button {
+                // Select Location:
+                let panel = NSSavePanel()
+                panel.allowedContentTypes = [.text]
+                panel.canCreateDirectories = true
+                panel.nameFieldLabel = "File Name:"
+                if panel.runModal() == .OK {
+                    guard let url = panel.url else { return }
+                    export(fromURLs: self.urls, toURL: url)
+                }
+            } label: {
+                Text("Export")
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -44,18 +58,54 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 
-func decodeATDF(urls: [URL]) {
+func decodeATDF(urls: [URL]) -> [GeneratedAVRCore] {
+    var generatedAVRCores: [GeneratedAVRCore] = []
+    
     for url in urls {
         do {
             let data = try Data(contentsOf: url)
-            decodeATDF(data: data)
+            generatedAVRCores.append(decodeATDF(data: data))
         } catch {
-            print("Did not work.")
+            print("Could not get data from ATDF file URL.")
+        }
+    }
+    
+    return generatedAVRCores
+}
+
+var listOfValues: [String] = []
+
+func export(fromURLs: [URL], toURL: URL) {
+    // Load ATDF Files
+    let generatedCores = decodeATDF(urls: fromURLs)
+    
+    // Save GPIO.swift
+    for core in generatedCores {
+        let subFolderURL = toURL.appendingPathComponent(core.name, conformingTo: .directory)
+        for file in core.files {
+            export(toURL: subFolderURL, fileName: file.fileName, fileContents: file.content)
         }
     }
 }
 
-var listOfValues: [String] = []
+func export(toURL: URL, fileName: String, fileContents: String) {
+    do {
+        try FileManager.default.createDirectory(at: toURL, withIntermediateDirectories: true)
+        
+        do {
+            let fileNameURL = toURL.appendingPathComponent(fileName, conformingTo: .text)
+            try fileContents.write(to: fileNameURL, atomically: true, encoding: .utf8)
+            
+        } catch {
+            // TODO: Show error in GUI.
+            print("Write File Error: \(error.localizedDescription)")
+        }
+        
+    } catch {
+        // TODO: Show error in GUI.
+        print("Create Directory Error: \(error)")
+    }
+}
 
 func printValues() {
     let uniqueNames = listOfValues.unique()
@@ -67,14 +117,29 @@ func printValues() {
     }
 }
 
-func decodeATDF(data: Data) {
+struct GeneratedCodeFile {
+    let fileName: String
+    let content: String
+}
+
+struct GeneratedAVRCore {
+    let name: String
+    let files: [GeneratedCodeFile]
+}
+
+func decodeATDF(data: Data) -> GeneratedAVRCore {
     
     let ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
-
+    let deviceName = ATDFObject.devices.device.name
+    var generatedFiles: [GeneratedCodeFile] = []
+    generatedFiles.append(buildGPIO(file: ATDFObject))
     
-    print("ATDFObject.devices.device.name = \(ATDFObject.devices.device.name)")
+    print("ATDFObject.devices.device.name = \(deviceName)")
     print()
-    print(buildGPIO(file: ATDFObject))
+    print(buildGPIO(file: ATDFObject).content)
+    
+    return GeneratedAVRCore(name: deviceName, files: generatedFiles)
+    
     
 //    for module in ATDFObject.devices.device.peripherals.module {
 //        if module.name == .port {
