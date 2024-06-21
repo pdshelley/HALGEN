@@ -16,6 +16,12 @@
 		DA53268E2AF757D800D7D526 /* AVRDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA53268D2AF757D800D7D526 /* AVRDevices.swift */; };
 		DA5326902AF7588600D7D526 /* AVRModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA53268F2AF7588600D7D526 /* AVRModules.swift */; };
 		DA5326922AF759EB00D7D526 /* AVRPinouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5326912AF759EB00D7D526 /* AVRPinouts.swift */; };
+		DADDB0DC2C24F626009F65E9 /* SwiftBasicFormat in Frameworks */ = {isa = PBXBuildFile; productRef = DADDB0DB2C24F626009F65E9 /* SwiftBasicFormat */; };
+		DADDB0DE2C24F626009F65E9 /* SwiftOperators in Frameworks */ = {isa = PBXBuildFile; productRef = DADDB0DD2C24F626009F65E9 /* SwiftOperators */; };
+		DADDB0E02C24F626009F65E9 /* SwiftParser in Frameworks */ = {isa = PBXBuildFile; productRef = DADDB0DF2C24F626009F65E9 /* SwiftParser */; };
+		DADDB0E22C24F626009F65E9 /* SwiftParserDiagnostics in Frameworks */ = {isa = PBXBuildFile; productRef = DADDB0E12C24F626009F65E9 /* SwiftParserDiagnostics */; };
+		DADDB0E42C24F626009F65E9 /* SwiftSyntax in Frameworks */ = {isa = PBXBuildFile; productRef = DADDB0E32C24F626009F65E9 /* SwiftSyntax */; };
+		DADDB0E62C24F626009F65E9 /* SwiftSyntaxBuilder in Frameworks */ = {isa = PBXBuildFile; productRef = DADDB0E52C24F626009F65E9 /* SwiftSyntaxBuilder */; };
 		DAE992DE2A22A6F4007656B5 /* XMLTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992DD2A22A6F4007656B5 /* XMLTestApp.swift */; };
 		DAE992E02A22A6F4007656B5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992DF2A22A6F4007656B5 /* ContentView.swift */; };
 		DAE992E22A22A6F5007656B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DAE992E12A22A6F5007656B5 /* Assets.xcassets */; };
@@ -69,6 +75,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DADDB0DE2C24F626009F65E9 /* SwiftOperators in Frameworks */,
+				DADDB0E42C24F626009F65E9 /* SwiftSyntax in Frameworks */,
+				DADDB0E02C24F626009F65E9 /* SwiftParser in Frameworks */,
+				DADDB0DC2C24F626009F65E9 /* SwiftBasicFormat in Frameworks */,
+				DADDB0E62C24F626009F65E9 /* SwiftSyntaxBuilder in Frameworks */,
+				DADDB0E22C24F626009F65E9 /* SwiftParserDiagnostics in Frameworks */,
 				476CFF482A3A701E00217EC2 /* XMLCoder in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -181,6 +193,12 @@
 			name = XMLTest;
 			packageProductDependencies = (
 				476CFF472A3A701E00217EC2 /* XMLCoder */,
+				DADDB0DB2C24F626009F65E9 /* SwiftBasicFormat */,
+				DADDB0DD2C24F626009F65E9 /* SwiftOperators */,
+				DADDB0DF2C24F626009F65E9 /* SwiftParser */,
+				DADDB0E12C24F626009F65E9 /* SwiftParserDiagnostics */,
+				DADDB0E32C24F626009F65E9 /* SwiftSyntax */,
+				DADDB0E52C24F626009F65E9 /* SwiftSyntaxBuilder */,
 			);
 			productName = XMLTest;
 			productReference = DAE992DA2A22A6F4007656B5 /* XMLTest.app */;
@@ -256,6 +274,7 @@
 			mainGroup = DAE992D12A22A6F4007656B5;
 			packageReferences = (
 				476CFF462A3A701D00217EC2 /* XCRemoteSwiftPackageReference "XMLCoder" */,
+				DADDB0DA2C24F626009F65E9 /* XCRemoteSwiftPackageReference "swift-syntax" */,
 			);
 			productRefGroup = DAE992DB2A22A6F4007656B5 /* Products */;
 			projectDirPath = "";
@@ -676,6 +695,14 @@
 				minimumVersion = 0.17.1;
 			};
 		};
+		DADDB0DA2C24F626009F65E9 /* XCRemoteSwiftPackageReference "swift-syntax" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-syntax.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 510.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -683,6 +710,36 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 476CFF462A3A701D00217EC2 /* XCRemoteSwiftPackageReference "XMLCoder" */;
 			productName = XMLCoder;
+		};
+		DADDB0DB2C24F626009F65E9 /* SwiftBasicFormat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DADDB0DA2C24F626009F65E9 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftBasicFormat;
+		};
+		DADDB0DD2C24F626009F65E9 /* SwiftOperators */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DADDB0DA2C24F626009F65E9 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftOperators;
+		};
+		DADDB0DF2C24F626009F65E9 /* SwiftParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DADDB0DA2C24F626009F65E9 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftParser;
+		};
+		DADDB0E12C24F626009F65E9 /* SwiftParserDiagnostics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DADDB0DA2C24F626009F65E9 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftParserDiagnostics;
+		};
+		DADDB0E32C24F626009F65E9 /* SwiftSyntax */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DADDB0DA2C24F626009F65E9 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftSyntax;
+		};
+		DADDB0E52C24F626009F65E9 /* SwiftSyntaxBuilder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DADDB0DA2C24F626009F65E9 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftSyntaxBuilder;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

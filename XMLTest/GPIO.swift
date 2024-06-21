@@ -27,20 +27,6 @@ func buildGPIO(file: AVRToolsDeviceFile) -> GeneratedCodeFile {
     }
     
     code.append(buildPadsForPort(file: file))
-    
-    
-//    for module in file.devices.device.peripherals.module {
-//        if module.name == .port {
-//            for instance in module.instance {
-//                guard let signals = instance.signals else { break }
-//                for signal in signals.signal {
-//                    code.append(signal.pad.rawValue)
-//                    listOfValues.append(signal.function.rawValue)
-//                }
-//            }
-//        }
-//    }
-    
     code.append("""
     
     }

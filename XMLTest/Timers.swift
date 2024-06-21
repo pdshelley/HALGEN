@@ -6,6 +6,73 @@
 //
 
 import Foundation
+import SwiftSyntax
+import SwiftSyntaxBuilder
+
+
+//struct Main2 {
+//  static func main() {
+//    let properties = [
+//      "firstName": "String",
+//      "lastName": "String",
+//      "age": "Int",
+//    ]
+//
+//    let source = SourceFileSyntax {
+//      StructDeclSyntax(name: "Person") {
+//        for (propertyName, propertyType) in properties {
+//          DeclSyntax("var \(raw: propertyName): \(raw: propertyType)")
+//
+//          DeclSyntax(
+//            """
+//            func with\(raw: propertyName)(_ \(raw: propertyName): \(raw: propertyType)) -> Person {
+//              var result = self
+//              result.\(raw: propertyName) = \(raw: propertyName)
+//              return result
+//            }
+//            """
+//          )
+//        }
+//      }
+//    }
+//
+//    print(source.formatted().description)
+//  }
+//}
+
+
+
+//@main
+//struct Main {
+//  static func main() {
+//    let properties = [
+//      "firstName": "String",
+//      "lastName": "String",
+//      "age": "Int",
+//    ]
+//
+//    let source = SourceFileSyntax {
+//      StructDeclSyntax(name: "Timer0") {
+//
+//          DeclSyntax(
+//            """
+//                static var timerCounterControlRegisterA: UInt8 {
+//                    get {
+//                        _volatileRegisterReadUInt8(\())
+//                    }
+//                    set {
+//                        _volatileRegisterWriteUInt8(\(), newValue)
+//                    }
+//                }
+//            """
+//          )
+//      }
+//    }
+//
+//    print(source.formatted().description)
+//  }
+//}
+
 
 // file.devices.device.peripherals.module.name == .TC8
 //
@@ -69,23 +136,263 @@ import Foundation
 //    </module>
 
 
-func buildTimer(file: AVRToolsDeviceFile) -> String {
-    var code: String = ""
-    
-    
-    
+func buildTimers(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] { // TODO: This should probably return a "File" as there can be many different timers.
+//    let fileName = "Timer0.swift" // TODO
+//    var code: String = ""
+    var timerFiles: [GeneratedCodeFile] = []
     
     // Filter for Modules named "PORT" // TODO: Find a better way to filter.
     for module in file.modules.module {
-        if module.name == .tc8 {
-            for registerGroup in module.registerGroup {
-                code.append(buildPort(port: registerGroup))
+        for registerGroup in module.registerGroup {
+            switch registerGroup.name {
+            case .TC0:
+                timerFiles.append(buildTimer(module: module, timerName: "Timer0"))
+            case .TC1:
+                timerFiles.append(buildTimer(module: module, timerName: "Timer1"))
+            case .TC2:
+                timerFiles.append(buildTimer(module: module, timerName: "Timer2"))
+            case .TC3:
+                timerFiles.append(buildTimer(module: module, timerName: "Timer3"))
+            case .TC4:
+                timerFiles.append(buildTimer(module: module, timerName: "Timer4"))
+            case .TC5:
+                timerFiles.append(buildTimer(module: module, timerName: "Timer5")) // TODO: Are there timers A and B? What does TCA stand for?
+            default:
+                break
             }
         }
     }
     
-    return code
+    return timerFiles
 }
+
+
+func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFile {
+    let fileName = "\(timerName).swift"
+    var code: String = ""
+    
+    var bitSize: String = {
+        switch module.name {
+        case .tc8, .tc8Async:
+            return "UInt8"
+        case .tc10, .tc16:
+            return "UInt16"
+        default:
+            assertionFailure("Failed to find bit size.")
+            return ""
+        }
+    }()
+    
+    let TCCRA_Address: String = {
+        for registerGroup in module.registerGroup { // always register Group TC0
+            for register in registerGroup.register {
+                if register.name == .TCCR0A  || register.name == .TCCR1A || register.name == .TCCR2A || register.name == .TCCR3A || register.name == .TCCR4A || register.name == .TCCR5A {
+                    return register.offset.rawValue
+                }
+            }
+        }
+        assertionFailure("Failed to find TCCRA address.")
+        return ""
+    }()
+    
+    let TCCRA_Name: String = {
+        for registerGroup in module.registerGroup { // always register Group TC0
+            for register in registerGroup.register {
+                if register.name == .TCCR0A  || register.name == .TCCR1A || register.name == .TCCR2A || register.name == .TCCR3A || register.name == .TCCR4A || register.name == .TCCR5A {
+                    return register.name.rawValue
+                }
+            }
+        }
+        assertionFailure("Failed to find TCCRA name.")
+        return ""
+    }()
+    
+    let TCCRA_Caption: String = {
+        for registerGroup in module.registerGroup { // always register Group TC0
+            for register in registerGroup.register {
+                if register.name == .TCCR0A  || register.name == .TCCR1A || register.name == .TCCR2A || register.name == .TCCR3A || register.name == .TCCR4A || register.name == .TCCR5A {
+                    return register.caption!.rawValue
+                }
+            }
+        }
+        assertionFailure("Failed to find TCCRA name.")
+        return ""
+    }()
+    
+    
+    var TCCRA_VariableName: String {
+        var variableName = TCCRA_Caption.filter { $0 != " " }
+        variableName = variableName.filter { $0 != " " }
+        variableName = variableName.filter { $0 != "/" }
+        return variableName.prefix(1).lowercased() + variableName.dropFirst()
+    }
+    
+    var TCCRB_Address = {
+        for registerGroup in module.registerGroup { // always register Group TC0
+            for register in registerGroup.register {
+                if register.name == .TCCR0B  || register.name == .TCCR1B || register.name == .TCCR2B || register.name == .TCCR3B || register.name == .TCCR4B || register.name == .TCCR5B {
+                    return register.offset.rawValue
+                }
+            }
+        }
+        assertionFailure("Failed to find TCCRB address.")
+        return ""
+    }
+    
+    let registerVar = DeclSyntax(
+      """
+          /// \(raw: TCCRA_Name) – \(raw: TCCRA_Caption)
+          ///```
+          ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+          ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
+          ///| (\(raw: TCCRA_Address))       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
+          ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+          ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
+          ///```
+          static var \(raw: TCCRA_VariableName): \(raw: bitSize) {
+              get {
+                  _volatileRegisterRead\(raw: bitSize)(\(raw: TCCRA_Address))
+              }
+              set {
+                  _volatileRegisterWrite\(raw: bitSize)(\(raw: TCCRA_Address), newValue)
+              }
+          }
+      """
+    )
+    
+    let memberBlock = MemberBlockSyntax(
+              """
+              {
+                  /// \(raw: TCCRA_Name) – \(raw: TCCRA_Caption)
+                  ///```
+                  ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+                  ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
+                  ///| (\(raw: TCCRA_Address))       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
+                  ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+                  ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
+                  ///```
+                  static var \(raw: TCCRA_VariableName): \(raw: bitSize) {
+                      get {
+                          _volatileRegisterRead\(raw: bitSize)(\(raw: TCCRA_Address))
+                      }
+                      set {
+                          _volatileRegisterWrite\(raw: bitSize)(\(raw: TCCRA_Address), newValue)
+                      }
+                  }
+              }
+              """
+    )
+//    let proto = SyntaxProtocol("Timer8Bit")
+    let InheritedType = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: "Timer8Bit, HasExternalClock "))
+//    let hasExternalClock = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: ""))
+    let inheritedTypeList = InheritedTypeListSyntax(arrayLiteral: InheritedType) // InheritedTypeListSyntax("Timer8Bit")
+    let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
+    
+    code.append(SourceFileSyntax {
+        StructDeclSyntax(
+//            leadingTrivia: SwiftSyntax.Keyword.public,
+//            <#T##unexpectedBeforeAttributes: UnexpectedNodesSyntax?##UnexpectedNodesSyntax?#>,
+//            attributes: <#T##AttributeListSyntax#>, 
+//            <#T##unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax?##UnexpectedNodesSyntax?#>,
+            modifiers: DeclModifierListSyntax(arrayLiteral: DeclModifierSyntax(name: "public")),
+//            <#T##unexpectedBetweenModifiersAndStructKeyword: UnexpectedNodesSyntax?##UnexpectedNodesSyntax?#>,
+//            structKeyword: <#T##TokenSyntax#>,
+//            <#T##unexpectedBetweenStructKeywordAndName: UnexpectedNodesSyntax?##UnexpectedNodesSyntax?#>,
+            name: "\(raw: timerName)",
+//            <#T##unexpectedBetweenNameAndGenericParameterClause: UnexpectedNodesSyntax?##UnexpectedNodesSyntax?#>,
+//            genericParameterClause: <#T##GenericParameterClauseSyntax?#>,
+//            <#T##unexpectedBetweenGenericParameterClauseAndInheritanceClause: UnexpectedNodesSyntax?##UnexpectedNodesSyntax?#>,
+            inheritanceClause: inheritanceClause,
+//            <#T##unexpectedBetweenInheritanceClauseAndGenericWhereClause: UnexpectedNodesSyntax?##UnexpectedNodesSyntax?#>,
+//            genericWhereClause: <#T##GenericWhereClauseSyntax?#>,
+//            <#T##unexpectedBetweenGenericWhereClauseAndMemberBlock: UnexpectedNodesSyntax?##UnexpectedNodesSyntax?#>,
+            memberBlock: memberBlock
+//            <#T##unexpectedAfterMemberBlock: UnexpectedNodesSyntax?##UnexpectedNodesSyntax?#>,
+//            trailingTrivia: <#T##Trivia?#>)
+        )
+        
+        
+        
+//        StructDeclSyntax(name: "\(raw: timerName)") {
+//            DeclSyntax(
+//              """
+//                  /// \(raw: TCCRA_Name) – \(raw: TCCRA_Caption)
+//                  ///```
+//                  ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+//                  ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
+//                  ///| (\(raw: TCCRA_Address))       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
+//                  ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+//                  ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
+//                  ///```
+//                  static var \(raw: TCCRA_VariableName): \(raw: bitSize) {
+//                      get {
+//                          _volatileRegisterRead\(raw: bitSize)(\(raw: TCCRA_Address))
+//                      }
+//                      set {
+//                          _volatileRegisterWrite\(raw: bitSize)(\(raw: TCCRA_Address), newValue)
+//                      }
+//                  }
+//              """
+//            )
+//        }
+    }.formatted().description)
+
+    print(code)
+    
+    return GeneratedCodeFile(fileName: fileName, content: code)
+}
+
+
+
+func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSize: String) -> DeclSyntax {
+    
+    var variableName: String {
+        var variableName = register.caption!.rawValue.filter { $0 != " " } // TODO: Print some kind of error.
+        variableName = variableName.filter { $0 != " " }
+        variableName = variableName.filter { $0 != "/" }
+        return variableName.prefix(1).lowercased() + variableName.dropFirst()
+    }
+    
+    
+    
+    return DeclSyntax(
+      """
+          /// \(raw: register.name) – \(raw: register.caption)
+          ///```
+          ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+          ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
+          ///| (\(raw: register.offset))       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
+          ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+          ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
+          ///```
+          static var \(raw: variableName): \(raw: bitSize) {
+              get {
+                  _volatileRegisterRead\(raw: bitSize)(\(raw: register.offset))
+              }
+              set {
+                  _volatileRegisterWrite\(raw: bitSize)(\(raw: register.offset), newValue)
+              }
+          }
+      """
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Note: These are only here for being able to build as these symbols are not linked like they would be in a true HAL project.
 func _volatileRegisterReadUInt8(_: UInt16) -> UInt8 { return 0 }

@@ -133,6 +133,10 @@ func decodeATDF(data: Data) -> GeneratedAVRCore {
     let deviceName = ATDFObject.devices.device.name
     var generatedFiles: [GeneratedCodeFile] = []
     generatedFiles.append(buildGPIO(file: ATDFObject))
+    for file in buildTimers(file: ATDFObject) {
+        generatedFiles.append(file)
+    }
+    
     
     print("ATDFObject.devices.device.name = \(deviceName)")
     print()

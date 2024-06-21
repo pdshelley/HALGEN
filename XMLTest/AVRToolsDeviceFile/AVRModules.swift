@@ -1288,6 +1288,7 @@ struct AVRModules: Codable {
                     case BODCR
                 }
                 
+                
                 enum Offset: String, Codable { // TODO: convert HEX to Int?
                     case zeroX02 = "0x02"
                     case zeroX01 = "0x01"
