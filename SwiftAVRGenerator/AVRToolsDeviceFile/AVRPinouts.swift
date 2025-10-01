@@ -1,6 +1,6 @@
 //
 //  AVRPinouts.swift
-//  XMLTest
+//  SwiftAVRGenerator
 //
 //  Created by Paul Shelley on 11/4/23.
 //

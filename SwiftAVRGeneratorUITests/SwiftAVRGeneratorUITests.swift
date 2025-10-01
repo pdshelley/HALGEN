@@ -1,13 +1,13 @@
 //
-//  XMLTestUITests.swift
-//  XMLTestUITests
+//  SwiftAVRGeneratorUITests.swift
+//  SwiftAVRGeneratorUITests
 //
 //  Created by Paul Shelley on 5/27/23.
 //
 
 import XCTest
 
-final class XMLTestUITests: XCTestCase {
+final class SwiftAVRGeneratorUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

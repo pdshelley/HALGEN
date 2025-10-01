@@ -1,13 +1,13 @@
 //
-//  XMLTestUITestsLaunchTests.swift
-//  XMLTestUITests
+//  SwiftAVRGeneratorUITestsLaunchTests.swift
+//  SwiftAVRGeneratorUITests
 //
 //  Created by Paul Shelley on 5/27/23.
 //
 
 import XCTest
 
-final class XMLTestUITestsLaunchTests: XCTestCase {
+final class SwiftAVRGeneratorUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
