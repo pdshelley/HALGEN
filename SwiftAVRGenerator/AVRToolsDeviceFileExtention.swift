@@ -1,6 +1,6 @@
 //
 //  AVRToolsDeviceFileExtention.swift
-//  XMLTest
+//  SwiftAVRGenerator
 //
 //  Created by Paul Shelley on 7/19/23.
 //

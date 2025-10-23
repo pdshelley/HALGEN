@@ -1,6 +1,6 @@
 //
-//  XMLTestApp.swift
-//  XMLTest
+//  SwiftAVRGeneratorApp.swift
+//  SwiftAVRGenerator
 //
 //  Created by Paul Shelley on 5/27/23.
 //
