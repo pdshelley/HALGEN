@@ -40,6 +40,41 @@ func buildTimers(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] { // TODO: Thi
 }
 
 
+func buildProtocolDeclarationsFrom(module: AVRModules.Module) -> String {
+    var hasProtocols: [String] = []
+    
+    // The name of the module indicates if it is 8 or 16 bit as well as if it is Async.
+    // TODO: Check to see if any 16 bit timers have
+    switch module.name {
+    case .tc8Async:
+        hasProtocols.append("Timer8Bit")
+        hasProtocols.append("AsyncTimer")
+    case .tc8:
+        hasProtocols.append("Timer8Bit")
+    case .tc10:
+        hasProtocols.append("Timer10Bit")
+    case .tc16:
+        hasProtocols.append("Timer16Bit")
+    default: ()
+    }
+    
+    // To check for an external clock you need to check each register and each bitfiled to see if there is a bitfiled with a name of "EXCLK"
+    // Module -> Register Group -> [Register] -> [Bitfield] -> EXCLK
+    for registerGroup in module.registerGroup {
+        var externalClock = "HasExternalClock"
+        for register in registerGroup.register {
+            for bitfield in register.bitfield {
+                if bitfield.name == .EXCLK { // TODO: This name seems to indicate an external clock but from our example code we have the opposite, where this would indicate it has an internal clock only. Check this and figure out what is going on.
+                    externalClock = "InternalClockOnly"
+                }
+            }
+        }
+        hasProtocols.append(externalClock)
+    }
+    
+    return hasProtocols.isEmpty ? "" : " \(hasProtocols.joined(separator: ", ")) "
+}
+
 func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFile {
     let fileName = "\(timerName).swift"
     var code: String = ""
@@ -58,7 +93,7 @@ func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFi
     
     var memberBlockList = MemberBlockItemListSyntax()
     
-    for registerGroup in module.registerGroup { // always register Group TC0
+    for registerGroup in module.registerGroup {
         for register in registerGroup.register {
             let memberBlock = generateRegister(register: register, bitSize: bitSize) // TODO: add this to the stored member blocks
             memberBlockList.append(memberBlock)
@@ -66,9 +101,10 @@ func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFi
     }
     
     let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
+    let protocolDeclarations = buildProtocolDeclarationsFrom(module: module)
 
     // Information needed to setup the Struct.
-    let InheritedType = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: "Timer8Bit, HasExternalClock ")) // TODO: Set these based on ATDF Data.
+    let InheritedType = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: protocolDeclarations))
     let inheritedTypeList = InheritedTypeListSyntax(arrayLiteral: InheritedType)
     let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
     

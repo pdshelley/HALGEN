@@ -1,4 +1,4 @@
-public struct Timer2: Timer8Bit, HasExternalClock {
+public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
     /// TIMSK2 – timerCounterInterruptMaskregister
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
