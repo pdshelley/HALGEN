@@ -1,10 +1,23 @@
+//===----------------------------------------------------------------------===//
+//
+// Timer1.swift
+// CoreAVR
+//
+// Created by Swift AVR Generator on 10/23/2025.
+// Copyright © 2025 Paul Shelley. All rights reserved.
+//
+//===----------------------------------------------------------------------===//
+
+
+public typealias timer1 = Timer1 
+
 public struct Timer1: Timer16Bit, HasExternalClock {
     /// TIMSK1 – timerCounterInterruptMaskRegister
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x6F)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x6F)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var timerCounterInterruptMaskRegister: UInt16 {
@@ -19,8 +32,8 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x36)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x36)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var timerCounterInterruptFlagregister: UInt16 {
@@ -35,8 +48,8 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x80)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x80)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var timerCounterControlRegisterA: UInt16 {
@@ -51,8 +64,8 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x81)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x81)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var timerCounterControlRegisterB: UInt16 {
@@ -67,8 +80,8 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x82)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x82)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var timerCounterControlRegisterC: UInt16 {
@@ -83,8 +96,8 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x84)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x84)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var timerCounterBytes: UInt16 {
@@ -99,8 +112,8 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x88)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x88)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var timerCounterOutputCompareRegisterBytes: UInt16 {
@@ -115,8 +128,8 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x8A)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x8A)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var timerCounterOutputCompareRegisterBytes: UInt16 {
@@ -131,8 +144,8 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x86)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x86)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var timerCounterInputCaptureRegisterBytes: UInt16 {
@@ -147,8 +160,8 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x43)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+    ///| (0x43)       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
     ///```
     static var generalTimerCounterControlRegister: UInt16 {

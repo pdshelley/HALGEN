@@ -75,9 +75,38 @@ func buildProtocolDeclarationsFrom(module: AVRModules.Module) -> String {
     return hasProtocols.isEmpty ? "" : " \(hasProtocols.joined(separator: ", ")) "
 }
 
+func buildFileHeaderFor(fileName: String) -> String {
+    let fullFormatter = DateFormatter()
+    fullFormatter.dateFormat = "MM/dd/yyyy"
+    let fullDateString = fullFormatter.string(from: Date())
+    
+    let yearFormatter = DateFormatter()
+    yearFormatter.dateFormat = "yyyy"
+    let yearString = yearFormatter.string(from: Date())
+    
+    let fileHeader = """
+    //===----------------------------------------------------------------------===//
+    //
+    // \(fileName).swift
+    // CoreAVR
+    //
+    // Created by Swift AVR Generator on \(fullDateString).
+    // Copyright © \(yearString) Paul Shelley. All rights reserved.
+    //
+    //===----------------------------------------------------------------------===//
+    
+    
+    public typealias \(fileName.lowercased()) = \(fileName) 
+    
+    
+    """
+    // TODO: The typealias should be generated in a different location.
+    return fileHeader
+}
+
 func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFile {
     let fileName = "\(timerName).swift"
-    var code: String = ""
+    var code: String = buildFileHeaderFor(fileName: timerName)
     
     let bitSize: String = {
         switch module.name {
@@ -147,8 +176,8 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
           ///```
           ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
           ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-          ///| (\(raw: register.offset.rawValue))       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-          ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
+          ///| (\(raw: register.offset.rawValue))       |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+          ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
           ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
           ///```
           static var \(raw: variableName): \(raw: bitSize) {
