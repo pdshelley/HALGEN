@@ -151,7 +151,29 @@ func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFi
     return GeneratedCodeFile(fileName: fileName, content: code)
 }
 
-
+func getBitNamesFrom(register: AVRModules.Module.RegisterGroup.Register) -> [String] {
+    var bitNames = Array(repeating: "-", count: 8)
+        
+    for bitField in register.bitfield {
+        let mask: UInt16 = bitField.mask.value
+        let name = bitField.name.rawValue
+            
+        // Check each bit position (0 to 7)
+        for i in 0..<8 {
+            // If the bit is set in the mask, assign the name
+            if (mask & (1 << i)) != 0 {
+                bitNames[7 - i] = name // Reverse to match MSB to index 0
+            }
+        }
+    }
+    print()
+    print("Register: \(register.name.rawValue)")
+    for bitName in bitNames{
+        print(bitName)
+    }
+    print()
+    return bitNames
+}
 
 func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSize: String) -> MemberBlockItemSyntax {
     
@@ -167,6 +189,8 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
         variableName = variableName.filter { $0 != "5" }
         return variableName.prefix(1).lowercased() + variableName.dropFirst()
     }
+    
+    let bitNames = getBitNamesFrom(register: register)
     
     // TODO: Generate bit names and R/W in documentation table properly.
     // TODO: I don't think the UInt8 & UInt16 is set properly as the timer can be a 16 bit timer but only some of the registers need to be 16 bit while others are still 8 bit.

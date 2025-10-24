@@ -4769,55 +4769,23 @@ struct AVRModules: Codable {
                         case resetDisabledEnablePB5asioPin = "Reset Disabled (Enable PB5 as i/o pin)"
                     }
                     
-                    enum Mask: String, Codable {
-                        case zeroX0E = "0x0E"
-                        case zeroX01 = "0x01"
-                        case zeroX80 = "0x80"
-                        case zeroX40 = "0x40"
-                        case zeroX20 = "0x20"
-                        case zeroX10 = "0x10"
-                        case zeroX08 = "0x08"
-                        case zeroX06 = "0x06"
-                        case zeroX3F = "0x3F"
-                        case zeroX03 = "0x03"
-                        case zeroX0C = "0x0C"
-                        case zeroX30 = "0x30"
-                        case zeroX04 = "0x04"
-                        case zeroXFF = "0xFF"
-                        case zeroXF8 = "0xF8"
-                        case zeroXFE = "0xFE"
-                        case zeroX02 = "0x02"
-                        case zeroX70 = "0x70"
-                        case zeroX07 = "0x07"
-                        case zeroX0F = "0x0F"
-                        case zeroXC0 = "0xC0"
-                        case zeroX0FFF = "0x0FFF"
-                        case zeroX18 = "0x18"
-                        case zeroX1F = "0x1F"
-                        case zeroX7F = "0x7F"
-                        case zeroX7E = "0x7E"
-                        case zeroX60 = "0x60"
-                        case zeroXFFFF = "0xFFFF"
-                        case zeroXF0 = "0xF0"
-                        case zeroX8000 = "0x8000"
-                        case zeroX27 = "0x27"
-                        case zeroX03FF = "0x03FF"
-                        case zeroX3C = "0x3C"
-                        case zeroX01FF = "0x01FF"
-                        case zeroX24 = "0x24"
-                        case zeroXE0 = "0xE0"
-                        case zeroX1C = "0x1C"
-                        case zeroX07FF = "0x07FF"
-                        case zeroXB0 = "0xB0"
-                        case zeroXFC = "0xFC"
-                        case zeroXFF00 = "0xFF00"
-                        case zeroX00FF = "0x00FF"
-                        case zeroX6 = "0x6"
-                        case zeroX38 = "0x38"
-                        case zeroX78 = "0x78"
-                        case zeroX3E = "0x3E"
-                        case zeroX7C = "0x7C"
-                        case zeroX1E = "0x1E"
+                    struct Mask: Codable {
+                        let value: UInt16
+                        
+                        init(from decoder: Decoder) throws {
+                            let container = try decoder.singleValueContainer()
+                            let stringValue = try container.decode(String.self)
+                            guard stringValue.lowercased().hasPrefix("0x"),
+                                  let intValue = UInt16(stringValue.dropFirst(2), radix: 16) else {
+                                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid hexadecimal string for bitfield mask: \(stringValue)")
+                            }
+                            self.value = intValue
+                        }
+                        
+                        func encode(to encoder: Encoder) throws {
+                            var container = encoder.singleValueContainer()
+                            try container.encode(String(format: "0x%02X", value))
+                        }
                     }
                     
                     enum Name: String, Codable {
