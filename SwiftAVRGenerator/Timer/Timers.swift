@@ -187,12 +187,12 @@ func getBitNamesFrom(register: AVRModules.Module.RegisterGroup.Register) -> [Str
 /// Adds Padding to strings for documentation. This is intended to be used for centering text in mono-spaced ASCII tables.
 /// - Parameter input: String of 7 characters or less.
 /// - Returns: A string of 7 characters, if the input string had more than 7 characters it should be unchanged.
-func padString(_ input: String) -> String {
-    if input.count >= 7 {
+func padString(_ input: String, padding: Int) -> String {
+    if input.count >= padding {
         return input
     }
     
-    let totalPadding = 7 - input.count
+    let totalPadding = padding - input.count
     let leftPadding = totalPadding / 2
     let rightPadding = totalPadding - leftPadding
     
@@ -214,8 +214,21 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
         return variableName.prefix(1).lowercased() + variableName.dropFirst()
     }
     
-    var bitNames = getBitNamesFrom(register: register)
-    bitNames = bitNames.map(padString)
+    
+    
+    // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
+    var registerName = ""
+    
+    if register.bitfield.isEmpty {
+        registerName = padString(register.name.rawValue, padding: 63)
+    } else {
+        var bitNames = getBitNamesFrom(register: register)
+        bitNames = bitNames.map { padString($0, padding: 7) }
+        registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
+    }
+    
+    
+    
     
     // TODO: Generate bit names and R/W in documentation table properly.
     // TODO: I don't think the UInt8 & UInt16 is set properly as the timer can be a 16 bit timer but only some of the registers need to be 16 bit while others are still 8 bit.
@@ -226,7 +239,7 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
           ///--------------------------------------------------------------------------------
           ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
           ///--------------------------------------------------------------------------------
-          ///| (\(raw: register.offset.rawValue))       |\(raw: bitNames[7])|\(raw: bitNames[6])|\(raw: bitNames[5])|\(raw: bitNames[4])|\(raw: bitNames[3])|\(raw: bitNames[2])|\(raw: bitNames[1])|\(raw: bitNames[0])|
+          ///| (\(raw: register.offset.rawValue))       |\(raw: registerName)|
           ///--------------------------------------------------------------------------------
           ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
           ///--------------------------------------------------------------------------------
@@ -252,3 +265,4 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
 //func _volatileRegisterReadUInt8(_: UInt16) -> UInt8 { return 0 }
 //
 //func _volatileRegisterWriteUInt8(_: UInt16, _: UInt8) { }
+
