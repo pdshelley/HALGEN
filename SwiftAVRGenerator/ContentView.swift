@@ -138,9 +138,9 @@ func decodeATDF(data: Data) -> GeneratedAVRCore {
     }
     
     
-    print("ATDFObject.devices.device.name = \(deviceName)")
-    print()
-    print(buildGPIO(file: ATDFObject).content)
+//    print("ATDFObject.devices.device.name = \(deviceName)")
+//    print()
+//    print(buildGPIO(file: ATDFObject).content)
     
     return GeneratedAVRCore(name: deviceName, files: generatedFiles)
     
