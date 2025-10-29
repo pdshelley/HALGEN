@@ -28,3 +28,24 @@ extension Int {
         return "0x" + String(self, radix: 16).uppercased()
     }
 }
+
+extension UInt8 {
+    var binaryString: String {
+        let leadingZeros = "" + String(repeating: "0", count: Int(self.leadingZeroBitCount))
+        return "0b" + leadingZeros + String(self, radix: 2)
+    }
+}
+
+extension UInt16 {
+    var binaryString: String {
+        let leadingZeros = "" + String(repeating: "0", count: Int(self.leadingZeroBitCount))
+        return "0b" + leadingZeros + String(self, radix: 2)
+    }
+}
+
+/// Extracts the low-order (rightmost) byte or a word.
+extension BinaryInteger {
+    var lowByte: UInt8 {
+        return UInt8(self & 0b11111111)
+    }
+}

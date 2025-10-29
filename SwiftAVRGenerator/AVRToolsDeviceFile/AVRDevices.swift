@@ -1601,10 +1601,12 @@ struct AVRDevices: Codable {
                     case timerCounter2CompareMatchB = "Timer/Counter2 Compare Match B"
                     case timerCounter2CompareMatchC = "Timer/Counter2 Compare Match C"
                     case timerCounter0CompareMatchB = "Timer/Counter0 Compare Match B"
-                    case usart1DataRegisterEmpty = "USART1 Data register Empty"
+                    
+                    case usart1DataRegisterEmpty = "USART1 Data Register Empty"
                     case usart1DataRegisterEmpty2 = "USART1, Data Register Empty" // Looks like a duplicate
-                    case usart1DataRegisterEmpty3 = "USART1, Data register Empty" // Looks like a duplicate
-                    case usart1DataRegisterEmpty4 = "USART1 Data Register Empty" // Looks like a duplicate
+                    case usart1DataRegisterEmpty3 = "USART1 Data register Empty" // Looks like a duplicate
+                    case usart1DataRegisterEmpty4 = "USART1, Data register Empty" // Looks like a duplicate
+                    
                     case timerCounter2CompareMatchA = "Timer/Counter2 Compare Match A"
                     case timerCounter1CompareMatchB = "Timer/Counter1 Compare Match B"
                     case timerCounter1CompareMatchB2 = "Timer/Counter1 Compare MatchB" // Looks like a duplicate

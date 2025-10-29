@@ -126,6 +126,14 @@ func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFi
         for register in registerGroup.register {
             let memberBlock = generateRegister(register: register, bitSize: bitSize) // TODO: add this to the stored member blocks
             memberBlockList.append(memberBlock)
+            
+            let registerVariableName = variableNameFromString(register.caption?.rawValue ?? "") // .filter { $0 != " " } // TODO: Print some kind of error.
+            
+            // TODO: Generate Bitfield Accessor EX: Wave Form Generation Mode (WGM)
+            for bitfield in register.bitfield {
+                let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariableName: registerVariableName)
+                memberBlockList.append(bitfieldMemberBlock)
+            }
         }
     }
     
@@ -199,22 +207,22 @@ func padString(_ input: String, padding: Int) -> String {
     return String(repeating: " ", count: leftPadding) + input + String(repeating: " ", count: rightPadding)
 }
 
+func variableNameFromString(_ name: String) -> String {
+    var variableName = name
+    variableName = variableName.filter { $0 != " " }
+    variableName = variableName.filter { $0 != "/" }
+    variableName = variableName.filter { $0 != "0" }
+    variableName = variableName.filter { $0 != "1" }
+    variableName = variableName.filter { $0 != "2" }
+    variableName = variableName.filter { $0 != "3" }
+    variableName = variableName.filter { $0 != "4" }
+    variableName = variableName.filter { $0 != "5" }
+    return variableName.prefix(1).lowercased() + variableName.dropFirst()
+}
+
 func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSize: String) -> MemberBlockItemSyntax {
     
-    var variableName: String {
-        var variableName = register.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
-        variableName = variableName.filter { $0 != " " }
-        variableName = variableName.filter { $0 != "/" }
-        variableName = variableName.filter { $0 != "0" }
-        variableName = variableName.filter { $0 != "1" }
-        variableName = variableName.filter { $0 != "2" }
-        variableName = variableName.filter { $0 != "3" }
-        variableName = variableName.filter { $0 != "4" }
-        variableName = variableName.filter { $0 != "5" }
-        return variableName.prefix(1).lowercased() + variableName.dropFirst()
-    }
-    
-    
+    let variableName = variableNameFromString(register.caption?.rawValue ?? "") // .filter { $0 != " " } // TODO: Print some kind of error.
     
     // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
     var registerName = ""
@@ -226,8 +234,6 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
         bitNames = bitNames.map { padString($0, padding: 7) }
         registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
     }
-    
-    
     
     
     // TODO: Generate bit names and R/W in documentation table properly.
@@ -246,7 +252,9 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
           ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
           ///--------------------------------------------------------------------------------
           /// ```
-          static var \(raw: variableName): \(raw: bitSize) {
+          @inlinable
+          @inline(__always)
+          public static var \(raw: variableName): \(raw: bitSize) {
               get {
                   _volatileRegisterRead\(raw: bitSize)(\(raw: register.offset.rawValue))
               }
@@ -259,6 +267,40 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
     
     return MemberBlockItemSyntax(decl: source)
 }
+
+
+
+
+// TODO: Pass the parent register name to this function so I can set the bits on the parent register.
+func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String) -> MemberBlockItemSyntax {
+    
+    let caption = bitfield.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
+    let variableName = variableNameFromString(caption)
+    let bitmask = bitfield.mask.value.lowByte.binaryString
+    let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
+    
+    // TODO: Generate bit names and R/W in documentation table properly.
+    // TODO: I don't think the UInt8 & UInt16 is set properly as the timer can be a 16 bit timer but only some of the registers need to be 16 bit while others are still 8 bit.
+    let source = DeclSyntax(
+      """
+          /// \(raw: bitfield.name) – \(raw: caption)
+          @inlinable
+          @inline(__always)
+          public static var \(raw: variableName): Timer.CompareOutputMode {
+              get {
+                  let mode = (\(raw: parentVariableName) & \(raw: bitmask)) >> UInt8(\(raw: bitshift))
+                  return Timer.CompareOutputMode.init(rawValue: mode) ?? .normal
+              }
+              set {
+                  \(raw: parentVariableName) |= (newValue.rawValue & \(raw: bitmask)) << UInt8(\(raw: bitshift))
+              }
+          }
+      """
+    )
+    
+    return MemberBlockItemSyntax(decl: source)
+}
+
 
 
 // Note: These are only here for being able to build as these symbols are not linked like they would be in a true HAL project.
