@@ -223,7 +223,7 @@ func variableNameFor(register: AVRModules.Module.RegisterGroup.Register) -> Stri
     case .TCCR0B, .TCCR1B, .TCCR2B, .TCCR3B, .TCCR4B, .TCCR5B:
         return "controlRegisterB"
     case .TCNT0, .TCNT1, .TCNT2, .TCNT3, .TCNT4, .TCNT5:
-        return "timerCounter" // TODO: What should this be called? Number?
+        return "number" // TODO: What should this be called? "number"?
     case .OCR0B, .OCR1B, .OCR2B, .OCR3B, .OCR4B, .OCR5B:
         return "outputCompareRegisterB"
     case .OCR0A, .OCR1A, .OCR2A, .OCR3A, .OCR4A, .OCR5A:
@@ -323,33 +323,33 @@ func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitf
     case .COM0A, .COM1A, .COM2A, .COM3A, .COM4A, .COM5A:
         return SupplementalData(variableName: "compareOutputModeA", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeADocumentation)
     case .COM0B, .COM1B, .COM2B, .COM3B, .COM4B, .COM5B:
-        return SupplementalData(variableName: "compareOutputModeB", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: "")
+        return SupplementalData(variableName: "compareOutputModeB", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeBDocumentation)
     case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5:
-        return SupplementalData(variableName: "waveformGenerationMode", valueType: "Timer8Bit.WaveformGenerationMode", defaultValue: ".normal", documentation: "") // TODO: Needs to know if this is an 8 bit or 16 bit timer.
+        return SupplementalData(variableName: "waveformGenerationMode", valueType: "Timer8Bit.WaveformGenerationMode", defaultValue: ".normal", documentation: waveformGenerationModeDocumentation) // TODO: Needs to know if this is an 8 bit or 16 bit timer.
         
         // Control Register B
     case .FOC0A, .FOC1A, .FOC2A, .FOC3A, .FOC4A, .FOC5A:
-        return SupplementalData(variableName: "forceOutputCompareA", valueType: "", defaultValue: "", documentation: "") // TODO: Finish this in CoreAVR
+        return SupplementalData(variableName: "forceOutputCompareA", valueType: "Bool", defaultValue: "", documentation: "") // TODO: Finish this in CoreAVR
     case .FOC0B, .FOC1B, .FOC2B, .FOC3B, .FOC4B, .FOC5B:
-        return SupplementalData(variableName: "forceOutputCompareB", valueType: "", defaultValue: "", documentation: "") // TODO: Finish this in CoreAVR
+        return SupplementalData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: "") // TODO: Finish this in CoreAVR
     case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
-        return SupplementalData(variableName: "prescaler", valueType: "InternalClockOnlyPrescaling", defaultValue: ".noClockSource", documentation: "") // TODO: This needs to know if the parent clock is an internal or external timer.
+        return SupplementalData(variableName: "prescaler", valueType: "InternalClockOnlyPrescaling", defaultValue: ".noClockSource", documentation: prescalerDocumentation) // TODO: This needs to know if the parent clock is an internal or external timer.
     
         // Asynchronous Status Register
     case .EXCLK:
-        return SupplementalData(variableName: "enableExternalClockInput", valueType: "", defaultValue: "", documentation: "")
+        return SupplementalData(variableName: "enableExternalClockInput", valueType: "Bool", defaultValue: "", documentation: "")
     case .AS2:
-        return SupplementalData(variableName: "asynchronousTimerCounter", valueType: "", defaultValue: "", documentation: "")
+        return SupplementalData(variableName: "asynchronousTimerCounter", valueType: "Bool", defaultValue: "", documentation: "")
     case .TCN2UB:
-        return SupplementalData(variableName: "updateBusy", valueType: "", defaultValue: "", documentation: "")
+        return SupplementalData(variableName: "updateBusy", valueType: "Bool", defaultValue: "", documentation: "")
     case .OCR2AUB:
-        return SupplementalData(variableName: "outputCompareRegisterUpdateBusy", valueType: "", defaultValue: "", documentation: "")
+        return SupplementalData(variableName: "outputCompareRegisterAUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "")
     case .OCR2BUB:
-        return SupplementalData(variableName: "outputCompareRegisterUpdateBusy", valueType: "", defaultValue: "", documentation: "")
+        return SupplementalData(variableName: "outputCompareRegisterBUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "")
     case .TCR2AUB:
-        return SupplementalData(variableName: "controlRegisterUpdateBusy", valueType: "", defaultValue: "", documentation: "")
+        return SupplementalData(variableName: "controlRegisterAUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "")
     case .TCR2BUB:
-        return SupplementalData(variableName: "controlRegisterUpdateBusy", valueType: "", defaultValue: "", documentation: "")
+        return SupplementalData(variableName: "controlRegisterBUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "")
         
     
         // General Timer/Counter Control Register
@@ -392,7 +392,28 @@ func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register
       """
     )
     
-    return MemberBlockItemSyntax(decl: source)
+    let sourceForBool = DeclSyntax(
+      """
+          /// \(raw: bitfield.name) – \(raw: caption) \(raw: info.documentation)
+          @inlinable
+          @inline(__always)
+          public static var \(raw: info.variableName): \(raw: info.valueType) {
+              get {
+                  let flag = (\(raw: parentVariableName) & \(raw: bitmask)) >> UInt8(\(raw: bitshift))
+                  return flag == 1
+              }
+              set {
+                  \(raw: parentVariableName) |= (newValue ? 1 : 0) & \(raw: enumBitmask) << UInt8(\(raw: bitshift))
+              }
+          }
+      """
+    )
+    
+    if info.valueType == "Bool" {
+        return MemberBlockItemSyntax(decl: sourceForBool)
+    } else {
+        return MemberBlockItemSyntax(decl: source)
+    }
 }
 
 
@@ -470,4 +491,148 @@ let outputCompareModeADocumentation: String = """
     /// Note: 1. A special case occurs when OCR2A equals TOP and COM2A1 is set. In this case, the Compare Match is
     ///       ignored, but the set or clear is done at TOP. See ”Phase Correct PWM Mode” in datasheet for more details.
     ///
+"""
+
+
+
+
+
+let outputCompareModeBDocumentation: String = """
+\n    /// See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.
+    ///
+    /// These bits control the Output Compare pin (OC2B) behavior. If one or both of the COM2B1:0 bits are set, the
+    /// OC2B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data
+    /// Direction Register (DDR) bit corresponding to the OC2B pin must be set in order to enable the output driver.
+    /// When OC2B is connected to the pin, the function of the COM2B1:0 bits depends on the WGM22:0 bit setting.
+    /// Table 18-5 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode
+    /// (non-PWM).
+    ///
+    /// Table 18-5. Compare Output Mode, non-PWM Mode
+    ///```
+    ///---------------------------------------------------------------------------------------------
+    ///|  Mode  | COM2B1| COM2B0| Description                                                      |
+    ///---------------------------------------------------------------------------------------------
+    ///| normal |   0   |   0   | Normal port operation, OC0B disconnected.                        |
+    ///---------------------------------------------------------------------------------------------
+    ///| toggle |   0   |   1   | Toggle OC2B on Compare Match                                     |
+    ///---------------------------------------------------------------------------------------------
+    ///| clear  |   1   |   0   | Clear OC2B on Compare Match                                      |
+    ///---------------------------------------------------------------------------------------------
+    ///| set    |   1   |   1   | Set OC2B on Compare Match                                        |
+    ///---------------------------------------------------------------------------------------------
+    ///```
+    ///
+    /// Table 18-6 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to fast PWM mode.
+    ///
+    /// Table 18-6. Compare Output Mode, Fast PWM Mode
+    ///```
+    ///---------------------------------------------------------------------------------------------
+    ///|  Mode  | COM2B1| COM2B0| Description                                                      |
+    ///---------------------------------------------------------------------------------------------
+    ///| normal |   0   |   0   | Normal port operation, OC2B disconnected.                        |
+    ///---------------------------------------------------------------------------------------------
+    ///| toggle |   0   |   1   | Reserved                                                         |
+    ///---------------------------------------------------------------------------------------------
+    ///| clear  |   1   |   0   | Clear OC2B on Compare Match, set OC2B at BOTTOM,                 |
+    ///|        |       |       | (non-inverting mode).                                            |
+    ///---------------------------------------------------------------------------------------------
+    ///| set    |   1   |   1   | Set OC2B on Compare Match, clear OC2B at BOTTOM,                 |
+    ///|        |       |       | (inverting mode).                                                |
+    ///---------------------------------------------------------------------------------------------
+    ///```
+    /// Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is
+    ///       ignored, but the set or clear is done at BOTTOM. See ”Phase Correct PWM Mode” on page 157 for more
+    ///       details.
+    ///
+    /// Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.
+    ///
+    /// Table 18-7. Compare Output Mode, Phase Correct PWM Mode
+    ///```
+    ///---------------------------------------------------------------------------------------------
+    ///|  Mode  | COM2B1| COM2B0| Description                                                      |
+    ///---------------------------------------------------------------------------------------------
+    ///| normal |   0   |   0   | Normal port operation, OC2B disconnected.                        |
+    ///---------------------------------------------------------------------------------------------
+    ///| toggle |   0   |   1   | Reserved                                                         |
+    ///---------------------------------------------------------------------------------------------
+    ///| clear  |   1   |   0   | Clear OC2B on Compare Match when up-counting.                    |
+    ///|        |       |       | Set OC2B on Compare Match when down-counting.                    |
+    ///---------------------------------------------------------------------------------------------
+    ///| set    |   1   |   1   | Set OC2B on Compare Match when up-counting.                      |
+    ///|        |       |       | Clear OC2B on Compare Match when down-counting.                  |
+    ///---------------------------------------------------------------------------------------------
+    ///```
+    /// Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is
+    ///       ignored, but the set or clear is done at TOP. See ”Phase Correct PWM Mode” on page 157 for more details.
+    ///
+"""
+
+
+
+
+let waveformGenerationModeDocumentation: String = """
+\n    ///
+    /// Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the
+    /// counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see
+    /// Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer
+    /// on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of
+    /// Operation” on page 155).
+    ///
+    /// Table 18-8. Waveform Generation Mode Bit Description
+    ///```
+    ///-----------------------------------------------------------------------------------------------------
+    ///|  Mode  | WGM22 | WGM21 | WGM20 | Mode of Operation  |  TOP  | Update of OCRx at | TOV Flag Set on |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    0   |   0   |   0   |   0   | Normal             | 0xFF  | Immediate         | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    1   |   0   |   0   |   1   | PWM, Phase Correct | 0xFF  | TOP               | BOTTOM          |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    2   |   0   |   1   |   0   | CTC                | OCRA  | Immediate         | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    3   |   0   |   1   |   1   | Fast PWM           | 0xFF  | BOTTOM            | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    4   |   1   |   0   |   0   | Reserved           |   -   |         -         |        -        |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    5   |   1   |   0   |   1   | PWM, Phase Correct | OCRA  | TOP               | BOTTOM          |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    6   |   1   |   1   |   0   | Reserved           |   -   |         -         |        -        |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    7   |   1   |   1   |   1   | Fast PWM           | OCRA  | BOTTOM            | TOP             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///```
+    /// Notes: 1. MAX= 0xFF
+    ///      2. BOTTOM= 0x00
+    ///
+"""
+
+
+let prescalerDocumentation: String = """
+\n    /// The three Clock Select bits select the clock source to be used by the Timer/Counter, see Table 18-9 on page 165.
+    ///
+    /// Table 18-9. Clock Select Bit Description
+    ///```
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |  Mode  | CS22  | CS21  | CS20  | Description                                                     |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    0   |   0   |   0   |   0   | No clock source (Timer/Counter stopped)                         |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    1   |   0   |   0   |   1   | clk T2S/(No prescaling)                                         |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    2   |   0   |   1   |   0   | clk T2S/8 (From prescaler)                                      |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    3   |   0   |   1   |   1   | clk T2S/32 (From prescaler)                                     |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    4   |   1   |   0   |   0   | clkI T2S/64 (From prescaler)                                    |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    5   |   1   |   0   |   1   | clkI T2S/128 (From prescaler)                                   |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    6   |   1   |   1   |   0   | clkI T2S/256 (From prescaler)                                   |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    7   |   1   |   1   |   1   | clkI T2S/1024 (From prescaler)                                  |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// ```
+    /// If external pin modes are used for the Timer/Counter0, transitions on the T0 pin will clock the counter even if the
+    /// pin is configured as an output. This feature allows software control of the counting.
+    ///
+    /// Note: In the datasheet this is called the Clock Select. Prescaler is probably more descriptive.
 """
