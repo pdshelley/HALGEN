@@ -3,7 +3,7 @@
 // Timer0.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/05/2025.
+// Created by Swift AVR Generator on 11/10/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -124,18 +124,6 @@ public struct Timer0: Timer8Bit, HasExternalClock {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
     }
-    /// WGM02 –  
-    @inlinable
-    @inline(__always)
-    public static var :  {
-        get {
-            let mode = (controlRegisterB & 0b00001000) >> UInt8(3)
-            return .init(rawValue: mode) ??
-        }
-        set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(3)
-        }
-    }
     /// CS0 – Clock Select 
     /// The three Clock Select bits select the clock source to be used by the Timer/Counter, see Table 18-9 on page 165.
     ///
@@ -163,6 +151,8 @@ public struct Timer0: Timer8Bit, HasExternalClock {
     /// ```
     /// If external pin modes are used for the Timer/Counter0, transitions on the T0 pin will clock the counter even if the
     /// pin is configured as an output. This feature allows software control of the counting.
+    ///
+    /// Note: In the datasheet this is called the Clock Select. Prescaler is probably more descriptive.
     @inlinable
     @inline(__always)
     public static var prescaler: InternalClockOnlyPrescaling {
@@ -354,7 +344,7 @@ public struct Timer0: Timer8Bit, HasExternalClock {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(4)
         }
     }
-    /// WGM0 – Waveform Generation Mode 
+    /// WGM02 –  
     ///
     /// Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the
     /// counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see
@@ -391,11 +381,12 @@ public struct Timer0: Timer8Bit, HasExternalClock {
     @inline(__always)
     public static var waveformGenerationMode: Timer8Bit.WaveformGenerationMode {
         get {
-            let mode = (controlRegisterA & 0b00000011) >> UInt8(0)
-            return Timer8Bit.WaveformGenerationMode.init(rawValue: mode) ?? .normal
+            let mode = ((controlRegisterA & 0b00000011) >> 1) | (controlRegisterB & 0b00001000)
+            return Timer8Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0)
+            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(3))
+            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
         }
     }
     /// TIMSK0 – Timer/Counter0 Interrupt Mask Register

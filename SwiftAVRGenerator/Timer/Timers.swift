@@ -168,7 +168,6 @@ func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFi
 /// - Returns: A fixed array of 16 that includes either a "-" if there is no bit in that positon or the name of the bit in that position.
 /// Example output: ["FOC2A", "FOC2B", "-", "-", "WGM22", "CS22", "CS21", "CS20"]
 func getBitNamesFrom(register: AVRModules.Module.RegisterGroup.Register) -> [String] {
-    print("Get Bit Names From Register:")
     var bitNames = Array(repeating: "-", count: 16)
         
     for bitField in register.bitfield {
@@ -324,7 +323,7 @@ func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitf
         return SupplementalData(variableName: "compareOutputModeA", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeADocumentation)
     case .COM0B, .COM1B, .COM2B, .COM3B, .COM4B, .COM5B:
         return SupplementalData(variableName: "compareOutputModeB", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeBDocumentation)
-    case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5:
+    case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
         return SupplementalData(variableName: "waveformGenerationMode", valueType: "Timer8Bit.WaveformGenerationMode", defaultValue: ".normal", documentation: waveformGenerationModeDocumentation) // TODO: Needs to know if this is an 8 bit or 16 bit timer.
         
         // Control Register B
@@ -363,9 +362,65 @@ func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitf
     }
 }
 
+var wmgBitfieldA: (bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String)? = nil
+
+func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield, bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableNameA: String, parentVariableNameB: String) -> MemberBlockItemSyntax {
+    
+    let caption = bitfieldA.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
+    let info = supplementalDataFor(bitfield: bitfieldA)
+    
+    let bitmaskA = bitfieldA.mask.value.lowByte.binaryString
+    let bitshiftA = UInt8(bitfieldA.mask.value.trailingZeroBitCount)
+    let enumBitmaskA = (bitfieldA.mask.value.lowByte >> bitshiftA).binaryString
+    
+    let bitmaskB = bitfieldB.mask.value.lowByte.binaryString
+    let bitshiftB = UInt8(bitfieldB.mask.value.trailingZeroBitCount)
+    let enumBitmaskB = (bitfieldB.mask.value.lowByte >> bitshiftB).binaryString
+    
+    let source = DeclSyntax(
+      """
+          /// \(raw: bitfieldA.name) – \(raw: caption) \(raw: info.documentation)
+          @inlinable
+          @inline(__always)
+          public static var \(raw: info.variableName): \(raw: info.valueType) {
+              get {
+                  let mode = ((\(raw: parentVariableNameB) & \(raw: bitmaskB)) >> 1) | (\(raw: parentVariableNameA) & \(raw: bitmaskA))
+                  return \(raw: info.valueType)(rawValue: mode) ?? \(raw: info.defaultValue)
+              }
+              set {
+                  \(raw: parentVariableNameA) |= (newValue.rawValue & \(raw: enumBitmaskA)) << UInt8(\(raw: bitshiftA)))
+                  \(raw: parentVariableNameB) |= ((newValue.rawValue & \(raw: enumBitmaskB)) << UInt8(\(raw: bitshiftB)))
+              }
+          }
+      """
+    )
+    
+    return MemberBlockItemSyntax(decl: source)
+}
+
 
 // TODO: Pass the parent register name to this function so I can set the bits on the parent register.
 func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String) -> MemberBlockItemSyntax {
+    
+    // The WGM Bitfield is split between two registers so this takes special handling.
+    switch bitfield.name {
+        
+    case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
+        print()
+        print("Bitfield: \(bitfield.name)")
+        if let wgmBitfield = wmgBitfieldA {
+            print("Privious Bitfield: \(wgmBitfield.bitfield.name)")
+            let bitFieldAccessor = generateSplitBitfieldAccessor(bitfieldA: wgmBitfield.bitfield, bitfieldB: bitfield, parentVariableNameA: wgmBitfield.parentVariableName, parentVariableNameB: parentVariableName)
+            wmgBitfieldA = nil
+            return bitFieldAccessor
+        } else {
+            print("New Bitfield: \(bitfield.name)")
+            wmgBitfieldA = (bitfield, parentVariableName)
+            return MemberBlockItemSyntax(decl: DeclSyntax("")) // Return nothing
+        }
+    default:
+        break
+    }
     
     let caption = bitfield.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
     let info = supplementalDataFor(bitfield: bitfield)

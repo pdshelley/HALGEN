@@ -3,7 +3,7 @@
 // Timer2.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/05/2025.
+// Created by Swift AVR Generator on 11/10/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -308,50 +308,6 @@ public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(4)
         }
     }
-    /// WGM2 – Waveform Genration Mode 
-    ///
-    /// Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the
-    /// counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see
-    /// Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer
-    /// on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of
-    /// Operation” on page 155).
-    ///
-    /// Table 18-8. Waveform Generation Mode Bit Description
-    ///```
-    ///-----------------------------------------------------------------------------------------------------
-    ///|  Mode  | WGM22 | WGM21 | WGM20 | Mode of Operation  |  TOP  | Update of OCRx at | TOV Flag Set on |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    0   |   0   |   0   |   0   | Normal             | 0xFF  | Immediate         | MAX             |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    1   |   0   |   0   |   1   | PWM, Phase Correct | 0xFF  | TOP               | BOTTOM          |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    2   |   0   |   1   |   0   | CTC                | OCRA  | Immediate         | MAX             |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    3   |   0   |   1   |   1   | Fast PWM           | 0xFF  | BOTTOM            | MAX             |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    4   |   1   |   0   |   0   | Reserved           |   -   |         -         |        -        |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    5   |   1   |   0   |   1   | PWM, Phase Correct | OCRA  | TOP               | BOTTOM          |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    6   |   1   |   1   |   0   | Reserved           |   -   |         -         |        -        |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    7   |   1   |   1   |   1   | Fast PWM           | OCRA  | BOTTOM            | TOP             |
-    ///-----------------------------------------------------------------------------------------------------
-    ///```
-    /// Notes: 1. MAX= 0xFF
-    ///      2. BOTTOM= 0x00
-    ///
-    @inlinable
-    @inline(__always)
-    public static var waveformGenerationMode: Timer8Bit.WaveformGenerationMode {
-        get {
-            let mode = (controlRegisterA & 0b00000011) >> UInt8(0)
-            return Timer8Bit.WaveformGenerationMode.init(rawValue: mode) ?? .normal
-        }
-        set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0)
-        }
-    }
     /// TCCR2B – Timer/Counter2 Control Register B
     ///```
     ///--------------------------------------------------------------------------------
@@ -398,16 +354,49 @@ public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
     }
-    /// WGM22 – Waveform Generation Mode 
+    /// WGM2 – Waveform Genration Mode 
+    ///
+    /// Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the
+    /// counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see
+    /// Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer
+    /// on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of
+    /// Operation” on page 155).
+    ///
+    /// Table 18-8. Waveform Generation Mode Bit Description
+    ///```
+    ///-----------------------------------------------------------------------------------------------------
+    ///|  Mode  | WGM22 | WGM21 | WGM20 | Mode of Operation  |  TOP  | Update of OCRx at | TOV Flag Set on |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    0   |   0   |   0   |   0   | Normal             | 0xFF  | Immediate         | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    1   |   0   |   0   |   1   | PWM, Phase Correct | 0xFF  | TOP               | BOTTOM          |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    2   |   0   |   1   |   0   | CTC                | OCRA  | Immediate         | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    3   |   0   |   1   |   1   | Fast PWM           | 0xFF  | BOTTOM            | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    4   |   1   |   0   |   0   | Reserved           |   -   |         -         |        -        |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    5   |   1   |   0   |   1   | PWM, Phase Correct | OCRA  | TOP               | BOTTOM          |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    6   |   1   |   1   |   0   | Reserved           |   -   |         -         |        -        |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    7   |   1   |   1   |   1   | Fast PWM           | OCRA  | BOTTOM            | TOP             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///```
+    /// Notes: 1. MAX= 0xFF
+    ///      2. BOTTOM= 0x00
+    ///
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var waveformGenerationMode: Timer8Bit.WaveformGenerationMode {
         get {
-            let mode = (controlRegisterB & 0b00001000) >> UInt8(3)
-            return .init(rawValue: mode) ??
+            let mode = ((controlRegisterB & 0b00001000) >> 1) | (controlRegisterA & 0b00000011)
+            return Timer8Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(3)
+            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterB |= ((newValue.rawValue & 0b00000001) << UInt8(3))
         }
     }
     /// CS2 – Clock Select bits 
@@ -437,6 +426,8 @@ public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
     /// ```
     /// If external pin modes are used for the Timer/Counter0, transitions on the T0 pin will clock the counter even if the
     /// pin is configured as an output. This feature allows software control of the counting.
+    ///
+    /// Note: In the datasheet this is called the Clock Select. Prescaler is probably more descriptive.
     @inlinable
     @inline(__always)
     public static var prescaler: InternalClockOnlyPrescaling {
