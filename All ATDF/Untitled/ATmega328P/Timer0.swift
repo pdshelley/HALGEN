@@ -173,10 +173,10 @@ public struct Timer0: Timer8Bit, HasExternalClock {
     /// Note: In the datasheet this is called the Clock Select. Prescaler is probably more descriptive.
     @inlinable
     @inline(__always)
-    public static var prescaler: InternalClockOnlyPrescaling {
+    public static var prescaler: HasExternalClockPrescaling {
         get {
             let mode = (controlRegisterB & 0b00000111) >> UInt8(0)
-            return InternalClockOnlyPrescaling.init(rawValue: mode) ?? .noClockSource
+            return HasExternalClockPrescaling.init(rawValue: mode) ?? .noClockSource
         }
         set {
             controlRegisterB |= (newValue.rawValue & 0b00000111) << UInt8(0)

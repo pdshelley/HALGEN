@@ -39,37 +39,100 @@ func buildTimers(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] { // TODO: Thi
     return timerFiles
 }
 
+struct TimerInfo {
+    let internalTimer: Bool
+    let isAsynchronous: Bool
+    let bitSize: BitSize
+    
+    var prescalingProtocol: String {
+        if internalTimer {
+            return "InternalClockOnlyPrescaling"
+        } else {
+            return "HasExternalClockPrescaling"
+        }
+    }
+    
+    var timerProtocol: String {
+        switch bitSize {
+        case .eightBit:
+            return "Timer8Bit"
+        case .tenBit:
+            return "Timer10Bit"
+        case .sixteenBit:
+            return "Timer16Bit"
+        }
+    }
+    
+    enum BitSize: String, Codable { // TODO: There are also 10 bit timers
+        case eightBit = "UInt8"
+        case tenBit = "UInt10"
+        case sixteenBit = "UInt16"
+    }
 
-func buildProtocolDeclarationsFrom(module: AVRModules.Module) -> String {
-    var hasProtocols: [String] = []
+    enum TimerType: String, Codable {
+        case internalTimer = "InternalClockOnlyPrescaling"
+        case externalTimer = "HasExternalClockPrescaling"
+    }
+}
+
+func gatherTimerInfoFrom(module: AVRModules.Module) -> TimerInfo {
+    var bitSize: TimerInfo.BitSize = .eightBit
+    var isAsync: Bool = false
     
     // The name of the module indicates if it is 8 or 16 bit as well as if it is Async.
     // TODO: Check to see if any 16 bit timers have
     switch module.name {
     case .tc8Async:
-        hasProtocols.append("Timer8Bit")
-        hasProtocols.append("AsyncTimer")
+        isAsync = true
+        bitSize = .eightBit
     case .tc8:
-        hasProtocols.append("Timer8Bit")
+        bitSize = .eightBit
     case .tc10:
-        hasProtocols.append("Timer10Bit")
+        bitSize = .tenBit
     case .tc16:
-        hasProtocols.append("Timer16Bit")
+        bitSize = .sixteenBit
     default: ()
     }
+    
+    var hasInternalTimer = false
     
     // To check for an external clock you need to check each register and each bitfiled to see if there is a bitfiled with a name of "EXCLK"
     // Module -> Register Group -> [Register] -> [Bitfield] -> EXCLK
     for registerGroup in module.registerGroup {
-        var externalClock = "HasExternalClock"
         for register in registerGroup.register {
             for bitfield in register.bitfield {
                 if bitfield.name == .EXCLK { // TODO: This name seems to indicate an external clock but from our example code we have the opposite, where this would indicate it has an internal clock only. Check this and figure out what is going on.
-                    externalClock = "InternalClockOnly"
+                    hasInternalTimer = true
                 }
             }
         }
-        hasProtocols.append(externalClock)
+    }
+    
+    return TimerInfo(internalTimer: hasInternalTimer, isAsynchronous: isAsync, bitSize: bitSize)
+}
+
+func buildProtocolDeclarationsFrom(info: TimerInfo) -> String {
+    var hasProtocols: [String] = []
+    
+    // The name of the module indicates if it is 8 or 16 bit as well as if it is Async.
+    // TODO: Check to see if any 16 bit timers have
+    switch info.bitSize {
+    case .eightBit:
+        hasProtocols.append("Timer8Bit")
+    case .tenBit:
+        hasProtocols.append("Timer10Bit")
+    case .sixteenBit:
+        hasProtocols.append("Timer16Bit")
+    }
+    
+    if info.isAsynchronous {
+        hasProtocols.append("AsyncTimer")
+    }
+    
+    if info.internalTimer {
+        hasProtocols.append("InternalClockOnly")
+    } else {
+        hasProtocols.append("HasExternalClock")
     }
     
     return hasProtocols.isEmpty ? "" : " \(hasProtocols.joined(separator: ", ")) "
@@ -104,33 +167,16 @@ func buildFileHeaderFor(fileName: String) -> String {
     return fileHeader
 }
 
-enum timerBitSize: String, Codable {
-    case eightBit = "UInt8"
-    case sixteenBit = "UInt16"
-    case none
-}
-
 func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFile {
     let fileName = "\(timerName).swift"
     var code: String = buildFileHeaderFor(fileName: timerName)
-    
-    let bitSize: timerBitSize = {
-        switch module.name {
-        case .tc8, .tc8Async:
-            return .eightBit
-        case .tc10, .tc16:
-            return .sixteenBit
-        default:
-            assertionFailure("Failed to find bit size.")
-            return .none
-        }
-    }()
-    
+    let timerInfo = gatherTimerInfoFrom(module: module)
     var memberBlockList = MemberBlockItemListSyntax()
+    let protocolDeclarations = buildProtocolDeclarationsFrom(info: timerInfo) // buildProtocolDeclarationsFrom(module: module)
     
     for registerGroup in module.registerGroup {
         for register in registerGroup.register {
-            let memberBlock = generateRegister(register: register, bitSize: bitSize) // TODO: add this to the stored member blocks
+            let memberBlock = generateRegister(register: register, bitSize: timerInfo.bitSize) // TODO: add this to the stored member blocks
             memberBlockList.append(memberBlock)
             
             let registerVariableName = variableNameFor(register: register)
@@ -138,14 +184,13 @@ func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFi
             
             // TODO: Generate Bitfield Accessor EX: Wave Form Generation Mode (WGM)
             for bitfield in register.bitfield {
-                let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariableName: registerVariableName, bitSize: bitSize)
+                let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariableName: registerVariableName, timerInfo: timerInfo)
                 memberBlockList.append(bitfieldMemberBlock)
             }
         }
     }
     
     let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
-    let protocolDeclarations = buildProtocolDeclarationsFrom(module: module)
 
     // Information needed to setup the Struct.
     let InheritedType = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: protocolDeclarations))
@@ -251,7 +296,7 @@ func variableNameFor(register: AVRModules.Module.RegisterGroup.Register) -> Stri
     }
 }
 
-func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSize: timerBitSize) -> MemberBlockItemSyntax {
+func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSize: TimerInfo.BitSize) -> MemberBlockItemSyntax {
     
     let variableName = variableNameFor(register: register)
     
@@ -316,7 +361,7 @@ struct SupplementalData {
     let documentation: String
 }
 
-func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalData {
+func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, timerInfo: TimerInfo) -> SupplementalData {
     switch bitfield.name {
         // Interrupt Mask Register
     case .OCIE0B, .OCIE1B, .OCIE2B, .OCIE3B, .OCIE4B, .OCIE5B:
@@ -348,7 +393,7 @@ func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitf
     case .FOC0B, .FOC1B, .FOC2B, .FOC3B, .FOC4B, .FOC5B:
         return SupplementalData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareBDocumentation)
     case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
-        return SupplementalData(variableName: "prescaler", valueType: "InternalClockOnlyPrescaling", defaultValue: ".noClockSource", documentation: prescalerDocumentation) // TODO: This needs to know if the parent clock is an internal or external timer.
+        return SupplementalData(variableName: "prescaler", valueType: timerInfo.prescalingProtocol, defaultValue: ".noClockSource", documentation: prescalerDocumentation)
     
         // Asynchronous Status Register
     case .EXCLK:
@@ -385,21 +430,10 @@ func generateSplitBitfieldAccessor(
     bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield,
     parentVariableNameA: String,
     parentVariableNameB: String,
-    bitSize: timerBitSize) -> MemberBlockItemSyntax {
+    timerInfo: TimerInfo) -> MemberBlockItemSyntax {
     
     let caption = bitfieldA.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
-    let info = supplementalDataFor(bitfield: bitfieldA)
-    
-    var timerType: String {
-        switch bitSize {
-        case .eightBit:
-            return "Timer8Bit"
-        case .sixteenBit:
-            return "Timer16Bit"
-        default:
-            return ""
-        }
-    }
+    let info = supplementalDataFor(bitfield: bitfieldA, timerInfo: timerInfo)
     
     let bitmaskA = bitfieldA.mask.value.lowByte.binaryString
     let bitshiftA = UInt8(bitfieldA.mask.value.trailingZeroBitCount)
@@ -414,10 +448,10 @@ func generateSplitBitfieldAccessor(
           /// \(raw: bitfieldA.name) – \(raw: caption) \(raw: info.documentation)
           @inlinable
           @inline(__always)
-          public static var \(raw: info.variableName): \(raw: timerType).\(raw: info.valueType) {
+          public static var \(raw: info.variableName): \(raw: timerInfo.timerProtocol).\(raw: info.valueType) {
               get {
                   let mode = ((\(raw: parentVariableNameB) & \(raw: bitmaskB)) >> 1) | (\(raw: parentVariableNameA) & \(raw: bitmaskA))
-                  return \(raw: timerType).\(raw: info.valueType)(rawValue: mode) ?? \(raw: info.defaultValue)
+                  return \(raw: timerInfo.timerProtocol).\(raw: info.valueType)(rawValue: mode) ?? \(raw: info.defaultValue)
               }
               set {
                   \(raw: parentVariableNameA) |= (newValue.rawValue & \(raw: enumBitmaskA)) << UInt8(\(raw: bitshiftA)))
@@ -432,7 +466,7 @@ func generateSplitBitfieldAccessor(
 
 
 // TODO: Pass the parent register name to this function so I can set the bits on the parent register.
-func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String, bitSize: timerBitSize) -> MemberBlockItemSyntax {
+func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String, timerInfo: TimerInfo) -> MemberBlockItemSyntax {
     
     // The WGM Bitfield is split between two registers so this takes special handling.
     switch bitfield.name {
@@ -441,7 +475,7 @@ func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register
         print("Bitfield: \(bitfield.name)")
         if let wgmBitfield = wmgBitfieldA {
             print("Privious Bitfield: \(wgmBitfield.bitfield.name)")
-            let bitFieldAccessor = generateSplitBitfieldAccessor(bitfieldA: wgmBitfield.bitfield, bitfieldB: bitfield, parentVariableNameA: wgmBitfield.parentVariableName, parentVariableNameB: parentVariableName, bitSize: bitSize)
+            let bitFieldAccessor = generateSplitBitfieldAccessor(bitfieldA: wgmBitfield.bitfield, bitfieldB: bitfield, parentVariableNameA: wgmBitfield.parentVariableName, parentVariableNameB: parentVariableName, timerInfo: timerInfo)
             wmgBitfieldA = nil
             return bitFieldAccessor
         } else {
@@ -454,7 +488,7 @@ func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register
     }
     
     let caption = bitfield.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
-    let info = supplementalDataFor(bitfield: bitfield)
+    let info = supplementalDataFor(bitfield: bitfield, timerInfo: timerInfo)
     let bitmask = bitfield.mask.value.lowByte.binaryString
     let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
     let enumBitmask = (bitfield.mask.value.lowByte >> bitshift).binaryString
