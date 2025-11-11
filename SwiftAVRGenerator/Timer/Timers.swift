@@ -104,19 +104,25 @@ func buildFileHeaderFor(fileName: String) -> String {
     return fileHeader
 }
 
+enum timerBitSize: String, Codable {
+    case eightBit = "UInt8"
+    case sixteenBit = "UInt16"
+    case none
+}
+
 func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFile {
     let fileName = "\(timerName).swift"
     var code: String = buildFileHeaderFor(fileName: timerName)
     
-    let bitSize: String = {
+    let bitSize: timerBitSize = {
         switch module.name {
         case .tc8, .tc8Async:
-            return "UInt8"
+            return .eightBit
         case .tc10, .tc16:
-            return "UInt16"
+            return .sixteenBit
         default:
             assertionFailure("Failed to find bit size.")
-            return ""
+            return .none
         }
     }()
     
@@ -132,7 +138,7 @@ func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFi
             
             // TODO: Generate Bitfield Accessor EX: Wave Form Generation Mode (WGM)
             for bitfield in register.bitfield {
-                let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariableName: registerVariableName)
+                let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariableName: registerVariableName, bitSize: bitSize)
                 memberBlockList.append(bitfieldMemberBlock)
             }
         }
@@ -245,7 +251,7 @@ func variableNameFor(register: AVRModules.Module.RegisterGroup.Register) -> Stri
     }
 }
 
-func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSize: String) -> MemberBlockItemSyntax {
+func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSize: timerBitSize) -> MemberBlockItemSyntax {
     
     let variableName = variableNameFor(register: register)
     
@@ -260,6 +266,16 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
         registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
     }
     
+    var registerBitSize: String {
+        switch bitSize {
+        case .eightBit:
+            return "UInt8"
+        case .sixteenBit:
+            return "UInt16"
+        default:
+            return ""
+        }
+    }
     
     // TODO: Generate bit names and R/W in documentation table properly.
     // TODO: I don't think the UInt8 & UInt16 is set properly as the timer can be a 16 bit timer but only some of the registers need to be 16 bit while others are still 8 bit.
@@ -279,12 +295,12 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
           ///```
           @inlinable
           @inline(__always)
-          public static var \(raw: variableName): \(raw: bitSize) {
+          public static var \(raw: variableName): \(raw: registerBitSize) {
               get {
-                  _volatileRegisterRead\(raw: bitSize)(\(raw: register.offset.rawValue))
+                  _volatileRegisterRead\(raw: registerBitSize)(\(raw: register.offset.rawValue))
               }
               set {
-                  _volatileRegisterWrite\(raw: bitSize)(\(raw: register.offset.rawValue), newValue)
+                  _volatileRegisterWrite\(raw: registerBitSize)(\(raw: register.offset.rawValue), newValue)
               }
           }
       """
@@ -324,13 +340,13 @@ func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitf
     case .COM0B, .COM1B, .COM2B, .COM3B, .COM4B, .COM5B:
         return SupplementalData(variableName: "compareOutputModeB", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeBDocumentation)
     case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
-        return SupplementalData(variableName: "waveformGenerationMode", valueType: "Timer8Bit.WaveformGenerationMode", defaultValue: ".normal", documentation: waveformGenerationModeDocumentation) // TODO: Needs to know if this is an 8 bit or 16 bit timer.
+        return SupplementalData(variableName: "waveformGenerationMode", valueType: "WaveformGenerationMode", defaultValue: ".normal", documentation: waveformGenerationModeDocumentation)
         
         // Control Register B
     case .FOC0A, .FOC1A, .FOC2A, .FOC3A, .FOC4A, .FOC5A:
-        return SupplementalData(variableName: "forceOutputCompareA", valueType: "Bool", defaultValue: "", documentation: "") // TODO: Finish this in CoreAVR
+        return SupplementalData(variableName: "forceOutputCompareA", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareADocumentation)
     case .FOC0B, .FOC1B, .FOC2B, .FOC3B, .FOC4B, .FOC5B:
-        return SupplementalData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: "") // TODO: Finish this in CoreAVR
+        return SupplementalData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareBDocumentation)
     case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
         return SupplementalData(variableName: "prescaler", valueType: "InternalClockOnlyPrescaling", defaultValue: ".noClockSource", documentation: prescalerDocumentation) // TODO: This needs to know if the parent clock is an internal or external timer.
     
@@ -353,7 +369,7 @@ func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitf
     
         // General Timer/Counter Control Register
     case .TSM:
-        return SupplementalData(variableName: "timerSynchronizationMode", valueType: "Timer.TimerSynchronizationMode", defaultValue: ".disabled", documentation: "")
+        return SupplementalData(variableName: "timerSynchronizationMode", valueType: "Timer.TimerSynchronizationMode", defaultValue: ".disabled", documentation: timerSynchronizationModeDocumentation)
     case .PSRASY:
         return SupplementalData(variableName: "prescalerReset", valueType: "Bool", defaultValue: "", documentation: "")
         
@@ -364,10 +380,26 @@ func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitf
 
 var wmgBitfieldA: (bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String)? = nil
 
-func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield, bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableNameA: String, parentVariableNameB: String) -> MemberBlockItemSyntax {
+func generateSplitBitfieldAccessor(
+    bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield,
+    bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield,
+    parentVariableNameA: String,
+    parentVariableNameB: String,
+    bitSize: timerBitSize) -> MemberBlockItemSyntax {
     
     let caption = bitfieldA.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
     let info = supplementalDataFor(bitfield: bitfieldA)
+    
+    var timerType: String {
+        switch bitSize {
+        case .eightBit:
+            return "Timer8Bit"
+        case .sixteenBit:
+            return "Timer16Bit"
+        default:
+            return ""
+        }
+    }
     
     let bitmaskA = bitfieldA.mask.value.lowByte.binaryString
     let bitshiftA = UInt8(bitfieldA.mask.value.trailingZeroBitCount)
@@ -382,10 +414,10 @@ func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Re
           /// \(raw: bitfieldA.name) – \(raw: caption) \(raw: info.documentation)
           @inlinable
           @inline(__always)
-          public static var \(raw: info.variableName): \(raw: info.valueType) {
+          public static var \(raw: info.variableName): \(raw: timerType).\(raw: info.valueType) {
               get {
                   let mode = ((\(raw: parentVariableNameB) & \(raw: bitmaskB)) >> 1) | (\(raw: parentVariableNameA) & \(raw: bitmaskA))
-                  return \(raw: info.valueType)(rawValue: mode) ?? \(raw: info.defaultValue)
+                  return \(raw: timerType).\(raw: info.valueType)(rawValue: mode) ?? \(raw: info.defaultValue)
               }
               set {
                   \(raw: parentVariableNameA) |= (newValue.rawValue & \(raw: enumBitmaskA)) << UInt8(\(raw: bitshiftA)))
@@ -400,17 +432,16 @@ func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Re
 
 
 // TODO: Pass the parent register name to this function so I can set the bits on the parent register.
-func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String) -> MemberBlockItemSyntax {
+func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String, bitSize: timerBitSize) -> MemberBlockItemSyntax {
     
     // The WGM Bitfield is split between two registers so this takes special handling.
     switch bitfield.name {
-        
     case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
         print()
         print("Bitfield: \(bitfield.name)")
         if let wgmBitfield = wmgBitfieldA {
             print("Privious Bitfield: \(wgmBitfield.bitfield.name)")
-            let bitFieldAccessor = generateSplitBitfieldAccessor(bitfieldA: wgmBitfield.bitfield, bitfieldB: bitfield, parentVariableNameA: wgmBitfield.parentVariableName, parentVariableNameB: parentVariableName)
+            let bitFieldAccessor = generateSplitBitfieldAccessor(bitfieldA: wgmBitfield.bitfield, bitfieldB: bitfield, parentVariableNameA: wgmBitfield.parentVariableName, parentVariableNameB: parentVariableName, bitSize: bitSize)
             wmgBitfieldA = nil
             return bitFieldAccessor
         } else {
@@ -548,10 +579,6 @@ let outputCompareModeADocumentation: String = """
     ///
 """
 
-
-
-
-
 let outputCompareModeBDocumentation: String = """
 \n    /// See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.
     ///
@@ -622,9 +649,6 @@ let outputCompareModeBDocumentation: String = """
     ///
 """
 
-
-
-
 let waveformGenerationModeDocumentation: String = """
 \n    ///
     /// Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the
@@ -660,7 +684,6 @@ let waveformGenerationModeDocumentation: String = """
     ///
 """
 
-
 let prescalerDocumentation: String = """
 \n    /// The three Clock Select bits select the clock source to be used by the Timer/Counter, see Table 18-9 on page 165.
     ///
@@ -690,4 +713,38 @@ let prescalerDocumentation: String = """
     /// pin is configured as an output. This feature allows software control of the counting.
     ///
     /// Note: In the datasheet this is called the Clock Select. Prescaler is probably more descriptive.
+"""
+
+let timerSynchronizationModeDocumentation: String = """
+\n    ///
+    /// Writing the TSM bit to one activates the Timer/Counter Synchronization mode. In this mode, the value that is
+    /// written to the PSRASY and PSRSYNC bits is kept, hence keeping the corresponding prescaler reset signals
+    /// asserted. This ensures that the corresponding Timer/Counters are halted and can be configured to the same
+    /// value without the risk of one of them advancing during configuration. When the TSM bit is written to zero, the
+    /// PSRASY and PSRSYNC bits are cleared by hardware, and the Timer/Counters start counting simultaneously.
+    ///
+"""
+
+let forceOutputCompareADocumentation: String = """
+\n    ///
+    /// The FOC2A bit is only active when the WGM bits specify a non-PWM mode.
+    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written
+    /// when operating in PWM mode. When writing a logical one to the FOC2A bit, an immediate Compare Match is
+    /// forced on the Waveform Generation unit. The OC2A output is changed according to its COM2A1:0 bits setting.
+    /// Note that the FOC2A bit is implemented as a strobe. Therefore it is the value present in the COM2A1:0 bits that
+    /// determines the effect of the forced compare.
+    /// A FOC2A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2A as TOP.
+    /// The FOC2A bit is always read as zero.
+"""
+
+let forceOutputCompareBDocumentation: String = """
+\n    ///
+    /// The FOC2B bit is only active when the WGM bits specify a non-PWM mode.
+    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written
+    /// when operating in PWM mode. When writing a logical one to the FOC2B bit, an immediate Compare Match is
+    /// forced on the Waveform Generation unit. The OC2B output is changed according to its COM2B1:0 bits setting.
+    /// Note that the FOC2B bit is implemented as a strobe. Therefore it is the value present in the COM2B1:0 bits that
+    /// determines the effect of the forced compare.
+    /// A FOC2B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2B as TOP.
+    /// The FOC2B bit is always read as zero.
 """

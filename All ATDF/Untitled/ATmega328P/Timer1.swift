@@ -413,10 +413,10 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///
     @inlinable
     @inline(__always)
-    public static var waveformGenerationMode: Timer8Bit.WaveformGenerationMode {
+    public static var waveformGenerationMode: Timer16Bit.WaveformGenerationMode {
         get {
             let mode = ((controlRegisterB & 0b00011000) >> 1) | (controlRegisterA & 0b00000011)
-            return Timer8Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
+            return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
@@ -486,6 +486,15 @@ public struct Timer1: Timer16Bit, HasExternalClock {
         }
     }
     /// FOC1A –  
+    ///
+    /// The FOC2A bit is only active when the WGM bits specify a non-PWM mode.
+    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written
+    /// when operating in PWM mode. When writing a logical one to the FOC2A bit, an immediate Compare Match is
+    /// forced on the Waveform Generation unit. The OC2A output is changed according to its COM2A1:0 bits setting.
+    /// Note that the FOC2A bit is implemented as a strobe. Therefore it is the value present in the COM2A1:0 bits that
+    /// determines the effect of the forced compare.
+    /// A FOC2A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2A as TOP.
+    /// The FOC2A bit is always read as zero.
     @inlinable
     @inline(__always)
     public static var forceOutputCompareA: Bool {
@@ -498,6 +507,15 @@ public struct Timer1: Timer16Bit, HasExternalClock {
         }
     }
     /// FOC1B –  
+    ///
+    /// The FOC2B bit is only active when the WGM bits specify a non-PWM mode.
+    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written
+    /// when operating in PWM mode. When writing a logical one to the FOC2B bit, an immediate Compare Match is
+    /// forced on the Waveform Generation unit. The OC2B output is changed according to its COM2B1:0 bits setting.
+    /// Note that the FOC2B bit is implemented as a strobe. Therefore it is the value present in the COM2B1:0 bits that
+    /// determines the effect of the forced compare.
+    /// A FOC2B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2B as TOP.
+    /// The FOC2B bit is always read as zero.
     @inlinable
     @inline(__always)
     public static var forceOutputCompareB: Bool {
@@ -620,6 +638,13 @@ public struct Timer1: Timer16Bit, HasExternalClock {
         }
     }
     /// TSM – Timer/Counter Synchronization Mode 
+    ///
+    /// Writing the TSM bit to one activates the Timer/Counter Synchronization mode. In this mode, the value that is
+    /// written to the PSRASY and PSRSYNC bits is kept, hence keeping the corresponding prescaler reset signals
+    /// asserted. This ensures that the corresponding Timer/Counters are halted and can be configured to the same
+    /// value without the risk of one of them advancing during configuration. When the TSM bit is written to zero, the
+    /// PSRASY and PSRSYNC bits are cleared by hardware, and the Timer/Counters start counting simultaneously.
+    ///
     @inlinable
     @inline(__always)
     public static var timerSynchronizationMode: Timer.TimerSynchronizationMode {
