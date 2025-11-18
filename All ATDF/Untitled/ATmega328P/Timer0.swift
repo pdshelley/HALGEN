@@ -3,7 +3,7 @@
 // Timer0.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/10/2025.
+// Created by Swift AVR Generator on 11/18/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -142,41 +142,45 @@ public struct Timer0: Timer8Bit, HasExternalClock {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
     }
-    /// CS0 – Clock Select 
-    /// The three Clock Select bits select the clock source to be used by the Timer/Counter, see Table 18-9 on page 165.
-    ///
-    /// Table 18-9. Clock Select Bit Description
-    ///```
+    /// ```
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |  Mode  | CS22  | CS21  | CS20  | Description                                                     |
+    /// |  Mode  | CS02  | CS01  | CS00  | Description                                                     |
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    0   |   0   |   0   |   0   | No clock source (Timer/Counter stopped)                         |
+    /// |    0   |   0   |   0   |   0   | No Clock Source (Stopped)                                       |
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    1   |   0   |   0   |   1   | clk T2S/(No prescaling)                                         |
+    /// |    1   |   0   |   0   |   1   | Running, No Prescaling                                          |
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    2   |   0   |   1   |   0   | clk T2S/8 (From prescaler)                                      |
+    /// |    2   |   0   |   1   |   0   | Running, CLK/8                                                  |
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    3   |   0   |   1   |   1   | clk T2S/32 (From prescaler)                                     |
+    /// |    3   |   0   |   1   |   1   | Running, CLK/64                                                 |
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    4   |   1   |   0   |   0   | clkI T2S/64 (From prescaler)                                    |
+    /// |    4   |   1   |   0   |   0   | Running, CLK/256                                                |
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    5   |   1   |   0   |   1   | clkI T2S/128 (From prescaler)                                   |
+    /// |    5   |   1   |   0   |   1   | Running, CLK/1024                                               |
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    6   |   1   |   1   |   0   | clkI T2S/256 (From prescaler)                                   |
+    /// |    6   |   1   |   1   |   0   | External clock source. Clock on falling edge.                   |
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    7   |   1   |   1   |   1   | clkI T2S/1024 (From prescaler)                                  |
+    /// |    7   |   1   |   1   |   1   | External clock source. Clock on rising edge.                    |
     /// |--------|-------|-------|-------|-----------------------------------------------------------------|
     /// ```
-    /// If external pin modes are used for the Timer/Counter0, transitions on the T0 pin will clock the counter even if the
-    /// pin is configured as an output. This feature allows software control of the counting.
-    ///
-    /// Note: In the datasheet this is called the Clock Select. Prescaler is probably more descriptive.
+    public enum Prescaling: UInt8 {
+        case stopped = 0
+        case runningNone = 1
+        case runningEight = 2
+        case runningSixtyFour = 3
+        case runningTwoFiftySix = 4
+        case runningTenTwentyFour = 5
+        case runningExternalFallingEdge = 6
+        case runningExternalRisingEdge = 7
+    }
+    /// CS0 – Clock Select 
+    /// The three Clock Select bits select the clock source to be used by the Timer/Counter.
     @inlinable
     @inline(__always)
-    public static var prescaler: HasExternalClockPrescaling {
+    public static var prescaler: Prescaling {
         get {
             let mode = (controlRegisterB & 0b00000111) >> UInt8(0)
-            return HasExternalClockPrescaling.init(rawValue: mode) ?? .noClockSource
+            return Prescaling.init(rawValue: mode) ?? .stopped
         }
         set {
             controlRegisterB |= (newValue.rawValue & 0b00000111) << UInt8(0)

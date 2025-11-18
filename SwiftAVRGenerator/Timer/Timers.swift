@@ -184,8 +184,43 @@ func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFi
             
             // TODO: Generate Bitfield Accessor EX: Wave Form Generation Mode (WGM)
             for bitfield in register.bitfield {
-                let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariableName: registerVariableName, timerInfo: timerInfo)
-                memberBlockList.append(bitfieldMemberBlock)
+                
+                switch bitfield.name {
+                    // TODO: Move the WGM logic here?
+                    // The WGM Bitfield is split between two registers so this takes special handling.
+//                case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
+//                    print()
+//                    print("Bitfield: \(bitfield.name)")
+//                    if let wgmBitfield = wmgBitfieldA {
+//                        print("Privious Bitfield: \(wgmBitfield.bitfield.name)")
+//                        let bitFieldAccessor = generateSplitBitfieldAccessor(bitfieldA: wgmBitfield.bitfield, bitfieldB: bitfield, parentVariableNameA: wgmBitfield.parentVariableName, parentVariableNameB: parentVariableName, timerInfo: timerInfo)
+//                        wmgBitfieldA = nil
+//                        return bitFieldAccessor
+//                    } else {
+//                        print("New Bitfield: \(bitfield.name)")
+//                        wmgBitfieldA = (bitfield, parentVariableName)
+//                        return MemberBlockItemSyntax(decl: DeclSyntax("")) // Return nothing
+//                    }
+                case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
+                    // Generate The Enum
+                    if let valueGroupName = bitfield.values?.rawValue {
+                        for valueGroup in module.valueGroup {
+                            // Make sure that the name of the valueGroup matches
+                            if valueGroup.name.rawValue == valueGroupName {
+                                let bitfieldMemberBlock = generateEnumFrom(ValueGroup: valueGroup, bitfieldName: bitfield.name.rawValue)
+                                memberBlockList.append(bitfieldMemberBlock)
+                            }
+                        }
+                    }
+                    
+                    // Then Generate the standard Bitfield Accessor
+                    let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariableName: registerVariableName, timerInfo: timerInfo)
+                    memberBlockList.append(bitfieldMemberBlock)
+                default:
+                    // Generate the standard Bitfield Accessor
+                    let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariableName: registerVariableName, timerInfo: timerInfo)
+                    memberBlockList.append(bitfieldMemberBlock)
+                }
             }
         }
     }
@@ -393,7 +428,7 @@ func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitf
     case .FOC0B, .FOC1B, .FOC2B, .FOC3B, .FOC4B, .FOC5B:
         return SupplementalData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareBDocumentation)
     case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
-        return SupplementalData(variableName: "prescaler", valueType: timerInfo.prescalingProtocol, defaultValue: ".noClockSource", documentation: prescalerDocumentation)
+        return SupplementalData(variableName: "prescaler", valueType: "Prescaling", defaultValue: ".stopped", documentation: prescalerDocumentation)
     
         // Asynchronous Status Register
     case .EXCLK:
@@ -464,12 +499,129 @@ func generateSplitBitfieldAccessor(
     return MemberBlockItemSyntax(decl: source)
 }
 
+/// This takes messy string data that should be a number and tries to convert it to a UInt8. Default Value is 0.
+/// - Parameter stringValue: Hex values as a string, Intigers as a string, or anything else that will default to 0
+/// - Returns: UInt8. If the number is greater than 8 Bit Max then return 0.
+func numberFromValue(stringValue: String) -> UInt8 {
+    let trimmedString = stringValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            
+    // Empty string → default
+    guard !trimmedString.isEmpty else { return 0 }
+    
+    // Hex: either starts with "0x" or consists only of hex digits
+    let hexString: String
+    if trimmedString.hasPrefix("0x") {
+        hexString = String(trimmedString.dropFirst(2))
+    } else if trimmedString.allSatisfy({ $0.isHexDigit }) {
+        hexString = trimmedString
+    } else {
+        hexString = ""
+    }
+    
+    // Try hex first
+    if !hexString.isEmpty,
+        let value = UInt8(hexString, radix: 16), value <= 255 {
+        return value
+    }
+    
+    // Then try decimal
+    if let value = UInt8(trimmedString), value <= 255 {
+        return value
+    }
+    
+    // Anything else (text, out-of-range, etc.) → default
+    return 0
+}
+
+func generateEnumFrom(ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: String) -> MemberBlockItemSyntax {
+    
+    var documentationTable = """
+        /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+        /// |  Mode  | \(bitfieldName)2  | \(bitfieldName)1  | \(bitfieldName)0  | Description                                                     |
+        /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    """
+    
+    var enumValues = ""
+    
+    for value in ValueGroup.value {
+        var description = ""
+        var enumValue = ""
+        
+        switch value.name {
+        case .NOCLOCKSOURCESTOPPED, .NOCLOCKSOURCETIMERCOUNTERSTOPPED, .NOCLOCKSOURCETIMERCOUNTER0STOPPED, .NOCLOCKSOURCETIMERCOUNTER2STOPPED:
+            description = "No Clock Source (Stopped)"
+            enumValue = "stopped"
+        case .RUNNINGNOPRESCALING:
+            description = "Running, No Prescaling"
+            enumValue = "runningNone"
+        case .RUNNINGCLK8:
+            description = "Running, CLK/8"
+            enumValue = "runningEight"
+        case .RUNNINGCLK16:
+            description = "Running, CLK/16"
+            enumValue = "runningSixteen"
+        case .RUNNINGCLK32:
+            description = "Running, CLK/32"
+            enumValue = "runningThirtyTwo"
+        case .RUNNINGCLK64:
+            description = "Running, CLK/64"
+            enumValue = "runningSixtyFour"
+        case .RUNNINGCLK128:
+            description = "Running, CLK/128"
+            enumValue = "runningOneTwentyEight"
+        case .RUNNINGCLK256:
+            description = "Running, CLK/256"
+            enumValue = "runningTwoFiftySix"
+        case .RUNNINGCLK1024:
+            description = "Running, CLK/1024"
+            enumValue = "runningTenTwentyFour"
+        case .RUNNINGEXTCLKTNFALLINGEDGE:
+            description = "External clock source. Clock on falling edge."
+            enumValue = "runningExternalFallingEdge"
+        case .RUNNINGEXTCLKTNRISINGEDGE:
+            description = "External clock source. Clock on rising edge."
+            enumValue = "runningExternalRisingEdge"
+        default:
+            description = ""
+        }
+        
+        // Note: Can't Convert in the Codable conversion because there is messy data that is not always numbers.
+        let number = numberFromValue(stringValue: value.value.rawValue)
+        
+        let documentationRow = """
+        
+            /// |    \(number)   |   \((number & 0b00000100) >> 2)   |   \((number & 0b00000010) >> 1)   |   \(number & 0b00000001)   | \(description.padding(toLength: 64, withPad: " ", startingAt: 0))|
+            /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+        """
+        
+        let enumValueRow = "        case \(enumValue) = \(number)\n"
+        
+        documentationTable.append(documentationRow)
+        enumValues.append(enumValueRow)
+    }
+    
+    
+    
+    
+    let source = DeclSyntax(
+      """
+          /// ```
+      \(raw: documentationTable)
+          /// ```
+          public enum Prescaling: UInt8 {
+      \(raw: enumValues)}
+      """
+    )
+    
+    return MemberBlockItemSyntax(decl: source)
+}
 
 // TODO: Pass the parent register name to this function so I can set the bits on the parent register.
 func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String, timerInfo: TimerInfo) -> MemberBlockItemSyntax {
     
-    // The WGM Bitfield is split between two registers so this takes special handling.
+    
     switch bitfield.name {
+        // The WGM Bitfield is split between two registers so this takes special handling.
     case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
         print()
         print("Bitfield: \(bitfield.name)")
@@ -719,34 +871,7 @@ let waveformGenerationModeDocumentation: String = """
 """
 
 let prescalerDocumentation: String = """
-\n    /// The three Clock Select bits select the clock source to be used by the Timer/Counter, see Table 18-9 on page 165.
-    ///
-    /// Table 18-9. Clock Select Bit Description
-    ///```
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |  Mode  | CS22  | CS21  | CS20  | Description                                                     |
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    0   |   0   |   0   |   0   | No clock source (Timer/Counter stopped)                         |
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    1   |   0   |   0   |   1   | clk T2S/(No prescaling)                                         |
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    2   |   0   |   1   |   0   | clk T2S/8 (From prescaler)                                      |
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    3   |   0   |   1   |   1   | clk T2S/32 (From prescaler)                                     |
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    4   |   1   |   0   |   0   | clkI T2S/64 (From prescaler)                                    |
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    5   |   1   |   0   |   1   | clkI T2S/128 (From prescaler)                                   |
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    6   |   1   |   1   |   0   | clkI T2S/256 (From prescaler)                                   |
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// |    7   |   1   |   1   |   1   | clkI T2S/1024 (From prescaler)                                  |
-    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    /// ```
-    /// If external pin modes are used for the Timer/Counter0, transitions on the T0 pin will clock the counter even if the
-    /// pin is configured as an output. This feature allows software control of the counting.
-    ///
-    /// Note: In the datasheet this is called the Clock Select. Prescaler is probably more descriptive.
+\n    /// The three Clock Select bits select the clock source to be used by the Timer/Counter.
 """
 
 let timerSynchronizationModeDocumentation: String = """
