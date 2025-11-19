@@ -553,28 +553,28 @@ func generateEnumFrom(ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: St
             enumValue = "stopped"
         case .RUNNINGNOPRESCALING:
             description = "Running, No Prescaling"
-            enumValue = "runningNone"
+            enumValue = "runningWithoutPrescaling"
         case .RUNNINGCLK8:
             description = "Running, CLK/8"
-            enumValue = "runningEight"
+            enumValue = "running8"
         case .RUNNINGCLK16:
             description = "Running, CLK/16"
-            enumValue = "runningSixteen"
+            enumValue = "running16"
         case .RUNNINGCLK32:
             description = "Running, CLK/32"
-            enumValue = "runningThirtyTwo"
+            enumValue = "running32"
         case .RUNNINGCLK64:
             description = "Running, CLK/64"
-            enumValue = "runningSixtyFour"
+            enumValue = "running64"
         case .RUNNINGCLK128:
             description = "Running, CLK/128"
-            enumValue = "runningOneTwentyEight"
+            enumValue = "running128"
         case .RUNNINGCLK256:
             description = "Running, CLK/256"
-            enumValue = "runningTwoFiftySix"
+            enumValue = "running256"
         case .RUNNINGCLK1024:
             description = "Running, CLK/1024"
-            enumValue = "runningTenTwentyFour"
+            enumValue = "running1024"
         case .RUNNINGEXTCLKTNFALLINGEDGE:
             description = "External clock source. Clock on falling edge."
             enumValue = "runningExternalFallingEdge"

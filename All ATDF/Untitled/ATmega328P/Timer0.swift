@@ -3,7 +3,7 @@
 // Timer0.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/18/2025.
+// Created by Swift AVR Generator on 11/19/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -165,11 +165,11 @@ public struct Timer0: Timer8Bit, HasExternalClock {
     /// ```
     public enum Prescaling: UInt8 {
         case stopped = 0
-        case runningNone = 1
-        case runningEight = 2
-        case runningSixtyFour = 3
-        case runningTwoFiftySix = 4
-        case runningTenTwentyFour = 5
+        case runningWithoutPrescaling = 1
+        case running8 = 2
+        case running64 = 3
+        case running256 = 4
+        case running1024 = 5
         case runningExternalFallingEdge = 6
         case runningExternalRisingEdge = 7
     }

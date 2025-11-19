@@ -3,7 +3,7 @@
 // Timer2.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/18/2025.
+// Created by Swift AVR Generator on 11/19/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -440,13 +440,13 @@ public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
     /// ```
     public enum Prescaling: UInt8 {
         case stopped = 0
-        case runningNone = 1
-        case runningEight = 2
-        case runningThirtyTwo = 3
-        case runningSixtyFour = 4
-        case runningOneTwentyEight = 5
-        case runningTwoFiftySix = 6
-        case runningTenTwentyFour = 7
+        case runningWithoutPrescaling = 1
+        case running8 = 2
+        case running32 = 3
+        case running64 = 4
+        case running128 = 5
+        case running256 = 6
+        case running1024 = 7
     }
     /// CS2 – Clock Select bits 
     /// The three Clock Select bits select the clock source to be used by the Timer/Counter.
