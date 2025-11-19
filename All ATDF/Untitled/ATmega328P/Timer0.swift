@@ -70,7 +70,7 @@ public struct Timer0: Timer8Bit, HasExternalClock {
     ///```
     @inlinable
     @inline(__always)
-    public static var number: UInt8 {
+    public static var count: UInt8 {
         get {
             _volatileRegisterReadUInt8(0x46)
         }

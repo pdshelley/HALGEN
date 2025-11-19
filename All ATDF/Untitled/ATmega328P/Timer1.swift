@@ -545,7 +545,7 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     ///```
     @inlinable
     @inline(__always)
-    public static var number: UInt16 {
+    public static var count: UInt16 {
         get {
             _volatileRegisterReadUInt16(0x84)
         }

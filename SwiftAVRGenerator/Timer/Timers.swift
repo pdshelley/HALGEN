@@ -308,7 +308,7 @@ func variableNameFor(register: AVRModules.Module.RegisterGroup.Register) -> Stri
     case .TCCR0B, .TCCR1B, .TCCR2B, .TCCR3B, .TCCR4B, .TCCR5B:
         return "controlRegisterB"
     case .TCNT0, .TCNT1, .TCNT2, .TCNT3, .TCNT4, .TCNT5:
-        return "number" // TODO: What should this be called? "number"?
+        return "count"
     case .OCR0B, .OCR1B, .OCR2B, .OCR3B, .OCR4B, .OCR5B:
         return "outputCompareRegisterB"
     case .OCR0A, .OCR1A, .OCR2A, .OCR3A, .OCR4A, .OCR5A:

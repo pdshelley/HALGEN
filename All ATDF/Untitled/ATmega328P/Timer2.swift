@@ -475,7 +475,7 @@ public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
     ///```
     @inlinable
     @inline(__always)
-    public static var number: UInt8 {
+    public static var count: UInt8 {
         get {
             _volatileRegisterReadUInt8(0xB2)
         }
