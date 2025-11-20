@@ -168,6 +168,7 @@ func buildFileHeaderFor(fileName: String) -> String {
 }
 
 func buildTimer(module: AVRModules.Module, timerName: String) -> GeneratedCodeFile {
+    print("------------------\(timerName)------------------")
     let fileName = "\(timerName).swift"
     var code: String = buildFileHeaderFor(fileName: timerName)
     let timerInfo = gatherTimerInfoFrom(module: module)
@@ -460,23 +461,57 @@ func supplementalDataFor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitf
 
 var wmgBitfieldA: (bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableName: String)? = nil
 
-func generateSplitBitfieldAccessor(
-    bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield,
-    bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield,
-    parentVariableNameA: String,
-    parentVariableNameB: String,
-    timerInfo: TimerInfo) -> MemberBlockItemSyntax {
+func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield, bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableNameA: String, parentVariableNameB: String, timerInfo: TimerInfo) -> MemberBlockItemSyntax {
+    
+    // Example Data:
+    // Register A Bitmask:           0b00000011
+    // Register B Bitmask:           0b00001000
+    // New Value Bitmask:            0b00000111
+    // Register B New Value Bitmask: 0b00000100
+    // Register B Bitshift should be: << 1 to get back to the "Register B Bitmask" location
     
     let caption = bitfieldA.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
     let info = supplementalDataFor(bitfield: bitfieldA, timerInfo: timerInfo)
     
-    let bitmaskA = bitfieldA.mask.value.lowByte.binaryString
-    let bitshiftA = UInt8(bitfieldA.mask.value.trailingZeroBitCount)
-    let enumBitmaskA = (bitfieldA.mask.value.lowByte >> bitshiftA).binaryString
+    // Assume that Bitfield A represents the least significant bits.
+    var lowBitfield = bitfieldA
+    var lowParentVariableName = parentVariableNameA
+    var highBitfield = bitfieldB
+    var hightParentVariableName = parentVariableNameB
     
-    let bitmaskB = bitfieldB.mask.value.lowByte.binaryString
-    let bitshiftB = UInt8(bitfieldB.mask.value.trailingZeroBitCount)
-    let enumBitmaskB = (bitfieldB.mask.value.lowByte >> bitshiftB).binaryString
+    // If Bitfield B represents the least significant bits we need to swap them.
+    if bitfieldA.mask.value > bitfieldB.mask.value {
+        lowBitfield = bitfieldB
+        lowParentVariableName = parentVariableNameB
+        highBitfield = bitfieldA
+        hightParentVariableName = parentVariableNameA
+        
+    }
+    
+    // Mask Value is 16 Bits and we have to have 8. Assuming that it's a total error to have a mask with bits above 8 we will just throw those away.
+    let lowBitmask = lowBitfield.mask.value.lowByte.binaryString
+    let highBitmask = highBitfield.mask.value.lowByte.binaryString
+    
+    // We then make sure that the byte is shifted all the way over to the Least Significant Bit because the value assigned will also be in the Least Significant Bits.
+    let lowBitshift = UInt8(lowBitfield.mask.value.trailingZeroBitCount)
+    let highBitshift = UInt8(highBitfield.mask.value.trailingZeroBitCount)
+    
+    // Then turn all of this into a bianary string for legibility, a bitmask should be seen as bits and not an Int or Hex value.
+    let newValueLowBitmask = (lowBitfield.mask.value.lowByte >> lowBitshift).binaryString
+    
+    print()
+    print("-----------------------------------------------------------")
+    print("Low Bitmask Value: \(lowBitfield.mask.value), Mask: \(lowBitmask), Shift: \(lowBitshift)")
+    print("high Bitmask Value: \(highBitfield.mask.value), Mask: \(highBitmask), Shift: \(highBitshift)")
+    print("adjustedHighBitshift = \(highBitshift) - \(UInt8(lowBitfield.mask.value.nonzeroBitCount))")
+    print("-----------------------------------------------------------")
+    print()
+    
+    // This would give me the number of bits to shift, assuming that there is only a single group of bits and not two or more groups split by one or more 0s.
+    let adjustedHighBitshift = highBitshift - UInt8(lowBitfield.mask.value.nonzeroBitCount)
+    
+    // The high bitmask nees to be shifted only enough to lign up with the least significant bits.
+    let newValueHighBitmask = (highBitfield.mask.value.lowByte >> adjustedHighBitshift).binaryString
     
     let source = DeclSyntax(
       """
@@ -485,12 +520,12 @@ func generateSplitBitfieldAccessor(
           @inline(__always)
           public static var \(raw: info.variableName): \(raw: timerInfo.timerProtocol).\(raw: info.valueType) {
               get {
-                  let mode = ((\(raw: parentVariableNameB) & \(raw: bitmaskB)) >> 1) | (\(raw: parentVariableNameA) & \(raw: bitmaskA))
+                  let mode = ((\(raw: hightParentVariableName) & \(raw: highBitmask)) >> \(raw: adjustedHighBitshift)) | (\(raw: lowParentVariableName) & \(raw: lowBitmask))
                   return \(raw: timerInfo.timerProtocol).\(raw: info.valueType)(rawValue: mode) ?? \(raw: info.defaultValue)
               }
               set {
-                  \(raw: parentVariableNameA) |= (newValue.rawValue & \(raw: enumBitmaskA)) << UInt8(\(raw: bitshiftA)))
-                  \(raw: parentVariableNameB) |= ((newValue.rawValue & \(raw: enumBitmaskB)) << UInt8(\(raw: bitshiftB)))
+                  \(raw: lowParentVariableName) |= (newValue.rawValue & \(raw: newValueLowBitmask)) << UInt8(\(raw: lowBitshift)))
+                  \(raw: hightParentVariableName) |= ((newValue.rawValue & \(raw: newValueHighBitmask)) << UInt8(\(raw: adjustedHighBitshift)))
               }
           }
       """
@@ -622,17 +657,17 @@ func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register
     
     switch bitfield.name {
         // The WGM Bitfield is split between two registers so this takes special handling.
-    case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
+    case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM01, .WGM02, .WGM10, .WGM13, .WGM20, .WGM21, .WGM22, .WGM32, .WGM33, .WGM42, .WGM43, .WGMODE:
         print()
         print("Bitfield: \(bitfield.name)")
-        if let wgmBitfield = wmgBitfieldA {
+        if let wgmBitfield = wmgBitfieldA { // If we previously found and saved a WGM Bitfield
             print("Privious Bitfield: \(wgmBitfield.bitfield.name)")
             let bitFieldAccessor = generateSplitBitfieldAccessor(bitfieldA: wgmBitfield.bitfield, bitfieldB: bitfield, parentVariableNameA: wgmBitfield.parentVariableName, parentVariableNameB: parentVariableName, timerInfo: timerInfo)
-            wmgBitfieldA = nil
+            wmgBitfieldA = nil // Clear for next Timer
             return bitFieldAccessor
-        } else {
+        } else {  // We have not previously found and saved a WGM Bitfield
             print("New Bitfield: \(bitfield.name)")
-            wmgBitfieldA = (bitfield, parentVariableName)
+            wmgBitfieldA = (bitfield, parentVariableName) // Save for later when we find the second half
             return MemberBlockItemSyntax(decl: DeclSyntax("")) // Return nothing
         }
     default:

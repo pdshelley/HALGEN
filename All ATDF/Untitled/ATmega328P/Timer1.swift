@@ -420,7 +420,7 @@ public struct Timer1: Timer16Bit, HasExternalClock {
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
-            controlRegisterB |= ((newValue.rawValue & 0b00000011) << UInt8(3))
+            controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
     /// ```

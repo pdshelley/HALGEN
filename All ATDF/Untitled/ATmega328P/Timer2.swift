@@ -414,7 +414,7 @@ public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
-            controlRegisterB |= ((newValue.rawValue & 0b00000001) << UInt8(3))
+            controlRegisterB |= ((newValue.rawValue & 0b00000100) << UInt8(1))
         }
     }
     /// ```
