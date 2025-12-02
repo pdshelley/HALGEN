@@ -3,7 +3,7 @@
 // Timer4.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/19/2025.
+// Created by Swift AVR Generator on 12/02/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -420,7 +420,7 @@ public struct Timer4: Timer16Bit, HasExternalClock {
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
-            controlRegisterB |= ((newValue.rawValue & 0b00000011) << UInt8(3))
+            controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
     /// ```
@@ -1038,28 +1038,49 @@ public struct Timer4: Timer16Bit, HasExternalClock {
             controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(6)
         }
     }
-    /// WGM33 – Waveform Generation Mode bit 3 
+    /// WGM3 – Waveform Genration Mode 
+    ///
+    /// Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the
+    /// counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see
+    /// Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer
+    /// on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of
+    /// Operation” on page 155).
+    ///
+    /// Table 18-8. Waveform Generation Mode Bit Description
+    ///```
+    ///-----------------------------------------------------------------------------------------------------
+    ///|  Mode  | WGM22 | WGM21 | WGM20 | Mode of Operation  |  TOP  | Update of OCRx at | TOV Flag Set on |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    0   |   0   |   0   |   0   | Normal             | 0xFF  | Immediate         | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    1   |   0   |   0   |   1   | PWM, Phase Correct | 0xFF  | TOP               | BOTTOM          |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    2   |   0   |   1   |   0   | CTC                | OCRA  | Immediate         | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    3   |   0   |   1   |   1   | Fast PWM           | 0xFF  | BOTTOM            | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    4   |   1   |   0   |   0   | Reserved           |   -   |         -         |        -        |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    5   |   1   |   0   |   1   | PWM, Phase Correct | OCRA  | TOP               | BOTTOM          |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    6   |   1   |   1   |   0   | Reserved           |   -   |         -         |        -        |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    7   |   1   |   1   |   1   | Fast PWM           | OCRA  | BOTTOM            | TOP             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///```
+    /// Notes: 1. MAX= 0xFF
+    ///      2. BOTTOM= 0x00
+    ///
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var waveformGenerationMode: Timer16Bit.WaveformGenerationMode {
         get {
-            let mode = (controlRegisterB & 0b00010000) >> UInt8(4)
-            return .init(rawValue: mode) ??
+            let mode = ((controlRegisterB & 0b00010000) >> 2) | (controlRegisterA & 0b00000011)
+            return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(4)
-        }
-    }
-    /// WGM32 – Waveform Generation Mode bit 2 
-    @inlinable
-    @inline(__always)
-    public static var :  {
-        get {
-            let mode = (controlRegisterB & 0b00001000) >> UInt8(3)
-            return .init(rawValue: mode) ??
-        }
-        set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(3)
+            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterB |= ((newValue.rawValue & 0b00000100) << UInt8(2))
         }
     }
     /// ```
@@ -1578,49 +1599,17 @@ public struct Timer4: Timer16Bit, HasExternalClock {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(4)
         }
     }
-    /// WGM3 – Waveform Genration Mode 
-    ///
-    /// Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the
-    /// counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see
-    /// Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer
-    /// on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of
-    /// Operation” on page 155).
-    ///
-    /// Table 18-8. Waveform Generation Mode Bit Description
-    ///```
-    ///-----------------------------------------------------------------------------------------------------
-    ///|  Mode  | WGM22 | WGM21 | WGM20 | Mode of Operation  |  TOP  | Update of OCRx at | TOV Flag Set on |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    0   |   0   |   0   |   0   | Normal             | 0xFF  | Immediate         | MAX             |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    1   |   0   |   0   |   1   | PWM, Phase Correct | 0xFF  | TOP               | BOTTOM          |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    2   |   0   |   1   |   0   | CTC                | OCRA  | Immediate         | MAX             |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    3   |   0   |   1   |   1   | Fast PWM           | 0xFF  | BOTTOM            | MAX             |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    4   |   1   |   0   |   0   | Reserved           |   -   |         -         |        -        |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    5   |   1   |   0   |   1   | PWM, Phase Correct | OCRA  | TOP               | BOTTOM          |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    6   |   1   |   1   |   0   | Reserved           |   -   |         -         |        -        |
-    ///-----------------------------------------------------------------------------------------------------
-    ///|    7   |   1   |   1   |   1   | Fast PWM           | OCRA  | BOTTOM            | TOP             |
-    ///-----------------------------------------------------------------------------------------------------
-    ///```
-    /// Notes: 1. MAX= 0xFF
-    ///      2. BOTTOM= 0x00
-    ///
+    /// WGM32 – Waveform Generation Mode bit 2 
     @inlinable
     @inline(__always)
-    public static var waveformGenerationMode: Timer16Bit.WaveformGenerationMode {
+    public static var : Timer16Bit. {
         get {
-            let mode = ((controlRegisterA & 0b00000011) >> 1) | (controlRegisterA & 0b00000011)
-            return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
+            let mode = ((controlRegisterB & 0b00001000) >> 1) | (controlRegisterA & 0b00000011)
+            return Timer16Bit.(rawValue: mode) ??
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
-            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterB |= ((newValue.rawValue & 0b00000100) << UInt8(1))
         }
     }
     /// TCCR4B – Timer/Counter4 Control Register B
@@ -1672,25 +1661,14 @@ public struct Timer4: Timer16Bit, HasExternalClock {
     /// WGM43 – Waveform Generation Mode bit 3 
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var : Timer16Bit. {
         get {
-            let mode = (controlRegisterB & 0b00010000) >> UInt8(4)
-            return .init(rawValue: mode) ??
+            let mode = ((controlRegisterB & 0b00010000) >> 3) | (controlRegisterB & 0b00001000)
+            return Timer16Bit.(rawValue: mode) ??
         }
         set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(4)
-        }
-    }
-    /// WGM42 – Waveform Generation Mode bit 2 
-    @inlinable
-    @inline(__always)
-    public static var :  {
-        get {
-            let mode = (controlRegisterB & 0b00001000) >> UInt8(3)
-            return .init(rawValue: mode) ??
-        }
-        set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(3)
+            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(3))
+            controlRegisterB |= ((newValue.rawValue & 0b00000010) << UInt8(3))
         }
     }
     /// ```

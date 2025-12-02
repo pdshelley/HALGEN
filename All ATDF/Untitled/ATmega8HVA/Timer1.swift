@@ -3,7 +3,7 @@
 // Timer1.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/19/2025.
+// Created by Swift AVR Generator on 12/02/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -126,18 +126,6 @@ public struct Timer1: Timer16Bit, HasExternalClock {
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000001) << UInt8(3)
-        }
-    }
-    /// WGM10 – Waveform Generation Mode 
-    @inlinable
-    @inline(__always)
-    public static var :  {
-        get {
-            let mode = (controlRegisterA & 0b00000001) >> UInt8(0)
-            return .init(rawValue: mode) ??
-        }
-        set {
-            controlRegisterA |= (newValue.rawValue & 0b00000001) << UInt8(0)
         }
     }
     /// TCNT1 – Timer Counter 1  Bytes
@@ -479,6 +467,19 @@ public struct Timer1: Timer16Bit, HasExternalClock {
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000001) << UInt8(3)
+        }
+    }
+    /// WGM10 – Waveform Generation Mode 
+    @inlinable
+    @inline(__always)
+    public static var : Timer16Bit. {
+        get {
+            let mode = ((controlRegisterA & 0b00000001) << 1) | (controlRegisterA & 0b00000001)
+            return Timer16Bit.(rawValue: mode) ??
+        }
+        set {
+            controlRegisterA |= (newValue.rawValue & 0b00000001) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000010) >> UInt8(1))
         }
     }
     /// TCCR0B – Timer/Counter0 Control Register

@@ -3,7 +3,7 @@
 // Timer2.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/19/2025.
+// Created by Swift AVR Generator on 12/02/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -171,12 +171,12 @@ public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
     @inline(__always)
     public static var waveformGenerationMode: Timer8Bit.WaveformGenerationMode {
         get {
-            let mode = ((controlRegisterA & 0b00001000) >> 1) | (controlRegisterA & 0b01000000)
+            let mode = ((controlRegisterA & 0b00001000) >> 2) | (controlRegisterA & 0b01000000)
             return Timer8Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000001) << UInt8(6))
-            controlRegisterA |= ((newValue.rawValue & 0b00000001) << UInt8(3))
+            controlRegisterA |= ((newValue.rawValue & 0b00000010) << UInt8(2))
         }
     }
     /// ```

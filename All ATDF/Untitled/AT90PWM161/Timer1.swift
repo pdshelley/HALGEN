@@ -3,7 +3,7 @@
 // Timer1.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/19/2025.
+// Created by Swift AVR Generator on 12/02/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -153,13 +153,14 @@ public struct Timer1: Timer16Bit, HasExternalClock {
     /// WGM13 – Waveform Generation Mode 
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var : Timer16Bit. {
         get {
-            let mode = (controlRegisterB & 0b00010000) >> UInt8(4)
-            return .init(rawValue: mode) ??
+            let mode = ((controlRegisterB & 0b00010000) >> 3) | (controlRegisterB & 0b00010000)
+            return Timer16Bit.(rawValue: mode) ??
         }
         set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(4)
+            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(4))
+            controlRegisterB |= ((newValue.rawValue & 0b00000010) << UInt8(3))
         }
     }
     /// ```

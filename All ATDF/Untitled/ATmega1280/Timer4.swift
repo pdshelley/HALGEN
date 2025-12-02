@@ -3,7 +3,7 @@
 // Timer4.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/19/2025.
+// Created by Swift AVR Generator on 12/02/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -292,7 +292,7 @@ public struct Timer4: Timer16Bit, HasExternalClock {
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
-            controlRegisterB |= ((newValue.rawValue & 0b00000011) << UInt8(3))
+            controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
     /// ```
@@ -969,7 +969,7 @@ public struct Timer4: Timer16Bit, HasExternalClock {
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
-            controlRegisterB |= ((newValue.rawValue & 0b00000011) << UInt8(3))
+            controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
     /// ```
@@ -1646,7 +1646,7 @@ public struct Timer4: Timer16Bit, HasExternalClock {
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
-            controlRegisterB |= ((newValue.rawValue & 0b00000011) << UInt8(3))
+            controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
     /// ```
@@ -2323,7 +2323,7 @@ public struct Timer4: Timer16Bit, HasExternalClock {
         }
         set {
             controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
-            controlRegisterB |= ((newValue.rawValue & 0b00000011) << UInt8(3))
+            controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
     /// ```

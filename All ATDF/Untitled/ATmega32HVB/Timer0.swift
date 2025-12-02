@@ -3,7 +3,7 @@
 // Timer0.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 11/19/2025.
+// Created by Swift AVR Generator on 12/02/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -128,16 +128,49 @@ public struct Timer0: Timer16Bit, HasExternalClock {
             controlRegisterA |= (newValue.rawValue & 0b00000001) << UInt8(3)
         }
     }
-    /// WGM10 – Waveform Generation Mode 
+    /// WGM00 – Waveform Generation Mode 
+    ///
+    /// Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the
+    /// counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see
+    /// Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer
+    /// on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of
+    /// Operation” on page 155).
+    ///
+    /// Table 18-8. Waveform Generation Mode Bit Description
+    ///```
+    ///-----------------------------------------------------------------------------------------------------
+    ///|  Mode  | WGM22 | WGM21 | WGM20 | Mode of Operation  |  TOP  | Update of OCRx at | TOV Flag Set on |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    0   |   0   |   0   |   0   | Normal             | 0xFF  | Immediate         | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    1   |   0   |   0   |   1   | PWM, Phase Correct | 0xFF  | TOP               | BOTTOM          |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    2   |   0   |   1   |   0   | CTC                | OCRA  | Immediate         | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    3   |   0   |   1   |   1   | Fast PWM           | 0xFF  | BOTTOM            | MAX             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    4   |   1   |   0   |   0   | Reserved           |   -   |         -         |        -        |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    5   |   1   |   0   |   1   | PWM, Phase Correct | OCRA  | TOP               | BOTTOM          |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    6   |   1   |   1   |   0   | Reserved           |   -   |         -         |        -        |
+    ///-----------------------------------------------------------------------------------------------------
+    ///|    7   |   1   |   1   |   1   | Fast PWM           | OCRA  | BOTTOM            | TOP             |
+    ///-----------------------------------------------------------------------------------------------------
+    ///```
+    /// Notes: 1. MAX= 0xFF
+    ///      2. BOTTOM= 0x00
+    ///
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var waveformGenerationMode: Timer16Bit.WaveformGenerationMode {
         get {
-            let mode = (controlRegisterA & 0b00000001) >> UInt8(0)
-            return .init(rawValue: mode) ??
+            let mode = ((controlRegisterA & 0b00000001) << 1) | (controlRegisterA & 0b00000001)
+            return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000001) << UInt8(0)
+            controlRegisterA |= (newValue.rawValue & 0b00000001) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000010) >> UInt8(1))
         }
     }
     /// TCNT1 – Timer Counter 1 Bytes
