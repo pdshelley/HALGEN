@@ -426,7 +426,9 @@ func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bit
     case .TSM:
         return SupplementalData(variableName: "timerSynchronizationMode", valueType: "Timer.TimerSynchronizationMode", defaultValue: ".disabled", documentation: timerSynchronizationModeDocumentation)
     case .PSRASY:
-        return SupplementalData(variableName: "prescalerReset", valueType: "Bool", defaultValue: "", documentation: "")
+        return SupplementalData(variableName: "prescalerReset", valueType: "Bool", defaultValue: "", documentation: prescalerResetDocumentation)
+    case .PSRSYNC:
+        return SupplementalData(variableName: "prescalerResetSync", valueType: "Bool", defaultValue: "", documentation: prescalerResetSyncDocumentation)
         
     default :
         return SupplementalData(variableName: "", valueType: "", defaultValue: "", documentation: "")
@@ -949,4 +951,20 @@ let forceOutputCompareBDocumentation: String = """
     /// determines the effect of the forced compare.
     /// A FOC2B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2B as TOP.
     /// The FOC2B bit is always read as zero.
+"""
+
+let prescalerResetDocumentation: String = """
+\n    ///
+    /// When this bit is one, the Timer/Counter2 prescaler will be reset. This bit is normally cleared immediately by
+    /// hardware. If the bit is written when Timer/Counter2 is operating in asynchronous mode, the bit will remain one
+    /// until the prescaler has been reset. The bit will not be cleared by hardware if the TSM bit is set. Refer to the
+    /// description of the ”Bit 7 – TSM: Timer/Counter Synchronization Mode” for a description of the
+    /// Timer/Counter Synchronization mode.
+"""
+
+let prescalerResetSyncDocumentation: String = """
+\n    ///
+    /// When this bit is one, Timer/Counter1 and Timer/Counter0 prescaler will be Reset. This bit is normally cleared
+    /// immediately by hardware, except if the TSM bit is set. Note that Timer/Counter1 and Timer/Counter0 share the
+    /// same prescaler and a reset of this prescaler will affect both timers.
 """
