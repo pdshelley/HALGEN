@@ -3,7 +3,7 @@
 // Timer2.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/02/2025.
+// Created by Swift AVR Generator on 12/04/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -11,7 +11,7 @@
 
 public typealias timer2 = Timer2
 
-public struct Timer2: Timer8Bit, AsyncTimer, HasExternalClock {
+public struct Timer2: Timer8Bit, AsyncTimer {
     /// TCCR2 – Timer/Counter Control Register
     ///```
     ///--------------------------------------------------------------------------------

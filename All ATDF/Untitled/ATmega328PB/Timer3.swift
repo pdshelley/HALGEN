@@ -3,7 +3,7 @@
 // Timer3.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/02/2025.
+// Created by Swift AVR Generator on 12/04/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -11,7 +11,7 @@
 
 public typealias timer3 = Timer3
 
-public struct Timer3: Timer16Bit, HasExternalClock {
+public struct Timer3: Timer16Bit {
     /// TIMSK1 – Timer/Counter Interrupt Mask Register
     ///```
     ///--------------------------------------------------------------------------------
@@ -419,7 +419,7 @@ public struct Timer3: Timer16Bit, HasExternalClock {
             return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
             controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
@@ -1079,7 +1079,7 @@ public struct Timer3: Timer16Bit, HasExternalClock {
             return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
             controlRegisterB |= ((newValue.rawValue & 0b00000100) << UInt8(2))
         }
     }
@@ -1608,7 +1608,7 @@ public struct Timer3: Timer16Bit, HasExternalClock {
             return Timer16Bit.(rawValue: mode) ??
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
             controlRegisterB |= ((newValue.rawValue & 0b00000100) << UInt8(1))
         }
     }
@@ -1667,7 +1667,7 @@ public struct Timer3: Timer16Bit, HasExternalClock {
             return Timer16Bit.(rawValue: mode) ??
         }
         set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(3))
+            controlRegisterB |= ((newValue.rawValue & 0b00000001) << UInt8(3))
             controlRegisterB |= ((newValue.rawValue & 0b00000010) << UInt8(3))
         }
     }

@@ -3,7 +3,7 @@
 // Timer1.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/02/2025.
+// Created by Swift AVR Generator on 12/04/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -11,7 +11,7 @@
 
 public typealias timer1 = Timer1
 
-public struct Timer1: Timer16Bit, HasExternalClock {
+public struct Timer1: Timer16Bit {
     /// TIMSK – Timer/Counter Interrupt Mask Register
     ///```
     ///--------------------------------------------------------------------------------

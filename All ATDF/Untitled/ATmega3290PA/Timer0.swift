@@ -3,7 +3,7 @@
 // Timer0.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/02/2025.
+// Created by Swift AVR Generator on 12/04/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -11,7 +11,7 @@
 
 public typealias timer0 = Timer0
 
-public struct Timer0: Timer8Bit, HasExternalClock {
+public struct Timer0: Timer8Bit {
     /// TCCR0A – Timer/Counter0 Control Register
     ///```
     ///--------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ public struct Timer0: Timer8Bit, HasExternalClock {
             return Timer8Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000001) << UInt8(6))
+            controlRegisterA |= ((newValue.rawValue & 0b00000001) << UInt8(6))
             controlRegisterA |= ((newValue.rawValue & 0b00000010) << UInt8(2))
         }
     }

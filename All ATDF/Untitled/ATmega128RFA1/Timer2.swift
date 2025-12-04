@@ -3,7 +3,7 @@
 // Timer2.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/02/2025.
+// Created by Swift AVR Generator on 12/04/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -11,7 +11,7 @@
 
 public typealias timer2 = Timer2
 
-public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
+public struct Timer2: Timer8Bit, AsyncTimer {
     /// TIMSK2 – Timer/Counter Interrupt Mask register
     ///```
     ///--------------------------------------------------------------------------------
@@ -461,7 +461,7 @@ public struct Timer2: Timer8Bit, AsyncTimer, InternalClockOnly {
             return Timer8Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
             controlRegisterB |= ((newValue.rawValue & 0b00000100) << UInt8(1))
         }
     }

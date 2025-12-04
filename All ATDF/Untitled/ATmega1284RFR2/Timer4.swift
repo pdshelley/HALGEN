@@ -3,7 +3,7 @@
 // Timer4.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/02/2025.
+// Created by Swift AVR Generator on 12/04/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -11,7 +11,7 @@
 
 public typealias timer4 = Timer4
 
-public struct Timer4: Timer16Bit, HasExternalClock {
+public struct Timer4: Timer16Bit {
     /// TCCR5A – Timer/Counter5 Control Register A
     ///```
     ///--------------------------------------------------------------------------------
@@ -303,7 +303,7 @@ public struct Timer4: Timer16Bit, HasExternalClock {
             return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
             controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
@@ -1004,7 +1004,7 @@ public struct Timer4: Timer16Bit, HasExternalClock {
             return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
             controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
@@ -1705,7 +1705,7 @@ public struct Timer4: Timer16Bit, HasExternalClock {
             return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
             controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
@@ -2406,7 +2406,7 @@ public struct Timer4: Timer16Bit, HasExternalClock {
             return Timer16Bit.WaveformGenerationMode(rawValue: mode) ?? .normal
         }
         set {
-            controlRegisterA |= (newValue.rawValue & 0b00000011) << UInt8(0))
+            controlRegisterA |= ((newValue.rawValue & 0b00000011) << UInt8(0))
             controlRegisterB |= ((newValue.rawValue & 0b00001100) << UInt8(1))
         }
     }
