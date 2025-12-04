@@ -605,15 +605,19 @@ public struct Timer0: Timer8Bit {
         }
     }
     /// PSRSYNC – Prescaler Reset Timer/Counter1 and Timer/Counter0 
+    ///
+    /// When this bit is one, Timer/Counter1 and Timer/Counter0 prescaler will be Reset. This bit is normally cleared
+    /// immediately by hardware, except if the TSM bit is set. Note that Timer/Counter1 and Timer/Counter0 share the
+    /// same prescaler and a reset of this prescaler will affect both timers.
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var prescalerResetSync: Bool {
         get {
-            let mode = (generalControlRegister & 0b00000001) >> UInt8(0)
-            return .init(rawValue: mode) ??
+            let flag = (generalControlRegister & 0b00000001) >> UInt8(0)
+            return flag == 1
         }
         set {
-            generalControlRegister |= (newValue.rawValue & 0b00000001) << UInt8(0)
+            generalControlRegister |= (newValue ? 1 : 0) & 0b00000001 << UInt8(0)
         }
     }
 }

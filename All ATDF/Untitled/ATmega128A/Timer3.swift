@@ -26,12 +26,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterInterruptMaskRegister: UInt16 {
+    public static var timerCounterInterruptMaskRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x57)
+            _volatileRegisterReadUInt8(0x57)
         }
         set {
-            _volatileRegisterWriteUInt16(0x57, newValue)
+            _volatileRegisterWriteUInt8(0x57, newValue)
         }
     }
     /// TICIE1 – Timer/Counter1 Input Capture Interrupt Enable 
@@ -96,12 +96,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var extendedTimerCounterInterruptMaskRegister: UInt16 {
+    public static var extendedTimerCounterInterruptMaskRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x7D)
+            _volatileRegisterReadUInt8(0x7D)
         }
         set {
-            _volatileRegisterWriteUInt16(0x7D, newValue)
+            _volatileRegisterWriteUInt8(0x7D, newValue)
         }
     }
     /// OCIE1C – Timer/Counter 1, Output Compare Match C Interrupt Enable 
@@ -130,24 +130,29 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterInterruptFlagregister: UInt16 {
+    public static var timerCounterInterruptFlagregister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x56)
+            _volatileRegisterReadUInt8(0x56)
         }
         set {
-            _volatileRegisterWriteUInt16(0x56, newValue)
+            _volatileRegisterWriteUInt8(0x56, newValue)
         }
     }
     /// ICF1 – Input Capture Flag 1 
+    ///
+    /// This flag is set when a capture event occurs on the ICPn pin. When the Input Capture Register (ICRn) is set by
+    /// the WGM to be used as the TOP value, the ICFn Flag is set when the counter reaches the TOP value.
+    /// ICFn is automatically cleared when the Input Capture Interrupt Vector is executed. Alternatively, ICFn can be
+    /// cleared by writing a logic one to its bit location.
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var inputCaptureFlag: Bool {
         get {
-            let mode = (timerCounterInterruptFlagregister & 0b00100000) >> UInt8(5)
-            return .init(rawValue: mode) ??
+            let flag = (timerCounterInterruptFlagregister & 0b00100000) >> UInt8(5)
+            return flag == 1
         }
         set {
-            timerCounterInterruptFlagregister |= (newValue.rawValue & 0b00000001) << UInt8(5)
+            timerCounterInterruptFlagregister |= (newValue ? 1 : 0) & 0b00000001 << UInt8(5)
         }
     }
     /// OCF1A – Output Compare Flag 1A 
@@ -200,12 +205,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var extendedTimerCounterInterruptFlagregister: UInt16 {
+    public static var extendedTimerCounterInterruptFlagregister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x7C)
+            _volatileRegisterReadUInt8(0x7C)
         }
         set {
-            _volatileRegisterWriteUInt16(0x7C, newValue)
+            _volatileRegisterWriteUInt8(0x7C, newValue)
         }
     }
     /// OCF1C – Timer/Counter 1, Output Compare C Match Flag 
@@ -234,12 +239,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var specialFunctionIORegister: UInt16 {
+    public static var specialFunctionIORegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x40)
+            _volatileRegisterReadUInt8(0x40)
         }
         set {
-            _volatileRegisterWriteUInt16(0x40, newValue)
+            _volatileRegisterWriteUInt8(0x40, newValue)
         }
     }
     /// TSM – Timer/Counter Synchronization Mode 
@@ -287,12 +292,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var controlRegisterA: UInt16 {
+    public static var controlRegisterA: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x4F)
+            _volatileRegisterReadUInt8(0x4F)
         }
         set {
-            _volatileRegisterWriteUInt16(0x4F, newValue)
+            _volatileRegisterWriteUInt8(0x4F, newValue)
         }
     }
     /// COM1A – Compare Output Mode 1A, bits 
@@ -479,36 +484,50 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var controlRegisterB: UInt16 {
+    public static var controlRegisterB: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x4E)
+            _volatileRegisterReadUInt8(0x4E)
         }
         set {
-            _volatileRegisterWriteUInt16(0x4E, newValue)
+            _volatileRegisterWriteUInt8(0x4E, newValue)
         }
     }
     /// ICNC1 – Input Capture 1 Noise Canceler 
+    ///
+    /// Setting this bit (to true) activates the Input Capture Noise Canceler. When the noise canceler is activated, the
+    /// input from the Input Capture pin (ICPn) is filtered. The filter function requires four successive equal valued
+    /// samples of the ICPn pin for changing its output. The Input Capture is therefore delayed by four Oscillator cycles
+    /// when the noise canceler is enabled.
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var inputCaptureNoiseCanceler: Bool {
         get {
-            let mode = (controlRegisterB & 0b10000000) >> UInt8(7)
-            return .init(rawValue: mode) ??
+            let flag = (controlRegisterB & 0b10000000) >> UInt8(7)
+            return flag == 1
         }
         set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(7)
+            controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
         }
     }
     /// ICES1 – Input Capture 1 Edge Select 
+    ///
+    /// This bit selects which edge on the Input Capture pin (ICPn) that is used to trigger a capture event. When the
+    /// ICESn bit is written to zero, a falling (negative) edge is used as trigger, and when the ICESn bit is written to one,
+    /// a rising (positive) edge will trigger the capture.
+    /// When a capture is triggered according to the ICESn setting, the counter value is copied into the Input Capture
+    /// Register (ICRn). The event will also set the Input Capture Flag (ICFn), and this can be used to cause an Input
+    /// Capture Interrupt, if this interrupt is enabled.
+    /// When the ICRn is used as TOP value (see description of the WGM bits located in the TCCRnA and the
+    /// TCCRnB Register), the ICPn is disconnected and consequently the Input Capture function is disabled.
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var inputCaptureEdgeSelect: Bool {
         get {
-            let mode = (controlRegisterB & 0b01000000) >> UInt8(6)
-            return .init(rawValue: mode) ??
+            let flag = (controlRegisterB & 0b01000000) >> UInt8(6)
+            return flag == 1
         }
         set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(6)
+            controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
     }
     /// WGM1 – Waveform Generation Mode Bits 
@@ -614,12 +633,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterControlRegisterC: UInt16 {
+    public static var controlRegisterC: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x7A)
+            _volatileRegisterReadUInt8(0x7A)
         }
         set {
-            _volatileRegisterWriteUInt16(0x7A, newValue)
+            _volatileRegisterWriteUInt8(0x7A, newValue)
         }
     }
     /// FOC1A – Force Output Compare for channel A 
@@ -636,11 +655,11 @@ public struct Timer3: Timer16Bit {
     @inline(__always)
     public static var forceOutputCompareA: Bool {
         get {
-            let flag = (timerCounterControlRegisterC & 0b10000000) >> UInt8(7)
+            let flag = (controlRegisterC & 0b10000000) >> UInt8(7)
             return flag == 1
         }
         set {
-            timerCounterControlRegisterC |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
+            controlRegisterC |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
         }
     }
     /// FOC1B – Force Output Compare for channel B 
@@ -657,11 +676,11 @@ public struct Timer3: Timer16Bit {
     @inline(__always)
     public static var forceOutputCompareB: Bool {
         get {
-            let flag = (timerCounterControlRegisterC & 0b01000000) >> UInt8(6)
+            let flag = (controlRegisterC & 0b01000000) >> UInt8(6)
             return flag == 1
         }
         set {
-            timerCounterControlRegisterC |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
+            controlRegisterC |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
     }
     /// FOC1C – Force Output Compare for channel C 
@@ -669,11 +688,11 @@ public struct Timer3: Timer16Bit {
     @inline(__always)
     public static var :  {
         get {
-            let mode = (timerCounterControlRegisterC & 0b00100000) >> UInt8(5)
+            let mode = (controlRegisterC & 0b00100000) >> UInt8(5)
             return .init(rawValue: mode) ??
         }
         set {
-            timerCounterControlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(5)
+            controlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(5)
         }
     }
     /// TCNT1 – Timer/Counter1  Bytes
@@ -690,12 +709,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var count: UInt16 {
+    public static var count: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x4C)
+            _volatileRegisterReadUInt8(0x4C)
         }
         set {
-            _volatileRegisterWriteUInt16(0x4C, newValue)
+            _volatileRegisterWriteUInt8(0x4C, newValue)
         }
     }
     /// OCR1A – Timer/Counter1 Output Compare Register  Bytes
@@ -712,12 +731,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterA: UInt16 {
+    public static var outputCompareRegisterA: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x4A)
+            _volatileRegisterReadUInt8(0x4A)
         }
         set {
-            _volatileRegisterWriteUInt16(0x4A, newValue)
+            _volatileRegisterWriteUInt8(0x4A, newValue)
         }
     }
     /// OCR1B – Timer/Counter1 Output Compare Register  Bytes
@@ -734,12 +753,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterB: UInt16 {
+    public static var outputCompareRegisterB: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x48)
+            _volatileRegisterReadUInt8(0x48)
         }
         set {
-            _volatileRegisterWriteUInt16(0x48, newValue)
+            _volatileRegisterWriteUInt8(0x48, newValue)
         }
     }
     /// OCR1C – Timer/Counter1 Output Compare Register  Bytes
@@ -756,12 +775,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterOutputCompareRegisterBytes: UInt16 {
+    public static var timerCounterOutputCompareRegisterBytes: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x78)
+            _volatileRegisterReadUInt8(0x78)
         }
         set {
-            _volatileRegisterWriteUInt16(0x78, newValue)
+            _volatileRegisterWriteUInt8(0x78, newValue)
         }
     }
     /// ICR1 – Timer/Counter1 Input Capture Register  Bytes
@@ -778,12 +797,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterInputCaptureRegisterBytes: UInt16 {
+    public static var inputCaptureRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x46)
+            _volatileRegisterReadUInt8(0x46)
         }
         set {
-            _volatileRegisterWriteUInt16(0x46, newValue)
+            _volatileRegisterWriteUInt8(0x46, newValue)
         }
     }
     /// ETIMSK – Extended Timer/Counter Interrupt Mask Register
@@ -800,12 +819,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var extendedTimerCounterInterruptMaskRegister: UInt16 {
+    public static var extendedTimerCounterInterruptMaskRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x7D)
+            _volatileRegisterReadUInt8(0x7D)
         }
         set {
-            _volatileRegisterWriteUInt16(0x7D, newValue)
+            _volatileRegisterWriteUInt8(0x7D, newValue)
         }
     }
     /// TICIE3 – Timer/Counter3 Input Capture Interrupt Enable 
@@ -882,24 +901,29 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var extendedTimerCounterInterruptFlagregister: UInt16 {
+    public static var extendedTimerCounterInterruptFlagregister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x7C)
+            _volatileRegisterReadUInt8(0x7C)
         }
         set {
-            _volatileRegisterWriteUInt16(0x7C, newValue)
+            _volatileRegisterWriteUInt8(0x7C, newValue)
         }
     }
     /// ICF3 – Input Capture Flag 3 
+    ///
+    /// This flag is set when a capture event occurs on the ICPn pin. When the Input Capture Register (ICRn) is set by
+    /// the WGM to be used as the TOP value, the ICFn Flag is set when the counter reaches the TOP value.
+    /// ICFn is automatically cleared when the Input Capture Interrupt Vector is executed. Alternatively, ICFn can be
+    /// cleared by writing a logic one to its bit location.
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var inputCaptureFlag: Bool {
         get {
-            let mode = (extendedTimerCounterInterruptFlagregister & 0b00100000) >> UInt8(5)
-            return .init(rawValue: mode) ??
+            let flag = (extendedTimerCounterInterruptFlagregister & 0b00100000) >> UInt8(5)
+            return flag == 1
         }
         set {
-            extendedTimerCounterInterruptFlagregister |= (newValue.rawValue & 0b00000001) << UInt8(5)
+            extendedTimerCounterInterruptFlagregister |= (newValue ? 1 : 0) & 0b00000001 << UInt8(5)
         }
     }
     /// OCF3A – Output Compare Flag 3A 
@@ -964,12 +988,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var specialFunctionIORegister: UInt16 {
+    public static var specialFunctionIORegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x40)
+            _volatileRegisterReadUInt8(0x40)
         }
         set {
-            _volatileRegisterWriteUInt16(0x40, newValue)
+            _volatileRegisterWriteUInt8(0x40, newValue)
         }
     }
     /// TSM – Timer/Counter Synchronization Mode 
@@ -1017,12 +1041,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var controlRegisterA: UInt16 {
+    public static var controlRegisterA: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x8B)
+            _volatileRegisterReadUInt8(0x8B)
         }
         set {
-            _volatileRegisterWriteUInt16(0x8B, newValue)
+            _volatileRegisterWriteUInt8(0x8B, newValue)
         }
     }
     /// COM3A – Compare Output Mode 3A, bits 
@@ -1209,36 +1233,50 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var controlRegisterB: UInt16 {
+    public static var controlRegisterB: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x8A)
+            _volatileRegisterReadUInt8(0x8A)
         }
         set {
-            _volatileRegisterWriteUInt16(0x8A, newValue)
+            _volatileRegisterWriteUInt8(0x8A, newValue)
         }
     }
     /// ICNC3 – Input Capture 3  Noise Canceler 
+    ///
+    /// Setting this bit (to true) activates the Input Capture Noise Canceler. When the noise canceler is activated, the
+    /// input from the Input Capture pin (ICPn) is filtered. The filter function requires four successive equal valued
+    /// samples of the ICPn pin for changing its output. The Input Capture is therefore delayed by four Oscillator cycles
+    /// when the noise canceler is enabled.
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var inputCaptureNoiseCanceler: Bool {
         get {
-            let mode = (controlRegisterB & 0b10000000) >> UInt8(7)
-            return .init(rawValue: mode) ??
+            let flag = (controlRegisterB & 0b10000000) >> UInt8(7)
+            return flag == 1
         }
         set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(7)
+            controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
         }
     }
     /// ICES3 – Input Capture 3 Edge Select 
+    ///
+    /// This bit selects which edge on the Input Capture pin (ICPn) that is used to trigger a capture event. When the
+    /// ICESn bit is written to zero, a falling (negative) edge is used as trigger, and when the ICESn bit is written to one,
+    /// a rising (positive) edge will trigger the capture.
+    /// When a capture is triggered according to the ICESn setting, the counter value is copied into the Input Capture
+    /// Register (ICRn). The event will also set the Input Capture Flag (ICFn), and this can be used to cause an Input
+    /// Capture Interrupt, if this interrupt is enabled.
+    /// When the ICRn is used as TOP value (see description of the WGM bits located in the TCCRnA and the
+    /// TCCRnB Register), the ICPn is disconnected and consequently the Input Capture function is disabled.
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var inputCaptureEdgeSelect: Bool {
         get {
-            let mode = (controlRegisterB & 0b01000000) >> UInt8(6)
-            return .init(rawValue: mode) ??
+            let flag = (controlRegisterB & 0b01000000) >> UInt8(6)
+            return flag == 1
         }
         set {
-            controlRegisterB |= (newValue.rawValue & 0b00000001) << UInt8(6)
+            controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
     }
     /// WGM3 – Waveform Generation Mode Bits 
@@ -1344,12 +1382,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterControlRegisterC: UInt16 {
+    public static var controlRegisterC: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x8C)
+            _volatileRegisterReadUInt8(0x8C)
         }
         set {
-            _volatileRegisterWriteUInt16(0x8C, newValue)
+            _volatileRegisterWriteUInt8(0x8C, newValue)
         }
     }
     /// FOC3A – Force Output Compare for channel A 
@@ -1366,11 +1404,11 @@ public struct Timer3: Timer16Bit {
     @inline(__always)
     public static var forceOutputCompareA: Bool {
         get {
-            let flag = (timerCounterControlRegisterC & 0b10000000) >> UInt8(7)
+            let flag = (controlRegisterC & 0b10000000) >> UInt8(7)
             return flag == 1
         }
         set {
-            timerCounterControlRegisterC |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
+            controlRegisterC |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
         }
     }
     /// FOC3B – Force Output Compare for channel B 
@@ -1387,11 +1425,11 @@ public struct Timer3: Timer16Bit {
     @inline(__always)
     public static var forceOutputCompareB: Bool {
         get {
-            let flag = (timerCounterControlRegisterC & 0b01000000) >> UInt8(6)
+            let flag = (controlRegisterC & 0b01000000) >> UInt8(6)
             return flag == 1
         }
         set {
-            timerCounterControlRegisterC |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
+            controlRegisterC |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
     }
     /// FOC3C – Force Output Compare for channel C 
@@ -1399,11 +1437,11 @@ public struct Timer3: Timer16Bit {
     @inline(__always)
     public static var :  {
         get {
-            let mode = (timerCounterControlRegisterC & 0b00100000) >> UInt8(5)
+            let mode = (controlRegisterC & 0b00100000) >> UInt8(5)
             return .init(rawValue: mode) ??
         }
         set {
-            timerCounterControlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(5)
+            controlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(5)
         }
     }
     /// TCNT3 – Timer/Counter3  Bytes
@@ -1420,12 +1458,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var count: UInt16 {
+    public static var count: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x88)
+            _volatileRegisterReadUInt8(0x88)
         }
         set {
-            _volatileRegisterWriteUInt16(0x88, newValue)
+            _volatileRegisterWriteUInt8(0x88, newValue)
         }
     }
     /// OCR3A – Timer/Counter3 Output Compare Register A  Bytes
@@ -1442,12 +1480,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterA: UInt16 {
+    public static var outputCompareRegisterA: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x86)
+            _volatileRegisterReadUInt8(0x86)
         }
         set {
-            _volatileRegisterWriteUInt16(0x86, newValue)
+            _volatileRegisterWriteUInt8(0x86, newValue)
         }
     }
     /// OCR3B – Timer/Counter3 Output Compare Register B  Bytes
@@ -1464,12 +1502,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterB: UInt16 {
+    public static var outputCompareRegisterB: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x84)
+            _volatileRegisterReadUInt8(0x84)
         }
         set {
-            _volatileRegisterWriteUInt16(0x84, newValue)
+            _volatileRegisterWriteUInt8(0x84, newValue)
         }
     }
     /// OCR3C – Timer/Counter3 Output compare Register C  Bytes
@@ -1486,12 +1524,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterOutputcompareRegisterCBytes: UInt16 {
+    public static var timerCounterOutputcompareRegisterCBytes: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x82)
+            _volatileRegisterReadUInt8(0x82)
         }
         set {
-            _volatileRegisterWriteUInt16(0x82, newValue)
+            _volatileRegisterWriteUInt8(0x82, newValue)
         }
     }
     /// ICR3 – Timer/Counter3 Input Capture Register  Bytes
@@ -1508,12 +1546,12 @@ public struct Timer3: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterInputCaptureRegisterBytes: UInt16 {
+    public static var inputCaptureRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x80)
+            _volatileRegisterReadUInt8(0x80)
         }
         set {
-            _volatileRegisterWriteUInt16(0x80, newValue)
+            _volatileRegisterWriteUInt8(0x80, newValue)
         }
     }
 }

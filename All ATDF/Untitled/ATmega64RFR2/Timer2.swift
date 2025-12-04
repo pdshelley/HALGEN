@@ -687,6 +687,12 @@ public struct Timer2: Timer8Bit, AsyncTimer {
         }
     }
     /// PSRASY – Prescaler Reset Timer/Counter2 
+    ///
+    /// When this bit is one, the Timer/Counter2 prescaler will be reset. This bit is normally cleared immediately by
+    /// hardware. If the bit is written when Timer/Counter2 is operating in asynchronous mode, the bit will remain one
+    /// until the prescaler has been reset. The bit will not be cleared by hardware if the TSM bit is set. Refer to the
+    /// description of the ”Bit 7 – TSM: Timer/Counter Synchronization Mode” for a description of the
+    /// Timer/Counter Synchronization mode.
     @inlinable
     @inline(__always)
     public static var prescalerReset: Bool {

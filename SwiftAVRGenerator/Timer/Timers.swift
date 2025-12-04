@@ -282,12 +282,16 @@ func variableNameFor(register: AVRModules.Module.RegisterGroup.Register) -> Stri
         return "controlRegisterA"
     case .TCCR0B, .TCCR1B, .TCCR2B, .TCCR3B, .TCCR4B, .TCCR5B:
         return "controlRegisterB"
+    case .TCCR1C, .TCCR3C, .TCCR4C, .TCCR5C:
+        return "controlRegisterC"
     case .TCNT0, .TCNT1, .TCNT2, .TCNT3, .TCNT4, .TCNT5:
         return "count"
     case .OCR0B, .OCR1B, .OCR2B, .OCR3B, .OCR4B, .OCR5B:
         return "outputCompareRegisterB"
     case .OCR0A, .OCR1A, .OCR2A, .OCR3A, .OCR4A, .OCR5A:
         return "outputCompareRegisterA"
+    case .ICR1, .ICR3, .ICR4, .ICR5:
+        return "inputCaptureRegister"
     case .ASSR:
         return "asynchronousStatusRegister"
     case .GTCCR:
@@ -350,12 +354,12 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSiz
           ///```
           @inlinable
           @inline(__always)
-          public static var \(raw: variableName): \(raw: registerBitSize) {
+          public static var \(raw: variableName): UInt8 {
               get {
-                  _volatileRegisterRead\(raw: registerBitSize)(\(raw: register.offset.rawValue))
+                  _volatileRegisterReadUInt8(\(raw: register.offset.rawValue))
               }
               set {
-                  _volatileRegisterWrite\(raw: registerBitSize)(\(raw: register.offset.rawValue), newValue)
+                  _volatileRegisterWriteUInt8(\(raw: register.offset.rawValue), newValue)
               }
           }
       """
@@ -380,6 +384,8 @@ func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bit
         return SupplementalData(variableName: "outputCompareMatchAInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "")
     case .TOIE0, .TOIE1, .TOIE2, .TOIE3, .TOIE4, .TOIE5:
         return SupplementalData(variableName: "overflowInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "")
+    case .ICIE0, .ICIE1, .ICIE3, .ICIE4, .ICIE5:
+        return SupplementalData(variableName: "inputCaptureInterruptEnable", valueType: "Bool", defaultValue: "", documentation: inputCaptureInterruptEnableDocumentation)
         
         // Interrupt Flag Register
     case .OCF0B, .OCF1B, .OCF2B, .OCF3B, .OCF4B, .OCF5B:
@@ -388,6 +394,8 @@ func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bit
         return SupplementalData(variableName: "outputCompareFlagA", valueType: "Bool", defaultValue: "", documentation: "")
     case .TOV0, .TOV1, .TOV2, .TOV3, .TOV4, .TOV5:
         return SupplementalData(variableName: "overflowFlag", valueType: "Bool", defaultValue: "", documentation: "")
+    case .ICF0, .ICF1, .ICF3, .ICF4, .ICF5:
+        return SupplementalData(variableName: "inputCaptureFlag", valueType: "Bool", defaultValue: "", documentation: inputCaptureFlagDocumentation)
         
         // Control Register A
     case .COM0A, .COM1A, .COM2A, .COM3A, .COM4A, .COM5A:
@@ -404,6 +412,10 @@ func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bit
         return SupplementalData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareBDocumentation)
     case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
         return SupplementalData(variableName: "prescaler", valueType: "Prescaling", defaultValue: ".stopped", documentation: prescalerDocumentation)
+    case .ICNC0, .ICNC1, .ICNC3, .ICNC4, .ICNC5:
+        return SupplementalData(variableName: "inputCaptureNoiseCanceler", valueType: "Bool", defaultValue: "", documentation: inputCaptureNoiseCancelerDocumentation)
+    case .ICES0, .ICES1, .ICES3, .ICES4, .ICES5:
+        return SupplementalData(variableName: "inputCaptureEdgeSelect", valueType: "Bool", defaultValue: "", documentation: inputCaptureEdgeSelectDocumentation)
     
         // Asynchronous Status Register
     case .EXCLK:
@@ -967,4 +979,40 @@ let prescalerResetSyncDocumentation: String = """
     /// When this bit is one, Timer/Counter1 and Timer/Counter0 prescaler will be Reset. This bit is normally cleared
     /// immediately by hardware, except if the TSM bit is set. Note that Timer/Counter1 and Timer/Counter0 share the
     /// same prescaler and a reset of this prescaler will affect both timers.
+"""
+
+let inputCaptureInterruptEnableDocumentation: String = """
+\n    ///
+    /// When this bit is written to one, and the I-flag in the Status Register is set (interrupts globally enabled), the
+    /// Timer/Counter1 Input Capture interrupt is enabled. The corresponding Interrupt Vector (see “Interrupts” is executed
+    /// when the ICFn Flag, located in TIFRn, is set.
+"""
+
+
+let inputCaptureFlagDocumentation: String = """
+\n    ///
+    /// This flag is set when a capture event occurs on the ICPn pin. When the Input Capture Register (ICRn) is set by
+    /// the WGM to be used as the TOP value, the ICFn Flag is set when the counter reaches the TOP value.
+    /// ICFn is automatically cleared when the Input Capture Interrupt Vector is executed. Alternatively, ICFn can be
+    /// cleared by writing a logic one to its bit location.
+"""
+
+let inputCaptureNoiseCancelerDocumentation: String = """
+\n    ///
+    /// Setting this bit (to true) activates the Input Capture Noise Canceler. When the noise canceler is activated, the
+    /// input from the Input Capture pin (ICPn) is filtered. The filter function requires four successive equal valued
+    /// samples of the ICPn pin for changing its output. The Input Capture is therefore delayed by four Oscillator cycles
+    /// when the noise canceler is enabled.
+"""
+
+let inputCaptureEdgeSelectDocumentation: String = """
+\n    ///
+    /// This bit selects which edge on the Input Capture pin (ICPn) that is used to trigger a capture event. When the
+    /// ICESn bit is written to zero, a falling (negative) edge is used as trigger, and when the ICESn bit is written to one,
+    /// a rising (positive) edge will trigger the capture.
+    /// When a capture is triggered according to the ICESn setting, the counter value is copied into the Input Capture
+    /// Register (ICRn). The event will also set the Input Capture Flag (ICFn), and this can be used to cause an Input
+    /// Capture Interrupt, if this interrupt is enabled.
+    /// When the ICRn is used as TOP value (see description of the WGM bits located in the TCCRnA and the
+    /// TCCRnB Register), the ICPn is disconnected and consequently the Input Capture function is disabled.
 """

@@ -26,12 +26,12 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var controlRegisterB: UInt16 {
+    public static var controlRegisterB: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x81)
+            _volatileRegisterReadUInt8(0x81)
         }
         set {
-            _volatileRegisterWriteUInt16(0x81, newValue)
+            _volatileRegisterWriteUInt8(0x81, newValue)
         }
     }
     /// CTC1 – Clear Timer/Counter on Compare Match 
@@ -104,12 +104,12 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var count: UInt16 {
+    public static var count: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x84)
+            _volatileRegisterReadUInt8(0x84)
         }
         set {
-            _volatileRegisterWriteUInt16(0x84, newValue)
+            _volatileRegisterWriteUInt8(0x84, newValue)
         }
     }
     /// OCR1AL – Output Compare Register 1A Low byte
@@ -126,12 +126,12 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterALowbyte: UInt16 {
+    public static var outputCompareRegisterALowbyte: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x88)
+            _volatileRegisterReadUInt8(0x88)
         }
         set {
-            _volatileRegisterWriteUInt16(0x88, newValue)
+            _volatileRegisterWriteUInt8(0x88, newValue)
         }
     }
     /// OCR1AH – Output Compare Register 1A High byte
@@ -148,12 +148,12 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterAHighbyte: UInt16 {
+    public static var outputCompareRegisterAHighbyte: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x89)
+            _volatileRegisterReadUInt8(0x89)
         }
         set {
-            _volatileRegisterWriteUInt16(0x89, newValue)
+            _volatileRegisterWriteUInt8(0x89, newValue)
         }
     }
     /// TIMSK1 – Timer/Counter Interrupt Mask Register
@@ -170,12 +170,12 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var interruptMaskRegister: UInt16 {
+    public static var interruptMaskRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x6F)
+            _volatileRegisterReadUInt8(0x6F)
         }
         set {
-            _volatileRegisterWriteUInt16(0x6F, newValue)
+            _volatileRegisterWriteUInt8(0x6F, newValue)
         }
     }
     /// OCIE1A – Timer/Counter1 Output Compare Interrupt Enable 
@@ -216,12 +216,12 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var interruptFlagRegister: UInt16 {
+    public static var interruptFlagRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x36)
+            _volatileRegisterReadUInt8(0x36)
         }
         set {
-            _volatileRegisterWriteUInt16(0x36, newValue)
+            _volatileRegisterWriteUInt8(0x36, newValue)
         }
     }
     /// OCF1A – Timer/Counter1 Output Compare Flag A 
@@ -262,12 +262,12 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var generalControlRegister: UInt16 {
+    public static var generalControlRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x43)
+            _volatileRegisterReadUInt8(0x43)
         }
         set {
-            _volatileRegisterWriteUInt16(0x43, newValue)
+            _volatileRegisterWriteUInt8(0x43, newValue)
         }
     }
     /// TSM – Timer/Counter Synchronization Mode 
@@ -290,15 +290,19 @@ public struct Timer1: Timer16Bit {
         }
     }
     /// PSRSYNC – Prescaler Reset 
+    ///
+    /// When this bit is one, Timer/Counter1 and Timer/Counter0 prescaler will be Reset. This bit is normally cleared
+    /// immediately by hardware, except if the TSM bit is set. Note that Timer/Counter1 and Timer/Counter0 share the
+    /// same prescaler and a reset of this prescaler will affect both timers.
     @inlinable
     @inline(__always)
-    public static var :  {
+    public static var prescalerResetSync: Bool {
         get {
-            let mode = (generalControlRegister & 0b00000001) >> UInt8(0)
-            return .init(rawValue: mode) ??
+            let flag = (generalControlRegister & 0b00000001) >> UInt8(0)
+            return flag == 1
         }
         set {
-            generalControlRegister |= (newValue.rawValue & 0b00000001) << UInt8(0)
+            generalControlRegister |= (newValue ? 1 : 0) & 0b00000001 << UInt8(0)
         }
     }
 }

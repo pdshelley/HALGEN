@@ -26,12 +26,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var controlRegisterA:  {
+    public static var controlRegisterA: UInt8 {
         get {
-            _volatileRegisterRead(0xC0)
+            _volatileRegisterReadUInt8(0xC0)
         }
         set {
-            _volatileRegisterWrite(0xC0, newValue)
+            _volatileRegisterWriteUInt8(0xC0, newValue)
         }
     }
     /// COM4A – Compare Output Mode 1A, bits 
@@ -272,12 +272,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var controlRegisterB:  {
+    public static var controlRegisterB: UInt8 {
         get {
-            _volatileRegisterRead(0xC1)
+            _volatileRegisterReadUInt8(0xC1)
         }
         set {
-            _volatileRegisterWrite(0xC1, newValue)
+            _volatileRegisterWriteUInt8(0xC1, newValue)
         }
     }
     /// PWM4X – PWM Inversion Mode 
@@ -343,12 +343,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterControlRegisterC:  {
+    public static var controlRegisterC: UInt8 {
         get {
-            _volatileRegisterRead(0xC2)
+            _volatileRegisterReadUInt8(0xC2)
         }
         set {
-            _volatileRegisterWrite(0xC2, newValue)
+            _volatileRegisterWriteUInt8(0xC2, newValue)
         }
     }
     /// COM4A1S – Comparator A Output Mode 
@@ -356,11 +356,11 @@ public struct Timer4: Timer10Bit {
     @inline(__always)
     public static var :  {
         get {
-            let mode = (timerCounterControlRegisterC & 0b10000000) >> UInt8(7)
+            let mode = (controlRegisterC & 0b10000000) >> UInt8(7)
             return .init(rawValue: mode) ??
         }
         set {
-            timerCounterControlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(7)
+            controlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(7)
         }
     }
     /// COM4A0S – Comparator A Output Mode 
@@ -368,11 +368,11 @@ public struct Timer4: Timer10Bit {
     @inline(__always)
     public static var :  {
         get {
-            let mode = (timerCounterControlRegisterC & 0b01000000) >> UInt8(6)
+            let mode = (controlRegisterC & 0b01000000) >> UInt8(6)
             return .init(rawValue: mode) ??
         }
         set {
-            timerCounterControlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(6)
+            controlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(6)
         }
     }
     /// COM4B1S – Comparator B Output Mode 
@@ -380,11 +380,11 @@ public struct Timer4: Timer10Bit {
     @inline(__always)
     public static var :  {
         get {
-            let mode = (timerCounterControlRegisterC & 0b00100000) >> UInt8(5)
+            let mode = (controlRegisterC & 0b00100000) >> UInt8(5)
             return .init(rawValue: mode) ??
         }
         set {
-            timerCounterControlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(5)
+            controlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(5)
         }
     }
     /// COM4B0S – Comparator B Output Mode 
@@ -392,11 +392,11 @@ public struct Timer4: Timer10Bit {
     @inline(__always)
     public static var :  {
         get {
-            let mode = (timerCounterControlRegisterC & 0b00010000) >> UInt8(4)
+            let mode = (controlRegisterC & 0b00010000) >> UInt8(4)
             return .init(rawValue: mode) ??
         }
         set {
-            timerCounterControlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(4)
+            controlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(4)
         }
     }
     /// COM4D – Comparator D Output Mode 
@@ -404,11 +404,11 @@ public struct Timer4: Timer10Bit {
     @inline(__always)
     public static var :  {
         get {
-            let mode = (timerCounterControlRegisterC & 0b00001100) >> UInt8(2)
+            let mode = (controlRegisterC & 0b00001100) >> UInt8(2)
             return .init(rawValue: mode) ??
         }
         set {
-            timerCounterControlRegisterC |= (newValue.rawValue & 0b00000011) << UInt8(2)
+            controlRegisterC |= (newValue.rawValue & 0b00000011) << UInt8(2)
         }
     }
     /// FOC4D – Force Output Compare Match 4D 
@@ -416,11 +416,11 @@ public struct Timer4: Timer10Bit {
     @inline(__always)
     public static var :  {
         get {
-            let mode = (timerCounterControlRegisterC & 0b00000010) >> UInt8(1)
+            let mode = (controlRegisterC & 0b00000010) >> UInt8(1)
             return .init(rawValue: mode) ??
         }
         set {
-            timerCounterControlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(1)
+            controlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(1)
         }
     }
     /// PWM4D – Pulse Width Modulator D Enable 
@@ -428,11 +428,11 @@ public struct Timer4: Timer10Bit {
     @inline(__always)
     public static var :  {
         get {
-            let mode = (timerCounterControlRegisterC & 0b00000001) >> UInt8(0)
+            let mode = (controlRegisterC & 0b00000001) >> UInt8(0)
             return .init(rawValue: mode) ??
         }
         set {
-            timerCounterControlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(0)
+            controlRegisterC |= (newValue.rawValue & 0b00000001) << UInt8(0)
         }
     }
     /// TCCR4D – Timer/Counter 4 Control Register D
@@ -449,12 +449,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterControlRegisterD:  {
+    public static var timerCounterControlRegisterD: UInt8 {
         get {
-            _volatileRegisterRead(0xC3)
+            _volatileRegisterReadUInt8(0xC3)
         }
         set {
-            _volatileRegisterWrite(0xC3, newValue)
+            _volatileRegisterWriteUInt8(0xC3, newValue)
         }
     }
     /// FPIE4 – Fault Protection Interrupt Enable 
@@ -543,12 +543,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterControlRegisterE:  {
+    public static var timerCounterControlRegisterE: UInt8 {
         get {
-            _volatileRegisterRead(0xC4)
+            _volatileRegisterReadUInt8(0xC4)
         }
         set {
-            _volatileRegisterWrite(0xC4, newValue)
+            _volatileRegisterWriteUInt8(0xC4, newValue)
         }
     }
     /// TLOCK4 – Register Update Lock 
@@ -601,12 +601,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var count:  {
+    public static var count: UInt8 {
         get {
-            _volatileRegisterRead(0xBE)
+            _volatileRegisterReadUInt8(0xBE)
         }
         set {
-            _volatileRegisterWrite(0xBE, newValue)
+            _volatileRegisterWriteUInt8(0xBE, newValue)
         }
     }
     /// TC4 – Timer/Counter4 bits 
@@ -635,12 +635,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounter:  {
+    public static var timerCounter: UInt8 {
         get {
-            _volatileRegisterRead(0xBF)
+            _volatileRegisterReadUInt8(0xBF)
         }
         set {
-            _volatileRegisterWrite(0xBF, newValue)
+            _volatileRegisterWriteUInt8(0xBF, newValue)
         }
     }
     /// TC4 – Timer/Counter4 bits 
@@ -669,12 +669,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterA:  {
+    public static var outputCompareRegisterA: UInt8 {
         get {
-            _volatileRegisterRead(0xCF)
+            _volatileRegisterReadUInt8(0xCF)
         }
         set {
-            _volatileRegisterWrite(0xCF, newValue)
+            _volatileRegisterWriteUInt8(0xCF, newValue)
         }
     }
     /// OCR4A – Timer/Counter4 Output Compare A bits 
@@ -703,12 +703,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterB:  {
+    public static var outputCompareRegisterB: UInt8 {
         get {
-            _volatileRegisterRead(0xD0)
+            _volatileRegisterReadUInt8(0xD0)
         }
         set {
-            _volatileRegisterWrite(0xD0, newValue)
+            _volatileRegisterWriteUInt8(0xD0, newValue)
         }
     }
     /// OCR4B – Timer/Counter4 Output Compare B bits 
@@ -737,12 +737,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterOutputCompareRegisterC:  {
+    public static var timerCounterOutputCompareRegisterC: UInt8 {
         get {
-            _volatileRegisterRead(0xD1)
+            _volatileRegisterReadUInt8(0xD1)
         }
         set {
-            _volatileRegisterWrite(0xD1, newValue)
+            _volatileRegisterWriteUInt8(0xD1, newValue)
         }
     }
     /// OCR4C – Timer/Counter4 Output Compare C bits 
@@ -771,12 +771,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterOutputCompareRegisterD:  {
+    public static var timerCounterOutputCompareRegisterD: UInt8 {
         get {
-            _volatileRegisterRead(0xD2)
+            _volatileRegisterReadUInt8(0xD2)
         }
         set {
-            _volatileRegisterWrite(0xD2, newValue)
+            _volatileRegisterWriteUInt8(0xD2, newValue)
         }
     }
     /// OCR4D – Timer/Counter4 Output Compare D bits 
@@ -805,12 +805,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var interruptMaskRegister:  {
+    public static var interruptMaskRegister: UInt8 {
         get {
-            _volatileRegisterRead(0x72)
+            _volatileRegisterReadUInt8(0x72)
         }
         set {
-            _volatileRegisterWrite(0x72, newValue)
+            _volatileRegisterWriteUInt8(0x72, newValue)
         }
     }
     /// OCIE4D – Timer/Counter4 Output Compare D Match Interrupt Enable 
@@ -875,12 +875,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var interruptFlagRegister:  {
+    public static var interruptFlagRegister: UInt8 {
         get {
-            _volatileRegisterRead(0x39)
+            _volatileRegisterReadUInt8(0x39)
         }
         set {
-            _volatileRegisterWrite(0x39, newValue)
+            _volatileRegisterWriteUInt8(0x39, newValue)
         }
     }
     /// OCF4D – Output Compare Flag 4D 
@@ -945,12 +945,12 @@ public struct Timer4: Timer10Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var timerCounterDeadTimeValue:  {
+    public static var timerCounterDeadTimeValue: UInt8 {
         get {
-            _volatileRegisterRead(0xD4)
+            _volatileRegisterReadUInt8(0xD4)
         }
         set {
-            _volatileRegisterWrite(0xD4, newValue)
+            _volatileRegisterWriteUInt8(0xD4, newValue)
         }
     }
     /// DT4L – Timer/Counter 4 Dead Time Value Bits 
