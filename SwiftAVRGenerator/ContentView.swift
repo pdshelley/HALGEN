@@ -131,10 +131,14 @@ struct Logs: Codable {
     }
     
     func saveToFile(toURL: URL) {
-        let jsonData = try! JSONEncoder().encode(logs)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        
+        let jsonData = try! encoder.encode(logs)
         let jsonString = String(data: jsonData, encoding: .utf8)!
+        
         export(toURL: toURL, fileName: "logs.json", fileContents: jsonString)
-        print("Saved logs to file.")
+        print("Saved pretty-printed logs.json")
     }
 }
 
