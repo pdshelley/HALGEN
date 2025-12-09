@@ -255,6 +255,34 @@ func getBitNamesFrom(register: AVRModules.Module.RegisterGroup.Register) -> [Str
     return bitNames
 }
 
+func getBitAccessFrom(register: AVRModules.Module.RegisterGroup.Register, parentAccess: String) -> [String] {
+    var bitAccess = Array(repeating: parentAccess, count: 16)
+        
+    for bitField in register.bitfield {
+        var mask: UInt16 = bitField.mask.value
+//        let name = bitField.name.rawValue
+        let access = supplementalData(for: bitField).access
+        
+        // 0b0100100
+        
+//        let numberOfBitsInMask = mask.nonzeroBitCount
+        let startIndex = mask.trailingZeroBitCount
+        var currentIndex = startIndex
+        mask = mask >> mask.trailingZeroBitCount // Shift out any 0s before starting.
+
+        while mask.nonzeroBitCount > 0 {
+//            var adjustedName = "" // TODO: Remove this because we don't need to change the "R/W" like we need to asjust the bit names.
+//            if numberOfBitsInMask > 1 { adjustedName = "\(numberOfBitsInMask - mask.nonzeroBitCount)" } // Check if and calculated the bit name number.
+            bitAccess[currentIndex] = access //+ adjustedName // Save name at current index.
+            mask = mask >> 1 // Shift out bit that we just saved.
+            currentIndex += 1 + mask.trailingZeroBitCount // Increase the index, if there are more 0s increase the index by how many 0s there are.
+            mask = mask >> mask.trailingZeroBitCount // If there are 0s shift them out of the mask so we don't save a name for them.
+        }
+    }
+    
+    return bitAccess
+}
+
 /// Adds Padding to strings for documentation. This is intended to be used for centering text in mono-spaced ASCII tables.
 /// - Parameter input: String of 7 characters or less.
 /// - Returns: A string of 7 characters, if the input string had more than 7 characters it should be unchanged.
@@ -270,60 +298,28 @@ func padString(_ input: String, padding: Int) -> String {
     return String(repeating: " ", count: leftPadding) + input + String(repeating: " ", count: rightPadding)
 }
 
-
-
-func variableNameFor(register: AVRModules.Module.RegisterGroup.Register) -> String {
-    switch register.name {
-    case .TIMSK0, .TIMSK1, .TIMSK2, .TIMSK3, .TIMSK4, .TIMSK5:
-        return "interruptMaskRegister"
-    case .TIFR0, .TIFR1, .TIFR2, .TIFR3, .TIFR4, .TIFR5:
-        return "interruptFlagRegister"
-    case .TCCR0A, .TCCR1A, .TCCR2A, .TCCR3A, .TCCR4A, .TCCR5A:
-        return "controlRegisterA"
-    case .TCCR0B, .TCCR1B, .TCCR2B, .TCCR3B, .TCCR4B, .TCCR5B:
-        return "controlRegisterB"
-    case .TCCR1C, .TCCR3C, .TCCR4C, .TCCR5C:
-        return "controlRegisterC"
-    case .TCNT0, .TCNT1, .TCNT2, .TCNT3, .TCNT4, .TCNT5:
-        return "count"
-    case .OCR0B, .OCR1B, .OCR2B, .OCR3B, .OCR4B, .OCR5B:
-        return "outputCompareRegisterB"
-    case .OCR0A, .OCR1A, .OCR2A, .OCR3A, .OCR4A, .OCR5A:
-        return "outputCompareRegisterA"
-    case .ICR1, .ICR3, .ICR4, .ICR5:
-        return "inputCaptureRegister"
-    case .ASSR:
-        return "asynchronousStatusRegister"
-    case .GTCCR:
-        return "generalControlRegister"
-    default :
-        var variableName = register.caption?.rawValue ?? ""
-        variableName = variableName.filter { $0 != " " }
-        variableName = variableName.filter { $0 != "/" }
-        variableName = variableName.filter { $0 != "0" }
-        variableName = variableName.filter { $0 != "1" }
-        variableName = variableName.filter { $0 != "2" }
-        variableName = variableName.filter { $0 != "3" }
-        variableName = variableName.filter { $0 != "4" }
-        variableName = variableName.filter { $0 != "5" }
-        return variableName.prefix(1).lowercased() + variableName.dropFirst()
-    }
-}
-
 //func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSize: TimerInfo.BitSize) -> MemberBlockItemSyntax {
 func generateRegister(register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
     
-    let variableName = variableNameFor(register: register)
+    let variableName = supplementalData(for: register).variableName
     
     // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
     var registerName = ""
+    var readWrite = ""
+    let registarAccess = supplementalData(for: register).access
+    
     
     if register.bitfield.isEmpty {
         registerName = padString(register.name.rawValue, padding: 63)
+        readWrite = padString(registarAccess, padding: 63)
     } else {
         var bitNames = getBitNamesFrom(register: register)
         bitNames = bitNames.map { padString($0, padding: 7) }
         registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
+        
+        var bitAccess = getBitAccessFrom(register: register, parentAccess: registarAccess) // TODO: Check the register for it's access level
+        bitAccess = bitAccess.map { padString($0, padding: 7) }
+        readWrite = "\(bitAccess[7])|\(bitAccess[6])|\(bitAccess[5])|\(bitAccess[4])|\(bitAccess[3])|\(bitAccess[2])|\(bitAccess[1])|\(bitAccess[0])"
     }
     
     var bit: (size: String, atomicStart: String, atomicEnd: String) {
@@ -346,9 +342,9 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register) -> Mem
           ///--------------------------------------------------------------------------------
           ///| (\(raw: register.offset.rawValue))       |\(raw: registerName)|
           ///--------------------------------------------------------------------------------
-          ///| Read/Write   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+          ///| Read/Write   |\(raw: readWrite)|
           ///--------------------------------------------------------------------------------
-          ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
+          ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
           ///--------------------------------------------------------------------------------
           ///```
           @inlinable
@@ -365,85 +361,6 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register) -> Mem
     )
     
     return MemberBlockItemSyntax(decl: source)
-}
-
-struct SupplementalData {
-    let variableName: String
-    let valueType: String
-    let defaultValue: String
-    let documentation: String
-}
-
-func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, with timerInfo: TimerInfo) -> SupplementalData {
-    switch bitfield.name {
-        // Interrupt Mask Register
-    case .OCIE0B, .OCIE1B, .OCIE2B, .OCIE3B, .OCIE4B, .OCIE5B:
-        return SupplementalData(variableName: "outputCompareMatchBInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "")
-    case .OCIE0A, .OCIE1A, .OCIE2A, .OCIE3A, .OCIE4A, .OCIE5A:
-        return SupplementalData(variableName: "outputCompareMatchAInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "")
-    case .TOIE0, .TOIE1, .TOIE2, .TOIE3, .TOIE4, .TOIE5:
-        return SupplementalData(variableName: "overflowInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "")
-    case .ICIE0, .ICIE1, .ICIE3, .ICIE4, .ICIE5:
-        return SupplementalData(variableName: "inputCaptureInterruptEnable", valueType: "Bool", defaultValue: "", documentation: inputCaptureInterruptEnableDocumentation)
-        
-        // Interrupt Flag Register
-    case .OCF0B, .OCF1B, .OCF2B, .OCF3B, .OCF4B, .OCF5B:
-        return SupplementalData(variableName: "outputCompareFlagB", valueType: "Bool", defaultValue: "", documentation: "")
-    case .OCF0A, .OCF1A, .OCF2A, .OCF3A, .OCF4A, .OCF5A:
-        return SupplementalData(variableName: "outputCompareFlagA", valueType: "Bool", defaultValue: "", documentation: "")
-    case .TOV0, .TOV1, .TOV2, .TOV3, .TOV4, .TOV5:
-        return SupplementalData(variableName: "overflowFlag", valueType: "Bool", defaultValue: "", documentation: "")
-    case .ICF0, .ICF1, .ICF3, .ICF4, .ICF5:
-        return SupplementalData(variableName: "inputCaptureFlag", valueType: "Bool", defaultValue: "", documentation: inputCaptureFlagDocumentation)
-        
-        // Control Register A
-    case .COM0A, .COM1A, .COM2A, .COM3A, .COM4A, .COM5A:
-        return SupplementalData(variableName: "compareOutputModeA", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeADocumentation)
-    case .COM0B, .COM1B, .COM2B, .COM3B, .COM4B, .COM5B:
-        return SupplementalData(variableName: "compareOutputModeB", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeBDocumentation)
-    case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
-        return SupplementalData(variableName: "waveformGenerationMode", valueType: "WaveformGenerationMode", defaultValue: ".normal", documentation: waveformGenerationModeDocumentation)
-        
-        // Control Register B
-    case .FOC0A, .FOC1A, .FOC2A, .FOC3A, .FOC4A, .FOC5A:
-        return SupplementalData(variableName: "forceOutputCompareA", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareADocumentation)
-    case .FOC0B, .FOC1B, .FOC2B, .FOC3B, .FOC4B, .FOC5B:
-        return SupplementalData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareBDocumentation)
-    case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
-        return SupplementalData(variableName: "prescaler", valueType: "Prescaling", defaultValue: ".stopped", documentation: prescalerDocumentation)
-    case .ICNC0, .ICNC1, .ICNC3, .ICNC4, .ICNC5:
-        return SupplementalData(variableName: "inputCaptureNoiseCanceler", valueType: "Bool", defaultValue: "", documentation: inputCaptureNoiseCancelerDocumentation)
-    case .ICES0, .ICES1, .ICES3, .ICES4, .ICES5:
-        return SupplementalData(variableName: "inputCaptureEdgeSelect", valueType: "Bool", defaultValue: "", documentation: inputCaptureEdgeSelectDocumentation)
-    
-        // Asynchronous Status Register
-    case .EXCLK:
-        return SupplementalData(variableName: "enableExternalClockInput", valueType: "Bool", defaultValue: "", documentation: "")
-    case .AS2:
-        return SupplementalData(variableName: "asynchronousTimerCounter", valueType: "Bool", defaultValue: "", documentation: "")
-    case .TCN2UB:
-        return SupplementalData(variableName: "updateBusy", valueType: "Bool", defaultValue: "", documentation: "")
-    case .OCR2AUB:
-        return SupplementalData(variableName: "outputCompareRegisterAUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "")
-    case .OCR2BUB:
-        return SupplementalData(variableName: "outputCompareRegisterBUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "")
-    case .TCR2AUB:
-        return SupplementalData(variableName: "controlRegisterAUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "")
-    case .TCR2BUB:
-        return SupplementalData(variableName: "controlRegisterBUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "")
-        
-    
-        // General Timer/Counter Control Register
-    case .TSM:
-        return SupplementalData(variableName: "timerSynchronizationMode", valueType: "Timer.TimerSynchronizationMode", defaultValue: ".disabled", documentation: timerSynchronizationModeDocumentation)
-    case .PSRASY:
-        return SupplementalData(variableName: "prescalerReset", valueType: "Bool", defaultValue: "", documentation: prescalerResetDocumentation)
-    case .PSRSYNC:
-        return SupplementalData(variableName: "prescalerResetSync", valueType: "Bool", defaultValue: "", documentation: prescalerResetSyncDocumentation)
-        
-    default :
-        return SupplementalData(variableName: "", valueType: "", defaultValue: "", documentation: "")
-    }
 }
 
 var wmgBitfieldA: (bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariable: AVRModules.Module.RegisterGroup.Register)? = nil
@@ -470,7 +387,7 @@ func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Re
     // Register B Bitshift should be: << 2 to get back to the "Register B Bitmask" location
     
     let caption = bitfieldA.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
-    let info = supplementalData(for: bitfieldA, with: timerInfo)
+    let info = supplementalData(for: bitfieldA)
     
     var lowBitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
     var lowParentVariableName: String
@@ -482,14 +399,14 @@ func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Re
     switch parentVariableA.name {
     case .TCCR0A, .TCCR1A, .TCCR2A, .TCCR3A, .TCCR4A, .TCCR5A:
         lowBitfield = bitfieldA
-        lowParentVariableName = variableNameFor(register: parentVariableA)
+        lowParentVariableName = supplementalData(for: parentVariableA).variableName
         highBitfield = bitfieldB
-        hightParentVariableName = variableNameFor(register: parentVariableB)
+        hightParentVariableName = supplementalData(for: parentVariableB).variableName
     case .TCCR0B, .TCCR1B, .TCCR2B, .TCCR3B, .TCCR4B, .TCCR5B:
         lowBitfield = bitfieldB
-        lowParentVariableName = variableNameFor(register: parentVariableB)
+        lowParentVariableName = supplementalData(for: parentVariableB).variableName
         highBitfield = bitfieldA
-        hightParentVariableName = variableNameFor(register: parentVariableA)
+        hightParentVariableName = supplementalData(for: parentVariableA).variableName
     case .TCCR2, .TCCR0, .TCCR4D: // ATmega8, ATmega16, ATmega16U4 // I think this only has one TCCR register.
         print("Failed to generate WaveformGenerationMode Accessor.")
         logs.addLog("Failed to generate WaveformGenerationMode Accessor. The register: \(parentVariableA.name) has something different that needs to be handled.", toChip: chipName) // TODO: Set to the correct chip name!
@@ -693,10 +610,10 @@ func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register
         break
     }
     
-    let parentVariableName = variableNameFor(register: parentVariable)
+    let parentVariableName: String = supplementalData(for: parentVariable).variableName
     
     let caption = bitfield.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
-    let info = supplementalData(for: bitfield, with: timerInfo)
+    let info = supplementalData(for: bitfield)
     let bitmask = bitfield.mask.value.lowByte.binaryString
     let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
     let enumBitmask = (bitfield.mask.value.lowByte >> bitshift).binaryString
@@ -744,12 +661,136 @@ func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register
     }
 }
 
+struct SupplementalRegisterData {
+    let variableName: String
+    let valueType: String
+    let defaultValue: String
+    let documentation: String
+    let access: String
+}
 
+func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
+    switch register.name {
+    case .TIMSK0, .TIMSK1, .TIMSK2, .TIMSK3, .TIMSK4, .TIMSK5:
+        return SupplementalRegisterData(variableName: "interruptMaskRegister", valueType: "", defaultValue: "", documentation: "", access: "R")
+    case .TIFR0, .TIFR1, .TIFR2, .TIFR3, .TIFR4, .TIFR5:
+        return SupplementalRegisterData(variableName: "interruptFlagRegister", valueType: "", defaultValue: "", documentation: "", access: "R")
+    case .TCCR0A, .TCCR1A, .TCCR2A, .TCCR3A, .TCCR4A, .TCCR5A:
+        return SupplementalRegisterData(variableName: "controlRegisterA", valueType: "", defaultValue: "", documentation: "", access: "R")
+    case .TCCR0B, .TCCR1B, .TCCR2B, .TCCR3B, .TCCR4B, .TCCR5B:
+        return SupplementalRegisterData(variableName: "controlRegisterB", valueType: "", defaultValue: "", documentation: "", access: "R")
+    case .TCCR1C, .TCCR3C, .TCCR4C, .TCCR5C:
+        return SupplementalRegisterData(variableName: "controlRegisterC", valueType: "", defaultValue: "", documentation: "", access: "R")
+    case .TCNT0, .TCNT1, .TCNT2, .TCNT3, .TCNT4, .TCNT5:
+        return SupplementalRegisterData(variableName: "count", valueType: "", defaultValue: "", documentation: "", access: "R/W")
+    case .OCR0A, .OCR1A, .OCR2A, .OCR3A, .OCR4A, .OCR5A:
+        return SupplementalRegisterData(variableName: "outputCompareRegisterA", valueType: "", defaultValue: "", documentation: "", access: "R/W")
+    case .OCR0B, .OCR1B, .OCR2B, .OCR3B, .OCR4B, .OCR5B:
+        return SupplementalRegisterData(variableName: "outputCompareRegisterB", valueType: "", defaultValue: "", documentation: "", access: "R/W")
+    case .ICR1, .ICR3, .ICR4, .ICR5:
+        return SupplementalRegisterData(variableName: "inputCaptureRegister", valueType: "", defaultValue: "", documentation: "", access: "R/W")
+    case .ASSR:
+        return SupplementalRegisterData(variableName: "asynchronousStatusRegister", valueType: "", defaultValue: "", documentation: "", access: "R")
+    case .GTCCR:
+        return SupplementalRegisterData(variableName: "generalControlRegister", valueType: "", defaultValue: "", documentation: "", access: "R")
+    default :
+        var variableName = register.caption?.rawValue ?? ""
+        variableName = variableName.filter { $0 != " " }
+        variableName = variableName.filter { $0 != "/" }
+        variableName = variableName.filter { $0 != "0" }
+        variableName = variableName.filter { $0 != "1" }
+        variableName = variableName.filter { $0 != "2" }
+        variableName = variableName.filter { $0 != "3" }
+        variableName = variableName.filter { $0 != "4" }
+        variableName = variableName.filter { $0 != "5" }
+        let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
+        return SupplementalRegisterData(variableName: name, valueType: "", defaultValue: "", documentation: "", access: "")
+    }
+}
 
-// Note: These are only here for being able to build as these symbols are not linked like they would be in a true HAL project.
-//func _volatileRegisterReadUInt8(_: UInt16) -> UInt8 { return 0 }
-//
-//func _volatileRegisterWriteUInt8(_: UInt16, _: UInt8) { }
+struct SupplementalBitfieldData {
+    let variableName: String
+    let valueType: String
+    let defaultValue: String
+    let documentation: String
+    let access: String
+}
+
+func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
+    switch bitfield.name {
+        // Interrupt Mask Register
+    case .OCIE0B, .OCIE1B, .OCIE2B, .OCIE3B, .OCIE4B, .OCIE5B:
+        return SupplementalBitfieldData(variableName: "outputCompareMatchBInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "", access: "R/W")
+    case .OCIE0A, .OCIE1A, .OCIE2A, .OCIE3A, .OCIE4A, .OCIE5A:
+        return SupplementalBitfieldData(variableName: "outputCompareMatchAInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "", access: "R/W")
+    case .TOIE0, .TOIE1, .TOIE2, .TOIE3, .TOIE4, .TOIE5:
+        return SupplementalBitfieldData(variableName: "overflowInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "", access: "R/W")
+    case .ICIE0, .ICIE1, .ICIE3, .ICIE4, .ICIE5:
+        return SupplementalBitfieldData(variableName: "inputCaptureInterruptEnable", valueType: "Bool", defaultValue: "", documentation: inputCaptureInterruptEnableDocumentation, access: "R/W")
+        
+        // Interrupt Flag Register
+    case .OCF0B, .OCF1B, .OCF2B, .OCF3B, .OCF4B, .OCF5B:
+        return SupplementalBitfieldData(variableName: "outputCompareFlagB", valueType: "Bool", defaultValue: "", documentation: "", access: "R/W")
+    case .OCF0A, .OCF1A, .OCF2A, .OCF3A, .OCF4A, .OCF5A:
+        return SupplementalBitfieldData(variableName: "outputCompareFlagA", valueType: "Bool", defaultValue: "", documentation: "", access: "R/W")
+    case .TOV0, .TOV1, .TOV2, .TOV3, .TOV4, .TOV5:
+        return SupplementalBitfieldData(variableName: "overflowFlag", valueType: "Bool", defaultValue: "", documentation: "", access: "R/W")
+    case .ICF0, .ICF1, .ICF3, .ICF4, .ICF5:
+        return SupplementalBitfieldData(variableName: "inputCaptureFlag", valueType: "Bool", defaultValue: "", documentation: inputCaptureFlagDocumentation, access: "R/W")
+        
+        // Control Register A
+    case .COM0A, .COM1A, .COM2A, .COM3A, .COM4A, .COM5A:
+        return SupplementalBitfieldData(variableName: "compareOutputModeA", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeADocumentation, access: "R/W")
+    case .COM0B, .COM1B, .COM2B, .COM3B, .COM4B, .COM5B:
+        return SupplementalBitfieldData(variableName: "compareOutputModeB", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeBDocumentation, access: "R/W")
+    case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
+        return SupplementalBitfieldData(variableName: "waveformGenerationMode", valueType: "WaveformGenerationMode", defaultValue: ".normal", documentation: waveformGenerationModeDocumentation, access: "R/W")
+        
+        // Control Register B
+    case .FOC0A, .FOC2A: // NOTE: On the Atmega328P Datasheet FOC1A, FOC2A and FOC1B, FOC2B are Write only while the same bit on other Timers registers are Read/Write. Is this an error in the Datasheet?
+        return SupplementalBitfieldData(variableName: "forceOutputCompareA", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareADocumentation, access: "W")
+    case .FOC1A, .FOC3A, .FOC4A, .FOC5A:
+        return SupplementalBitfieldData(variableName: "forceOutputCompareA", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareADocumentation, access: "R/W")
+    case .FOC0B, .FOC2B: // NOTE: On the Atmega328P Datasheet FOC1A, FOC2A and FOC1B, FOC2B are Write only while the same bit on other Timers registers are Read/Write. Is this an error in the Datasheet?
+        return SupplementalBitfieldData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareBDocumentation, access: "W")
+    case .FOC1B, .FOC3B, .FOC4B, .FOC5B:
+        return SupplementalBitfieldData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareBDocumentation, access: "R/W")
+    case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
+        return SupplementalBitfieldData(variableName: "prescaler", valueType: "Prescaling", defaultValue: ".stopped", documentation: prescalerDocumentation, access: "R/W")
+    case .ICNC0, .ICNC1, .ICNC3, .ICNC4, .ICNC5:
+        return SupplementalBitfieldData(variableName: "inputCaptureNoiseCanceler", valueType: "Bool", defaultValue: "", documentation: inputCaptureNoiseCancelerDocumentation, access: "R/W")
+    case .ICES0, .ICES1, .ICES3, .ICES4, .ICES5:
+        return SupplementalBitfieldData(variableName: "inputCaptureEdgeSelect", valueType: "Bool", defaultValue: "", documentation: inputCaptureEdgeSelectDocumentation, access: "R/W")
+    
+        // Asynchronous Status Register
+    case .EXCLK:
+        return SupplementalBitfieldData(variableName: "enableExternalClockInput", valueType: "Bool", defaultValue: "", documentation: "", access: "R/W")
+    case .AS2:
+        return SupplementalBitfieldData(variableName: "asynchronousTimerCounter", valueType: "Bool", defaultValue: "", documentation: "", access: "R/W")
+    case .TCN2UB:
+        return SupplementalBitfieldData(variableName: "updateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: "R")
+    case .OCR2AUB:
+        return SupplementalBitfieldData(variableName: "outputCompareRegisterAUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: "R")
+    case .OCR2BUB:
+        return SupplementalBitfieldData(variableName: "outputCompareRegisterBUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: "R")
+    case .TCR2AUB:
+        return SupplementalBitfieldData(variableName: "controlRegisterAUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: "R")
+    case .TCR2BUB:
+        return SupplementalBitfieldData(variableName: "controlRegisterBUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: "R")
+        
+    
+        // General Timer/Counter Control Register
+    case .TSM:
+        return SupplementalBitfieldData(variableName: "timerSynchronizationMode", valueType: "Timer.TimerSynchronizationMode", defaultValue: ".disabled", documentation: timerSynchronizationModeDocumentation, access: "R/W")
+    case .PSRASY:
+        return SupplementalBitfieldData(variableName: "prescalerReset", valueType: "Bool", defaultValue: "", documentation: prescalerResetDocumentation, access: "R/W")
+    case .PSRSYNC:
+        return SupplementalBitfieldData(variableName: "prescalerResetSync", valueType: "Bool", defaultValue: "", documentation: prescalerResetSyncDocumentation, access: "R/W")
+        
+    default :
+        return SupplementalBitfieldData(variableName: "", valueType: "", defaultValue: "", documentation: "", access: "")
+    }
+}
 
 let outputCompareModeADocumentation: String = """
 \n    ///
