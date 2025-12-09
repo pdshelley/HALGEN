@@ -3,7 +3,7 @@
 // Timer1.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/04/2025.
+// Created by Swift AVR Generator on 12/09/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -244,12 +244,16 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var count: UInt8 {
+    public static var count: UInt16 {
         get {
-            _volatileRegisterReadUInt8(0x5A)
+            atomic {
+                _volatileRegisterReadUInt16(0x5A)
+            }
         }
         set {
-            _volatileRegisterWriteUInt8(0x5A, newValue)
+            atomic {
+                _volatileRegisterWriteUInt16(0x5A, newValue)
+            }
         }
     }
     /// ICR1 – Timer/Counter1 Input Capture Register  Bytes
@@ -266,12 +270,16 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var inputCaptureRegister: UInt8 {
+    public static var inputCaptureRegister: UInt16 {
         get {
-            _volatileRegisterReadUInt8(0x8C)
+            atomic {
+                _volatileRegisterReadUInt16(0x8C)
+            }
         }
         set {
-            _volatileRegisterWriteUInt8(0x8C, newValue)
+            atomic {
+                _volatileRegisterWriteUInt16(0x8C, newValue)
+            }
         }
     }
 }

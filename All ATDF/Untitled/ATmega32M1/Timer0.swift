@@ -3,7 +3,7 @@
 // Timer0.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/04/2025.
+// Created by Swift AVR Generator on 12/09/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -377,14 +377,14 @@ public struct Timer0: Timer8Bit {
     }
     /// FOC0A – Force Output Compare A 
     ///
-    /// The FOC2A bit is only active when the WGM bits specify a non-PWM mode.
-    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written
-    /// when operating in PWM mode. When writing a logical one to the FOC2A bit, an immediate Compare Match is
-    /// forced on the Waveform Generation unit. The OC2A output is changed according to its COM2A1:0 bits setting.
-    /// Note that the FOC2A bit is implemented as a strobe. Therefore it is the value present in the COM2A1:0 bits that
+    /// The FOCnA bit is only active when the WGM bits specify a non-PWM mode.
+    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCRnB is written
+    /// when operating in PWM mode. When writing a logical one to the FOCnA bit, an immediate Compare Match is
+    /// forced on the Waveform Generation unit. The OCnA output is changed according to its COMnA bits setting.
+    /// Note that the FOCnA bit is implemented as a strobe. Therefore it is the value present in the COMnA bits that
     /// determines the effect of the forced compare.
-    /// A FOC2A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2A as TOP.
-    /// The FOC2A bit is always read as zero.
+    /// A FOCnA strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCRnA as TOP.
+    /// The FOCnA bit is always read as zero.
     @inlinable
     @inline(__always)
     public static var forceOutputCompareA: Bool {
@@ -398,14 +398,14 @@ public struct Timer0: Timer8Bit {
     }
     /// FOC0B – Force Output Compare B 
     ///
-    /// The FOC2B bit is only active when the WGM bits specify a non-PWM mode.
-    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written
-    /// when operating in PWM mode. When writing a logical one to the FOC2B bit, an immediate Compare Match is
-    /// forced on the Waveform Generation unit. The OC2B output is changed according to its COM2B1:0 bits setting.
-    /// Note that the FOC2B bit is implemented as a strobe. Therefore it is the value present in the COM2B1:0 bits that
+    /// The FOCnB bit is only active when the WGM bits specify a non-PWM mode.
+    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCRnB is written
+    /// when operating in PWM mode. When writing a logical one to the FOCnB bit, an immediate Compare Match is
+    /// forced on the Waveform Generation unit. The OCnB output is changed according to its COMnB bits setting.
+    /// Note that the FOCnB bit is implemented as a strobe. Therefore it is the value present in the COMnB bits that
     /// determines the effect of the forced compare.
-    /// A FOC2B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2B as TOP.
-    /// The FOC2B bit is always read as zero.
+    /// A FOCnB strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCRnB as TOP.
+    /// The FOCnB bit is always read as zero.
     @inlinable
     @inline(__always)
     public static var forceOutputCompareB: Bool {

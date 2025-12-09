@@ -3,7 +3,7 @@
 // Timer0.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/04/2025.
+// Created by Swift AVR Generator on 12/09/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -201,12 +201,16 @@ public struct Timer0: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var count: UInt8 {
+    public static var count: UInt16 {
         get {
-            _volatileRegisterReadUInt8(0x84)
+            atomic {
+                _volatileRegisterReadUInt16(0x84)
+            }
         }
         set {
-            _volatileRegisterWriteUInt8(0x84, newValue)
+            atomic {
+                _volatileRegisterWriteUInt16(0x84, newValue)
+            }
         }
     }
     /// OCR1A – Output Compare Register 1A
@@ -627,12 +631,16 @@ public struct Timer0: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var count: UInt8 {
+    public static var count: UInt16 {
         get {
-            _volatileRegisterReadUInt8(0x46)
+            atomic {
+                _volatileRegisterReadUInt16(0x46)
+            }
         }
         set {
-            _volatileRegisterWriteUInt8(0x46, newValue)
+            atomic {
+                _volatileRegisterWriteUInt16(0x46, newValue)
+            }
         }
     }
     /// OCR0A – Output Compare Register 0A

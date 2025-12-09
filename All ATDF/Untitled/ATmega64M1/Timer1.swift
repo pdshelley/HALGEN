@@ -3,7 +3,7 @@
 // Timer1.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/04/2025.
+// Created by Swift AVR Generator on 12/09/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -514,14 +514,14 @@ public struct Timer1: Timer16Bit {
     }
     /// FOC1A – Force Output Compare for Channel A 
     ///
-    /// The FOC2A bit is only active when the WGM bits specify a non-PWM mode.
-    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written
-    /// when operating in PWM mode. When writing a logical one to the FOC2A bit, an immediate Compare Match is
-    /// forced on the Waveform Generation unit. The OC2A output is changed according to its COM2A1:0 bits setting.
-    /// Note that the FOC2A bit is implemented as a strobe. Therefore it is the value present in the COM2A1:0 bits that
+    /// The FOCnA bit is only active when the WGM bits specify a non-PWM mode.
+    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCRnB is written
+    /// when operating in PWM mode. When writing a logical one to the FOCnA bit, an immediate Compare Match is
+    /// forced on the Waveform Generation unit. The OCnA output is changed according to its COMnA bits setting.
+    /// Note that the FOCnA bit is implemented as a strobe. Therefore it is the value present in the COMnA bits that
     /// determines the effect of the forced compare.
-    /// A FOC2A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2A as TOP.
-    /// The FOC2A bit is always read as zero.
+    /// A FOCnA strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCRnA as TOP.
+    /// The FOCnA bit is always read as zero.
     @inlinable
     @inline(__always)
     public static var forceOutputCompareA: Bool {
@@ -535,14 +535,14 @@ public struct Timer1: Timer16Bit {
     }
     /// FOC1B – Force Output Compare for Channel B 
     ///
-    /// The FOC2B bit is only active when the WGM bits specify a non-PWM mode.
-    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written
-    /// when operating in PWM mode. When writing a logical one to the FOC2B bit, an immediate Compare Match is
-    /// forced on the Waveform Generation unit. The OC2B output is changed according to its COM2B1:0 bits setting.
-    /// Note that the FOC2B bit is implemented as a strobe. Therefore it is the value present in the COM2B1:0 bits that
+    /// The FOCnB bit is only active when the WGM bits specify a non-PWM mode.
+    /// However, for ensuring compatibility with future devices, this bit must be set to zero when TCCRnB is written
+    /// when operating in PWM mode. When writing a logical one to the FOCnB bit, an immediate Compare Match is
+    /// forced on the Waveform Generation unit. The OCnB output is changed according to its COMnB bits setting.
+    /// Note that the FOCnB bit is implemented as a strobe. Therefore it is the value present in the COMnB bits that
     /// determines the effect of the forced compare.
-    /// A FOC2B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2B as TOP.
-    /// The FOC2B bit is always read as zero.
+    /// A FOCnB strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCRnB as TOP.
+    /// The FOCnB bit is always read as zero.
     @inlinable
     @inline(__always)
     public static var forceOutputCompareB: Bool {
@@ -568,12 +568,16 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var count: UInt8 {
+    public static var count: UInt16 {
         get {
-            _volatileRegisterReadUInt8(0x84)
+            atomic {
+                _volatileRegisterReadUInt16(0x84)
+            }
         }
         set {
-            _volatileRegisterWriteUInt8(0x84, newValue)
+            atomic {
+                _volatileRegisterWriteUInt16(0x84, newValue)
+            }
         }
     }
     /// OCR1A – Timer/Counter1 Output Compare Register A
@@ -590,12 +594,16 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterA: UInt8 {
+    public static var outputCompareRegisterA: UInt16 {
         get {
-            _volatileRegisterReadUInt8(0x88)
+            atomic {
+                _volatileRegisterReadUInt16(0x88)
+            }
         }
         set {
-            _volatileRegisterWriteUInt8(0x88, newValue)
+            atomic {
+                _volatileRegisterWriteUInt16(0x88, newValue)
+            }
         }
     }
     /// OCR1B – Timer/Counter1 Output Compare Register B
@@ -612,12 +620,16 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var outputCompareRegisterB: UInt8 {
+    public static var outputCompareRegisterB: UInt16 {
         get {
-            _volatileRegisterReadUInt8(0x8A)
+            atomic {
+                _volatileRegisterReadUInt16(0x8A)
+            }
         }
         set {
-            _volatileRegisterWriteUInt8(0x8A, newValue)
+            atomic {
+                _volatileRegisterWriteUInt16(0x8A, newValue)
+            }
         }
     }
     /// ICR1 – Timer/Counter1 Input Capture Register
@@ -634,12 +646,16 @@ public struct Timer1: Timer16Bit {
     ///```
     @inlinable
     @inline(__always)
-    public static var inputCaptureRegister: UInt8 {
+    public static var inputCaptureRegister: UInt16 {
         get {
-            _volatileRegisterReadUInt8(0x86)
+            atomic {
+                _volatileRegisterReadUInt16(0x86)
+            }
         }
         set {
-            _volatileRegisterWriteUInt8(0x86, newValue)
+            atomic {
+                _volatileRegisterWriteUInt16(0x86, newValue)
+            }
         }
     }
     /// GTCCR – General Timer/Counter Control Register
