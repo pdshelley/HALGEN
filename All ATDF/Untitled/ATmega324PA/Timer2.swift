@@ -3,7 +3,7 @@
 // Timer2.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/09/2025.
+// Created by Swift AVR Generator on 12/11/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -343,10 +343,6 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     @inlinable
     @inline(__always)
     public static var forceOutputCompareA: Bool {
-        get {
-            let flag = (controlRegisterB & 0b10000000) >> UInt8(7)
-            return flag == 1
-        }
         set {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
         }
@@ -364,10 +360,6 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     @inlinable
     @inline(__always)
     public static var forceOutputCompareB: Bool {
-        get {
-            let flag = (controlRegisterB & 0b01000000) >> UInt8(6)
-            return flag == 1
-        }
         set {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
@@ -468,7 +460,7 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     ///--------------------------------------------------------------------------------
     ///| (0xB2)       |TCNT27 |TCNT26 |TCNT25 |TCNT24 |TCNT23 |TCNT22 |TCNT21 |TCNT20 |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |       |       |       |       |       |       |       |       |
+    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------
@@ -502,7 +494,7 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     ///--------------------------------------------------------------------------------
     ///| (0xB4)       |OCR2B7 |OCR2B6 |OCR2B5 |OCR2B4 |OCR2B3 |OCR2B2 |OCR2B1 |OCR2B0 |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |       |       |       |       |       |       |       |       |
+    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------
@@ -536,7 +528,7 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     ///--------------------------------------------------------------------------------
     ///| (0xB3)       |OCR2A7 |OCR2A6 |OCR2A5 |OCR2A4 |OCR2A3 |OCR2A2 |OCR2A1 |OCR2A0 |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |       |       |       |       |       |       |       |       |
+    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------

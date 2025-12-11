@@ -3,7 +3,7 @@
 // Timer0.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/09/2025.
+// Created by Swift AVR Generator on 12/11/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -19,7 +19,7 @@ public struct Timer0: Timer8Bit {
     ///--------------------------------------------------------------------------------
     ///| (0x48)       |OCR0B7 |OCR0B6 |OCR0B5 |OCR0B4 |OCR0B3 |OCR0B2 |OCR0B1 |OCR0B0 |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |       |       |       |       |       |       |       |       |
+    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ public struct Timer0: Timer8Bit {
     ///--------------------------------------------------------------------------------
     ///| (0x47)       |OCR0A7 |OCR0A6 |OCR0A5 |OCR0A4 |OCR0A3 |OCR0A2 |OCR0A1 |OCR0A0 |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |       |       |       |       |       |       |       |       |
+    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ public struct Timer0: Timer8Bit {
     ///--------------------------------------------------------------------------------
     ///| (0x46)       |TCNT07 |TCNT06 |TCNT05 |TCNT04 |TCNT03 |TCNT02 |TCNT01 |TCNT00 |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |       |       |       |       |       |       |       |       |
+    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------
@@ -149,10 +149,6 @@ public struct Timer0: Timer8Bit {
     @inlinable
     @inline(__always)
     public static var forceOutputCompareA: Bool {
-        get {
-            let flag = (controlRegisterB & 0b10000000) >> UInt8(7)
-            return flag == 1
-        }
         set {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
         }
@@ -170,10 +166,6 @@ public struct Timer0: Timer8Bit {
     @inlinable
     @inline(__always)
     public static var forceOutputCompareB: Bool {
-        get {
-            let flag = (controlRegisterB & 0b01000000) >> UInt8(6)
-            return flag == 1
-        }
         set {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }

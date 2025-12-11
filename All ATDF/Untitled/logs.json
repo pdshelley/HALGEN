@@ -1,98 +1,98 @@
 {
   "chips" : [
     {
+      "name" : "ATmega8",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega8"
+      ]
     },
     {
+      "name" : "ATmega8A",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega8A"
+      ]
     },
     {
-      "logs" : [
-        "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
-        "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega16"
-    },
-    {
+      "name" : "ATmega16",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega16A"
+      ]
     },
     {
+      "name" : "ATmega16A",
+      "logs" : [
+        "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
+        "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
+      ]
+    },
+    {
+      "name" : "ATmega16U4",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR4D has something different that needs to be handled."
-      ],
-      "name" : "ATmega16U4"
+      ]
     },
     {
+      "name" : "ATmega32",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega32"
+      ]
     },
     {
+      "name" : "ATmega32A",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega32A"
+      ]
     },
     {
+      "name" : "ATmega64",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega64"
+      ]
     },
     {
+      "name" : "ATmega64A",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega64A"
+      ]
     },
     {
+      "name" : "ATmega128",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega128"
+      ]
     },
     {
+      "name" : "ATmega128A",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega128A"
+      ]
     },
     {
+      "name" : "ATmega162",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled.",
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled."
-      ],
-      "name" : "ATmega162"
+      ]
     },
     {
+      "name" : "ATmega8515",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled."
-      ],
-      "name" : "ATmega8515"
+      ]
     },
     {
+      "name" : "ATmega8535",
       "logs" : [
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR0 has something different that needs to be handled.",
         "Failed to generate WaveformGenerationMode Accessor. The register: TCCR2 has something different that needs to be handled."
-      ],
-      "name" : "ATmega8535"
+      ]
     }
   ]
 }

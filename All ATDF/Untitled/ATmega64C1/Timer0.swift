@@ -3,7 +3,7 @@
 // Timer0.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/09/2025.
+// Created by Swift AVR Generator on 12/11/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -343,10 +343,6 @@ public struct Timer0: Timer8Bit {
     @inlinable
     @inline(__always)
     public static var forceOutputCompareA: Bool {
-        get {
-            let flag = (controlRegisterB & 0b10000000) >> UInt8(7)
-            return flag == 1
-        }
         set {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
         }
@@ -364,10 +360,6 @@ public struct Timer0: Timer8Bit {
     @inlinable
     @inline(__always)
     public static var forceOutputCompareB: Bool {
-        get {
-            let flag = (controlRegisterB & 0b01000000) >> UInt8(6)
-            return flag == 1
-        }
         set {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
@@ -534,7 +526,7 @@ public struct Timer0: Timer8Bit {
     ///--------------------------------------------------------------------------------
     ///| (0x43)       |  TSM  |ICPSEL1|   -   |   -   |   -   |   -   |   -   | PSR10 |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |  R/W  |       |   R   |   R   |   R   |   R   |   R   |       |
+    ///| Read/Write   |  R/W  |  R/W  |   R   |   R   |   R   |   R   |   R   |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------

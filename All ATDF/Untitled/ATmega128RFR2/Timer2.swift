@@ -3,7 +3,7 @@
 // Timer2.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/09/2025.
+// Created by Swift AVR Generator on 12/11/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -19,7 +19,7 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     ///--------------------------------------------------------------------------------
     ///| (0x70)       | Res4  | Res3  | Res2  | Res1  | Res0  |OCIE2B |OCIE2A | TOIE2 |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |       |       |       |       |       |  R/W  |  R/W  |  R/W  |
+    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     ///--------------------------------------------------------------------------------
     ///| (0x37)       | Res4  | Res3  | Res2  | Res1  | Res0  | OCF2B | OCF2A | TOV2  |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |       |       |       |       |       |  R/W  |  R/W  |  R/W  |
+    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------
@@ -367,10 +367,6 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     @inlinable
     @inline(__always)
     public static var forceOutputCompareA: Bool {
-        get {
-            let flag = (controlRegisterB & 0b10000000) >> UInt8(7)
-            return flag == 1
-        }
         set {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
         }
@@ -388,10 +384,6 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     @inlinable
     @inline(__always)
     public static var forceOutputCompareB: Bool {
-        get {
-            let flag = (controlRegisterB & 0b01000000) >> UInt8(6)
-            return flag == 1
-        }
         set {
             controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
         }
@@ -558,7 +550,7 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     ///--------------------------------------------------------------------------------
     ///| (0xB6)       |EXCLKAMR| EXCLK |  AS2  |TCN2UB |OCR2AUB|OCR2BUB|TCR2AUB|TCR2BUB|
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |       |  R/W  |  R/W  |   R   |   R   |   R   |   R   |   R   |
+    ///| Read/Write   |  R/W  |  R/W  |  R/W  |   R   |   R   |   R   |   R   |   R   |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------

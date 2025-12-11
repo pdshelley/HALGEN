@@ -3,7 +3,7 @@
 // Timer2.swift
 // CoreAVR
 //
-// Created by Swift AVR Generator on 12/09/2025.
+// Created by Swift AVR Generator on 12/11/2025.
 // Copyright © 2025 Paul Shelley. All rights reserved.
 //
 //===----------------------------------------------------------------------===//
@@ -47,10 +47,6 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     @inlinable
     @inline(__always)
     public static var forceOutputCompareA: Bool {
-        get {
-            let flag = (controlRegisterA & 0b10000000) >> UInt8(7)
-            return flag == 1
-        }
         set {
             controlRegisterA |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
         }
@@ -366,7 +362,7 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     ///--------------------------------------------------------------------------------
     ///| (0x43)       |   -   |   -   |   -   |   -   |   -   |   -   | PSR2  |   -   |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |   R   |   R   |   R   |   R   |   R   |   R   |       |   R   |
+    ///| Read/Write   |   R   |   R   |   R   |   R   |   R   |   R   |  R/W  |   R   |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------
@@ -400,7 +396,7 @@ public struct Timer2: Timer8Bit, AsyncTimer {
     ///--------------------------------------------------------------------------------
     ///| (0xB6)       |   -   |   -   |   -   | EXCLK |  AS2  |TCN2UB |OCR2UB |TCR2UB |
     ///--------------------------------------------------------------------------------
-    ///| Read/Write   |   R   |   R   |   R   |  R/W  |  R/W  |   R   |       |       |
+    ///| Read/Write   |   R   |   R   |   R   |  R/W  |  R/W  |   R   |  R/W  |  R/W  |
     ///--------------------------------------------------------------------------------
     ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
     ///--------------------------------------------------------------------------------
