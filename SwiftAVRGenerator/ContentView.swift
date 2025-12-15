@@ -75,6 +75,8 @@ func decodeATDF(urls: [URL]) -> [GeneratedAVRCore] {
 
 var listOfValues: [String] = []
 
+// Does all of the decoding - Maybe it should not?
+// Creates Sub Folder for Chip and saves all the data to files in this folder.
 func export(fromURLs: [URL], toURL: URL) {
     // Load ATDF Files
     let generatedCores = decodeATDF(urls: fromURLs)
@@ -86,8 +88,11 @@ func export(fromURLs: [URL], toURL: URL) {
             export(toURL: subFolderURL, fileName: file.fileName, fileContents: file.content)
         }
     }
+    
+    logs.saveToFile(toURL: toURL)
 }
 
+// The actual saving of data to each file.
 func export(toURL: URL, fileName: String, fileContents: String) {
     do {
         try FileManager.default.createDirectory(at: toURL, withIntermediateDirectories: true)
@@ -104,6 +109,36 @@ func export(toURL: URL, fileName: String, fileContents: String) {
     } catch {
         // TODO: Show error in GUI.
         print("Create Directory Error: \(error)")
+    }
+}
+
+var logs = Logs(chips: [])
+
+struct Logs: Codable {
+    var chips: [Chip]
+    
+    struct  Chip: Codable {
+        let name: String
+        var logs: [String]
+    }
+    
+    mutating func addLog(_ text: String, toChip name: String) {
+        if let index = chips.firstIndex(where: { $0.name == name }) {
+            chips[index].logs.append(text)
+        } else {
+            chips.append(Chip(name: name, logs: [text]))
+        }
+    }
+    
+    func saveToFile(toURL: URL) {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        
+        let jsonData = try! encoder.encode(logs)
+        let jsonString = String(data: jsonData, encoding: .utf8)!
+        
+        export(toURL: toURL, fileName: "logs.json", fileContents: jsonString)
+        print("Saved pretty-printed logs.json")
     }
 }
 
@@ -130,6 +165,7 @@ struct GeneratedAVRCore {
 func decodeATDF(data: Data) -> GeneratedAVRCore {
     
     let ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
+    print("************************************************** \(ATDFObject.devices.device.name) **************************************************")
     let deviceName = ATDFObject.devices.device.name
     var generatedFiles: [GeneratedCodeFile] = []
     generatedFiles.append(buildGPIO(file: ATDFObject))
@@ -138,9 +174,9 @@ func decodeATDF(data: Data) -> GeneratedAVRCore {
     }
     
     
-    print("ATDFObject.devices.device.name = \(deviceName)")
-    print()
-    print(buildGPIO(file: ATDFObject).content)
+//    print("ATDFObject.devices.device.name = \(deviceName)")
+//    print()
+//    print(buildGPIO(file: ATDFObject).content)
     
     return GeneratedAVRCore(name: deviceName, files: generatedFiles)
     

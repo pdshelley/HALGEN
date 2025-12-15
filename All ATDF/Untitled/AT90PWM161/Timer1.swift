@@ -1,82 +1,285 @@
-public struct Timer1: Timer8Bit, HasExternalClock {
-    /// TIMSK1 – timerCounterInterruptMaskRegister
+//===----------------------------------------------------------------------===//
+//
+// Timer1.swift
+// CoreAVR
+//
+// Created by Swift AVR Generator on 12/11/2025.
+// Copyright © 2025 Paul Shelley. All rights reserved.
+//
+//===----------------------------------------------------------------------===//
+
+
+public typealias timer1 = Timer1
+
+public struct Timer1: Timer16Bit {
+    /// TIMSK1 – Timer/Counter Interrupt Mask Register
     ///```
+    ///--------------------------------------------------------------------------------
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
-    ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x21)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
-    ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
+    ///--------------------------------------------------------------------------------
+    ///| (0x21)       |   -   |   -   | ICIE1 |   -   |   -   |   -   |   -   | TOIE1 |
+    ///--------------------------------------------------------------------------------
+    ///| Read/Write   |   R   |   R   |  R/W  |   R   |   R   |   R   |   R   |  R/W  |
+    ///--------------------------------------------------------------------------------
+    ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///--------------------------------------------------------------------------------
     ///```
-    static var timerCounterInterruptMaskRegister: UInt16 {
+    @inlinable
+    @inline(__always)
+    public static var interruptMaskRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x21)
+            _volatileRegisterReadUInt8(0x21)
         }
         set {
-            _volatileRegisterWriteUInt16(0x21, newValue)
+            _volatileRegisterWriteUInt8(0x21, newValue)
         }
     }
-    /// TIFR1 – timerCounterInterruptFlagregister
-    ///```
-    ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
-    ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x22)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
-    ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
-    ///```
-    static var timerCounterInterruptFlagregister: UInt16 {
+    /// ICIE1 – Timer/Counter1 Input Capture Interrupt Enable 
+    ///
+    /// When this bit is written to one, and the I-flag in the Status Register is set (interrupts globally enabled), the
+    /// Timer/Counter1 Input Capture interrupt is enabled. The corresponding Interrupt Vector (see “Interrupts” is executed
+    /// when the ICFn Flag, located in TIFRn, is set.
+    @inlinable
+    @inline(__always)
+    public static var inputCaptureInterruptEnable: Bool {
         get {
-            _volatileRegisterReadUInt16(0x22)
+            let flag = (interruptMaskRegister & 0b00100000) >> UInt8(5)
+            return flag == 1
         }
         set {
-            _volatileRegisterWriteUInt16(0x22, newValue)
+            interruptMaskRegister |= (newValue ? 1 : 0) & 0b00000001 << UInt8(5)
         }
     }
-    /// TCCR1B – timerCounterControlRegisterB
-    ///```
-    ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
-    ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x8A)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
-    ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
-    ///```
-    static var timerCounterControlRegisterB: UInt16 {
+    /// TOIE1 – Timer/Counter1 Overflow Interrupt Enable 
+    @inlinable
+    @inline(__always)
+    public static var overflowInterruptEnable: Bool {
         get {
-            _volatileRegisterReadUInt16(0x8A)
+            let flag = (interruptMaskRegister & 0b00000001) >> UInt8(0)
+            return flag == 1
         }
         set {
-            _volatileRegisterWriteUInt16(0x8A, newValue)
+            interruptMaskRegister |= (newValue ? 1 : 0) & 0b00000001 << UInt8(0)
         }
     }
-    /// TCNT1 – timerCounterBytes
+    /// TIFR1 – Timer/Counter Interrupt Flag register
     ///```
+    ///--------------------------------------------------------------------------------
     ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
-    ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x5A)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
-    ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
+    ///--------------------------------------------------------------------------------
+    ///| (0x22)       |   -   |   -   | ICF1  |   -   |   -   |   -   |   -   | TOV1  |
+    ///--------------------------------------------------------------------------------
+    ///| Read/Write   |   R   |   R   |  R/W  |   R   |   R   |   R   |   R   |  R/W  |
+    ///--------------------------------------------------------------------------------
+    ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///--------------------------------------------------------------------------------
     ///```
-    static var timerCounterBytes: UInt16 {
+    @inlinable
+    @inline(__always)
+    public static var interruptFlagRegister: UInt8 {
         get {
-            _volatileRegisterReadUInt16(0x5A)
+            _volatileRegisterReadUInt8(0x22)
         }
         set {
-            _volatileRegisterWriteUInt16(0x5A, newValue)
+            _volatileRegisterWriteUInt8(0x22, newValue)
         }
     }
-    /// ICR1 – timerCounterInputCaptureRegisterBytes
-    ///```
-    ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
-    ///|--------------|-------|-------|-------|-------|-------|-------|-------|-------|
-    ///| (0x8C)       | COM0A1| COM0A0| COM0B1| COM0B0|   -   |   -   | WGM01 | WGM00 |
-    ///| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |   R   |   R   |  R/W  |  R/W  |
-    ///| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
-    ///```
-    static var timerCounterInputCaptureRegisterBytes: UInt16 {
+    /// ICF1 – Input Capture Flag 1 
+    ///
+    /// This flag is set when a capture event occurs on the ICPn pin. When the Input Capture Register (ICRn) is set by
+    /// the WGM to be used as the TOP value, the ICFn Flag is set when the counter reaches the TOP value.
+    /// ICFn is automatically cleared when the Input Capture Interrupt Vector is executed. Alternatively, ICFn can be
+    /// cleared by writing a logic one to its bit location.
+    @inlinable
+    @inline(__always)
+    public static var inputCaptureFlag: Bool {
         get {
-            _volatileRegisterReadUInt16(0x8C)
+            let flag = (interruptFlagRegister & 0b00100000) >> UInt8(5)
+            return flag == 1
         }
         set {
-            _volatileRegisterWriteUInt16(0x8C, newValue)
+            interruptFlagRegister |= (newValue ? 1 : 0) & 0b00000001 << UInt8(5)
+        }
+    }
+    /// TOV1 – Timer/Counter1 Overflow Flag 
+    @inlinable
+    @inline(__always)
+    public static var overflowFlag: Bool {
+        get {
+            let flag = (interruptFlagRegister & 0b00000001) >> UInt8(0)
+            return flag == 1
+        }
+        set {
+            interruptFlagRegister |= (newValue ? 1 : 0) & 0b00000001 << UInt8(0)
+        }
+    }
+    /// TCCR1B – Timer/Counter1 Control Register B
+    ///```
+    ///--------------------------------------------------------------------------------
+    ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+    ///--------------------------------------------------------------------------------
+    ///| (0x8A)       | ICNC1 | ICES1 |   -   | WGM13 |   -   | CS12  | CS11  | CS10  |
+    ///--------------------------------------------------------------------------------
+    ///| Read/Write   |  R/W  |  R/W  |   R   |  R/W  |   R   |  R/W  |  R/W  |  R/W  |
+    ///--------------------------------------------------------------------------------
+    ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///--------------------------------------------------------------------------------
+    ///```
+    @inlinable
+    @inline(__always)
+    public static var controlRegisterB: UInt8 {
+        get {
+            _volatileRegisterReadUInt8(0x8A)
+        }
+        set {
+            _volatileRegisterWriteUInt8(0x8A, newValue)
+        }
+    }
+    /// ICNC1 – Input Capture 1 Noise Canceler 
+    ///
+    /// Setting this bit (to true) activates the Input Capture Noise Canceler. When the noise canceler is activated, the
+    /// input from the Input Capture pin (ICPn) is filtered. The filter function requires four successive equal valued
+    /// samples of the ICPn pin for changing its output. The Input Capture is therefore delayed by four Oscillator cycles
+    /// when the noise canceler is enabled.
+    @inlinable
+    @inline(__always)
+    public static var inputCaptureNoiseCanceler: Bool {
+        get {
+            let flag = (controlRegisterB & 0b10000000) >> UInt8(7)
+            return flag == 1
+        }
+        set {
+            controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(7)
+        }
+    }
+    /// ICES1 – Input Capture 1 Edge Select 
+    ///
+    /// This bit selects which edge on the Input Capture pin (ICPn) that is used to trigger a capture event. When the
+    /// ICESn bit is written to zero, a falling (negative) edge is used as trigger, and when the ICESn bit is written to one,
+    /// a rising (positive) edge will trigger the capture.
+    /// When a capture is triggered according to the ICESn setting, the counter value is copied into the Input Capture
+    /// Register (ICRn). The event will also set the Input Capture Flag (ICFn), and this can be used to cause an Input
+    /// Capture Interrupt, if this interrupt is enabled.
+    /// When the ICRn is used as TOP value (see description of the WGM bits located in the TCCRnA and the
+    /// TCCRnB Register), the ICPn is disconnected and consequently the Input Capture function is disabled.
+    @inlinable
+    @inline(__always)
+    public static var inputCaptureEdgeSelect: Bool {
+        get {
+            let flag = (controlRegisterB & 0b01000000) >> UInt8(6)
+            return flag == 1
+        }
+        set {
+            controlRegisterB |= (newValue ? 1 : 0) & 0b00000001 << UInt8(6)
+        }
+    }
+    /// WGM13 – Waveform Generation Mode 
+    @inlinable
+    @inline(__always)
+    public static var : Timer16Bit. {
+        get {
+            let mode = ((controlRegisterB & 0b00010000) >> 3) | (controlRegisterB & 0b00010000)
+            return Timer16Bit.(rawValue: mode) ??
+        }
+        set {
+            controlRegisterB |= ((newValue.rawValue & 0b00000001) << UInt8(4))
+            controlRegisterB |= ((newValue.rawValue & 0b00000010) << UInt8(3))
+        }
+    }
+    /// ```
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |  Mode  | CS12  | CS11  | CS10  | Description                                                     |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    0   |   0   |   0   |   0   | No Clock Source (Stopped)                                       |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    1   |   0   |   0   |   1   | Running, No Prescaling                                          |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    2   |   0   |   1   |   0   | Running, CLK/8                                                  |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    3   |   0   |   1   |   1   | Running, CLK/64                                                 |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    4   |   1   |   0   |   0   | Running, CLK/256                                                |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    5   |   1   |   0   |   1   | Running, CLK/1024                                               |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    6   |   1   |   1   |   0   | External clock source. Clock on falling edge.                   |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// |    7   |   1   |   1   |   1   | External clock source. Clock on rising edge.                    |
+    /// |--------|-------|-------|-------|-----------------------------------------------------------------|
+    /// ```
+    public enum Prescaling: UInt8 {
+        case stopped = 0
+        case runningWithoutPrescaling = 1
+        case running8 = 2
+        case running64 = 3
+        case running256 = 4
+        case running1024 = 5
+        case runningExternalFallingEdge = 6
+        case runningExternalRisingEdge = 7
+    }
+    /// CS1 – Prescaler source of Timer/Counter 1 
+    /// The three Clock Select bits select the clock source to be used by the Timer/Counter.
+    @inlinable
+    @inline(__always)
+    public static var prescaler: Prescaling {
+        get {
+            let mode = (controlRegisterB & 0b00000111) >> UInt8(0)
+            return Prescaling.init(rawValue: mode) ?? .stopped
+        }
+        set {
+            controlRegisterB |= (newValue.rawValue & 0b00000111) << UInt8(0)
+        }
+    }
+    /// TCNT1 – Timer/Counter1  Bytes
+    ///```
+    ///--------------------------------------------------------------------------------
+    ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+    ///--------------------------------------------------------------------------------
+    ///| (0x5A)       |                             TCNT1                             |
+    ///--------------------------------------------------------------------------------
+    ///| Read/Write   |                              R/W                              |
+    ///--------------------------------------------------------------------------------
+    ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///--------------------------------------------------------------------------------
+    ///```
+    @inlinable
+    @inline(__always)
+    public static var count: UInt16 {
+        get {
+            atomic {
+                _volatileRegisterReadUInt16(0x5A)
+            }
+        }
+        set {
+            atomic {
+                _volatileRegisterWriteUInt16(0x5A, newValue)
+            }
+        }
+    }
+    /// ICR1 – Timer/Counter1 Input Capture Register  Bytes
+    ///```
+    ///--------------------------------------------------------------------------------
+    ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+    ///--------------------------------------------------------------------------------
+    ///| (0x8C)       |                             ICR1                              |
+    ///--------------------------------------------------------------------------------
+    ///| Read/Write   |                              R/W                              |
+    ///--------------------------------------------------------------------------------
+    ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    ///--------------------------------------------------------------------------------
+    ///```
+    @inlinable
+    @inline(__always)
+    public static var inputCaptureRegister: UInt16 {
+        get {
+            atomic {
+                _volatileRegisterReadUInt16(0x8C)
+            }
+        }
+        set {
+            atomic {
+                _volatileRegisterWriteUInt16(0x8C, newValue)
+            }
         }
     }
 }
