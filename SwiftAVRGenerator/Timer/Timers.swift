@@ -63,7 +63,7 @@ struct TimerInfo {
     }
 }
 
-func gatherTimerInfoFrom(module: AVRModules.Module) -> TimerInfo {
+func gatherTimerInfo(from module: AVRModules.Module) -> TimerInfo {
     var bitSize: TimerInfo.BitSize = .eightBit
     var isAsync: Bool = false
     
@@ -85,7 +85,7 @@ func gatherTimerInfoFrom(module: AVRModules.Module) -> TimerInfo {
     return TimerInfo(isAsynchronous: isAsync, bitSize: bitSize)
 }
 
-func buildProtocolDeclarationsFrom(info: TimerInfo) -> String {
+func buildProtocolDeclarations(from info: TimerInfo) -> String {
     var hasProtocols: [String] = []
     
     // The name of the module indicates if it is 8 or 16 bit as well as if it is Async.
@@ -112,7 +112,7 @@ func buildProtocolDeclarationsFrom(info: TimerInfo) -> String {
     return hasProtocols.isEmpty ? "" : " \(hasProtocols.joined(separator: ", ")) "
 }
 
-func buildFileHeaderFor(fileName: String) -> String {
+func buildFileHeader(for fileName: String) -> String {
     let fullFormatter = DateFormatter()
     fullFormatter.dateFormat = "MM/dd/yyyy"
     let fullDateString = fullFormatter.string(from: Date())
@@ -144,14 +144,14 @@ func buildFileHeaderFor(fileName: String) -> String {
 func buildTimer(module: AVRModules.Module, timerName: String, chipName: String) -> GeneratedCodeFile {
     print("------------------\(timerName)------------------")
     let fileName = "\(timerName).swift"
-    var code: String = buildFileHeaderFor(fileName: timerName)
-    let timerInfo = gatherTimerInfoFrom(module: module)
+    var code: String = buildFileHeader(for: timerName)
+    let timerInfo = gatherTimerInfo(from: module)
     var memberBlockList = MemberBlockItemListSyntax()
-    let protocolDeclarations = buildProtocolDeclarationsFrom(info: timerInfo) // buildProtocolDeclarationsFrom(module: module)
+    let protocolDeclarations = buildProtocolDeclarations(from: timerInfo) // buildProtocolDeclarationsFrom(module: module)
     
     for registerGroup in module.registerGroup {
         for register in registerGroup.register {
-            let memberBlock = generateRegister(register: register) // TODO: add this to the stored member blocks
+            let memberBlock = generateRegister(register) // TODO: add this to the stored member blocks
             memberBlockList.append(memberBlock)
             
 //            let registerVariableName = variableNameFor(register: register)
@@ -182,7 +182,7 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String) 
                         for valueGroup in module.valueGroup {
                             // Make sure that the name of the valueGroup matches
                             if valueGroup.name.rawValue == valueGroupName {
-                                let bitfieldMemberBlock = generateEnumFrom(ValueGroup: valueGroup, bitfieldName: bitfield.name.rawValue)
+                                let bitfieldMemberBlock = generateEnum(from: valueGroup, bitfieldName: bitfield.name.rawValue)
                                 memberBlockList.append(bitfieldMemberBlock)
                             }
                         }
@@ -228,7 +228,7 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String) 
 /// - Parameter register: A register from the ATDF file object.
 /// - Returns: A fixed array of 16 that includes either a "-" if there is no bit in that positon or the name of the bit in that position.
 /// Example output: ["FOC2A", "FOC2B", "-", "-", "WGM22", "CS22", "CS21", "CS20"]
-func getBitNamesFrom(register: AVRModules.Module.RegisterGroup.Register) -> [String] {
+func getBitNames(from register: AVRModules.Module.RegisterGroup.Register) -> [String] {
     var bitNames = Array(repeating: "-", count: 16)
         
     for bitField in register.bitfield {
@@ -255,7 +255,7 @@ func getBitNamesFrom(register: AVRModules.Module.RegisterGroup.Register) -> [Str
     return bitNames
 }
 
-func getBitAccessFrom(register: AVRModules.Module.RegisterGroup.Register, parentAccess: String) -> [String] {
+func getBitAccess(from register: AVRModules.Module.RegisterGroup.Register, parentAccess: String) -> [String] {
     var bitAccess = Array(repeating: parentAccess, count: 16)
         
     for bitField in register.bitfield {
@@ -299,7 +299,7 @@ func padString(_ input: String, padding: Int) -> String {
 }
 
 //func generateRegister(register: AVRModules.Module.RegisterGroup.Register, bitSize: TimerInfo.BitSize) -> MemberBlockItemSyntax {
-func generateRegister(register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
+func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
     
     let variableName = supplementalData(for: register).variableName
     
@@ -313,11 +313,11 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register) -> Mem
         registerName = padString(register.name.rawValue, padding: 63)
         readWrite = padString(registarAccess, padding: 63)
     } else {
-        var bitNames = getBitNamesFrom(register: register)
+        var bitNames = getBitNames(from: register)
         bitNames = bitNames.map { padString($0, padding: 7) }
         registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
         
-        var bitAccess = getBitAccessFrom(register: register, parentAccess: registarAccess) // TODO: Check the register for it's access level
+        var bitAccess = getBitAccess(from: register, parentAccess: registarAccess) // TODO: Check the register for it's access level
         bitAccess = bitAccess.map { padString($0, padding: 7) }
         readWrite = "\(bitAccess[7])|\(bitAccess[6])|\(bitAccess[5])|\(bitAccess[4])|\(bitAccess[3])|\(bitAccess[2])|\(bitAccess[1])|\(bitAccess[0])"
     }
@@ -474,7 +474,7 @@ func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Re
 /// This takes messy string data that should be a number and tries to convert it to a UInt8. Default Value is 0.
 /// - Parameter stringValue: Hex values as a string, Intigers as a string, or anything else that will default to 0
 /// - Returns: UInt8. If the number is greater than 8 Bit Max then return 0.
-func numberFromValue(stringValue: String) -> UInt8 {
+func numberFrom(value stringValue: String) -> UInt8 {
     let trimmedString = stringValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
             
     // Empty string → default
@@ -505,7 +505,7 @@ func numberFromValue(stringValue: String) -> UInt8 {
     return 0
 }
 
-func generateEnumFrom(ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: String) -> MemberBlockItemSyntax {
+func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: String) -> MemberBlockItemSyntax {
     
     var documentationTable = """
         /// |--------|-------|-------|-------|-----------------------------------------------------------------|
@@ -558,7 +558,7 @@ func generateEnumFrom(ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: St
         }
         
         // Note: Can't Convert in the Codable conversion because there is messy data that is not always numbers.
-        let number = numberFromValue(stringValue: value.value.rawValue)
+        let number = numberFrom(value: value.value.rawValue)
         
         let documentationRow = """
         
