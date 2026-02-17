@@ -29,10 +29,14 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
 //        }
 //    }
     
+    let bitfieldAccessorsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
+        .UPM0
+    ]
+    
     if let module: AVRModules.Module = file.modules.module.first(where: { $0.name == .usart }) {
         let uartNames = module.registerGroup.compactMap { uartNamesDict[$0.name] }
         for uartName in uartNames {
-            uartFiles.append(buildUART(module: module, uartName: uartName, chipName: file.devices.device.name))
+            uartFiles.append(buildUART(module: module, uartName: uartName, chipName: file.devices.device.name, bitfieldsToGenerate: bitfieldAccessorsToGenerate))
         }
     }
     
@@ -48,7 +52,7 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
     return uartFiles
 }
 
-func buildUART(module: AVRModules.Module, uartName: String, chipName: String) -> GeneratedCodeFile {
+func buildUART(module: AVRModules.Module, uartName: String, chipName: String, bitfieldsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name]) -> GeneratedCodeFile {
     let fileName = "\(uartName).swift"
     var code = buildUartFileHeader(for: uartName)
     var memberBlockList = MemberBlockItemListSyntax()
@@ -79,6 +83,28 @@ func buildUART(module: AVRModules.Module, uartName: String, chipName: String) ->
             }
             memberBlockList.append(generateUartRegister(register))
         }
+        // TODO: Improve this
+        for register in registerGroup.register {
+            for bitfield in bitfieldsToGenerate {
+                //let bitfield = register.bitfield.first(where: { $0.name == bitfield })!
+                guard let bitfield = register.bitfield.first(where: { $0.name == bitfield }) else {
+                    continue
+                }
+                memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register))
+            }
+        }
+        //for bitfield in bitfieldsToGenerate {
+            //let bitfieldRegister: AVRModules.Module.RegisterGroup.Register = registerGroup.register.first(where: { $0.bitfield(for: bitfield.rawValue) != nil })!
+//            let registers: [AVRModules.Module.RegisterGroup.Register] = registerGroup.register
+//
+//            let bitfieldRegister: AVRModules.Module.RegisterGroup.Register =
+//                registers.first(where: { $0.bitfield?.name == bitfield })!
+//            let bitfieldRegister: AVRModules.Module.RegisterGroup.Register =
+//                Swift.Array(registerGroup.register).first(where: { $0.bitfield?.name == bitfield })!
+            
+
+            //memberBlockList.append(generateBitfieldAccessor(for: module.registerGroup[registerGroupIndex].register[0], bitfield: bitfield, in: uartName))
+        //}
     }
     
     let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
@@ -183,6 +209,43 @@ func uartSupplementalData(for register: AVRModules.Module.RegisterGroup.Register
     }
 }
 
+func uartSupplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalRegisterData {
+    switch bitfield.name {
+    case .UPM0:
+        return SupplementalRegisterData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: "", documentation: """
+    /// Parity Mode
+    /// See ATMega328p Datasheet Section 20.11.4.
+    /// UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.
+    ///
+    ///These bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the
+    /// parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare
+    /// it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.
+    ///
+    /// ```
+    ///| UPMn1 | UPMn0 | Parity Mode          |
+    ///|-------|-------|----------------------|
+    ///| 0     | 0     | Disabled             |
+    ///| 0     | 1     | Reserved             |
+    ///| 1     | 0     | Enabled, Even Parity |
+    ///| 1     | 1     | Enabled, Odd Parity  |
+    /// ```
+""", access: "")
+        
+    default :
+        var variableName = bitfield.caption?.rawValue ?? ""
+        variableName = variableName.filter { $0 != " " }
+        variableName = variableName.filter { $0 != "/" }
+        variableName = variableName.filter { $0 != "0" }
+        variableName = variableName.filter { $0 != "1" }
+        variableName = variableName.filter { $0 != "2" }
+        variableName = variableName.filter { $0 != "3" }
+        variableName = variableName.filter { $0 != "4" }
+        variableName = variableName.filter { $0 != "5" }
+        let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
+        return SupplementalRegisterData(variableName: name, valueType: "", defaultValue: "", documentation: "", access: "")
+    }
+}
+
 func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
     let supData: SupplementalRegisterData = uartSupplementalData(for: register)
     
@@ -244,6 +307,23 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ va
               }
           }
       """
+    )
+    return MemberBlockItemSyntax(decl: source)
+}
+
+func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
+                              in register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
+    let supData = uartSupplementalData(for: bitfield)
+    let supDataParent = uartSupplementalData(for: register)
+    let source = DeclSyntax(
+        """
+        /// \(raw: bitfield.name) – \(raw: bitfield.caption) \(raw:supData.documentation)
+        @inlinable
+        @inline(__always)
+        static var \(raw: supData.variableName): \(raw: supData.valueType) {
+            get {
+                let mode = (\(raw: supDataParent.variableName)
+        """
     )
     return MemberBlockItemSyntax(decl: source)
 }
