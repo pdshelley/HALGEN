@@ -8,7 +8,7 @@ import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
 
-func buildUART(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
+func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
     var uartFiles: [GeneratedCodeFile] = []
     
     let fileName = "UART.swift"
@@ -39,11 +39,17 @@ func buildUART(module: AVRModules.Module, uartName: String, chipName: String) ->
     
     for registerGroup in module.registerGroup {
         for register in registerGroup.register {
+            if register.name == AVRModules.Module.RegisterGroup.Register.Name.UBRR0 {
+                memberBlockList.append(contentsOf: generateUartBaudRegister(register))
+                continue
+            }
             memberBlockList.append(generateUartRegister(register))
         }
     }
     
     let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
+    
+    // TODO: Check what this does and clean this up, I simply copy pasted from timers to get something working quickly.
     
     // Information needed to setup the Struct.
 //    let InheritedType = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: protocolDeclarations))
@@ -60,6 +66,30 @@ func buildUART(module: AVRModules.Module, uartName: String, chipName: String) ->
     }.formatted().description)
     
     return GeneratedCodeFile(fileName: fileName, content: code)
+}
+
+func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
+    var memberBlockList = MemberBlockItemListSyntax()
+    if register.size == AVRModules.Module.RegisterGroup.Register.Size.one {
+        memberBlockList.append(generateRegister(register, "baudRateRegister"))
+        return memberBlockList
+    }
+    // get register and change size to 1 so uint8 registers are generated instead of 16 bit
+    var customRegister: AVRModules.Module.RegisterGroup.Register = register
+    customRegister.size = .one
+    
+    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterL"))
+    
+//    let origOffset: String = register.offset.rawValue
+//    var newOffset = origOffset.hexValue()
+//    newOffset += 1
+    // I have no idea if this is ok, I'll just assume it is since it works
+    customRegister.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
+    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterH"))
+
+    memberBlockList.append(MemberBlockItemSyntax(decl: DeclSyntax("\(raw: uart16bitBaudRegister)")))
+    
+    return memberBlockList
 }
 
 func buildUartFileHeader(for fileName: String) -> String {
@@ -122,6 +152,30 @@ func uartSupplementalData(for register: AVRModules.Module.RegisterGroup.Register
 func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
     let supData: SupplementalRegisterData = uartSupplementalData(for: register)
     
+    return generateRegister(register, supData.variableName)
+}
+
+func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ variableName: String) -> MemberBlockItemSyntax {
+    
+    // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
+    var registerName = ""
+    var readWrite = ""
+    let registarAccess = supplementalData(for: register).access
+    
+    
+    if register.bitfield.isEmpty {
+        registerName = padString(register.name.rawValue, padding: 63)
+        readWrite = padString(registarAccess, padding: 63)
+    } else {
+        var bitNames = getBitNames(from: register)
+        bitNames = bitNames.map { padString($0, padding: 7) }
+        registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
+        
+        var bitAccess = getBitAccess(from: register, parentAccess: registarAccess) // TODO: Check the register for it's access level
+        bitAccess = bitAccess.map { padString($0, padding: 7) }
+        readWrite = "\(bitAccess[7])|\(bitAccess[6])|\(bitAccess[5])|\(bitAccess[4])|\(bitAccess[3])|\(bitAccess[2])|\(bitAccess[1])|\(bitAccess[0])"
+    }
+    
     var bit: (size: String, atomicStart: String, atomicEnd: String) {
         switch register.size {
         case .one:
@@ -133,21 +187,21 @@ func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) 
     
     let source = DeclSyntax(
       """
-          /// \(raw: register.name) – \(raw: register.caption?.rawValue ?? supData.variableName)
+          /// \(raw: register.name) – \(raw: register.caption?.rawValue ?? variableName)
           ///```
           ///--------------------------------------------------------------------------------
           ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
           ///--------------------------------------------------------------------------------
-          ///| (\(raw: register.offset.rawValue))       |\(raw: register.name)|
+          ///| (\(raw: register.offset.rawValue))       |\(raw: registerName)|
           ///--------------------------------------------------------------------------------
-          ///| Read/Write   ||
+          ///| Read/Write   |\(raw: readWrite)|
           ///--------------------------------------------------------------------------------
           ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
           ///--------------------------------------------------------------------------------
           ///```
           @inlinable
           @inline(__always)
-          public static var \(raw: supData.variableName): \(raw: bit.size) {
+          public static var \(raw: variableName): \(raw: bit.size) {
               get {
                   \(raw: bit.atomicStart)_volatileRegisterRead\(raw: bit.size)(\(raw: register.offset.rawValue))\(raw: bit.atomicEnd)
               }
@@ -247,4 +301,38 @@ public protocol UARTPort {
     // Communication
     static func writeByte(_ byte: PortDataType)
 }
+"""
+
+
+let uart16bitBaudRegister = """
+    /// UBBRn – USART Baud Rate Register
+    /// ```
+    /// --------------------------------------------------------------------------------
+    /// | Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+    /// --------------------------------------------------------------------------------
+    /// |              |   -   |   -   |   -   |   -   |         UBRRn[12:8]           |
+    /// |              |                       UBRRn[7:0]                              |
+    /// --------------------------------------------------------------------------------
+    /// | Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
+    /// --------------------------------------------------------------------------------
+    /// | InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
+    /// --------------------------------------------------------------------------------
+    /// ```
+    /// Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero
+    /// when UBRRnH is written.
+    ///
+    /// This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the
+    /// UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receive
+    /// will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler.
+    @inlinable
+    @inline(__always)
+    public static var baudRateRegister: UInt16 {
+        get {
+            return (UInt16(baudRateRegisterH) << 8) | UInt16(baudRateRegisterL)
+        }
+        set {
+            baudRateRegisterH = UInt8((newValue & 0b11111111_00000000) >> 8)
+            baudRateRegisterL = UInt8(newValue & 0b11111111)
+        }
+    }
 """

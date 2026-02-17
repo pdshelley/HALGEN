@@ -174,7 +174,7 @@ func decodeATDF(data: Data) -> GeneratedAVRCore {
     }
     //generatedFiles.append(buildUART(file: ATDFObject))
     
-    for uartFile in buildUART(file: ATDFObject) {
+    for uartFile in buildUARTs(file: ATDFObject) {
         generatedFiles.append(uartFile)
     }
     
