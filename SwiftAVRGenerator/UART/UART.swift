@@ -22,13 +22,29 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
         .USART3: "UART3"
     ]
     
-    // TODO: Find a better way to filter to the needed module
-    for module in file.modules.module {
+//    for module in file.modules.module {
+//        let uartNames = module.registerGroup.compactMap { uartNamesDict[$0.name] }
+//        for uartName in uartNames {
+//            uartFiles.append(buildUART(module: module, uartName: uartName, chipName: file.devices.device.name))
+//        }
+//    }
+    
+    if let module: AVRModules.Module = file.modules.module.first(where: { $0.name == .usart }) {
         let uartNames = module.registerGroup.compactMap { uartNamesDict[$0.name] }
         for uartName in uartNames {
             uartFiles.append(buildUART(module: module, uartName: uartName, chipName: file.devices.device.name))
         }
     }
+    
+//    var uartNames: [String] = []
+//
+//    // TODO: Find a better way to filter to the needed module
+//    for module in file.modules.module {
+//        uartNames = module.registerGroup.compactMap { uartNamesDict[$0.name] }
+//    }
+//    for uartName in uartNames {
+//        uartFiles.append(buildUART(module: module, uartName: uartName, chipName: file.devices.device.name))
+//    }
     return uartFiles
 }
 
@@ -37,11 +53,29 @@ func buildUART(module: AVRModules.Module, uartName: String, chipName: String) ->
     var code = buildUartFileHeader(for: uartName)
     var memberBlockList = MemberBlockItemListSyntax()
     
-    for registerGroup in module.registerGroup {
+//    for registerGroup in module.registerGroup {
+//        for register in registerGroup.register {
+//            if register.name == AVRModules.Module.RegisterGroup.Register.Name.UBRR0 {
+//                memberBlockList.append(contentsOf: generateUartBaudRegister(register))
+//                continue
+//            }
+//            memberBlockList.append(generateUartRegister(register))
+//        }
+//    }
+    
+    if let lastChar = uartName.last, let registerGroupIndex = lastChar.wholeNumberValue {
+        let registerGroup = module.registerGroup[registerGroupIndex]
         for register in registerGroup.register {
-            if register.name == AVRModules.Module.RegisterGroup.Register.Name.UBRR0 {
+//            if register.name == AVRModules.Module.RegisterGroup.Register.Name.UBRR0 {
+//                memberBlockList.append(contentsOf: generateUartBaudRegister(register))
+//                continue
+//            }
+            switch register.name {
+            case .UBRR0, .UBRR1, .UBRR2, .UBRR3:
                 memberBlockList.append(contentsOf: generateUartBaudRegister(register))
                 continue
+            default:
+                break
             }
             memberBlockList.append(generateUartRegister(register))
         }
