@@ -25,6 +25,7 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
     let bitfieldAccessorsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
         .UPM0, .UPM1, .UPM2, .UPM3,
         .USBS0, .USBS1, .USBS2, .USBS3,
+        .UCSZ02,
         .UCPOL0, .UCPOL1, .UCPOL2, .UCPOL3,
         .U2X0, .U2X1, .U2X2, .U2X3,
         .RXEN0, .RXEN1, .RXEN2, .RXEN3,
@@ -57,19 +58,9 @@ func buildUART(module: AVRModules.Module, uartName: String, chipName: String, bi
             }
             memberBlockList.append(generateUartRegister(register))
         }
-        // TODO: Improve this
-//        for register in registerGroup.register {
-//            for bitfield in bitfieldsToGenerate {
-//                //let bitfield = register.bitfield.first(where: { $0.name == bitfield })!
-//                guard let bitfield = register.bitfield.first(where: { $0.name == bitfield }) else {
-//                    continue
-//                }
-//                memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register))
-//            }
-//        }
         for bitfield in bitfieldsToGenerate {
             if let register = registerGroup.register.first(where: {$0.bitfield.contains(where: { $0.name == bitfield })}), let bitfield = register.bitfield.first(where: { $0.name == bitfield }) {
-                memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register))
+                memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register, registerGroup, chipName))
             }
         }
     }
@@ -146,8 +137,8 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
 
 fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalRegisterData {
     switch bitfield.name {
-    case .UPM0:
-        return SupplementalRegisterData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: "", documentation: """
+    case .UPM0, .UPM1, .UPM2, .UPM3:
+        return SupplementalRegisterData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: ".disabled", documentation: """
     /// Parity Mode
     /// See ATMega328p Datasheet Section 20.11.4.
     /// UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.
@@ -165,7 +156,18 @@ fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.
     ///| 1     | 1     | Enabled, Odd Parity  |
     /// ```
 """, access: "")
-        
+    case .USBS0, .USBS1, .USBS2, .USBS3:
+        return SupplementalRegisterData(variableName: "numberOfStopBits", valueType: "UART.NumberOfStopBits", defaultValue: ".one", documentation: "", access: "")
+    case .UCSZ0, .UCSZ1, .UCSZ2, .UCSZ3, .UCSZ02:
+        return SupplementalRegisterData(variableName: "numberOfDataBits", valueType: "UART.NumberOfDataBits", defaultValue: ".eight", documentation: "", access: "")
+    case .UCPOL0, .UCPOL1, .UCPOL2, .UCPOL3:
+        return SupplementalRegisterData(variableName: "clockPolarity", valueType: "UART.ClockPolarity", defaultValue: ".rising", documentation: "", access: "")
+    case .U2X0, .U2X1, .U2X2, .U2X3:
+        return SupplementalRegisterData(variableName: "asynchronousDoubleSpeedMode", valueType: "UART.AsynchronousDoubleSpeedMode", defaultValue: ".off", documentation: "", access: "")
+    case .RXEN0, .RXEN1, .RXEN2, .RXEN3:
+        return SupplementalRegisterData(variableName: "receiveEnable", valueType: "UART.ReceiverEnable", defaultValue: ".off", documentation: "", access: "")
+    case .TXEN0, .TXEN1, .TXEN2, .TXEN3:
+        return SupplementalRegisterData(variableName: "transmitterEnable", valueType: "UART.TransmitterEnable", defaultValue: ".off", documentation: "", access: "")
     default :
         var variableName = bitfield.caption?.rawValue ?? ""
         variableName = variableName.filter { $0 != " " }
@@ -246,8 +248,18 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ va
     return MemberBlockItemSyntax(decl: source)
 }
 
+let splitBitfieldAccessors: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name: AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
+    .UCSZ02: .UCSZ0
+]
+
 func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
-                              in register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
+                              in register: AVRModules.Module.RegisterGroup.Register, _ registerGroup: AVRModules.Module.RegisterGroup, _ chipName: String) -> MemberBlockItemSyntax {
+    if splitBitfieldAccessors.contains(where: { $0.self.key == bitfield.name}) {
+        let bitfieldBName = splitBitfieldAccessors[bitfield.name]
+        let registerB = registerGroup.register.first(where: {$0.bitfield.contains(where: { $0.name == bitfieldBName! })})
+        let bitfieldB = registerB?.bitfield.first(where: {$0.name == bitfieldBName})
+        return generateSplitBitfieldAccessorUart(bitfieldA: bitfield, bitfieldB: bitfieldB!, parentVariableA: register, parentVariableB: registerB!, chipName: chipName)
+    }
     let supData = supplementalData(for: bitfield)
     let supDataParent = supplementalData(for: register)
     let bitmask = bitfield.mask.value.lowByte.binaryString
@@ -272,6 +284,115 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
         }
         """
     ).with(\.trailingTrivia, .newlines(2))
+    return MemberBlockItemSyntax(decl: source)
+}
+
+func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield, bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableA: AVRModules.Module.RegisterGroup.Register, parentVariableB: AVRModules.Module.RegisterGroup.Register, chipName: String) -> MemberBlockItemSyntax {
+    
+    // TODO: Some chips only seem to have 1 bite for WGM. This breaks this logic and should be accounted for.
+    
+    // Example Data:
+    // Register A Bitmask:           0b00000011
+    // Register B Bitmask:           0b00001000
+    // New Value Bitmask:            0b00000111
+    // Register B New Value Bitmask: 0b00000100
+    // Register B Bitshift should be: << 1 to get back to the "Register B Bitmask" location
+    
+    
+    // The Below logic does not work for this second example
+    
+    // Another Example:
+    // Register A Bitmask:           0b00000011
+    // Register B Bitmask:           0b00000011
+    // New Value Bitmask:            0b00001111
+    // Register B New Value Bitmask: 0b00001100
+    // Register B Bitshift should be: << 2 to get back to the "Register B Bitmask" location
+    
+    let caption = bitfieldA.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
+    let info = supplementalData(for: bitfieldA)
+    
+    var lowBitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
+    var lowParentVariableName: String
+    var highBitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
+    var hightParentVariableName: String
+    
+    // The LSBs of WMG should always be on TCCRnA and the MSBs should be on TCCRnB.
+    
+//    switch parentVariableA.name {
+//    case .TCCR0A, .TCCR1A, .TCCR2A, .TCCR3A, .TCCR4A, .TCCR5A:
+//        lowBitfield = bitfieldA
+//        lowParentVariableName = supplementalData(for: parentVariableA).variableName
+//        highBitfield = bitfieldB
+//        hightParentVariableName = supplementalData(for: parentVariableB).variableName
+//    case .TCCR0B, .TCCR1B, .TCCR2B, .TCCR3B, .TCCR4B, .TCCR5B:
+//        lowBitfield = bitfieldB
+//        lowParentVariableName = supplementalData(for: parentVariableB).variableName
+//        highBitfield = bitfieldA
+//        hightParentVariableName = supplementalData(for: parentVariableA).variableName
+//    case .TCCR2, .TCCR0, .TCCR4D: // ATmega8, ATmega16, ATmega16U4 // I think this only has one TCCR register.
+//        print("Failed to generate WaveformGenerationMode Accessor.")
+//        logs.addLog("Failed to generate WaveformGenerationMode Accessor. The register: \(parentVariableA.name) has something different that needs to be handled.", toChip: chipName) // TODO: Set to the correct chip name!
+//        let source = DeclSyntax("")
+//        return MemberBlockItemSyntax(decl: source)
+//    default :
+//        // By having a default case that is different from the logging case above I can have two levels of errors.
+//        // Forced errors at run time that will show me every case that has issues which have been added to the case above to fail more gracefully and can be known, researched, and fixed.
+//        fatalError("Unhandled parent variable name for WaveformGenerationMode: \(parentVariableA.name.rawValue)")
+//    }
+    lowParentVariableName = supplementalData(for: parentVariableB).variableName
+    hightParentVariableName = supplementalData(for: parentVariableA).variableName
+    lowBitfield = bitfieldB
+    highBitfield = bitfieldA
+    // Mask Value is 16 Bits and we have to have 8. Assuming that it's a total error to have a mask with bits above 8 we will just throw those away.
+    let lowBitmask = lowBitfield.mask.value.lowByte.binaryString
+    let highBitmask = highBitfield.mask.value.lowByte.binaryString
+    
+    
+    
+    
+    // We then make sure that the byte is shifted all the way over to the Least Significant Bit because the value assigned will also be in the Least Significant Bits.
+    let lowBitshift = UInt8(lowBitfield.mask.value.trailingZeroBitCount)
+    let highBitshift = UInt8(highBitfield.mask.value.trailingZeroBitCount)
+    
+    // Then turn all of this into a bianary string for legibility, a bitmask should be seen as bits and not an Int or Hex value.
+    let newValueLowBitmask = (lowBitfield.mask.value.lowByte >> lowBitshift).binaryString
+    
+    print()
+    print("-----------------------------------------------------------")
+    print("Low Bitmask Value: \(lowBitfield.mask.value), Mask: \(lowBitmask), Shift: \(lowBitshift)")
+    print("high Bitmask Value: \(highBitfield.mask.value), Mask: \(highBitmask), Shift: \(highBitshift)")
+    print("adjustedHighBitshift = \(highBitshift) - \(UInt8(lowBitfield.mask.value.nonzeroBitCount))")
+    print("-----------------------------------------------------------")
+    print()
+    
+    // This would give me the number of bits to shift, assuming that there is only a single group of bits and not two or more groups split by one or more 0s.
+    // The difference between the Bitfield Bitmask and the newValue Bitmask This should account for shifting in either direction.
+    let adjustedHighBitshift = Int8(highBitfield.mask.value.trailingZeroBitCount) - Int8(lowBitfield.mask.value.nonzeroBitCount)
+    let getShiftDirection: String = adjustedHighBitshift >= 0 ? ">>" : "<<"
+    let setShiftDirection: String = adjustedHighBitshift >= 0 ? "<<" : ">>"
+    
+    
+    // Make sure the high bitmask is shifted all the way to the right and then shift it back by the LSB. This should always put it in the correct position for the newValueHighBitmask
+    let newValueHighBitmask = ((highBitfield.mask.value.lowByte >> highBitfield.mask.value.trailingZeroBitCount) << lowBitfield.mask.value.nonzeroBitCount).binaryString
+    
+    let source = DeclSyntax(
+      """
+          /// \(raw: bitfieldA.name) – \(raw: caption) \(raw: info.documentation)
+          @inlinable
+          @inline(__always)
+          public static var \(raw: info.variableName): \(raw: info.valueType) {
+              get {
+                  let mode = ((\(raw: hightParentVariableName) & \(raw: highBitmask)) \(raw: getShiftDirection) \(raw: highBitshift)) | ((\(raw: lowParentVariableName) & \(raw: lowBitmask)) \(raw: getShiftDirection) \(raw: lowBitshift))
+                  return \(raw: info.valueType).init(rawValue: mode) ?? \(raw: info.defaultValue)
+              }
+              set {
+                  \(raw: lowParentVariableName) = (\(raw: lowParentVariableName) & ~\(raw: lowBitmask)) | ((newValue.rawValue & \(raw: newValueLowBitmask)) << UInt8(\(raw: lowBitshift)))
+                  \(raw: hightParentVariableName) = (\(raw: hightParentVariableName) & ~\(raw: highBitmask)) | ((newValue.rawValue \(raw: setShiftDirection) \(raw: highBitshift) ) & \(raw: newValueHighBitmask))
+              }
+          }
+      """
+    )
+    
     return MemberBlockItemSyntax(decl: source)
 }
 
