@@ -23,7 +23,12 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
     ]
     
     let bitfieldAccessorsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
-        .UPM0
+        .UPM0, .UPM1, .UPM2, .UPM3,
+        .USBS0, .USBS1, .USBS2, .USBS3,
+        .UCPOL0, .UCPOL1, .UCPOL2, .UCPOL3,
+        .U2X0, .U2X1, .U2X2, .U2X3,
+        .RXEN0, .RXEN1, .RXEN2, .RXEN3,
+        .TXEN0, .TXEN1, .TXEN2, .TXEN3,
     ]
     
     if let module: AVRModules.Module = file.modules.module.first(where: { $0.name == .usart }) {
@@ -53,12 +58,17 @@ func buildUART(module: AVRModules.Module, uartName: String, chipName: String, bi
             memberBlockList.append(generateUartRegister(register))
         }
         // TODO: Improve this
-        for register in registerGroup.register {
-            for bitfield in bitfieldsToGenerate {
-                //let bitfield = register.bitfield.first(where: { $0.name == bitfield })!
-                guard let bitfield = register.bitfield.first(where: { $0.name == bitfield }) else {
-                    continue
-                }
+//        for register in registerGroup.register {
+//            for bitfield in bitfieldsToGenerate {
+//                //let bitfield = register.bitfield.first(where: { $0.name == bitfield })!
+//                guard let bitfield = register.bitfield.first(where: { $0.name == bitfield }) else {
+//                    continue
+//                }
+//                memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register))
+//            }
+//        }
+        for bitfield in bitfieldsToGenerate {
+            if let register = registerGroup.register.first(where: {$0.bitfield.contains(where: { $0.name == bitfield })}), let bitfield = register.bitfield.first(where: { $0.name == bitfield }) {
                 memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register))
             }
         }
@@ -240,14 +250,26 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
                               in register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
     let supData = supplementalData(for: bitfield)
     let supDataParent = supplementalData(for: register)
+    let bitmask = bitfield.mask.value.lowByte.binaryString
+    let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
+    let caption: String = bitfield.caption.map(\.rawValue.capitalized) ?? "Unknown"
+    let enumBitmask = (bitfield.mask.value.lowByte >> bitshift).binaryString
+    // TODO: Fix the weirdness happening when trying to include documentation
+    // /// \(raw: bitfield.name) – \(raw: bitfield.caption?.rawValue) \(raw:supData.documentation)
     let source = DeclSyntax(
         """
-        /// \(raw: bitfield.name) – \(raw: bitfield.caption) \(raw:supData.documentation)
+        /// \(raw: bitfield.name) – \(raw: caption)
         @inlinable
         @inline(__always)
         static var \(raw: supData.variableName): \(raw: supData.valueType) {
             get {
-                let mode = (\(raw: supDataParent.variableName)
+                let mode = (\(raw: supDataParent.variableName) & \(raw: bitmask)) >> \(raw: bitshift)
+                return \(raw: supData.valueType).init(rawValue: mode) ?? \(raw: supData.defaultValue)
+            }
+            set {
+                \(raw: supDataParent.variableName) = (\(raw: supDataParent.variableName) & ~\(raw: bitmask)) | ((newValue.rawValue << \(raw: bitshift)) & \(raw: bitmask))
+            }
+        }
         """
     ).with(\.trailingTrivia, .newlines(2))
     return MemberBlockItemSyntax(decl: source)
