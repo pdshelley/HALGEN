@@ -101,7 +101,7 @@ func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Regist
     customRegister.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
     memberBlockList.append(generateRegister(customRegister, "baudRateRegisterH"))
 
-    memberBlockList.append(MemberBlockItemSyntax(decl: DeclSyntax("\(raw: uart16bitBaudRegister)")))
+    memberBlockList.append(MemberBlockItemSyntax(decl: DeclSyntax("\(raw: uart16bitBaudRegister)").with(\.trailingTrivia, .newlines(2))))
     
     return memberBlockList
 }
@@ -232,7 +232,7 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ va
               }
           }
       """
-    )
+    ).with(\.trailingTrivia, .newlines(2))
     return MemberBlockItemSyntax(decl: source)
 }
 
@@ -249,7 +249,7 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
             get {
                 let mode = (\(raw: supDataParent.variableName)
         """
-    )
+    ).with(\.trailingTrivia, .newlines(2))
     return MemberBlockItemSyntax(decl: source)
 }
 

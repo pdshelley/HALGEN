@@ -329,7 +329,7 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> M
               }
           }
       """
-    )
+    ).with(\.trailingTrivia, .newlines(2))
     
     return MemberBlockItemSyntax(decl: source)
 }
@@ -636,9 +636,9 @@ func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register
     )
     
     if info.valueType == "Bool" {
-        return MemberBlockItemSyntax(decl: sourceForBool)
+        return MemberBlockItemSyntax(decl: sourceForBool.with(\.trailingTrivia, .newlines(2)))
     } else {
-        return MemberBlockItemSyntax(decl: source)
+        return MemberBlockItemSyntax(decl: source.with(\.trailingTrivia, .newlines(2)))
     }
 }
 
