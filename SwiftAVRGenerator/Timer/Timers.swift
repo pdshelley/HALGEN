@@ -112,35 +112,6 @@ func buildProtocolDeclarations(from info: TimerInfo) -> String {
     return hasProtocols.isEmpty ? "" : " \(hasProtocols.joined(separator: ", ")) "
 }
 
-func buildFileHeader(for fileName: String) -> String {
-    let fullFormatter = DateFormatter()
-    fullFormatter.dateFormat = "MM/dd/yyyy"
-    let fullDateString = fullFormatter.string(from: Date())
-    
-    let yearFormatter = DateFormatter()
-    yearFormatter.dateFormat = "yyyy"
-    let yearString = yearFormatter.string(from: Date())
-    
-    let fileHeader = """
-    //===----------------------------------------------------------------------===//
-    //
-    // \(fileName).swift
-    // CoreAVR
-    //
-    // Created by Swift AVR Generator on \(fullDateString).
-    // Copyright © \(yearString) Paul Shelley. All rights reserved.
-    //
-    //===----------------------------------------------------------------------===//
-    
-    
-    public typealias \(fileName.lowercased()) = \(fileName)
-    
-    
-    """
-    // TODO: The typealias should be generated in a different location.
-    return fileHeader
-}
-
 func buildTimer(module: AVRModules.Module, timerName: String, chipName: String) -> GeneratedCodeFile {
     print("------------------\(timerName)------------------")
     let fileName = "\(timerName).swift"
@@ -679,7 +650,7 @@ struct SupplementalRegisterData {
     let access: String
 }
 
-func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
+fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
     switch register.name {
     case .TIMSK0, .TIMSK1, .TIMSK2, .TIMSK3, .TIMSK4, .TIMSK5:
         return SupplementalRegisterData(variableName: "interruptMaskRegister", valueType: "", defaultValue: "", documentation: "", access: "R")
@@ -732,7 +703,7 @@ struct SupplementalBitfieldData {
     let access: Access
 }
 
-func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
+fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
     switch bitfield.name {
         // Interrupt Mask Register
     case .OCIE0B, .OCIE1B, .OCIE2B, .OCIE3B, .OCIE4B, .OCIE5B:

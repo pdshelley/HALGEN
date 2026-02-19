@@ -12,7 +12,7 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
     var uartFiles: [GeneratedCodeFile] = []
     
     let fileName = "UART.swift"
-    let code: String = buildUartFileHeader(for: fileName) + uartBoilerPlate
+    let code: String = buildFileHeader(for: fileName) + uartBoilerPlate
     uartFiles.append(GeneratedCodeFile(fileName: fileName, content: code))
     
     let uartNamesDict: [AVRModules.Module.RegisterGroup.Name: String] = [
@@ -21,13 +21,6 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
         .USART2: "UART2",
         .USART3: "UART3"
     ]
-    
-//    for module in file.modules.module {
-//        let uartNames = module.registerGroup.compactMap { uartNamesDict[$0.name] }
-//        for uartName in uartNames {
-//            uartFiles.append(buildUART(module: module, uartName: uartName, chipName: file.devices.device.name))
-//        }
-//    }
     
     let bitfieldAccessorsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
         .UPM0
@@ -39,41 +32,17 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
             uartFiles.append(buildUART(module: module, uartName: uartName, chipName: file.devices.device.name, bitfieldsToGenerate: bitfieldAccessorsToGenerate))
         }
     }
-    
-//    var uartNames: [String] = []
-//
-//    // TODO: Find a better way to filter to the needed module
-//    for module in file.modules.module {
-//        uartNames = module.registerGroup.compactMap { uartNamesDict[$0.name] }
-//    }
-//    for uartName in uartNames {
-//        uartFiles.append(buildUART(module: module, uartName: uartName, chipName: file.devices.device.name))
-//    }
     return uartFiles
 }
 
 func buildUART(module: AVRModules.Module, uartName: String, chipName: String, bitfieldsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name]) -> GeneratedCodeFile {
     let fileName = "\(uartName).swift"
-    var code = buildUartFileHeader(for: uartName)
+    var code = buildFileHeader(for: uartName)
     var memberBlockList = MemberBlockItemListSyntax()
-    
-//    for registerGroup in module.registerGroup {
-//        for register in registerGroup.register {
-//            if register.name == AVRModules.Module.RegisterGroup.Register.Name.UBRR0 {
-//                memberBlockList.append(contentsOf: generateUartBaudRegister(register))
-//                continue
-//            }
-//            memberBlockList.append(generateUartRegister(register))
-//        }
-//    }
     
     if let lastChar = uartName.last, let registerGroupIndex = lastChar.wholeNumberValue {
         let registerGroup = module.registerGroup[registerGroupIndex]
         for register in registerGroup.register {
-//            if register.name == AVRModules.Module.RegisterGroup.Register.Name.UBRR0 {
-//                memberBlockList.append(contentsOf: generateUartBaudRegister(register))
-//                continue
-//            }
             switch register.name {
             case .UBRR0, .UBRR1, .UBRR2, .UBRR3:
                 memberBlockList.append(contentsOf: generateUartBaudRegister(register))
@@ -93,18 +62,6 @@ func buildUART(module: AVRModules.Module, uartName: String, chipName: String, bi
                 memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register))
             }
         }
-        //for bitfield in bitfieldsToGenerate {
-            //let bitfieldRegister: AVRModules.Module.RegisterGroup.Register = registerGroup.register.first(where: { $0.bitfield(for: bitfield.rawValue) != nil })!
-//            let registers: [AVRModules.Module.RegisterGroup.Register] = registerGroup.register
-//
-//            let bitfieldRegister: AVRModules.Module.RegisterGroup.Register =
-//                registers.first(where: { $0.bitfield?.name == bitfield })!
-//            let bitfieldRegister: AVRModules.Module.RegisterGroup.Register =
-//                Swift.Array(registerGroup.register).first(where: { $0.bitfield?.name == bitfield })!
-            
-
-            //memberBlockList.append(generateBitfieldAccessor(for: module.registerGroup[registerGroupIndex].register[0], bitfield: bitfield, in: uartName))
-        //}
     }
     
     let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
@@ -140,9 +97,6 @@ func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Regist
     
     memberBlockList.append(generateRegister(customRegister, "baudRateRegisterL"))
     
-//    let origOffset: String = register.offset.rawValue
-//    var newOffset = origOffset.hexValue()
-//    newOffset += 1
     // I have no idea if this is ok, I'll just assume it is since it works
     customRegister.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
     memberBlockList.append(generateRegister(customRegister, "baudRateRegisterH"))
@@ -152,36 +106,7 @@ func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Regist
     return memberBlockList
 }
 
-func buildUartFileHeader(for fileName: String) -> String {
-    let fullFormatter = DateFormatter()
-    fullFormatter.dateFormat = "MM/dd/yyyy"
-    let fullDateString = fullFormatter.string(from: Date())
-    
-    let yearFormatter = DateFormatter()
-    yearFormatter.dateFormat = "yyyy"
-    let yearString = yearFormatter.string(from: Date())
-    
-    let fileHeader = """
-    //===----------------------------------------------------------------------===//
-    //
-    // \(fileName).swift
-    // CoreAVR
-    //
-    // Created by Swift AVR Generator on \(fullDateString).
-    // Copyright © \(yearString) Paul Shelley. All rights reserved.
-    //
-    //===----------------------------------------------------------------------===//
-    //===----------------------------------------------------------------------===//
-    // UART Serial Communications
-    //===----------------------------------------------------------------------===//
-    
-    
-    """
-    
-    return fileHeader
-}
-
-func uartSupplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
+fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
     switch register.name {
     case .UDR0, .UDR1, .UDR2, .UDR3:
         return SupplementalRegisterData(variableName: "dataRegister", valueType: "", defaultValue: "", documentation: "", access: "")
@@ -209,7 +134,7 @@ func uartSupplementalData(for register: AVRModules.Module.RegisterGroup.Register
     }
 }
 
-func uartSupplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalRegisterData {
+fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalRegisterData {
     switch bitfield.name {
     case .UPM0:
         return SupplementalRegisterData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: "", documentation: """
@@ -247,7 +172,7 @@ func uartSupplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register
 }
 
 func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
-    let supData: SupplementalRegisterData = uartSupplementalData(for: register)
+    let supData: SupplementalRegisterData = supplementalData(for: register)
     
     return generateRegister(register, supData.variableName)
 }
@@ -313,8 +238,8 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ va
 
 func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
                               in register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
-    let supData = uartSupplementalData(for: bitfield)
-    let supDataParent = uartSupplementalData(for: register)
+    let supData = supplementalData(for: bitfield)
+    let supDataParent = supplementalData(for: register)
     let source = DeclSyntax(
         """
         /// \(raw: bitfield.name) – \(raw: bitfield.caption) \(raw:supData.documentation)
