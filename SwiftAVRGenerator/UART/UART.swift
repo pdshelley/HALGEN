@@ -21,36 +21,17 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
         .USART2: "UART2",
         .USART3: "UART3"
     ]
-    // TODO: Get rid of this
-    let bitfieldAccessorsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
-        .UPM0, .UPM1, .UPM2, .UPM3,
-        .USBS0, .USBS1, .USBS2, .USBS3,
-        .UCSZ02,
-        .UCPOL0, .UCPOL1, .UCPOL2, .UCPOL3,
-        .U2X0, .U2X1, .U2X2, .U2X3,
-        .RXEN0, .RXEN1, .RXEN2, .RXEN3,
-        .TXEN0, .TXEN1, .TXEN2, .TXEN3,
-        .UDRIE0, .UDRIE1, .UDRIE2, .UDRIE3,
-        .TXCIE0, .TXCIE1, .TXCIE2, .TXCIE3,
-        .RXCIE0, .RXCIE1, .RXCIE2, .RXCIE3,
-        .UPE0, .UPE1, .UPE2, .UPE3,
-        .DOR0, .DOR1, .DOR2, .DOR3,
-        .FE0, .FE1, .FE2, .FE3,
-        .UDRE0, .UDRE1, .UDRE2, .UDRE3,
-        .TXC0, .TXC1, .TXC2, .TXC3,
-        .RXC0, .RXC1, .RXC2, .RXC3
-    ]
     
     if let module: AVRModules.Module = file.modules.module.first(where: { $0.name == .usart }) {
         let registerGroups: [AVRModules.Module.RegisterGroup] = module.registerGroup.filter { uartNamesDict.keys.contains($0.name) }
         for registerGroup in registerGroups {
-            uartFiles.append(buildUART(registerGroup: registerGroup, uartName: uartNamesDict[registerGroup.name]!, chipName: file.devices.device.name, bitfieldsToGenerate: bitfieldAccessorsToGenerate))
+            uartFiles.append(buildUART(registerGroup: registerGroup, uartName: uartNamesDict[registerGroup.name]!, chipName: file.devices.device.name))
         }
     }
     return uartFiles
 }
 
-func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String, chipName: String, bitfieldsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name]) -> GeneratedCodeFile {
+func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String, chipName: String) -> GeneratedCodeFile {
     let fileName = "\(uartName).swift"
     var code = buildFileHeader(for: uartName)
     var memberBlockList = MemberBlockItemListSyntax()
@@ -65,9 +46,12 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
         }
     }
     
-    for bitfield in bitfieldsToGenerate {
-        if let register = registerGroup.register.first(where: {$0.bitfield.contains(where: { $0.name == bitfield })}), let bitfield = register.bitfield.first(where: { $0.name == bitfield }) {
-            memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register, registerGroup, chipName))
+    // Doing this in the above loop would be more efficient but I want to generate the registers before anything else
+    for register in registerGroup.register {
+        for bitfield in register.bitfield {
+            if !splitBitfieldAccessors.values.contains(where: { $0 == bitfield.name}) {
+                memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register, registerGroup, chipName))
+            }
         }
     }
     
