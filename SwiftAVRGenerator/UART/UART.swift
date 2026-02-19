@@ -21,7 +21,7 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
         .USART2: "UART2",
         .USART3: "UART3"
     ]
-    
+    // TODO: Get rid of this
     let bitfieldAccessorsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
         .UPM0, .UPM1, .UPM2, .UPM3,
         .USBS0, .USBS1, .USBS2, .USBS3,
@@ -42,35 +42,32 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
     ]
     
     if let module: AVRModules.Module = file.modules.module.first(where: { $0.name == .usart }) {
-        let uartNames = module.registerGroup.compactMap { uartNamesDict[$0.name] }
-        for uartName in uartNames {
-            uartFiles.append(buildUART(module: module, uartName: uartName, chipName: file.devices.device.name, bitfieldsToGenerate: bitfieldAccessorsToGenerate))
+        let registerGroups: [AVRModules.Module.RegisterGroup] = module.registerGroup.filter { uartNamesDict.keys.contains($0.name) }
+        for registerGroup in registerGroups {
+            uartFiles.append(buildUART(registerGroup: registerGroup, uartName: uartNamesDict[registerGroup.name]!, chipName: file.devices.device.name, bitfieldsToGenerate: bitfieldAccessorsToGenerate))
         }
     }
     return uartFiles
 }
 
-func buildUART(module: AVRModules.Module, uartName: String, chipName: String, bitfieldsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name]) -> GeneratedCodeFile {
+func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String, chipName: String, bitfieldsToGenerate: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name]) -> GeneratedCodeFile {
     let fileName = "\(uartName).swift"
     var code = buildFileHeader(for: uartName)
     var memberBlockList = MemberBlockItemListSyntax()
     
-    if let lastChar = uartName.last, let registerGroupIndex = lastChar.wholeNumberValue {
-        let registerGroup = module.registerGroup[registerGroupIndex]
-        for register in registerGroup.register {
-            switch register.name {
-            case .UBRR0, .UBRR1, .UBRR2, .UBRR3:
-                memberBlockList.append(contentsOf: generateUartBaudRegister(register))
-                continue
-            default:
-                break
-            }
+    for register in registerGroup.register {
+        switch register.name {
+        case .UBRR0, .UBRR1, .UBRR2, .UBRR3:
+            memberBlockList.append(contentsOf: generateUartBaudRegister(register))
+            continue
+        default:
             memberBlockList.append(generateUartRegister(register))
         }
-        for bitfield in bitfieldsToGenerate {
-            if let register = registerGroup.register.first(where: {$0.bitfield.contains(where: { $0.name == bitfield })}), let bitfield = register.bitfield.first(where: { $0.name == bitfield }) {
-                memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register, registerGroup, chipName))
-            }
+    }
+    
+    for bitfield in bitfieldsToGenerate {
+        if let register = registerGroup.register.first(where: {$0.bitfield.contains(where: { $0.name == bitfield })}), let bitfield = register.bitfield.first(where: { $0.name == bitfield }) {
+            memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register, registerGroup, chipName))
         }
     }
     
