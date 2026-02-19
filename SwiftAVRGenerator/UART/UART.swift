@@ -30,6 +30,15 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
         .U2X0, .U2X1, .U2X2, .U2X3,
         .RXEN0, .RXEN1, .RXEN2, .RXEN3,
         .TXEN0, .TXEN1, .TXEN2, .TXEN3,
+        .UDRIE0, .UDRIE1, .UDRIE2, .UDRIE3,
+        .TXCIE0, .TXCIE1, .TXCIE2, .TXCIE3,
+        .RXCIE0, .RXCIE1, .RXCIE2, .RXCIE3,
+        .UPE0, .UPE1, .UPE2, .UPE3,
+        .DOR0, .DOR1, .DOR2, .DOR3,
+        .FE0, .FE1, .FE2, .FE3,
+        .UDRE0, .UDRE1, .UDRE2, .UDRE3,
+        .TXC0, .TXC1, .TXC2, .TXC3,
+        .RXC0, .RXC1, .RXC2, .RXC3
     ]
     
     if let module: AVRModules.Module = file.modules.module.first(where: { $0.name == .usart }) {
@@ -138,24 +147,7 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
 fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalRegisterData {
     switch bitfield.name {
     case .UPM0, .UPM1, .UPM2, .UPM3:
-        return SupplementalRegisterData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: ".disabled", documentation: """
-    /// Parity Mode
-    /// See ATMega328p Datasheet Section 20.11.4.
-    /// UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.
-    ///
-    ///These bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the
-    /// parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare
-    /// it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.
-    ///
-    /// ```
-    ///| UPMn1 | UPMn0 | Parity Mode          |
-    ///|-------|-------|----------------------|
-    ///| 0     | 0     | Disabled             |
-    ///| 0     | 1     | Reserved             |
-    ///| 1     | 0     | Enabled, Even Parity |
-    ///| 1     | 1     | Enabled, Odd Parity  |
-    /// ```
-""", access: "")
+        return SupplementalRegisterData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: ".disabled", documentation: "", access: Access.readWrite.rawValue)
     case .USBS0, .USBS1, .USBS2, .USBS3:
         return SupplementalRegisterData(variableName: "numberOfStopBits", valueType: "UART.NumberOfStopBits", defaultValue: ".one", documentation: "", access: "")
     case .UCSZ0, .UCSZ1, .UCSZ2, .UCSZ3, .UCSZ02:
@@ -165,9 +157,27 @@ fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.
     case .U2X0, .U2X1, .U2X2, .U2X3:
         return SupplementalRegisterData(variableName: "asynchronousDoubleSpeedMode", valueType: "UART.AsynchronousDoubleSpeedMode", defaultValue: ".off", documentation: "", access: "")
     case .RXEN0, .RXEN1, .RXEN2, .RXEN3:
-        return SupplementalRegisterData(variableName: "receiveEnable", valueType: "UART.ReceiverEnable", defaultValue: ".off", documentation: "", access: "")
+        return SupplementalRegisterData(variableName: "receiverEnable", valueType: "UART.ReceiverEnable", defaultValue: ".off", documentation: "", access: "")
     case .TXEN0, .TXEN1, .TXEN2, .TXEN3:
         return SupplementalRegisterData(variableName: "transmitterEnable", valueType: "UART.TransmitterEnable", defaultValue: ".off", documentation: "", access: "")
+    case .UDRIE0, .UDRIE1, .UDRIE2, .UDRIE3:
+        return SupplementalRegisterData(variableName: "dataRegisterEmptyInterruptEnable", valueType: "UART.DRECompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
+    case .TXCIE0, .TXCIE1, .TXCIE2, .TXCIE3:
+        return SupplementalRegisterData(variableName: "txCompleteInterruptEnable", valueType: "UART.TXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
+    case .RXCIE0, .RXCIE1, .RXCIE2, .RXCIE3:
+        return SupplementalRegisterData(variableName: "rxCompleteInterruptEnable", valueType: "UART.RXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
+    case .UPE0, .UPE1, .UPE2, .UPE3:
+        return SupplementalRegisterData(variableName: "parityError", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+    case .DOR0, .DOR1, .DOR2, .DOR3:
+        return SupplementalRegisterData(variableName: "dataOverrun", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+    case .FE0, .FE1, .FE2, .FE3:
+        return SupplementalRegisterData(variableName: "frameError", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+    case .UDRE0, .UDRE1, .UDRE2, .UDRE3:
+        return SupplementalRegisterData(variableName: "dataRegisterEmpty", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+    case .TXC0, .TXC1, .TXC2, .TXC3:
+        return SupplementalRegisterData(variableName: "txComplete", valueType: "Bool", defaultValue: "", documentation: "", access: Access.readWrite.rawValue )
+    case .RXC0, .RXC1, .RXC2, .RXC3:
+        return SupplementalRegisterData(variableName: "rxDataAvailable", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
     default :
         var variableName = bitfield.caption?.rawValue ?? ""
         variableName = variableName.filter { $0 != " " }
@@ -253,19 +263,53 @@ let splitBitfieldAccessors: [AVRModules.Module.RegisterGroup.Register.Bitfield.N
 ]
 
 func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
-                              in register: AVRModules.Module.RegisterGroup.Register, _ registerGroup: AVRModules.Module.RegisterGroup, _ chipName: String) -> MemberBlockItemSyntax {
+                              in register: AVRModules.Module.RegisterGroup.Register,
+                              _ registerGroup: AVRModules.Module.RegisterGroup,
+                              _ chipName: String) -> MemberBlockItemSyntax {
     if splitBitfieldAccessors.contains(where: { $0.self.key == bitfield.name}) {
         let bitfieldBName = splitBitfieldAccessors[bitfield.name]
         let registerB = registerGroup.register.first(where: {$0.bitfield.contains(where: { $0.name == bitfieldBName! })})
         let bitfieldB = registerB?.bitfield.first(where: {$0.name == bitfieldBName})
         return generateSplitBitfieldAccessorUart(bitfieldA: bitfield, bitfieldB: bitfieldB!, parentVariableA: register, parentVariableB: registerB!, chipName: chipName)
     }
+    
     let supData = supplementalData(for: bitfield)
     let supDataParent = supplementalData(for: register)
     let bitmask = bitfield.mask.value.lowByte.binaryString
     let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
     let caption: String = bitfield.caption.map(\.rawValue.capitalized) ?? "Unknown"
     let enumBitmask = (bitfield.mask.value.lowByte >> bitshift).binaryString
+    
+    if supData.valueType == "Bool" {
+        var sourceForBoolGet = """
+          get {
+              return !((\(supDataParent.variableName) & \(bitmask)) == 0)
+          }
+          """
+        
+        var sourceForBoolSet = """
+              set {
+              \(supDataParent.variableName) |= UInt8(newValue.hashValue) & \(bitmask)
+              }
+        """
+        if supData.access == Access.write.rawValue {
+            sourceForBoolGet = ""
+        }
+        if supData.access == Access.read.rawValue {
+            sourceForBoolSet = ""
+        }
+        
+        let sourceForBool = DeclSyntax(
+          """
+              /// \(raw: bitfield.name) – \(raw: caption) \(raw: supData.documentation)
+              @inlinable
+              @inline(never)
+              static var \(raw: supData.variableName): \(raw: supData.valueType) {\(raw: sourceForBoolGet)\(raw: sourceForBoolSet)
+              }
+          """
+        ).with(\.trailingTrivia, .newlines(2))
+        return MemberBlockItemSyntax(decl: sourceForBool)
+    }
     // TODO: Fix the weirdness happening when trying to include documentation
     // /// \(raw: bitfield.name) – \(raw: bitfield.caption?.rawValue) \(raw:supData.documentation)
     let source = DeclSyntax(
@@ -380,14 +424,14 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
           /// \(raw: bitfieldA.name) – \(raw: caption) \(raw: info.documentation)
           @inlinable
           @inline(__always)
-          public static var \(raw: info.variableName): \(raw: info.valueType) {
+          static var \(raw: info.variableName): \(raw: info.valueType) {
               get {
                   let mode = ((\(raw: hightParentVariableName) & \(raw: highBitmask)) \(raw: getShiftDirection) \(raw: highBitshift)) | ((\(raw: lowParentVariableName) & \(raw: lowBitmask)) \(raw: getShiftDirection) \(raw: lowBitshift))
                   return \(raw: info.valueType).init(rawValue: mode) ?? \(raw: info.defaultValue)
               }
               set {
                   \(raw: lowParentVariableName) = (\(raw: lowParentVariableName) & ~\(raw: lowBitmask)) | ((newValue.rawValue & \(raw: newValueLowBitmask)) << UInt8(\(raw: lowBitshift)))
-                  \(raw: hightParentVariableName) = (\(raw: hightParentVariableName) & ~\(raw: highBitmask)) | ((newValue.rawValue \(raw: setShiftDirection) \(raw: highBitshift) ) & \(raw: newValueHighBitmask))
+                  \(raw: hightParentVariableName) = (\(raw: hightParentVariableName) & ~\(raw: highBitmask)) | ((newValue.rawValue \(raw: setShiftDirection) \(raw: highBitshift)) & \(raw: newValueHighBitmask))
               }
           }
       """
@@ -517,4 +561,23 @@ let uart16bitBaudRegister = """
             baudRateRegisterL = UInt8(newValue & 0b11111111)
         }
     }
+"""
+
+let parityModeDocumentation = """
+    /// Parity Mode
+    /// See ATMega328p Datasheet Section 20.11.4.
+    /// UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.
+    ///
+    ///These bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the
+    /// parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare
+    /// it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.
+    ///
+    /// ```
+    ///| UPMn1 | UPMn0 | Parity Mode          |
+    ///|-------|-------|----------------------|
+    ///| 0     | 0     | Disabled             |
+    ///| 0     | 1     | Reserved             |
+    ///| 1     | 0     | Enabled, Even Parity |
+    ///| 1     | 1     | Enabled, Odd Parity  |
+    /// ```
 """
