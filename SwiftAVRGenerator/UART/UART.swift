@@ -57,18 +57,16 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
     
     let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
     
-    // TODO: Check what this does and clean this up, I simply copy pasted from timers to get something working quickly.
-    
     // Information needed to setup the Struct.
-//    let InheritedType = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: protocolDeclarations))
-//    let inheritedTypeList = InheritedTypeListSyntax(arrayLiteral: InheritedType)
-//    let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
+    let InheritedType = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: "UARTPort"))
+    let inheritedTypeList = InheritedTypeListSyntax(arrayLiteral: InheritedType)
+    let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
     
     code.append(SourceFileSyntax {
         StructDeclSyntax(
             modifiers: DeclModifierListSyntax(arrayLiteral: DeclModifierSyntax(name: "public")),
             name: "\(raw: uartName)",
-            //inheritanceClause: inheritanceClause,
+            inheritanceClause: inheritanceClause,
             memberBlock: memberBlock
         )
     }.formatted().description)
