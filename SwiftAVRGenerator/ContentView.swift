@@ -41,7 +41,16 @@ struct ContentView: View {
                 panel.nameFieldLabel = "File Name:"
                 if panel.runModal() == .OK {
                     guard let url = panel.url else { return }
-                    export(fromURLs: self.urls, toURL: url)
+//                    DispatchQueue.global().async() {
+//                        export(fromURLs: self.urls, toURL: url)
+//                    }
+                    // Singlethreaded
+                    //export(fromURLs: self.urls, toURL: url)
+                    //await parallelExport(fromURLs: self.urls, toURL: url)
+                    // Multithreaded
+                    Task {
+                        await parallelExport(fromURLs: self.urls, toURL: url)
+                    }
                 }
             } label: {
                 Text("Export")
@@ -71,6 +80,77 @@ func decodeATDF(urls: [URL]) -> [GeneratedAVRCore] {
     }
     
     return generatedAVRCores
+}
+
+func parallelDecodeATDF(urls: [URL]) async -> [GeneratedAVRCore] {
+//    var generatedAVRCores: [GeneratedAVRCore] = []
+//    
+//    for url in urls {
+//        do {
+//            let data = try Data(contentsOf: url)
+//            generatedAVRCores.append(decodeATDF(data: data))
+//        } catch {
+//            print("Could not get data from ATDF file URL.")
+//        }
+//    }
+//    
+//    return generatedAVRCores
+    return await withTaskGroup(of: GeneratedAVRCore?.self) { group in
+        var generatedAVRCores: [GeneratedAVRCore] = []
+        
+        for url in urls {
+            group.addTask {
+                do {
+                    let data = try Data(contentsOf: url)
+                    return decodeATDF(data: data)
+                } catch {
+                    return nil
+                }
+            }
+        }
+        
+        for await core in group {
+            if let core = core {
+                generatedAVRCores.append(core)
+            }
+        }
+        return generatedAVRCores
+    }
+}
+
+func parallelExport(fromURLs: [URL], toURL: URL) async {
+    // Load ATDF Files
+    let generatedCores = await parallelDecodeATDF(urls: fromURLs)
+    
+    // New
+    for core in generatedCores {
+        let subFolderURL = toURL.appendingPathComponent(core.name, conformingTo: .directory)
+        let moduleFolderURL = subFolderURL.appendingPathComponent("module", conformingTo: .directory)
+        let timerFolderUrl = moduleFolderURL.appendingPathComponent("Timer", conformingTo: .directory)
+        let uartFolderUrl = moduleFolderURL.appendingPathComponent("UART", conformingTo: .directory)
+        //print(uartFolderUrl.lastPathComponent)
+        for file in core.files {
+            //export(toURL: subFolderURL, fileName: file.fileName, fileContents: file.content)
+            if file.fileName.contains(timerFolderUrl.lastPathComponent) {
+                export(toURL: timerFolderUrl, fileName: file.fileName, fileContents: file.content)
+            } else if file.fileName.contains(uartFolderUrl.lastPathComponent) {
+                export(toURL: uartFolderUrl, fileName: file.fileName, fileContents: file.content)
+            } else {
+                export(toURL: moduleFolderURL, fileName: file.fileName, fileContents: file.content)
+            }
+            
+        }
+    }
+    
+    // Old
+//    for core in generatedCores {
+//        let subFolderURL = toURL.appendingPathComponent(core.name, conformingTo: .directory)
+//        for file in core.files {
+//            export(toURL: subFolderURL, fileName: file.fileName, fileContents: file.content)
+//        }
+//    }
+    
+    logs.saveToFile(toURL: toURL)
 }
 
 var listOfValues: [String] = []
