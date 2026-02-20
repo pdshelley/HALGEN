@@ -386,6 +386,9 @@ fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.
         return SupplementalBitfieldData(variableName: "", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
     case .TXB80, .TXB81, .TXB82, .TXB83:
         return SupplementalBitfieldData(variableName: "", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite )
+    case .UMSEL0, .UMSEL1, .UMSEL2, .UMSEL3:
+        return SupplementalBitfieldData(variableName: "modeSelect", valueType: "UART.ModeSelect", defaultValue: ".asynchronous", documentation: UARTDocs.modeSelectDocumentation, access: .readWrite)
+        
     default :
         // TODO: What do we do with bitfields that have no case? They are currently generated without variable name breaking the code
         return SupplementalBitfieldData(variableName: "", valueType: "", defaultValue: "", documentation: "", access: .readWrite)
@@ -609,5 +612,10 @@ public protocol UARTPort {
     
     static let rxDataAvailableDocumentation = """
         \n    /// URXCn is Bit 7 on UCSRnA. See Section 20.11.2.
+        """
+    
+    static let modeSelectDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.11.4
+            /// UMSELn are bit 7 and 6 on UCSRnC
         """
 }
