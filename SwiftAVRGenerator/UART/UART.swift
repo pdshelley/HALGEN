@@ -12,7 +12,7 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
     var uartFiles: [GeneratedCodeFile] = []
     
     let fileName = "UART.swift"
-    let code: String = buildFileHeader(for: fileName) + UARTDocs.uartBoilerPlate
+    let code: String = buildFileHeader(for: fileName, generateTypealias: false) + UARTDocs.uartBoilerPlate
     uartFiles.append(GeneratedCodeFile(fileName: fileName, content: code))
     
     let uartNamesDict: [AVRModules.Module.RegisterGroup.Name: String] = [
@@ -161,6 +161,7 @@ func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Regist
 }
 
 let splitBitfieldAccessors: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name: AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
+    //HIGH - LOW
     .UCSZ02: .UCSZ0
 ]
 
@@ -191,10 +192,10 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
           """
         
         var sourceForBoolSet = """
-              set {
+          set {
               \(variableName) |= UInt8(newValue.hashValue) & \(bitmask)
-              }
-        """
+          }
+          """
         if supData.access == Access.write {
             sourceForBoolGet = ""
         }

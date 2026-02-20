@@ -6,7 +6,7 @@
 //
 import Foundation
 
-func buildFileHeader(for fileName: String) -> String {
+func buildFileHeader(for fileName: String, generateTypealias: Bool = true) -> String {
     let fullFormatter = DateFormatter()
     fullFormatter.dateFormat = "MM/dd/yyyy"
     let fullDateString = fullFormatter.string(from: Date())
@@ -14,6 +14,11 @@ func buildFileHeader(for fileName: String) -> String {
     let yearFormatter = DateFormatter()
     yearFormatter.dateFormat = "yyyy"
     let yearString = yearFormatter.string(from: Date())
+    
+    var typealiasString = ""
+    if generateTypealias {
+        typealiasString = "public typealias \(fileName.lowercased()) = \(fileName)"
+    }
     
     let fileHeader = """
     //===----------------------------------------------------------------------===//
@@ -27,7 +32,7 @@ func buildFileHeader(for fileName: String) -> String {
     //===----------------------------------------------------------------------===//
     
     
-    public typealias \(fileName.lowercased()) = \(fileName)
+    \(typealiasString)
     
     
     """
