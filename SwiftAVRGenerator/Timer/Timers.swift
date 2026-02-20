@@ -226,33 +226,33 @@ func getBitNames(from register: AVRModules.Module.RegisterGroup.Register) -> [St
     return bitNames
 }
 
-func getBitAccess(from register: AVRModules.Module.RegisterGroup.Register, parentAccess: String) -> [String] {
-    var bitAccess = Array(repeating: parentAccess, count: 16)
-        
-    for bitField in register.bitfield {
-        var mask: UInt16 = bitField.mask.value
-//        let name = bitField.name.rawValue
-        let access = supplementalData(for: bitField).access
-        
-        // 0b0100100
-        
-//        let numberOfBitsInMask = mask.nonzeroBitCount
-        let startIndex = mask.trailingZeroBitCount
-        var currentIndex = startIndex
-        mask = mask >> mask.trailingZeroBitCount // Shift out any 0s before starting.
-
-        while mask.nonzeroBitCount > 0 {
-//            var adjustedName = "" // TODO: Remove this because we don't need to change the "R/W" like we need to asjust the bit names.
-//            if numberOfBitsInMask > 1 { adjustedName = "\(numberOfBitsInMask - mask.nonzeroBitCount)" } // Check if and calculated the bit name number.
-            bitAccess[currentIndex] = access.rawValue //+ adjustedName // Save name at current index.
-            mask = mask >> 1 // Shift out bit that we just saved.
-            currentIndex += 1 + mask.trailingZeroBitCount // Increase the index, if there are more 0s increase the index by how many 0s there are.
-            mask = mask >> mask.trailingZeroBitCount // If there are 0s shift them out of the mask so we don't save a name for them.
-        }
-    }
-    
-    return bitAccess
-}
+//func getBitAccess(from register: AVRModules.Module.RegisterGroup.Register, parentAccess: String) -> [String] {
+//    var bitAccess = Array(repeating: parentAccess, count: 16)
+//        
+//    for bitField in register.bitfield {
+//        var mask: UInt16 = bitField.mask.value
+////        let name = bitField.name.rawValue
+//        let access = supplementalData(for: bitField).access
+//        
+//        // 0b0100100
+//        
+////        let numberOfBitsInMask = mask.nonzeroBitCount
+//        let startIndex = mask.trailingZeroBitCount
+//        var currentIndex = startIndex
+//        mask = mask >> mask.trailingZeroBitCount // Shift out any 0s before starting.
+//
+//        while mask.nonzeroBitCount > 0 {
+////            var adjustedName = "" // TODO: Remove this because we don't need to change the "R/W" like we need to asjust the bit names.
+////            if numberOfBitsInMask > 1 { adjustedName = "\(numberOfBitsInMask - mask.nonzeroBitCount)" } // Check if and calculated the bit name number.
+//            bitAccess[currentIndex] = access.rawValue //+ adjustedName // Save name at current index.
+//            mask = mask >> 1 // Shift out bit that we just saved.
+//            currentIndex += 1 + mask.trailingZeroBitCount // Increase the index, if there are more 0s increase the index by how many 0s there are.
+//            mask = mask >> mask.trailingZeroBitCount // If there are 0s shift them out of the mask so we don't save a name for them.
+//        }
+//    }
+//    
+//    return bitAccess
+//}
 
 /// Adds Padding to strings for documentation. This is intended to be used for centering text in mono-spaced ASCII tables.
 /// - Parameter input: String of 7 characters or less.
@@ -288,7 +288,7 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> M
         bitNames = bitNames.map { padString($0, padding: 7) }
         registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
         
-        var bitAccess = getBitAccess(from: register, parentAccess: registarAccess) // TODO: Check the register for it's access level
+        var bitAccess = getBitAccess(from: register, parentAccess: registarAccess, supplementalData: supplementalData(for:)) // TODO: Check the register for it's access level
         bitAccess = bitAccess.map { padString($0, padding: 7) }
         readWrite = "\(bitAccess[7])|\(bitAccess[6])|\(bitAccess[5])|\(bitAccess[4])|\(bitAccess[3])|\(bitAccess[2])|\(bitAccess[1])|\(bitAccess[0])"
     }
@@ -642,13 +642,13 @@ func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register
     }
 }
 
-struct SupplementalRegisterData {
-    let variableName: String
-    let valueType: String
-    let defaultValue: String
-    let documentation: String
-    let access: String
-}
+//struct SupplementalRegisterData {
+//    let variableName: String
+//    let valueType: String
+//    let defaultValue: String
+//    let documentation: String
+//    let access: String
+//}
 
 fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
     switch register.name {
@@ -689,19 +689,19 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
     }
 }
 
-enum Access: String {
-    case read = "R"
-    case write = "W"
-    case readWrite = "R/W"
-}
-
-struct SupplementalBitfieldData {
-    let variableName: String
-    let valueType: String
-    let defaultValue: String
-    let documentation: String
-    let access: Access
-}
+//enum Access: String {
+//    case read = "R"
+//    case write = "W"
+//    case readWrite = "R/W"
+//}
+//
+//struct SupplementalBitfieldData {
+//    let variableName: String
+//    let valueType: String
+//    let defaultValue: String
+//    let documentation: String
+//    let access: Access
+//}
 
 fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
     switch bitfield.name {

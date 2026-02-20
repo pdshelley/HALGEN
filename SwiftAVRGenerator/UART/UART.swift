@@ -96,7 +96,7 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ va
         bitNames = bitNames.map { padString($0, padding: 7) }
         registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
         
-        var bitAccess = getBitAccess(from: register, parentAccess: registarAccess) // TODO: Check the register for it's access level
+        var bitAccess = getBitAccess(from: register, parentAccess: registarAccess, supplementalData: supplementalData(for:)) // TODO: Check the register for it's access level
         bitAccess = bitAccess.map { padString($0, padding: 7) }
         readWrite = "\(bitAccess[7])|\(bitAccess[6])|\(bitAccess[5])|\(bitAccess[4])|\(bitAccess[3])|\(bitAccess[2])|\(bitAccess[1])|\(bitAccess[0])"
     }
@@ -194,10 +194,10 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
               \(supDataParent.variableName) |= UInt8(newValue.hashValue) & \(bitmask)
               }
         """
-        if supData.access == Access.write.rawValue {
+        if supData.access == Access.write {
             sourceForBoolGet = ""
         }
-        if supData.access == Access.read.rawValue {
+        if supData.access == Access.read {
             sourceForBoolSet = ""
         }
         
@@ -262,29 +262,6 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
     var highBitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
     var hightParentVariableName: String
     
-    // The LSBs of WMG should always be on TCCRnA and the MSBs should be on TCCRnB.
-    
-//    switch parentVariableA.name {
-//    case .TCCR0A, .TCCR1A, .TCCR2A, .TCCR3A, .TCCR4A, .TCCR5A:
-//        lowBitfield = bitfieldA
-//        lowParentVariableName = supplementalData(for: parentVariableA).variableName
-//        highBitfield = bitfieldB
-//        hightParentVariableName = supplementalData(for: parentVariableB).variableName
-//    case .TCCR0B, .TCCR1B, .TCCR2B, .TCCR3B, .TCCR4B, .TCCR5B:
-//        lowBitfield = bitfieldB
-//        lowParentVariableName = supplementalData(for: parentVariableB).variableName
-//        highBitfield = bitfieldA
-//        hightParentVariableName = supplementalData(for: parentVariableA).variableName
-//    case .TCCR2, .TCCR0, .TCCR4D: // ATmega8, ATmega16, ATmega16U4 // I think this only has one TCCR register.
-//        print("Failed to generate WaveformGenerationMode Accessor.")
-//        logs.addLog("Failed to generate WaveformGenerationMode Accessor. The register: \(parentVariableA.name) has something different that needs to be handled.", toChip: chipName) // TODO: Set to the correct chip name!
-//        let source = DeclSyntax("")
-//        return MemberBlockItemSyntax(decl: source)
-//    default :
-//        // By having a default case that is different from the logging case above I can have two levels of errors.
-//        // Forced errors at run time that will show me every case that has issues which have been added to the case above to fail more gracefully and can be known, researched, and fixed.
-//        fatalError("Unhandled parent variable name for WaveformGenerationMode: \(parentVariableA.name.rawValue)")
-//    }
     lowParentVariableName = supplementalData(for: parentVariableB).variableName
     hightParentVariableName = supplementalData(for: parentVariableA).variableName
     lowBitfield = bitfieldB
@@ -293,9 +270,6 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
     let lowBitmask = lowBitfield.mask.value.lowByte.binaryString
     let highBitmask = highBitfield.mask.value.lowByte.binaryString
     
-    
-    
-    
     // We then make sure that the byte is shifted all the way over to the Least Significant Bit because the value assigned will also be in the Least Significant Bits.
     let lowBitshift = UInt8(lowBitfield.mask.value.trailingZeroBitCount)
     let highBitshift = UInt8(highBitfield.mask.value.trailingZeroBitCount)
@@ -303,20 +277,11 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
     // Then turn all of this into a bianary string for legibility, a bitmask should be seen as bits and not an Int or Hex value.
     let newValueLowBitmask = (lowBitfield.mask.value.lowByte >> lowBitshift).binaryString
     
-    print()
-    print("-----------------------------------------------------------")
-    print("Low Bitmask Value: \(lowBitfield.mask.value), Mask: \(lowBitmask), Shift: \(lowBitshift)")
-    print("high Bitmask Value: \(highBitfield.mask.value), Mask: \(highBitmask), Shift: \(highBitshift)")
-    print("adjustedHighBitshift = \(highBitshift) - \(UInt8(lowBitfield.mask.value.nonzeroBitCount))")
-    print("-----------------------------------------------------------")
-    print()
-    
     // This would give me the number of bits to shift, assuming that there is only a single group of bits and not two or more groups split by one or more 0s.
     // The difference between the Bitfield Bitmask and the newValue Bitmask This should account for shifting in either direction.
     let adjustedHighBitshift = Int8(highBitfield.mask.value.trailingZeroBitCount) - Int8(lowBitfield.mask.value.nonzeroBitCount)
     let getShiftDirection: String = adjustedHighBitshift >= 0 ? ">>" : "<<"
     let setShiftDirection: String = adjustedHighBitshift >= 0 ? "<<" : ">>"
-    
     
     // Make sure the high bitmask is shifted all the way to the right and then shift it back by the LSB. This should always put it in the correct position for the newValueHighBitmask
     let newValueHighBitmask = ((highBitfield.mask.value.lowByte >> highBitfield.mask.value.trailingZeroBitCount) << lowBitfield.mask.value.nonzeroBitCount).binaryString
@@ -345,7 +310,7 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
 fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
     switch register.name {
     case .UDR0, .UDR1, .UDR2, .UDR3:
-        return SupplementalRegisterData(variableName: "dataRegister", valueType: "", defaultValue: "", documentation: "", access: "")
+        return SupplementalRegisterData(variableName: "dataRegister", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
     case .UCSR0A, .UCSR1A, .UCSR2A, .UCSR3A:
         return SupplementalRegisterData(variableName: "controlRegisterA", valueType: "", defaultValue: "", documentation: "", access: "")
     case .UCSR0B, .UCSR1B, .UCSR2B, .UCSR3B:
@@ -370,52 +335,47 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
     }
 }
 
-fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalRegisterData {
+fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
     switch bitfield.name {
     case .UPM0, .UPM1, .UPM2, .UPM3:
-        return SupplementalRegisterData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: ".disabled", documentation: "", access: Access.readWrite.rawValue)
+        return SupplementalBitfieldData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: ".disabled", documentation: "", access: .readWrite)
     case .USBS0, .USBS1, .USBS2, .USBS3:
-        return SupplementalRegisterData(variableName: "numberOfStopBits", valueType: "UART.NumberOfStopBits", defaultValue: ".one", documentation: "", access: "")
+        return SupplementalBitfieldData(variableName: "numberOfStopBits", valueType: "UART.NumberOfStopBits", defaultValue: ".one", documentation: "", access: .readWrite)
     case .UCSZ0, .UCSZ1, .UCSZ2, .UCSZ3, .UCSZ02:
-        return SupplementalRegisterData(variableName: "numberOfDataBits", valueType: "UART.NumberOfDataBits", defaultValue: ".eight", documentation: "", access: "")
+        return SupplementalBitfieldData(variableName: "numberOfDataBits", valueType: "UART.NumberOfDataBits", defaultValue: ".eight", documentation: "", access: .readWrite)
     case .UCPOL0, .UCPOL1, .UCPOL2, .UCPOL3:
-        return SupplementalRegisterData(variableName: "clockPolarity", valueType: "UART.ClockPolarity", defaultValue: ".rising", documentation: "", access: "")
+        return SupplementalBitfieldData(variableName: "clockPolarity", valueType: "UART.ClockPolarity", defaultValue: ".rising", documentation: "", access: .readWrite)
     case .U2X0, .U2X1, .U2X2, .U2X3:
-        return SupplementalRegisterData(variableName: "asynchronousDoubleSpeedMode", valueType: "UART.AsynchronousDoubleSpeedMode", defaultValue: ".off", documentation: "", access: "")
+        return SupplementalBitfieldData(variableName: "asynchronousDoubleSpeedMode", valueType: "UART.AsynchronousDoubleSpeedMode", defaultValue: ".off", documentation: "", access: .readWrite)
     case .RXEN0, .RXEN1, .RXEN2, .RXEN3:
-        return SupplementalRegisterData(variableName: "receiverEnable", valueType: "UART.ReceiverEnable", defaultValue: ".off", documentation: "", access: "")
+        return SupplementalBitfieldData(variableName: "receiverEnable", valueType: "UART.ReceiverEnable", defaultValue: ".off", documentation: "", access: .readWrite)
     case .TXEN0, .TXEN1, .TXEN2, .TXEN3:
-        return SupplementalRegisterData(variableName: "transmitterEnable", valueType: "UART.TransmitterEnable", defaultValue: ".off", documentation: "", access: "")
+        return SupplementalBitfieldData(variableName: "transmitterEnable", valueType: "UART.TransmitterEnable", defaultValue: ".off", documentation: "", access: .readWrite)
     case .UDRIE0, .UDRIE1, .UDRIE2, .UDRIE3:
-        return SupplementalRegisterData(variableName: "dataRegisterEmptyInterruptEnable", valueType: "UART.DRECompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
+        return SupplementalBitfieldData(variableName: "dataRegisterEmptyInterruptEnable", valueType: "UART.DRECompleteInterruptEnable", defaultValue: ".off", documentation: "", access: .readWrite)
     case .TXCIE0, .TXCIE1, .TXCIE2, .TXCIE3:
-        return SupplementalRegisterData(variableName: "txCompleteInterruptEnable", valueType: "UART.TXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
+        return SupplementalBitfieldData(variableName: "txCompleteInterruptEnable", valueType: "UART.TXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: .readWrite)
     case .RXCIE0, .RXCIE1, .RXCIE2, .RXCIE3:
-        return SupplementalRegisterData(variableName: "rxCompleteInterruptEnable", valueType: "UART.RXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
+        return SupplementalBitfieldData(variableName: "rxCompleteInterruptEnable", valueType: "UART.RXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: .readWrite)
     case .UPE0, .UPE1, .UPE2, .UPE3:
-        return SupplementalRegisterData(variableName: "parityError", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+        return SupplementalBitfieldData(variableName: "parityError", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
     case .DOR0, .DOR1, .DOR2, .DOR3:
-        return SupplementalRegisterData(variableName: "dataOverrun", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+        return SupplementalBitfieldData(variableName: "dataOverrun", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
     case .FE0, .FE1, .FE2, .FE3:
-        return SupplementalRegisterData(variableName: "frameError", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+        return SupplementalBitfieldData(variableName: "frameError", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
     case .UDRE0, .UDRE1, .UDRE2, .UDRE3:
-        return SupplementalRegisterData(variableName: "dataRegisterEmpty", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+        return SupplementalBitfieldData(variableName: "dataRegisterEmpty", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
     case .TXC0, .TXC1, .TXC2, .TXC3:
-        return SupplementalRegisterData(variableName: "txComplete", valueType: "Bool", defaultValue: "", documentation: "", access: Access.readWrite.rawValue )
+        return SupplementalBitfieldData(variableName: "txComplete", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite )
     case .RXC0, .RXC1, .RXC2, .RXC3:
-        return SupplementalRegisterData(variableName: "rxDataAvailable", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+        return SupplementalBitfieldData(variableName: "rxDataAvailable", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
+    case .RXB80, .RXB81, .RXB82, .RXB83:
+        return SupplementalBitfieldData(variableName: "", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
+    case .TXB80, .TXB81, .TXB82, .TXB83:
+        return SupplementalBitfieldData(variableName: "", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite )
     default :
-        var variableName = bitfield.caption?.rawValue ?? ""
-        variableName = variableName.filter { $0 != " " }
-        variableName = variableName.filter { $0 != "/" }
-        variableName = variableName.filter { $0 != "0" }
-        variableName = variableName.filter { $0 != "1" }
-        variableName = variableName.filter { $0 != "2" }
-        variableName = variableName.filter { $0 != "3" }
-        variableName = variableName.filter { $0 != "4" }
-        variableName = variableName.filter { $0 != "5" }
-        let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
-        return SupplementalRegisterData(variableName: name, valueType: "", defaultValue: "", documentation: "", access: "")
+        // TODO: What do we do with bitfields that have no case? They are currently generated without variable name breaking the code
+        return SupplementalBitfieldData(variableName: "", valueType: "", defaultValue: "", documentation: "", access: .readWrite)
     }
 }
 
