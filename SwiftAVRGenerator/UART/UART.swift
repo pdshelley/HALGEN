@@ -212,22 +212,21 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
         ).with(\.trailingTrivia, .newlines(2))
         return MemberBlockItemSyntax(decl: sourceForBool)
     }
-    // TODO: Fix the weirdness happening when trying to include documentation
-    // /// \(raw: bitfield.name) – \(raw: bitfield.caption?.rawValue) \(raw:supData.documentation)
+    
     let source = DeclSyntax(
         """
-        /// \(raw: bitfield.name) – \(raw: caption)
-        @inlinable
-        @inline(__always)
-        static var \(raw: supData.variableName): \(raw: supData.valueType) {
-            get {
-                let mode = (\(raw: supDataParent.variableName) & \(raw: bitmask)) >> \(raw: bitshift)
-                return \(raw: supData.valueType).init(rawValue: mode) ?? \(raw: supData.defaultValue)
+            /// \(raw: bitfield.name) – \(raw: caption) \(raw: supData.documentation)
+            @inlinable
+            @inline(__always)
+            static var \(raw: supData.variableName): \(raw: supData.valueType) {
+                get {
+                    let mode = (\(raw: supDataParent.variableName) & \(raw: bitmask)) >> \(raw: bitshift)
+                    return \(raw: supData.valueType).init(rawValue: mode) ?? \(raw: supData.defaultValue)
+                }
+                set {
+                    \(raw: supDataParent.variableName) = (\(raw: supDataParent.variableName) & ~\(raw: bitmask)) | ((newValue.rawValue << \(raw: bitshift)) & \(raw: bitmask))
+                }
             }
-            set {
-                \(raw: supDataParent.variableName) = (\(raw: supDataParent.variableName) & ~\(raw: bitmask)) | ((newValue.rawValue << \(raw: bitshift)) & \(raw: bitmask))
-            }
-        }
         """
     ).with(\.trailingTrivia, .newlines(2))
     return MemberBlockItemSyntax(decl: source)
@@ -538,7 +537,7 @@ public protocol UARTPort {
         """
 
     static let parityModeDocumentation = """
-        \n     /// Parity Mode
+        \n    /// Parity Mode
             /// See ATMega328p Datasheet Section 20.11.4.
             /// UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.
             ///
