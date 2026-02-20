@@ -176,6 +176,7 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
     }
     
     let supData = supplementalData(for: bitfield)
+    let variableName = (supData.variableName != "") ? supData.variableName : getVariableName(caption: bitfield.caption?.rawValue ?? "")
     let supDataParent = supplementalData(for: register)
     let bitmask = bitfield.mask.value.lowByte.binaryString
     let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
@@ -191,7 +192,7 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
         
         var sourceForBoolSet = """
               set {
-              \(supDataParent.variableName) |= UInt8(newValue.hashValue) & \(bitmask)
+              \(variableName) |= UInt8(newValue.hashValue) & \(bitmask)
               }
         """
         if supData.access == Access.write {
@@ -206,11 +207,31 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
               /// \(raw: bitfield.name) – \(raw: caption) \(raw: supData.documentation)
               @inlinable
               @inline(never)
-              static var \(raw: supData.variableName): \(raw: supData.valueType) {\(raw: sourceForBoolGet)\(raw: sourceForBoolSet)
+              public static var \(raw: variableName): \(raw: supData.valueType) {\(raw: sourceForBoolGet)\(raw: sourceForBoolSet)
               }
           """
         ).with(\.trailingTrivia, .newlines(2))
         return MemberBlockItemSyntax(decl: sourceForBool)
+    }
+    
+    if bitshift == 0 {
+        let source = DeclSyntax(
+            """
+                /// \(raw: bitfield.name) – \(raw: caption) \(raw: supData.documentation)
+                @inlinable
+                @inline(__always)
+                public static var \(raw: variableName): \(raw: supData.valueType) {
+                    get {
+                        let mode = \(raw: supDataParent.variableName) & \(raw: bitmask)
+                        return \(raw: supData.valueType).init(rawValue: mode) ?? \(raw: supData.defaultValue)
+                    }
+                    set {
+                        \(raw: supDataParent.variableName) = (\(raw: supDataParent.variableName) & ~\(raw: bitmask)) | (newValue.rawValue & \(raw: bitmask))
+                    }
+                }
+            """
+        ).with(\.trailingTrivia, .newlines(2))
+        return MemberBlockItemSyntax(decl: source)
     }
     
     let source = DeclSyntax(
@@ -218,7 +239,7 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
             /// \(raw: bitfield.name) – \(raw: caption) \(raw: supData.documentation)
             @inlinable
             @inline(__always)
-            static var \(raw: supData.variableName): \(raw: supData.valueType) {
+            public static var \(raw: variableName): \(raw: supData.valueType) {
                 get {
                     let mode = (\(raw: supDataParent.variableName) & \(raw: bitmask)) >> \(raw: bitshift)
                     return \(raw: supData.valueType).init(rawValue: mode) ?? \(raw: supData.defaultValue)
@@ -290,7 +311,7 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
           /// \(raw: bitfieldA.name) – \(raw: caption) \(raw: info.documentation)
           @inlinable
           @inline(__always)
-          static var \(raw: info.variableName): \(raw: info.valueType) {
+          public static var \(raw: info.variableName): \(raw: info.valueType) {
               get {
                   let mode = ((\(raw: hightParentVariableName) & \(raw: highBitmask)) \(raw: getShiftDirection) \(raw: highBitshift)) | ((\(raw: lowParentVariableName) & \(raw: lowBitmask)) \(raw: getShiftDirection) \(raw: lowBitshift))
                   return \(raw: info.valueType).init(rawValue: mode) ?? \(raw: info.defaultValue)
@@ -322,17 +343,7 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
         return SupplementalRegisterData(variableName: "", valueType: "", defaultValue: "", documentation: "", access: "R/W")
         
     default :
-        var variableName = register.caption?.rawValue ?? ""
-        variableName = variableName.filter { $0 != " " }
-        variableName = variableName.filter { $0 != "/" }
-        variableName = variableName.filter { $0 != "0" }
-        variableName = variableName.filter { $0 != "1" }
-        variableName = variableName.filter { $0 != "2" }
-        variableName = variableName.filter { $0 != "3" }
-        variableName = variableName.filter { $0 != "4" }
-        variableName = variableName.filter { $0 != "5" }
-        let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
-        return SupplementalRegisterData(variableName: name, valueType: "", defaultValue: "", documentation: "", access: "")
+        return SupplementalRegisterData(variableName: getVariableName(caption: register.caption?.rawValue ?? ""), valueType: "", defaultValue: "", documentation: "", access: "")
     }
 }
 

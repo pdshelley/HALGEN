@@ -84,3 +84,17 @@ func getBitAccess(from register: AVRModules.Module.RegisterGroup.Register, paren
     
     return bitAccess
 }
+
+func getVariableName(caption: String) -> String {
+    var variableName = caption
+    variableName = variableName.filter { $0 != " " }
+    variableName = variableName.filter { $0 != "/" }
+    variableName = variableName.filter { $0 != "0" }
+    variableName = variableName.filter { $0 != "1" }
+    variableName = variableName.filter { $0 != "2" }
+    variableName = variableName.filter { $0 != "3" }
+    variableName = variableName.filter { $0 != "4" }
+    variableName = variableName.filter { $0 != "5" }
+    let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
+    return name
+}
