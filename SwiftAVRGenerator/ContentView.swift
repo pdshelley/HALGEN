@@ -81,13 +81,33 @@ func export(fromURLs: [URL], toURL: URL) {
     // Load ATDF Files
     let generatedCores = decodeATDF(urls: fromURLs)
     
-    // Save GPIO.swift
+    // New
     for core in generatedCores {
         let subFolderURL = toURL.appendingPathComponent(core.name, conformingTo: .directory)
+        let moduleFolderURL = subFolderURL.appendingPathComponent("module", conformingTo: .directory)
+        let timerFolderUrl = moduleFolderURL.appendingPathComponent("Timer", conformingTo: .directory)
+        let uartFolderUrl = moduleFolderURL.appendingPathComponent("UART", conformingTo: .directory)
+        //print(uartFolderUrl.lastPathComponent)
         for file in core.files {
-            export(toURL: subFolderURL, fileName: file.fileName, fileContents: file.content)
+            //export(toURL: subFolderURL, fileName: file.fileName, fileContents: file.content)
+            if file.fileName.contains(timerFolderUrl.lastPathComponent) {
+                export(toURL: timerFolderUrl, fileName: file.fileName, fileContents: file.content)
+            } else if file.fileName.contains(uartFolderUrl.lastPathComponent) {
+                export(toURL: uartFolderUrl, fileName: file.fileName, fileContents: file.content)
+            } else {
+                export(toURL: moduleFolderURL, fileName: file.fileName, fileContents: file.content)
+            }
+            
         }
     }
+    
+    // Old
+//    for core in generatedCores {
+//        let subFolderURL = toURL.appendingPathComponent(core.name, conformingTo: .directory)
+//        for file in core.files {
+//            export(toURL: subFolderURL, fileName: file.fileName, fileContents: file.content)
+//        }
+//    }
     
     logs.saveToFile(toURL: toURL)
 }
