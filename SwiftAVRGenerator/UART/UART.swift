@@ -80,13 +80,13 @@ func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) 
     return generateRegister(register, supData.variableName)
 }
 
-func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ variableName: String) -> MemberBlockItemSyntax {
+func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ variableName: String, optionalDocumentation: String = "") -> MemberBlockItemSyntax {
     
     // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
     var registerName = ""
     var readWrite = ""
     let registarAccess = supplementalData(for: register).access
-    
+    let documentation = (optionalDocumentation.isEmpty == false) ? optionalDocumentation : supplementalData(for: register).documentation
     
     if register.bitfield.isEmpty {
         registerName = padString(register.name.rawValue, padding: 63)
@@ -112,7 +112,7 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ va
     
     let source = DeclSyntax(
       """
-          /// \(raw: register.name) – \(raw: register.caption?.rawValue ?? variableName)
+          /// \(raw: register.name) – \(raw: register.caption?.rawValue ?? variableName) \(raw: documentation)
           ///```
           ///--------------------------------------------------------------------------------
           ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
@@ -149,11 +149,11 @@ func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Regist
     var customRegister: AVRModules.Module.RegisterGroup.Register = register
     customRegister.size = .one
     
-    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterL"))
+    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterL", optionalDocumentation: UARTDocs.baudRegisterLDocumentation))
     
     // I have no idea if this is ok, I'll just assume it is since it works
     customRegister.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
-    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterH"))
+    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterH", optionalDocumentation: UARTDocs.baudRegisterHDocumentation))
 
     memberBlockList.append(MemberBlockItemSyntax(decl: DeclSyntax("\(raw: UARTDocs.uart16bitBaudRegister)").with(\.trailingTrivia, .newlines(2))))
     
@@ -310,7 +310,7 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
 fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
     switch register.name {
     case .UDR0, .UDR1, .UDR2, .UDR3:
-        return SupplementalRegisterData(variableName: "dataRegister", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
+        return SupplementalRegisterData(variableName: "dataRegister", valueType: "", defaultValue: "", documentation: UARTDocs.dataRegisterDocumentation, access: Access.readWrite.rawValue)
     case .UCSR0A, .UCSR1A, .UCSR2A, .UCSR3A:
         return SupplementalRegisterData(variableName: "controlRegisterA", valueType: "", defaultValue: "", documentation: "", access: "")
     case .UCSR0B, .UCSR1B, .UCSR2B, .UCSR3B:
@@ -319,7 +319,9 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
         return SupplementalRegisterData(variableName: "controlRegisterC", valueType: "", defaultValue: "", documentation: "", access: "")
     case .UCSR0D, .UCSR1D, .UCSR2D:
         return SupplementalRegisterData(variableName: "controlRegisterD", valueType: "", defaultValue: "", documentation: "", access: "")
-    
+    case .UBRR0, .UBRR1, .UBRR2, .UBRR3:
+        return SupplementalRegisterData(variableName: "", valueType: "", defaultValue: "", documentation: "", access: "R/W")
+        
     default :
         var variableName = register.caption?.rawValue ?? ""
         variableName = variableName.filter { $0 != " " }
@@ -338,15 +340,15 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
 fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
     switch bitfield.name {
     case .UPM0, .UPM1, .UPM2, .UPM3:
-        return SupplementalBitfieldData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: ".disabled", documentation: "", access: .readWrite)
+        return SupplementalBitfieldData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: ".disabled", documentation: UARTDocs.parityModeDocumentation, access: .readWrite)
     case .USBS0, .USBS1, .USBS2, .USBS3:
-        return SupplementalBitfieldData(variableName: "numberOfStopBits", valueType: "UART.NumberOfStopBits", defaultValue: ".one", documentation: "", access: .readWrite)
+        return SupplementalBitfieldData(variableName: "numberOfStopBits", valueType: "UART.NumberOfStopBits", defaultValue: ".one", documentation: UARTDocs.numberOfStopBitsDocumentation, access: .readWrite)
     case .UCSZ0, .UCSZ1, .UCSZ2, .UCSZ3, .UCSZ02:
-        return SupplementalBitfieldData(variableName: "numberOfDataBits", valueType: "UART.NumberOfDataBits", defaultValue: ".eight", documentation: "", access: .readWrite)
+        return SupplementalBitfieldData(variableName: "numberOfDataBits", valueType: "UART.NumberOfDataBits", defaultValue: ".eight", documentation: UARTDocs.numberOfDataBitsDocumentation, access: .readWrite)
     case .UCPOL0, .UCPOL1, .UCPOL2, .UCPOL3:
-        return SupplementalBitfieldData(variableName: "clockPolarity", valueType: "UART.ClockPolarity", defaultValue: ".rising", documentation: "", access: .readWrite)
+        return SupplementalBitfieldData(variableName: "clockPolarity", valueType: "UART.ClockPolarity", defaultValue: ".rising", documentation: UARTDocs.clockPolarityDocumentation, access: .readWrite)
     case .U2X0, .U2X1, .U2X2, .U2X3:
-        return SupplementalBitfieldData(variableName: "asynchronousDoubleSpeedMode", valueType: "UART.AsynchronousDoubleSpeedMode", defaultValue: ".off", documentation: "", access: .readWrite)
+        return SupplementalBitfieldData(variableName: "asynchronousDoubleSpeedMode", valueType: "UART.AsynchronousDoubleSpeedMode", defaultValue: ".off", documentation: UARTDocs.asynchronousDoubleSpeedModeDocumentation, access: .readWrite)
     case .RXEN0, .RXEN1, .RXEN2, .RXEN3:
         return SupplementalBitfieldData(variableName: "receiverEnable", valueType: "UART.ReceiverEnable", defaultValue: ".off", documentation: "", access: .readWrite)
     case .TXEN0, .TXEN1, .TXEN2, .TXEN3:
@@ -358,17 +360,17 @@ fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.
     case .RXCIE0, .RXCIE1, .RXCIE2, .RXCIE3:
         return SupplementalBitfieldData(variableName: "rxCompleteInterruptEnable", valueType: "UART.RXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: .readWrite)
     case .UPE0, .UPE1, .UPE2, .UPE3:
-        return SupplementalBitfieldData(variableName: "parityError", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
+        return SupplementalBitfieldData(variableName: "parityError", valueType: "Bool", defaultValue: "", documentation: UARTDocs.parityErrorDocumentation, access: .read )
     case .DOR0, .DOR1, .DOR2, .DOR3:
-        return SupplementalBitfieldData(variableName: "dataOverrun", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
+        return SupplementalBitfieldData(variableName: "dataOverrun", valueType: "Bool", defaultValue: "", documentation: UARTDocs.dataOverrunDocumentation, access: .read )
     case .FE0, .FE1, .FE2, .FE3:
-        return SupplementalBitfieldData(variableName: "frameError", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
+        return SupplementalBitfieldData(variableName: "frameError", valueType: "Bool", defaultValue: "", documentation: UARTDocs.frameErrorDocumentation, access: .read )
     case .UDRE0, .UDRE1, .UDRE2, .UDRE3:
-        return SupplementalBitfieldData(variableName: "dataRegisterEmpty", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
+        return SupplementalBitfieldData(variableName: "dataRegisterEmpty", valueType: "Bool", defaultValue: "", documentation: UARTDocs.dataRegisterEmptyDocumentation, access: .read )
     case .TXC0, .TXC1, .TXC2, .TXC3:
-        return SupplementalBitfieldData(variableName: "txComplete", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite )
+        return SupplementalBitfieldData(variableName: "txComplete", valueType: "Bool", defaultValue: "", documentation: UARTDocs.txCompleteDocumentation, access: .readWrite )
     case .RXC0, .RXC1, .RXC2, .RXC3:
-        return SupplementalBitfieldData(variableName: "rxDataAvailable", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
+        return SupplementalBitfieldData(variableName: "rxDataAvailable", valueType: "Bool", defaultValue: "", documentation: UARTDocs.rxDataAvailableDocumentation, access: .read )
     case .RXB80, .RXB81, .RXB82, .RXB83:
         return SupplementalBitfieldData(variableName: "", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
     case .TXB80, .TXB81, .TXB82, .TXB83:
@@ -501,23 +503,100 @@ public protocol UARTPort {
         }
     }
 """
+     
+    static let dataRegisterDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 36 Register Summary  
+            /// The USART Transmit Data Buffer Register and USART Receive Data Buffer Registers share the same I/O address referred to as
+            /// USART Data Register or UDRn. The Transmit Data Buffer Register (TXB) will be the destination for data written to the UDRn
+            /// Register location. Reading the UDRn Register location will return the contents of the Receive Data Buffer Register (RXB).
+            ///
+            /// For 5-, 6-, or 7-bit characters the upper unused bits will be ignored by the Transmitter and set to zero by the Receiver.
+            ///
+            /// The transmit buffer can only be written when the UDREn Flag in the UCSRnA Register is set. Data written to UDRn when the
+            /// UDREn Flag is not set, will be ignored by the USART Transmitter. When data is written to the transmit buffer, and the
+            /// Transmitter is enabled, the Transmitter will load the data into the Transmit Shift Register when the Shift Register is empty.
+            /// Then the data will be serially transmitted on the TxDn pin.
+            ///
+            /// The receive buffer consists of a two level FIFO. The FIFO will change its state whenever the receive buffer is accessed. Due
+            /// to this behavior of the receive buffer, do not use Read-Modify-Write instructions (SBI and CBI) on this location. Be careful
+            /// when using bit test instructions (SBIC and SBIS), since these also will change the state of the FIFO.
+        """
     
+    static let baudRegisterLDocumentation = """
+        \n    /// This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the
+            /// UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver
+            /// will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler.
+        """
+    
+    static let baudRegisterHDocumentation = """
+        \n    /// Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero
+            /// when UBRRnH is written.
+            ///
+            /// This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the
+            /// UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver
+            /// will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler.
+        """
+
     static let parityModeDocumentation = """
-    /// Parity Mode
-    /// See ATMega328p Datasheet Section 20.11.4.
-    /// UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.
-    ///
-    ///These bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the
-    /// parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare
-    /// it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.
-    ///
-    /// ```
-    ///| UPMn1 | UPMn0 | Parity Mode          |
-    ///|-------|-------|----------------------|
-    ///| 0     | 0     | Disabled             |
-    ///| 0     | 1     | Reserved             |
-    ///| 1     | 0     | Enabled, Even Parity |
-    ///| 1     | 1     | Enabled, Odd Parity  |
-    /// ```
-"""
+        \n     /// Parity Mode
+            /// See ATMega328p Datasheet Section 20.11.4.
+            /// UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.
+            ///
+            /// These bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the
+            /// parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare
+            /// it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.
+            ///
+            /// ```
+            ///| UPMn1 | UPMn0 | Parity Mode          |
+            ///|-------|-------|----------------------|
+            ///| 0     | 0     | Disabled             |
+            ///| 0     | 1     | Reserved             |
+            ///| 1     | 0     | Enabled, Even Parity |
+            ///| 1     | 1     | Enabled, Odd Parity  |
+            /// ```
+        """
+    
+    static let numberOfStopBitsDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.11.4.
+            /// USBSn is bit 3 on UCSRnC.
+        """
+    
+    static let numberOfDataBitsDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.11.3 and Section 20.11.4.
+            /// UCSZn0 and UCSZn1 are bits 1 and 2 on UCSRnC while UCSZn2 is bit 2 on UCSRnB
+        """
+    
+    static let clockPolarityDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.11.4.
+            /// UCPOLn is bit 0 on UCSRnC.
+        """
+    
+    static let asynchronousDoubleSpeedModeDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.
+            /// U2Xn is bit 1 on UCSRnA.
+        """
+    
+    static let parityErrorDocumentation = """
+        \n    /// UPEn is Bit 2 on UCSRnA. See Section 20.11.2.
+        """
+    
+    static let dataOverrunDocumentation = """
+        \n    /// UDROn is Bit 3 on UCSRnA. See Section 20.11.2.
+        """
+    
+    static let frameErrorDocumentation = """
+        \n    /// UFEn is Bit 4 on UCSRnA. See Section 20.11.2.
+        """
+    
+    static let dataRegisterEmptyDocumentation = """
+        \n    /// UDREn is Bit 5 on UCSRnA. See Section 20.11.2.
+        """
+    
+    static let txCompleteDocumentation = """
+        \n    /// UTXCn is Bit 6 on UCSRnA. See Section 20.11.2.
+        """
+    
+    static let rxDataAvailableDocumentation = """
+        \n    /// URXCn is Bit 7 on UCSRnA. See Section 20.11.2.
+        """
 }
