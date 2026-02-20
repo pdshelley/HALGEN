@@ -12,7 +12,7 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
     var uartFiles: [GeneratedCodeFile] = []
     
     let fileName = "UART.swift"
-    let code: String = buildFileHeader(for: fileName) + uartBoilerPlate
+    let code: String = buildFileHeader(for: fileName) + UARTDocs.uartBoilerPlate
     uartFiles.append(GeneratedCodeFile(fileName: fileName, content: code))
     
     let uartNamesDict: [AVRModules.Module.RegisterGroup.Name: String] = [
@@ -72,104 +72,6 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
     }.formatted().description)
     
     return GeneratedCodeFile(fileName: fileName, content: code)
-}
-
-func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
-    var memberBlockList = MemberBlockItemListSyntax()
-    if register.size == AVRModules.Module.RegisterGroup.Register.Size.one {
-        memberBlockList.append(generateRegister(register, "baudRateRegister"))
-        return memberBlockList
-    }
-    // get register and change size to 1 so uint8 registers are generated instead of 16 bit
-    var customRegister: AVRModules.Module.RegisterGroup.Register = register
-    customRegister.size = .one
-    
-    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterL"))
-    
-    // I have no idea if this is ok, I'll just assume it is since it works
-    customRegister.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
-    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterH"))
-
-    memberBlockList.append(MemberBlockItemSyntax(decl: DeclSyntax("\(raw: uart16bitBaudRegister)").with(\.trailingTrivia, .newlines(2))))
-    
-    return memberBlockList
-}
-
-fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
-    switch register.name {
-    case .UDR0, .UDR1, .UDR2, .UDR3:
-        return SupplementalRegisterData(variableName: "dataRegister", valueType: "", defaultValue: "", documentation: "", access: "")
-    case .UCSR0A, .UCSR1A, .UCSR2A, .UCSR3A:
-        return SupplementalRegisterData(variableName: "controlRegisterA", valueType: "", defaultValue: "", documentation: "", access: "")
-    case .UCSR0B, .UCSR1B, .UCSR2B, .UCSR3B:
-        return SupplementalRegisterData(variableName: "controlRegisterB", valueType: "", defaultValue: "", documentation: "", access: "")
-    case .UCSR0C, .UCSR1C, .UCSR2C, .UCSR3C:
-        return SupplementalRegisterData(variableName: "controlRegisterC", valueType: "", defaultValue: "", documentation: "", access: "")
-    case .UCSR0D, .UCSR1D, .UCSR2D:
-        return SupplementalRegisterData(variableName: "controlRegisterD", valueType: "", defaultValue: "", documentation: "", access: "")
-    
-    default :
-        var variableName = register.caption?.rawValue ?? ""
-        variableName = variableName.filter { $0 != " " }
-        variableName = variableName.filter { $0 != "/" }
-        variableName = variableName.filter { $0 != "0" }
-        variableName = variableName.filter { $0 != "1" }
-        variableName = variableName.filter { $0 != "2" }
-        variableName = variableName.filter { $0 != "3" }
-        variableName = variableName.filter { $0 != "4" }
-        variableName = variableName.filter { $0 != "5" }
-        let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
-        return SupplementalRegisterData(variableName: name, valueType: "", defaultValue: "", documentation: "", access: "")
-    }
-}
-
-fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalRegisterData {
-    switch bitfield.name {
-    case .UPM0, .UPM1, .UPM2, .UPM3:
-        return SupplementalRegisterData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: ".disabled", documentation: "", access: Access.readWrite.rawValue)
-    case .USBS0, .USBS1, .USBS2, .USBS3:
-        return SupplementalRegisterData(variableName: "numberOfStopBits", valueType: "UART.NumberOfStopBits", defaultValue: ".one", documentation: "", access: "")
-    case .UCSZ0, .UCSZ1, .UCSZ2, .UCSZ3, .UCSZ02:
-        return SupplementalRegisterData(variableName: "numberOfDataBits", valueType: "UART.NumberOfDataBits", defaultValue: ".eight", documentation: "", access: "")
-    case .UCPOL0, .UCPOL1, .UCPOL2, .UCPOL3:
-        return SupplementalRegisterData(variableName: "clockPolarity", valueType: "UART.ClockPolarity", defaultValue: ".rising", documentation: "", access: "")
-    case .U2X0, .U2X1, .U2X2, .U2X3:
-        return SupplementalRegisterData(variableName: "asynchronousDoubleSpeedMode", valueType: "UART.AsynchronousDoubleSpeedMode", defaultValue: ".off", documentation: "", access: "")
-    case .RXEN0, .RXEN1, .RXEN2, .RXEN3:
-        return SupplementalRegisterData(variableName: "receiverEnable", valueType: "UART.ReceiverEnable", defaultValue: ".off", documentation: "", access: "")
-    case .TXEN0, .TXEN1, .TXEN2, .TXEN3:
-        return SupplementalRegisterData(variableName: "transmitterEnable", valueType: "UART.TransmitterEnable", defaultValue: ".off", documentation: "", access: "")
-    case .UDRIE0, .UDRIE1, .UDRIE2, .UDRIE3:
-        return SupplementalRegisterData(variableName: "dataRegisterEmptyInterruptEnable", valueType: "UART.DRECompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
-    case .TXCIE0, .TXCIE1, .TXCIE2, .TXCIE3:
-        return SupplementalRegisterData(variableName: "txCompleteInterruptEnable", valueType: "UART.TXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
-    case .RXCIE0, .RXCIE1, .RXCIE2, .RXCIE3:
-        return SupplementalRegisterData(variableName: "rxCompleteInterruptEnable", valueType: "UART.RXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
-    case .UPE0, .UPE1, .UPE2, .UPE3:
-        return SupplementalRegisterData(variableName: "parityError", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
-    case .DOR0, .DOR1, .DOR2, .DOR3:
-        return SupplementalRegisterData(variableName: "dataOverrun", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
-    case .FE0, .FE1, .FE2, .FE3:
-        return SupplementalRegisterData(variableName: "frameError", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
-    case .UDRE0, .UDRE1, .UDRE2, .UDRE3:
-        return SupplementalRegisterData(variableName: "dataRegisterEmpty", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
-    case .TXC0, .TXC1, .TXC2, .TXC3:
-        return SupplementalRegisterData(variableName: "txComplete", valueType: "Bool", defaultValue: "", documentation: "", access: Access.readWrite.rawValue )
-    case .RXC0, .RXC1, .RXC2, .RXC3:
-        return SupplementalRegisterData(variableName: "rxDataAvailable", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
-    default :
-        var variableName = bitfield.caption?.rawValue ?? ""
-        variableName = variableName.filter { $0 != " " }
-        variableName = variableName.filter { $0 != "/" }
-        variableName = variableName.filter { $0 != "0" }
-        variableName = variableName.filter { $0 != "1" }
-        variableName = variableName.filter { $0 != "2" }
-        variableName = variableName.filter { $0 != "3" }
-        variableName = variableName.filter { $0 != "4" }
-        variableName = variableName.filter { $0 != "5" }
-        let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
-        return SupplementalRegisterData(variableName: name, valueType: "", defaultValue: "", documentation: "", access: "")
-    }
 }
 
 func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
@@ -237,6 +139,27 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ va
     return MemberBlockItemSyntax(decl: source)
 }
 
+func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
+    var memberBlockList = MemberBlockItemListSyntax()
+    if register.size == AVRModules.Module.RegisterGroup.Register.Size.one {
+        memberBlockList.append(generateRegister(register, "baudRateRegister"))
+        return memberBlockList
+    }
+    // get register and change size to 1 so uint8 registers are generated instead of 16 bit
+    var customRegister: AVRModules.Module.RegisterGroup.Register = register
+    customRegister.size = .one
+    
+    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterL"))
+    
+    // I have no idea if this is ok, I'll just assume it is since it works
+    customRegister.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
+    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterH"))
+
+    memberBlockList.append(MemberBlockItemSyntax(decl: DeclSyntax("\(raw: UARTDocs.uart16bitBaudRegister)").with(\.trailingTrivia, .newlines(2))))
+    
+    return memberBlockList
+}
+
 let splitBitfieldAccessors: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name: AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
     .UCSZ02: .UCSZ0
 ]
@@ -257,7 +180,7 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
     let bitmask = bitfield.mask.value.lowByte.binaryString
     let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
     let caption: String = bitfield.caption.map(\.rawValue.capitalized) ?? "Unknown"
-    let enumBitmask = (bitfield.mask.value.lowByte >> bitshift).binaryString
+    //let enumBitmask = (bitfield.mask.value.lowByte >> bitshift).binaryString
     
     if supData.valueType == "Bool" {
         var sourceForBoolGet = """
@@ -419,7 +342,85 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
     return MemberBlockItemSyntax(decl: source)
 }
 
-let uartBoilerPlate = """
+fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
+    switch register.name {
+    case .UDR0, .UDR1, .UDR2, .UDR3:
+        return SupplementalRegisterData(variableName: "dataRegister", valueType: "", defaultValue: "", documentation: "", access: "")
+    case .UCSR0A, .UCSR1A, .UCSR2A, .UCSR3A:
+        return SupplementalRegisterData(variableName: "controlRegisterA", valueType: "", defaultValue: "", documentation: "", access: "")
+    case .UCSR0B, .UCSR1B, .UCSR2B, .UCSR3B:
+        return SupplementalRegisterData(variableName: "controlRegisterB", valueType: "", defaultValue: "", documentation: "", access: "")
+    case .UCSR0C, .UCSR1C, .UCSR2C, .UCSR3C:
+        return SupplementalRegisterData(variableName: "controlRegisterC", valueType: "", defaultValue: "", documentation: "", access: "")
+    case .UCSR0D, .UCSR1D, .UCSR2D:
+        return SupplementalRegisterData(variableName: "controlRegisterD", valueType: "", defaultValue: "", documentation: "", access: "")
+    
+    default :
+        var variableName = register.caption?.rawValue ?? ""
+        variableName = variableName.filter { $0 != " " }
+        variableName = variableName.filter { $0 != "/" }
+        variableName = variableName.filter { $0 != "0" }
+        variableName = variableName.filter { $0 != "1" }
+        variableName = variableName.filter { $0 != "2" }
+        variableName = variableName.filter { $0 != "3" }
+        variableName = variableName.filter { $0 != "4" }
+        variableName = variableName.filter { $0 != "5" }
+        let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
+        return SupplementalRegisterData(variableName: name, valueType: "", defaultValue: "", documentation: "", access: "")
+    }
+}
+
+fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalRegisterData {
+    switch bitfield.name {
+    case .UPM0, .UPM1, .UPM2, .UPM3:
+        return SupplementalRegisterData(variableName: "parityMode", valueType: "UART.ParityMode", defaultValue: ".disabled", documentation: "", access: Access.readWrite.rawValue)
+    case .USBS0, .USBS1, .USBS2, .USBS3:
+        return SupplementalRegisterData(variableName: "numberOfStopBits", valueType: "UART.NumberOfStopBits", defaultValue: ".one", documentation: "", access: "")
+    case .UCSZ0, .UCSZ1, .UCSZ2, .UCSZ3, .UCSZ02:
+        return SupplementalRegisterData(variableName: "numberOfDataBits", valueType: "UART.NumberOfDataBits", defaultValue: ".eight", documentation: "", access: "")
+    case .UCPOL0, .UCPOL1, .UCPOL2, .UCPOL3:
+        return SupplementalRegisterData(variableName: "clockPolarity", valueType: "UART.ClockPolarity", defaultValue: ".rising", documentation: "", access: "")
+    case .U2X0, .U2X1, .U2X2, .U2X3:
+        return SupplementalRegisterData(variableName: "asynchronousDoubleSpeedMode", valueType: "UART.AsynchronousDoubleSpeedMode", defaultValue: ".off", documentation: "", access: "")
+    case .RXEN0, .RXEN1, .RXEN2, .RXEN3:
+        return SupplementalRegisterData(variableName: "receiverEnable", valueType: "UART.ReceiverEnable", defaultValue: ".off", documentation: "", access: "")
+    case .TXEN0, .TXEN1, .TXEN2, .TXEN3:
+        return SupplementalRegisterData(variableName: "transmitterEnable", valueType: "UART.TransmitterEnable", defaultValue: ".off", documentation: "", access: "")
+    case .UDRIE0, .UDRIE1, .UDRIE2, .UDRIE3:
+        return SupplementalRegisterData(variableName: "dataRegisterEmptyInterruptEnable", valueType: "UART.DRECompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
+    case .TXCIE0, .TXCIE1, .TXCIE2, .TXCIE3:
+        return SupplementalRegisterData(variableName: "txCompleteInterruptEnable", valueType: "UART.TXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
+    case .RXCIE0, .RXCIE1, .RXCIE2, .RXCIE3:
+        return SupplementalRegisterData(variableName: "rxCompleteInterruptEnable", valueType: "UART.RXCompleteInterruptEnable", defaultValue: ".off", documentation: "", access: "")
+    case .UPE0, .UPE1, .UPE2, .UPE3:
+        return SupplementalRegisterData(variableName: "parityError", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+    case .DOR0, .DOR1, .DOR2, .DOR3:
+        return SupplementalRegisterData(variableName: "dataOverrun", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+    case .FE0, .FE1, .FE2, .FE3:
+        return SupplementalRegisterData(variableName: "frameError", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+    case .UDRE0, .UDRE1, .UDRE2, .UDRE3:
+        return SupplementalRegisterData(variableName: "dataRegisterEmpty", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+    case .TXC0, .TXC1, .TXC2, .TXC3:
+        return SupplementalRegisterData(variableName: "txComplete", valueType: "Bool", defaultValue: "", documentation: "", access: Access.readWrite.rawValue )
+    case .RXC0, .RXC1, .RXC2, .RXC3:
+        return SupplementalRegisterData(variableName: "rxDataAvailable", valueType: "Bool", defaultValue: "", documentation: "", access: Access.read.rawValue )
+    default :
+        var variableName = bitfield.caption?.rawValue ?? ""
+        variableName = variableName.filter { $0 != " " }
+        variableName = variableName.filter { $0 != "/" }
+        variableName = variableName.filter { $0 != "0" }
+        variableName = variableName.filter { $0 != "1" }
+        variableName = variableName.filter { $0 != "2" }
+        variableName = variableName.filter { $0 != "3" }
+        variableName = variableName.filter { $0 != "4" }
+        variableName = variableName.filter { $0 != "5" }
+        let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
+        return SupplementalRegisterData(variableName: name, valueType: "", defaultValue: "", documentation: "", access: "")
+    }
+}
+
+private enum UARTDocs {
+    static let uartBoilerPlate = """
 public enum UART {
 
     /// See ATMega328p Datasheet Section 20.4.1 and Table 20-9.
@@ -507,9 +508,8 @@ public protocol UARTPort {
     static func writeByte(_ byte: PortDataType)
 }
 """
-
-
-let uart16bitBaudRegister = """
+    
+    static let uart16bitBaudRegister = """
     /// UBBRn – USART Baud Rate Register
     /// ```
     /// --------------------------------------------------------------------------------
@@ -541,8 +541,8 @@ let uart16bitBaudRegister = """
         }
     }
 """
-
-let parityModeDocumentation = """
+    
+    static let parityModeDocumentation = """
     /// Parity Mode
     /// See ATMega328p Datasheet Section 20.11.4.
     /// UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.
@@ -560,3 +560,4 @@ let parityModeDocumentation = """
     ///| 1     | 1     | Enabled, Odd Parity  |
     /// ```
 """
+}
