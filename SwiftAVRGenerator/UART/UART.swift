@@ -295,7 +295,7 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
     let lowBitshift = UInt8(lowBitfield.mask.value.trailingZeroBitCount)
     let highBitshift = UInt8(highBitfield.mask.value.trailingZeroBitCount)
     
-    // Then turn all of this into a bianary string for legibility, a bitmask should be seen as bits and not an Int or Hex value.
+    // Then turn all of this into a binary string for legibility, a bitmask should be seen as bits and not an Int or Hex value.
     let newValueLowBitmask = (lowBitfield.mask.value.lowByte >> lowBitshift).binaryString
     
     // This would give me the number of bits to shift, assuming that there is only a single group of bits and not two or more groups split by one or more 0s.
