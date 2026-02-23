@@ -538,7 +538,7 @@ public extension UARTPort {
     @inline(__always)
     /// The lowest level of writing out data to hardware UART. This function makes sure that the Data Register is empty before sending out more data, this is important for proper opperation
     /// See Section 20.6.1
-    /// - Parameter byte: A single bite of data to be sent.
+    /// - Parameter byte: A single byte of data to be sent.
     static func writeByte(_ byte: PortDataType) {
         while !dataRegisterEmpty { }
         dataRegister = byte
