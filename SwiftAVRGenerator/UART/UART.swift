@@ -388,6 +388,8 @@ fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.
         return SupplementalBitfieldData(variableName: "transmitData8thBit", valueType: "Bool", defaultValue: "", documentation: UARTDocs.transmitData8thBitDocumentation, access: .readWrite)
     case .UMSEL0, .UMSEL1, .UMSEL2, .UMSEL3:
         return SupplementalBitfieldData(variableName: "modeSelect", valueType: "UART.ModeSelect", defaultValue: ".asynchronous", documentation: UARTDocs.modeSelectDocumentation, access: .readWrite)
+    case .MPCM0, .MPCM1, .MPCM2, .MPCM3:
+        return SupplementalBitfieldData(variableName: "multiProcessorCommunication", valueType: "Bool", defaultValue: "", documentation: UARTDocs.multiProcessorCommunicationDocumentation, access: .readWrite)
         
     default :
         // TODO: What do we do with bitfields that have no case? They are currently generated without variable name breaking the code
@@ -398,7 +400,6 @@ fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.
 private enum UARTDocs {
     static let uartBoilerPlate = """
 public enum UART {
-
     /// See ATMega328p Datasheet Section 20.4.1 and Table 20-9.
     public enum ParityMode: UInt8 {
         case disabled = 0
@@ -464,7 +465,7 @@ public enum UART {
         case off = 0
         case on = 1
     }
-
+    
     /// See ATMega328p Datasheet Section 20.11.4 Table 20-8.
     public enum ModeSelect: UInt8 {
         case asynchronous = 0
@@ -498,7 +499,7 @@ public protocol UARTPort {
     static var parityError: Bool { get }
     
     static var asynchronousDoubleSpeedMode: UART.AsynchronousDoubleSpeedMode { get set }
-    // TODO: MPCMu
+    static var multiProcessorCommunication: Bool { get set }
     
     static var rxCompleteInterruptEnable: UART.RXCompleteInterruptEnable { get set }
     static var txCompleteInterruptEnable: UART.TXCompleteInterruptEnable { get set }
@@ -800,5 +801,10 @@ public extension UARTPort where PortDataType == UInt8 {
     static let transmitData8thBitDocumentation = """
         \n    /// See ATMega328p Datasheet Section 20.11.3
             /// TXB8n is bit 0 on UCSRnB
+        """
+    
+    static let multiProcessorCommunicationDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.
+            /// MPCMn is bit 0 on UCSRnA.
         """
 }
