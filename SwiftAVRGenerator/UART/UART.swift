@@ -383,9 +383,9 @@ fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.
     case .RXC0, .RXC1, .RXC2, .RXC3:
         return SupplementalBitfieldData(variableName: "rxDataAvailable", valueType: "Bool", defaultValue: "", documentation: UARTDocs.rxDataAvailableDocumentation, access: .read )
     case .RXB80, .RXB81, .RXB82, .RXB83:
-        return SupplementalBitfieldData(variableName: "", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
+        return SupplementalBitfieldData(variableName: "receiveData8thBit", valueType: "Bool", defaultValue: "", documentation: UARTDocs.recieveData8thBitDocumentation, access: .read)
     case .TXB80, .TXB81, .TXB82, .TXB83:
-        return SupplementalBitfieldData(variableName: "", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite )
+        return SupplementalBitfieldData(variableName: "transmitData8thBit", valueType: "Bool", defaultValue: "", documentation: UARTDocs.transmitData8thBitDocumentation, access: .readWrite)
     case .UMSEL0, .UMSEL1, .UMSEL2, .UMSEL3:
         return SupplementalBitfieldData(variableName: "modeSelect", valueType: "UART.ModeSelect", defaultValue: ".asynchronous", documentation: UARTDocs.modeSelectDocumentation, access: .readWrite)
         
@@ -790,5 +790,15 @@ public extension UARTPort where PortDataType == UInt8 {
     static let modeSelectDocumentation = """
         \n    /// See ATMega328p Datasheet Section 20.11.4
             /// UMSELn are bit 7 and 6 on UCSRnC
+        """
+    
+    static let recieveData8thBitDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.11.3
+            /// RXB8n is bit 1 on UCSRnB
+        """
+        
+    static let transmitData8thBitDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.11.3
+            /// TXB8n is bit 0 on UCSRnB
         """
 }
