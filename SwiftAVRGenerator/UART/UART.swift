@@ -314,12 +314,12 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
           @inline(__always)
           public static var \(raw: info.variableName): \(raw: info.valueType) {
               get {
-                  let mode = ((\(raw: hightParentVariableName) & \(raw: highBitmask)) \(raw: getShiftDirection) \(raw: highBitshift)) | ((\(raw: lowParentVariableName) & \(raw: lowBitmask)) \(raw: getShiftDirection) \(raw: lowBitshift))
+                  let mode = ((\(raw: highParentVariableName) & \(raw: highBitmask)) \(raw: getShiftDirection) \(raw: highBitshift)) | ((\(raw: lowParentVariableName) & \(raw: lowBitmask)) \(raw: getShiftDirection) \(raw: lowBitshift))
                   return \(raw: info.valueType).init(rawValue: mode) ?? \(raw: info.defaultValue)
               }
               set {
                   \(raw: lowParentVariableName) = (\(raw: lowParentVariableName) & ~\(raw: lowBitmask)) | ((newValue.rawValue & \(raw: newValueLowBitmask)) << UInt8(\(raw: lowBitshift)))
-                  \(raw: hightParentVariableName) = (\(raw: hightParentVariableName) & ~\(raw: highBitmask)) | ((newValue.rawValue \(raw: setShiftDirection) \(raw: highBitshift)) & \(raw: newValueHighBitmask))
+                  \(raw: highParentVariableName) = (\(raw: highParentVariableName) & ~\(raw: highBitmask)) | ((newValue.rawValue \(raw: setShiftDirection) \(raw: highBitshift)) & \(raw: newValueHighBitmask))
               }
           }
       """
