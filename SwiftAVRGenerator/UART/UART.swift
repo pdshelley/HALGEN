@@ -423,7 +423,7 @@ public enum UART {
     }
 
     /// See ATMega328p Datasheet Table 20-12.
-    // This is relitive to the Transmitted Data Changed (Output of TxDn Pin)
+    // This is relative to the Transmitted Data Changed (Output of TxDn Pin)
     // Received Data Sampled will be opposite of Transmitted Data Changed, Ex: Rising for TX is Falling for RX.
     public enum ClockPolarity: UInt8 {
         case rising = 0
