@@ -256,7 +256,7 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
 
 func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield, bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableA: AVRModules.Module.RegisterGroup.Register, parentVariableB: AVRModules.Module.RegisterGroup.Register, chipName: String) -> MemberBlockItemSyntax {
     
-    // TODO: Some chips only seem to have 1 bite for WGM. This breaks this logic and should be accounted for.
+    // TODO: Some chips only seem to have 1 bit for WGM. This breaks this logic and should be accounted for.
     
     // Example Data:
     // Register A Bitmask:           0b00000011
