@@ -222,38 +222,38 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String) 
 }
 
 
-/// This function help create what is needed to generate documentation for a register object.
-/// Note that the data sheet adds a bit number to a bit name when there are more than one bit needed for a given value. This function adds these extra numbers to the bit name as they are not always present in the ATDF file. This also alwasy assumes that when a value is split accross two different registers, the most significan bit will be allone on one register and the least significant bits will be all togeather on the other register. This is believed to be the case but this function will calculate bit names incorectly if this is not the case. Ex: "FOC2A", "FOC2B", "-",  "-", "WGM22", "CS22", "CS21", "CS20"] and ["COM2A1", "COM2A0", "COM2B1", "COM2B0", "-", "-", "WGM21", "WGM20"] This example works because the ATDF file lists WGM2  as a setting with 2 bits on one register and then lists WGM22 as a setting on the other register. The second register will not add a number to the end because it is the only bit with that name.
-/// This function will work for non-consecutive bit locations (Ex: 00110010) and give them the correct names.
-/// - Parameter register: A register from the ATDF file object.
-/// - Returns: A fixed array of 16 that includes either a "-" if there is no bit in that positon or the name of the bit in that position.
-/// Example output: ["FOC2A", "FOC2B", "-", "-", "WGM22", "CS22", "CS21", "CS20"]
-func getBitNamesFrom(register: AVRModules.Module.RegisterGroup.Register) -> [String] {
-    var bitNames = Array(repeating: "-", count: 16)
-        
-    for bitField in register.bitfield {
-        var mask: UInt16 = bitField.mask.value
-        let name = bitField.name.rawValue
-        
-        // 0b0100100
-        
-        let numberOfBitsInMask = mask.nonzeroBitCount
-        let startIndex = mask.trailingZeroBitCount
-        var currentIndex = startIndex
-        mask = mask >> mask.trailingZeroBitCount // Shift out any 0s before starting.
-
-        while mask.nonzeroBitCount > 0 {
-            var adjustedName = ""
-            if numberOfBitsInMask > 1 { adjustedName = "\(numberOfBitsInMask - mask.nonzeroBitCount)" } // Check if and calculated the bit name number.
-            bitNames[currentIndex] = name + adjustedName // Save name at current index.
-            mask = mask >> 1 // Shift out bit that we just saved.
-            currentIndex += 1 + mask.trailingZeroBitCount // Increase the index, if there are more 0s increase the index by how many 0s there are.
-            mask = mask >> mask.trailingZeroBitCount // If there are 0s shift them out of the mask so we don't save a name for them.
-        }
-    }
-    
-    return bitNames
-}
+///// This function help create what is needed to generate documentation for a register object.
+///// Note that the data sheet adds a bit number to a bit name when there are more than one bit needed for a given value. This function adds these extra numbers to the bit name as they are not always present in the ATDF file. This also alwasy assumes that when a value is split accross two different registers, the most significan bit will be allone on one register and the least significant bits will be all togeather on the other register. This is believed to be the case but this function will calculate bit names incorectly if this is not the case. Ex: "FOC2A", "FOC2B", "-",  "-", "WGM22", "CS22", "CS21", "CS20"] and ["COM2A1", "COM2A0", "COM2B1", "COM2B0", "-", "-", "WGM21", "WGM20"] This example works because the ATDF file lists WGM2  as a setting with 2 bits on one register and then lists WGM22 as a setting on the other register. The second register will not add a number to the end because it is the only bit with that name.
+///// This function will work for non-consecutive bit locations (Ex: 00110010) and give them the correct names.
+///// - Parameter register: A register from the ATDF file object.
+///// - Returns: A fixed array of 16 that includes either a "-" if there is no bit in that positon or the name of the bit in that position.
+///// Example output: ["FOC2A", "FOC2B", "-", "-", "WGM22", "CS22", "CS21", "CS20"]
+//func getBitNamesFrom(register: AVRModules.Module.RegisterGroup.Register) -> [String] {
+//    var bitNames = Array(repeating: "-", count: 16)
+//        
+//    for bitField in register.bitfield {
+//        var mask: UInt16 = bitField.mask.value
+//        let name = bitField.name.rawValue
+//        
+//        // 0b0100100
+//        
+//        let numberOfBitsInMask = mask.nonzeroBitCount
+//        let startIndex = mask.trailingZeroBitCount
+//        var currentIndex = startIndex
+//        mask = mask >> mask.trailingZeroBitCount // Shift out any 0s before starting.
+//
+//        while mask.nonzeroBitCount > 0 {
+//            var adjustedName = ""
+//            if numberOfBitsInMask > 1 { adjustedName = "\(numberOfBitsInMask - mask.nonzeroBitCount)" } // Check if and calculated the bit name number.
+//            bitNames[currentIndex] = name + adjustedName // Save name at current index.
+//            mask = mask >> 1 // Shift out bit that we just saved.
+//            currentIndex += 1 + mask.trailingZeroBitCount // Increase the index, if there are more 0s increase the index by how many 0s there are.
+//            mask = mask >> mask.trailingZeroBitCount // If there are 0s shift them out of the mask so we don't save a name for them.
+//        }
+//    }
+//    
+//    return bitNames
+//}
 
 func getBitAccessFrom(register: AVRModules.Module.RegisterGroup.Register, parentAccess: String) -> [String] {
     var bitAccess = Array(repeating: parentAccess, count: 16)
@@ -313,7 +313,7 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register) -> Mem
         registerName = padString(register.name.rawValue, padding: 63)
         readWrite = padString(registarAccess, padding: 63)
     } else {
-        var bitNames = getBitNamesFrom(register: register)
+        var bitNames = getBitNames(from: register)
         bitNames = bitNames.map { padString($0, padding: 7) }
         registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
         
@@ -671,15 +671,15 @@ func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register
     }
 }
 
-struct SupplementalRegisterData {
-    let variableName: String
-    let valueType: String
-    let defaultValue: String
-    let documentation: String
-    let access: String
-}
+//struct SupplementalRegisterData {
+//    let variableName: String
+//    let valueType: String
+//    let defaultValue: String
+//    let documentation: String
+//    let access: String
+//}
 
-func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
+fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
     switch register.name {
     case .TIMSK0, .TIMSK1, .TIMSK2, .TIMSK3, .TIMSK4, .TIMSK5:
         return SupplementalRegisterData(variableName: "interruptMaskRegister", valueType: "", defaultValue: "", documentation: "", access: "R")
@@ -718,21 +718,21 @@ func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) ->
     }
 }
 
-enum Access: String {
-    case read = "R"
-    case write = "W"
-    case readWrite = "R/W"
-}
+//enum Access: String {
+//    case read = "R"
+//    case write = "W"
+//    case readWrite = "R/W"
+//}
+//
+//struct SupplementalBitfieldData {
+//    let variableName: String
+//    let valueType: String
+//    let defaultValue: String
+//    let documentation: String
+//    let access: Access
+//}
 
-struct SupplementalBitfieldData {
-    let variableName: String
-    let valueType: String
-    let defaultValue: String
-    let documentation: String
-    let access: Access
-}
-
-func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
+fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
     switch bitfield.name {
         // Interrupt Mask Register
     case .OCIE0B, .OCIE1B, .OCIE2B, .OCIE3B, .OCIE4B, .OCIE5B:

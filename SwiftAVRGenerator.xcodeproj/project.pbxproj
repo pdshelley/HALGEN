@@ -30,6 +30,8 @@
 		DAE992F02A22A6F5007656B5 /* SwiftAVRGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992EF2A22A6F5007656B5 /* SwiftAVRGeneratorTests.swift */; };
 		DAE992FA2A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992F92A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift */; };
 		DAE992FC2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992FB2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift */; };
+		EEE974D32F4C7B210072E371 /* AnalogToDigitalConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE974D22F4C7B160072E371 /* AnalogToDigitalConverter.swift */; };
+		EEE974D52F4C804B0072E371 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE974D42F4C80470072E371 /* Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +73,8 @@
 		DAE992F52A22A6F6007656B5 /* SwiftAVRGeneratorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftAVRGeneratorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAE992F92A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftAVRGeneratorUITests.swift; sourceTree = "<group>"; };
 		DAE992FB2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftAVRGeneratorUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		EEE974D22F4C7B160072E371 /* AnalogToDigitalConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalogToDigitalConverter.swift; sourceTree = "<group>"; };
+		EEE974D42F4C80470072E371 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +152,8 @@
 		DAE992DC2A22A6F4007656B5 /* SwiftAVRGenerator */ = {
 			isa = PBXGroup;
 			children = (
+				EEE974D42F4C80470072E371 /* Utils.swift */,
+				EEE974D22F4C7B160072E371 /* AnalogToDigitalConverter.swift */,
 				DADDB0EC2C277263009F65E9 /* Extensions.swift */,
 				DAE992DD2A22A6F4007656B5 /* SwiftAVRGeneratorApp.swift */,
 				DAE992DF2A22A6F4007656B5 /* ContentView.swift */,
@@ -335,6 +341,8 @@
 				DA3BB7402A51E8F600C464C3 /* AVRToolsDeviceFile.swift in Sources */,
 				DA53268C2AF7578B00D7D526 /* AVRVariants.swift in Sources */,
 				4709CA652A68A11300AD7343 /* AVRToolsDeviceFileExtention.swift in Sources */,
+				EEE974D32F4C7B210072E371 /* AnalogToDigitalConverter.swift in Sources */,
+				EEE974D52F4C804B0072E371 /* Utils.swift in Sources */,
 				DAE992DE2A22A6F4007656B5 /* SwiftAVRGeneratorApp.swift in Sources */,
 				DA5326902AF7588600D7D526 /* AVRModules.swift in Sources */,
 				DA5326922AF759EB00D7D526 /* AVRPinouts.swift in Sources */,

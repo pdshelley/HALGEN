@@ -172,7 +172,9 @@ func decodeATDF(data: Data) -> GeneratedAVRCore {
     for file in buildTimers(file: ATDFObject) {
         generatedFiles.append(file)
     }
-    
+    for file in buildAnalogToDigitalConverters(file: ATDFObject) {
+        generatedFiles.append(file)
+    }
     
 //    print("ATDFObject.devices.device.name = \(deviceName)")
 //    print()
