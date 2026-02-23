@@ -85,18 +85,18 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ va
     // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
     var registerName = ""
     var readWrite = ""
-    let registarAccess = supplementalData(for: register).access
+    let registerAccess = supplementalData(for: register).access
     let documentation = (optionalDocumentation.isEmpty == false) ? optionalDocumentation : supplementalData(for: register).documentation
     
     if register.bitfield.isEmpty {
         registerName = padString(register.name.rawValue, padding: 63)
-        readWrite = padString(registarAccess, padding: 63)
+        readWrite = padString(registerAccess, padding: 63)
     } else {
         var bitNames = getBitNames(from: register)
         bitNames = bitNames.map { padString($0, padding: 7) }
         registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
         
-        var bitAccess = getBitAccess(from: register, parentAccess: registarAccess, supplementalData: supplementalData(for:)) // TODO: Check the register for it's access level
+        var bitAccess = getBitAccess(from: register, parentAccess: registerAccess, supplementalData: supplementalData(for:)) // TODO: Check the register for it's access level
         bitAccess = bitAccess.map { padString($0, padding: 7) }
         readWrite = "\(bitAccess[7])|\(bitAccess[6])|\(bitAccess[5])|\(bitAccess[4])|\(bitAccess[3])|\(bitAccess[2])|\(bitAccess[1])|\(bitAccess[0])"
     }
