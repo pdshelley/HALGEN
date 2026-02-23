@@ -193,7 +193,7 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
         
         var sourceForBoolSet = """
           set {
-              \(variableName) |= UInt8(newValue.hashValue) & \(bitmask)
+              \(supDataParent.variableName) |= UInt8(newValue.hashValue) & \(bitmask)
           }
           """
         if supData.access == Access.write {
