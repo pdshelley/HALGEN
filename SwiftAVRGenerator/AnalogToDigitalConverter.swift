@@ -20,13 +20,17 @@ func buildAnalogToDigitalConverters(file: AVRToolsDeviceFile) -> [GeneratedCodeF
 }
 
 func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGroup, chipName: String) -> GeneratedCodeFile {
-    let fileName = "AnalogToDigitalConverter.swift"
+    let adcName = "AnalogToDigitalConverter"
+    let fileName = "\(adcName).swift"
     var code = buildFileHeader(for: fileName)
     var memberBlockList = MemberBlockItemListSyntax()
     
     // Generation of registers
     for register in registerGroup.register {
-        memberBlockList.append(generateAnalogToDigitalConverterRegister(register: register, variableName: supplementalData(for: register).variableName))
+        memberBlockList.append(generateAnalogToDigitalConverterRegister(register: register))
+        if register.size == .two {
+            memberBlockList.append(contentsOf: generateRegisterWithSizeTwo(register: register))
+        }
     }
     
     let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
@@ -39,7 +43,7 @@ func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGrou
     code.append(SourceFileSyntax {
         StructDeclSyntax(
             modifiers: DeclModifierListSyntax(arrayLiteral: DeclModifierSyntax(name: "public")),
-            name: "AnalogToDigitalConverter",
+            name: "\(raw: adcName)",
 //            inheritanceClause: inheritanceClause,
             memberBlock: memberBlock
         )
@@ -48,7 +52,28 @@ func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGrou
     return GeneratedCodeFile(fileName: fileName, content: code)
 }
 
-func generateAnalogToDigitalConverterRegister(register: AVRModules.Module.RegisterGroup.Register, variableName: String) -> MemberBlockItemSyntax {
+func generateAnalogToDigitalConverterRegister(register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
+    return generateRegister(register: register, variableName: supplementalData(for: register).variableName)
+}
+
+func generateRegisterWithSizeTwo(register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
+    var memberBlockList = MemberBlockItemListSyntax()
+    
+    // get register and change size to 1 so uint8 registers are generated instead of 16 bit
+    var customRegisterL: AVRModules.Module.RegisterGroup.Register = register
+    customRegisterL.size = .one
+    memberBlockList.append(generateRegister(register: customRegisterL, variableName: "\(supplementalData(for: register).variableName)L"))
+    
+    var customRegisterH: AVRModules.Module.RegisterGroup.Register = register
+    customRegisterH.size = .one
+    // I have no idea if this is ok, I'll just assume it is since it works
+    customRegisterH.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
+    memberBlockList.append(generateRegister(register: customRegisterH, variableName: "\(supplementalData(for: register).variableName)H"))
+    
+    return memberBlockList
+}
+
+func generateRegister(register: AVRModules.Module.RegisterGroup.Register, variableName: String) -> MemberBlockItemSyntax {
     // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
         var registerName = ""
         var readWrite = ""
@@ -110,16 +135,16 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
     switch register.name {
     case .ADMUX:
         return SupplementalRegisterData(variableName: "multiplexerSelectionRegister", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
-    case .UCSR0A, .UCSR1A, .UCSR2A, .UCSR3A:
-        return SupplementalRegisterData(variableName: "controlRegisterA", valueType: "", defaultValue: "", documentation: "", access: "")
-    case .UCSR0B, .UCSR1B, .UCSR2B, .UCSR3B:
-        return SupplementalRegisterData(variableName: "controlRegisterB", valueType: "", defaultValue: "", documentation: "", access: "")
-    case .UCSR0C, .UCSR1C, .UCSR2C, .UCSR3C:
-        return SupplementalRegisterData(variableName: "controlRegisterC", valueType: "", defaultValue: "", documentation: "", access: "")
-    case .UCSR0D, .UCSR1D, .UCSR2D:
-        return SupplementalRegisterData(variableName: "controlRegisterD", valueType: "", defaultValue: "", documentation: "", access: "")
-    case .UBRR0, .UBRR1, .UBRR2, .UBRR3:
-        return SupplementalRegisterData(variableName: "", valueType: "", defaultValue: "", documentation: "", access: "R/W")
+    case .ADC:
+        return SupplementalRegisterData(variableName: "dataRegister", valueType: "", defaultValue: "", documentation: "", access: Access.read.rawValue)
+    case .ADCSRA:
+        return SupplementalRegisterData(variableName: "controlRegisterA", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
+    case .ADCSRB:
+        return SupplementalRegisterData(variableName: "controlRegisterB", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
+    case .ADCSRC:
+        return SupplementalRegisterData(variableName: "controlRegisterC", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
+    case .DIDR0, .DIDR1, .DIDR2:
+        return SupplementalRegisterData(variableName: "digitalInputDisableRegister", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
     default :
         return SupplementalRegisterData(variableName: getVariableName(caption: register.caption?.rawValue ?? ""), valueType: "", defaultValue: "", documentation: "", access: "")
     }
@@ -127,75 +152,40 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
 
 fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
     switch bitfield.name {
-        // Interrupt Mask Register
-    case .OCIE0B, .OCIE1B, .OCIE2B, .OCIE3B, .OCIE4B, .OCIE5B:
-        return SupplementalBitfieldData(variableName: "outputCompareMatchBInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
-    case .OCIE0A, .OCIE1A, .OCIE2A, .OCIE3A, .OCIE4A, .OCIE5A:
-        return SupplementalBitfieldData(variableName: "outputCompareMatchAInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
-    case .TOIE0, .TOIE1, .TOIE2, .TOIE3, .TOIE4, .TOIE5:
-        return SupplementalBitfieldData(variableName: "overflowInterruptEnable", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
-    case .ICIE0, .ICIE1, .ICIE3, .ICIE4, .ICIE5:
-        return SupplementalBitfieldData(variableName: "inputCaptureInterruptEnable", valueType: "Bool", defaultValue: "", documentation: inputCaptureInterruptEnableDocumentation, access: .readWrite)
-        
-        // Interrupt Flag Register
-    case .OCF0B, .OCF1B, .OCF2B, .OCF3B, .OCF4B, .OCF5B:
-        return SupplementalBitfieldData(variableName: "outputCompareFlagB", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
-    case .OCF0A, .OCF1A, .OCF2A, .OCF3A, .OCF4A, .OCF5A:
-        return SupplementalBitfieldData(variableName: "outputCompareFlagA", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
-    case .TOV0, .TOV1, .TOV2, .TOV3, .TOV4, .TOV5:
-        return SupplementalBitfieldData(variableName: "overflowFlag", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
-    case .ICF0, .ICF1, .ICF3, .ICF4, .ICF5:
-        return SupplementalBitfieldData(variableName: "inputCaptureFlag", valueType: "Bool", defaultValue: "", documentation: inputCaptureFlagDocumentation, access: .readWrite)
-        
-        // Control Register A
-    case .COM0A, .COM1A, .COM2A, .COM3A, .COM4A, .COM5A:
-        return SupplementalBitfieldData(variableName: "compareOutputModeA", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeADocumentation, access: .readWrite)
-    case .COM0B, .COM1B, .COM2B, .COM3B, .COM4B, .COM5B:
-        return SupplementalBitfieldData(variableName: "compareOutputModeB", valueType: "Timer.CompareOutputMode", defaultValue: ".normal", documentation: outputCompareModeBDocumentation, access: .readWrite)
-    case .WGM0, .WGM1, .WGM2, .WGM3, .WGM4, .WGM5, .WGM00, .WGM02, .WGM01, .WGM20, .WGM21, .WGM22:
-        return SupplementalBitfieldData(variableName: "waveformGenerationMode", valueType: "WaveformGenerationMode", defaultValue: ".normal", documentation: waveformGenerationModeDocumentation, access: .readWrite)
-        
-        // Control Register B
-    case .FOC0A, .FOC2A: // NOTE: On the Atmega328P Datasheet FOC1A, FOC2A and FOC1B, FOC2B are Write only while the same bit on other Timers registers are Read/Write. Is this an error in the Datasheet?
-        return SupplementalBitfieldData(variableName: "forceOutputCompareA", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareADocumentation, access: .write)
-    case .FOC1A, .FOC3A, .FOC4A, .FOC5A:
-        return SupplementalBitfieldData(variableName: "forceOutputCompareA", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareADocumentation, access: .readWrite)
-    case .FOC0B, .FOC2B: // NOTE: On the Atmega328P Datasheet FOC1A, FOC2A and FOC1B, FOC2B are Write only while the same bit on other Timers registers are Read/Write. Is this an error in the Datasheet?
-        return SupplementalBitfieldData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareBDocumentation, access: .write)
-    case .FOC1B, .FOC3B, .FOC4B, .FOC5B:
-        return SupplementalBitfieldData(variableName: "forceOutputCompareB", valueType: "Bool", defaultValue: "", documentation: forceOutputCompareBDocumentation, access: .readWrite)
-    case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
-        return SupplementalBitfieldData(variableName: "prescaler", valueType: "Prescaling", defaultValue: ".stopped", documentation: prescalerDocumentation, access: .readWrite)
-    case .ICNC0, .ICNC1, .ICNC3, .ICNC4, .ICNC5:
-        return SupplementalBitfieldData(variableName: "inputCaptureNoiseCanceler", valueType: "Bool", defaultValue: "", documentation: inputCaptureNoiseCancelerDocumentation, access: .readWrite)
-    case .ICES0, .ICES1, .ICES3, .ICES4, .ICES5:
-        return SupplementalBitfieldData(variableName: "inputCaptureEdgeSelect", valueType: "Bool", defaultValue: "", documentation: inputCaptureEdgeSelectDocumentation, access: .readWrite)
-    
-        // Asynchronous Status Register
-    case .EXCLK:
-        return SupplementalBitfieldData(variableName: "enableExternalClockInput", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
-    case .AS2:
-        return SupplementalBitfieldData(variableName: "asynchronousTimerCounter", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
-    case .TCN2UB:
-        return SupplementalBitfieldData(variableName: "updateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: .read)
-    case .OCR2AUB:
-        return SupplementalBitfieldData(variableName: "outputCompareRegisterAUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: .read)
-    case .OCR2BUB:
-        return SupplementalBitfieldData(variableName: "outputCompareRegisterBUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: .read)
-    case .TCR2AUB:
-        return SupplementalBitfieldData(variableName: "controlRegisterAUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: .read)
-    case .TCR2BUB:
-        return SupplementalBitfieldData(variableName: "controlRegisterBUpdateBusy", valueType: "Bool", defaultValue: "", documentation: "", access: .read)
-        
-    
-        // General Timer/Counter Control Register
-    case .TSM:
-        return SupplementalBitfieldData(variableName: "timerSynchronizationMode", valueType: "Timer.TimerSynchronizationMode", defaultValue: ".disabled", documentation: timerSynchronizationModeDocumentation, access: .readWrite)
-    case .PSRASY:
-        return SupplementalBitfieldData(variableName: "prescalerReset", valueType: "Bool", defaultValue: "", documentation: prescalerResetDocumentation, access: .readWrite)
-    case .PSRSYNC:
-        return SupplementalBitfieldData(variableName: "prescalerResetSync", valueType: "Bool", defaultValue: "", documentation: prescalerResetSyncDocumentation, access: .readWrite)
-        
+    case .REFS, .REFS0: // Is REFS0 a part of the adc?
+        return SupplementalBitfieldData(variableName: "reference", valueType: "VoltageReferenceSelection", defaultValue: ".internalTurnedOff", documentation: "", access: .readWrite)
+    case .ADLAR:
+        return SupplementalBitfieldData(variableName: "leftAdjust", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .MUX, .MUX5: // Is MUX5 a part of the adc?
+        return SupplementalBitfieldData(variableName: "channel", valueType: "AnalogChannelSelection", defaultValue: ".adc0", documentation: "", access: .readWrite)
+    case .ADEN:
+        return SupplementalBitfieldData(variableName: "enabled", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADSC:
+        return SupplementalBitfieldData(variableName: "converting", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADATE:
+        return SupplementalBitfieldData(variableName: "autoTriggerEnabled", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADIF:
+        return SupplementalBitfieldData(variableName: "interruptFlag", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADIE:
+        return SupplementalBitfieldData(variableName: "interruptEnabled", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADPS:
+        return SupplementalBitfieldData(variableName: "prescaler", valueType: "AnalogPrescalerSelection", defaultValue: "", documentation: "", access: .readWrite)
+    case .ACME:
+        return SupplementalBitfieldData(variableName: "multiplexerEnable", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADTS, .ADTS0, .ADTS1, .ADTS2, .ADTS3: // Are .ADTSn a part of the adc?
+        return SupplementalBitfieldData(variableName: "autoTriggerSource", valueType: "AutoTriggerSource", defaultValue: ".freeRunning", documentation: "", access: .readWrite)
+    case .ADC5D:
+        return SupplementalBitfieldData(variableName: "digitalInput5Disabled", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADC4D:
+        return SupplementalBitfieldData(variableName: "digitalInput4Disabled", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADC3D:
+        return SupplementalBitfieldData(variableName: "digitalInput3Disabled", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADC2D:
+        return SupplementalBitfieldData(variableName: "digitalInput2Disabled", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADC1D:
+        return SupplementalBitfieldData(variableName: "digitalInput1Disabled", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
+    case .ADC0D:
+        return SupplementalBitfieldData(variableName: "digitalInput0Disabled", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite)
     default :
         return SupplementalBitfieldData(variableName: "", valueType: "", defaultValue: "", documentation: "", access: .readWrite)
     }
