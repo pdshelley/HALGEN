@@ -197,6 +197,9 @@ func decodeATDF(data: Data) -> GeneratedAVRCore {
     for uartFile in buildUARTs(file: ATDFObject) {
         generatedFiles.append(uartFile)
     }
+    for file in buildAnalogToDigitalConverters(file: ATDFObject) {
+        generatedFiles.append(file)
+    }
     
 //    print("ATDFObject.devices.device.name = \(deviceName)")
 //    print()
