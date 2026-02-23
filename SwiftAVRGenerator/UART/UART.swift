@@ -519,7 +519,7 @@ public protocol UARTPort {
 
 public extension UARTPort {
     /// Note: Needs to be updated to account for U2Xn or the Opperating Mode of the UART. See ATMega328p Datasheet Table 20-1.
-    /// This is a convienience wraper on the "baudRateRegister" or "UBRRn" to allow setting a "normal" baud rate
+    /// This is a convenience wrapper on the "baudRateRegister" or "UBRRn" to allow setting a "normal" baud rate
     /// and then do the calculation to convert this to the setting needed for UBRRn.
     @inlinable
     @inline(__always)
