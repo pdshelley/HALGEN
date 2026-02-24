@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -30,6 +30,7 @@
 		DAE992F02A22A6F5007656B5 /* SwiftAVRGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992EF2A22A6F5007656B5 /* SwiftAVRGeneratorTests.swift */; };
 		DAE992FA2A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992F92A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift */; };
 		DAE992FC2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992FB2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift */; };
+		EE5FF85F2F4716DD000479E5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5FF85E2F4716D6000479E5 /* Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,7 +72,12 @@
 		DAE992F52A22A6F6007656B5 /* SwiftAVRGeneratorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftAVRGeneratorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAE992F92A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftAVRGeneratorUITests.swift; sourceTree = "<group>"; };
 		DAE992FB2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftAVRGeneratorUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		EE5FF85E2F4716D6000479E5 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		EEA880C42F431EDD00AEE20B /* UART */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UART; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DAE992D72A22A6F4007656B5 /* Frameworks */ = {
@@ -148,6 +154,8 @@
 		DAE992DC2A22A6F4007656B5 /* SwiftAVRGenerator */ = {
 			isa = PBXGroup;
 			children = (
+				EE5FF85E2F4716D6000479E5 /* Utils.swift */,
+				EEA880C42F431EDD00AEE20B /* UART */,
 				DADDB0EC2C277263009F65E9 /* Extensions.swift */,
 				DAE992DD2A22A6F4007656B5 /* SwiftAVRGeneratorApp.swift */,
 				DAE992DF2A22A6F4007656B5 /* ContentView.swift */,
@@ -202,6 +210,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				EEA880C42F431EDD00AEE20B /* UART */,
 			);
 			name = SwiftAVRGenerator;
 			packageProductDependencies = (
@@ -336,6 +347,7 @@
 				DA53268C2AF7578B00D7D526 /* AVRVariants.swift in Sources */,
 				4709CA652A68A11300AD7343 /* AVRToolsDeviceFileExtention.swift in Sources */,
 				DAE992DE2A22A6F4007656B5 /* SwiftAVRGeneratorApp.swift in Sources */,
+				EE5FF85F2F4716DD000479E5 /* Utils.swift in Sources */,
 				DA5326902AF7588600D7D526 /* AVRModules.swift in Sources */,
 				DA5326922AF759EB00D7D526 /* AVRPinouts.swift in Sources */,
 				DADDB0EB2C2721AF009F65E9 /* Timers.swift in Sources */,
