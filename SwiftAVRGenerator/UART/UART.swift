@@ -85,18 +85,18 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ va
     // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
     var registerName = ""
     var readWrite = ""
-    let registarAccess = supplementalData(for: register).access
+    let registerAccess = supplementalData(for: register).access
     let documentation = (optionalDocumentation.isEmpty == false) ? optionalDocumentation : supplementalData(for: register).documentation
     
     if register.bitfield.isEmpty {
         registerName = padString(register.name.rawValue, padding: 63)
-        readWrite = padString(registarAccess, padding: 63)
+        readWrite = padString(registerAccess, padding: 63)
     } else {
         var bitNames = getBitNames(from: register)
         bitNames = bitNames.map { padString($0, padding: 7) }
         registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
         
-        var bitAccess = getBitAccess(from: register, parentAccess: registarAccess, supplementalData: supplementalData(for:)) // TODO: Check the register for it's access level
+        var bitAccess = getBitAccess(from: register, parentAccess: registerAccess, supplementalData: supplementalData(for:)) // TODO: Check the register for it's access level
         bitAccess = bitAccess.map { padString($0, padding: 7) }
         readWrite = "\(bitAccess[7])|\(bitAccess[6])|\(bitAccess[5])|\(bitAccess[4])|\(bitAccess[3])|\(bitAccess[2])|\(bitAccess[1])|\(bitAccess[0])"
     }
@@ -193,7 +193,7 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
         
         var sourceForBoolSet = """
           set {
-              \(variableName) |= UInt8(newValue.hashValue) & \(bitmask)
+              \(supDataParent.variableName) |= UInt8(newValue.hashValue) & \(bitmask)
           }
           """
         if supData.access == Access.write {
@@ -256,7 +256,7 @@ func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Regi
 
 func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield, bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableA: AVRModules.Module.RegisterGroup.Register, parentVariableB: AVRModules.Module.RegisterGroup.Register, chipName: String) -> MemberBlockItemSyntax {
     
-    // TODO: Some chips only seem to have 1 bite for WGM. This breaks this logic and should be accounted for.
+    // TODO: Some chips only seem to have 1 bit for WGM. This breaks this logic and should be accounted for.
     
     // Example Data:
     // Register A Bitmask:           0b00000011
@@ -295,7 +295,7 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
     let lowBitshift = UInt8(lowBitfield.mask.value.trailingZeroBitCount)
     let highBitshift = UInt8(highBitfield.mask.value.trailingZeroBitCount)
     
-    // Then turn all of this into a bianary string for legibility, a bitmask should be seen as bits and not an Int or Hex value.
+    // Then turn all of this into a binary string for legibility, a bitmask should be seen as bits and not an Int or Hex value.
     let newValueLowBitmask = (lowBitfield.mask.value.lowByte >> lowBitshift).binaryString
     
     // This would give me the number of bits to shift, assuming that there is only a single group of bits and not two or more groups split by one or more 0s.
@@ -314,12 +314,12 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
           @inline(__always)
           public static var \(raw: info.variableName): \(raw: info.valueType) {
               get {
-                  let mode = ((\(raw: hightParentVariableName) & \(raw: highBitmask)) \(raw: getShiftDirection) \(raw: highBitshift)) | ((\(raw: lowParentVariableName) & \(raw: lowBitmask)) \(raw: getShiftDirection) \(raw: lowBitshift))
+                  let mode = ((\(raw: highParentVariableName) & \(raw: highBitmask)) \(raw: getShiftDirection) \(raw: highBitshift)) | ((\(raw: lowParentVariableName) & \(raw: lowBitmask)) \(raw: getShiftDirection) \(raw: lowBitshift))
                   return \(raw: info.valueType).init(rawValue: mode) ?? \(raw: info.defaultValue)
               }
               set {
                   \(raw: lowParentVariableName) = (\(raw: lowParentVariableName) & ~\(raw: lowBitmask)) | ((newValue.rawValue & \(raw: newValueLowBitmask)) << UInt8(\(raw: lowBitshift)))
-                  \(raw: hightParentVariableName) = (\(raw: hightParentVariableName) & ~\(raw: highBitmask)) | ((newValue.rawValue \(raw: setShiftDirection) \(raw: highBitshift)) & \(raw: newValueHighBitmask))
+                  \(raw: highParentVariableName) = (\(raw: highParentVariableName) & ~\(raw: highBitmask)) | ((newValue.rawValue \(raw: setShiftDirection) \(raw: highBitshift)) & \(raw: newValueHighBitmask))
               }
           }
       """
@@ -383,11 +383,13 @@ fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.
     case .RXC0, .RXC1, .RXC2, .RXC3:
         return SupplementalBitfieldData(variableName: "rxDataAvailable", valueType: "Bool", defaultValue: "", documentation: UARTDocs.rxDataAvailableDocumentation, access: .read )
     case .RXB80, .RXB81, .RXB82, .RXB83:
-        return SupplementalBitfieldData(variableName: "", valueType: "Bool", defaultValue: "", documentation: "", access: .read )
+        return SupplementalBitfieldData(variableName: "receiveData8thBit", valueType: "Bool", defaultValue: "", documentation: UARTDocs.recieveData8thBitDocumentation, access: .read)
     case .TXB80, .TXB81, .TXB82, .TXB83:
-        return SupplementalBitfieldData(variableName: "", valueType: "Bool", defaultValue: "", documentation: "", access: .readWrite )
+        return SupplementalBitfieldData(variableName: "transmitData8thBit", valueType: "Bool", defaultValue: "", documentation: UARTDocs.transmitData8thBitDocumentation, access: .readWrite)
     case .UMSEL0, .UMSEL1, .UMSEL2, .UMSEL3:
         return SupplementalBitfieldData(variableName: "modeSelect", valueType: "UART.ModeSelect", defaultValue: ".asynchronous", documentation: UARTDocs.modeSelectDocumentation, access: .readWrite)
+    case .MPCM0, .MPCM1, .MPCM2, .MPCM3:
+        return SupplementalBitfieldData(variableName: "multiProcessorCommunication", valueType: "Bool", defaultValue: "", documentation: UARTDocs.multiProcessorCommunicationDocumentation, access: .readWrite)
         
     default :
         // TODO: What do we do with bitfields that have no case? They are currently generated without variable name breaking the code
@@ -398,7 +400,6 @@ fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.
 private enum UARTDocs {
     static let uartBoilerPlate = """
 public enum UART {
-
     /// See ATMega328p Datasheet Section 20.4.1 and Table 20-9.
     public enum ParityMode: UInt8 {
         case disabled = 0
@@ -422,7 +423,7 @@ public enum UART {
     }
 
     /// See ATMega328p Datasheet Table 20-12.
-    // This is relitive to the Transmitted Data Changed (Output of TxDn Pin)
+    // This is relative to the Transmitted Data Changed (Output of TxDn Pin)
     // Received Data Sampled will be opposite of Transmitted Data Changed, Ex: Rising for TX is Falling for RX.
     public enum ClockPolarity: UInt8 {
         case rising = 0
@@ -464,7 +465,7 @@ public enum UART {
         case off = 0
         case on = 1
     }
-
+    
     /// See ATMega328p Datasheet Section 20.11.4 Table 20-8.
     public enum ModeSelect: UInt8 {
         case asynchronous = 0
@@ -498,7 +499,7 @@ public protocol UARTPort {
     static var parityError: Bool { get }
     
     static var asynchronousDoubleSpeedMode: UART.AsynchronousDoubleSpeedMode { get set }
-    // TODO: MPCMu
+    static var multiProcessorCommunication: Bool { get set }
     
     static var rxCompleteInterruptEnable: UART.RXCompleteInterruptEnable { get set }
     static var txCompleteInterruptEnable: UART.TXCompleteInterruptEnable { get set }
@@ -518,7 +519,7 @@ public protocol UARTPort {
 
 public extension UARTPort {
     /// Note: Needs to be updated to account for U2Xn or the Opperating Mode of the UART. See ATMega328p Datasheet Table 20-1.
-    /// This is a convienience wraper on the "baudRateRegister" or "UBRRn" to allow setting a "normal" baud rate
+    /// This is a convenience wrapper on the "baudRateRegister" or "UBRRn" to allow setting a "normal" baud rate
     /// and then do the calculation to convert this to the setting needed for UBRRn.
     @inlinable
     @inline(__always)
@@ -537,7 +538,7 @@ public extension UARTPort {
     @inline(__always)
     /// The lowest level of writing out data to hardware UART. This function makes sure that the Data Register is empty before sending out more data, this is important for proper opperation
     /// See Section 20.6.1
-    /// - Parameter byte: A single bite of data to be sent.
+    /// - Parameter byte: A single byte of data to be sent.
     static func writeByte(_ byte: PortDataType) {
         while !dataRegisterEmpty { }
         dataRegister = byte
@@ -790,5 +791,20 @@ public extension UARTPort where PortDataType == UInt8 {
     static let modeSelectDocumentation = """
         \n    /// See ATMega328p Datasheet Section 20.11.4
             /// UMSELn are bit 7 and 6 on UCSRnC
+        """
+    
+    static let recieveData8thBitDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.11.3
+            /// RXB8n is bit 1 on UCSRnB
+        """
+        
+    static let transmitData8thBitDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.11.3
+            /// TXB8n is bit 0 on UCSRnB
+        """
+    
+    static let multiProcessorCommunicationDocumentation = """
+        \n    /// See ATMega328p Datasheet Section 20.
+            /// MPCMn is bit 0 on UCSRnA.
         """
 }
