@@ -165,7 +165,7 @@ let splitBitfieldAccessors: [AVRModules.Module.RegisterGroup.Register.Bitfield.N
     .UCSZ02: .UCSZ0
 ]
 
-func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
+fileprivate func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
                               in register: AVRModules.Module.RegisterGroup.Register,
                               _ registerGroup: AVRModules.Module.RegisterGroup,
                               _ chipName: String) -> MemberBlockItemSyntax {
@@ -281,10 +281,10 @@ func generateSplitBitfieldAccessorUart(bitfieldA: AVRModules.Module.RegisterGrou
     var lowBitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
     var lowParentVariableName: String
     var highBitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
-    var hightParentVariableName: String
+    var highParentVariableName: String
     
     lowParentVariableName = supplementalData(for: parentVariableB).variableName
-    hightParentVariableName = supplementalData(for: parentVariableA).variableName
+    highParentVariableName = supplementalData(for: parentVariableA).variableName
     lowBitfield = bitfieldB
     highBitfield = bitfieldA
     // Mask Value is 16 Bits and we have to have 8. Assuming that it's a total error to have a mask with bits above 8 we will just throw those away.

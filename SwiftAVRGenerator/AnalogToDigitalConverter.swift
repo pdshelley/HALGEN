@@ -139,7 +139,7 @@ func generateRegister(register: AVRModules.Module.RegisterGroup.Register, variab
         return MemberBlockItemSyntax(decl: source)
 }
 
-func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
+fileprivate func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
                               in register: AVRModules.Module.RegisterGroup.Register,
                               _ registerGroup: AVRModules.Module.RegisterGroup,
                               _ chipName: String) -> MemberBlockItemSyntax {
