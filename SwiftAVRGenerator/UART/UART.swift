@@ -75,85 +75,51 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
 }
 
 func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
-    let supData: SupplementalRegisterData = supplementalData(for: register)
-    
-    return generateRegister(register, supData.variableName)
-}
-
-func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register, _ variableName: String, optionalDocumentation: String = "") -> MemberBlockItemSyntax {
-    
-    // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
-    var registerName = ""
-    var readWrite = ""
-    let registerAccess = supplementalData(for: register).access
-    let documentation = (optionalDocumentation.isEmpty == false) ? optionalDocumentation : supplementalData(for: register).documentation
-    
-    if register.bitfield.isEmpty {
-        registerName = padString(register.name.rawValue, padding: 63)
-        readWrite = padString(registerAccess, padding: 63)
-    } else {
-        var bitNames = getBitNames(from: register)
-        bitNames = bitNames.map { padString($0, padding: 7) }
-        registerName = "\(bitNames[7])|\(bitNames[6])|\(bitNames[5])|\(bitNames[4])|\(bitNames[3])|\(bitNames[2])|\(bitNames[1])|\(bitNames[0])"
-        
-        var bitAccess = getBitAccess(from: register, parentAccess: registerAccess, supplementalData: supplementalData(for:)) // TODO: Check the register for it's access level
-        bitAccess = bitAccess.map { padString($0, padding: 7) }
-        readWrite = "\(bitAccess[7])|\(bitAccess[6])|\(bitAccess[5])|\(bitAccess[4])|\(bitAccess[3])|\(bitAccess[2])|\(bitAccess[1])|\(bitAccess[0])"
-    }
-    
-    var bit: (size: String, atomicStart: String, atomicEnd: String) {
-        switch register.size {
-        case .one:
-            return (size: "UInt8", atomicStart: "", atomicEnd: "")
-        case .two:
-            return (size: "UInt16", atomicStart: "atomic {", atomicEnd: " }")
-        }
-    }
-    
-    let source = DeclSyntax(
-      """
-          /// \(raw: register.name) – \(raw: register.caption?.rawValue ?? variableName) \(raw: documentation)
-          ///```
-          ///--------------------------------------------------------------------------------
-          ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
-          ///--------------------------------------------------------------------------------
-          ///| (\(raw: register.offset.rawValue))       |\(raw: registerName)|
-          ///--------------------------------------------------------------------------------
-          ///| Read/Write   |\(raw: readWrite)|
-          ///--------------------------------------------------------------------------------
-          ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
-          ///--------------------------------------------------------------------------------
-          ///```
-          @inlinable
-          @inline(__always)
-          public static var \(raw: variableName): \(raw: bit.size) {
-              get {
-                  \(raw: bit.atomicStart)_volatileRegisterRead\(raw: bit.size)(\(raw: register.offset.rawValue))\(raw: bit.atomicEnd)
-              }
-              set {
-                  \(raw: bit.atomicStart)_volatileRegisterWrite\(raw: bit.size)(\(raw: register.offset.rawValue), newValue)\(raw: bit.atomicEnd)
-              }
-          }
-      """
-    ).with(\.trailingTrivia, .newlines(2))
-    return MemberBlockItemSyntax(decl: source)
+    return generateRegister(
+        register: register,
+        registerData: supplementalData(for:),
+        bitfieldData: supplementalData(for:)
+    )
 }
 
 func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
     var memberBlockList = MemberBlockItemListSyntax()
     if register.size == AVRModules.Module.RegisterGroup.Register.Size.one {
-        memberBlockList.append(generateRegister(register, "baudRateRegister"))
+        memberBlockList.append(
+            generateRegister(
+                register: register,
+                variableName: "baudRateRegister",
+                registerData: supplementalData(for:),
+                bitfieldData: supplementalData(for:)
+            )
+        )
         return memberBlockList
     }
     // get register and change size to 1 so uint8 registers are generated instead of 16 bit
     var customRegister: AVRModules.Module.RegisterGroup.Register = register
     customRegister.size = .one
     
-    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterL", optionalDocumentation: UARTDocs.baudRegisterLDocumentation))
+    memberBlockList.append(
+        generateRegister(
+            register: customRegister,
+            variableName: "baudRateRegisterL",
+            optionalDocumentation: UARTDocs.baudRegisterLDocumentation,
+            registerData: supplementalData(for:),
+            bitfieldData: supplementalData(for:)
+        )
+    )
     
     // I have no idea if this is ok, I'll just assume it is since it works
     customRegister.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
-    memberBlockList.append(generateRegister(customRegister, "baudRateRegisterH", optionalDocumentation: UARTDocs.baudRegisterHDocumentation))
+    memberBlockList.append(
+        generateRegister(
+            register: customRegister,
+            variableName: "baudRateRegisterH",
+            optionalDocumentation: UARTDocs.baudRegisterHDocumentation,
+            registerData: supplementalData(for:),
+            bitfieldData: supplementalData(for:)
+        )
+    )
 
     memberBlockList.append(MemberBlockItemSyntax(decl: DeclSyntax("\(raw: UARTDocs.uart16bitBaudRegister)").with(\.trailingTrivia, .newlines(2))))
     

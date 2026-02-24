@@ -122,7 +122,16 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String) 
     
     for registerGroup in module.registerGroup {
         for register in registerGroup.register {
-            let memberBlock = generateRegister(register) // TODO: add this to the stored member blocks
+            
+            // THIS USES THE generateRegister WITHIN THIS FILE
+            // let memberBlock = generateRegister(register) // TODO: add this to the stored member blocks
+            
+            let memberBlock = generateRegister(
+                register: register,
+                registerData: supplementalData(for:),
+                bitfieldData: supplementalData(for:)
+            )
+            
             memberBlockList.append(memberBlock)
             
 //            let registerVariableName = variableNameFor(register: register)
