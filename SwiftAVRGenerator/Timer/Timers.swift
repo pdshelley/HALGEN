@@ -132,7 +132,7 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String) 
                 bitfieldData: supplementalData(for:)
             )
             
-            memberBlockList.append(memberBlock)
+            memberBlockList.append(contentsOf: memberBlock)
             
 //            let registerVariableName = variableNameFor(register: register)
 //            let registerVariableName = variableNameFromString(register.caption?.rawValue ?? "") // .filter { $0 != " " } // TODO: Print some kind of error.

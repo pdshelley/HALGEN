@@ -32,10 +32,7 @@ func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGrou
     
     // Generation of registers
     for register in registerGroup.register {
-        memberBlockList.append(generateAnalogToDigitalConverterRegister(register: register))
-        if register.size == .two {
-            memberBlockList.append(contentsOf: generateRegisterWithSizeTwo(register: register))
-        }
+        memberBlockList.append(contentsOf: generateAnalogToDigitalConverterRegister(register: register))
         for bitfield in register.bitfield {
             memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register, registerGroup, chipName))
         }
@@ -60,43 +57,12 @@ func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGrou
     return GeneratedCodeFile(fileName: fileName, content: code)
 }
 
-func generateAnalogToDigitalConverterRegister(register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
+func generateAnalogToDigitalConverterRegister(register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
     return generateRegister(
         register: register,
         registerData: supplementalData(for:),
         bitfieldData: supplementalData(for:)
     )
-}
-
-func generateRegisterWithSizeTwo(register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
-    var memberBlockList = MemberBlockItemListSyntax()
-    
-    // get register and change size to 1 so uint8 registers are generated instead of 16 bit
-    var customRegisterL: AVRModules.Module.RegisterGroup.Register = register
-    customRegisterL.size = .one
-    memberBlockList.append(
-        generateRegister(
-            register: customRegisterL,
-            variableName: "\(supplementalData(for: register).variableName)L",
-            registerData: supplementalData(for:),
-            bitfieldData: supplementalData(for:)
-        )
-    )
-    
-    var customRegisterH: AVRModules.Module.RegisterGroup.Register = register
-    customRegisterH.size = .one
-    // I have no idea if this is ok, I'll just assume it is since it works
-    customRegisterH.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
-    memberBlockList.append(
-        generateRegister(
-            register: customRegisterH,
-            variableName: "\(supplementalData(for: register).variableName)H",
-            registerData: supplementalData(for:),
-            bitfieldData: supplementalData(for:)
-        )
-    )
-    
-    return memberBlockList
 }
 
 fileprivate func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,

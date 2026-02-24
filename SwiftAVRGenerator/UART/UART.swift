@@ -36,14 +36,18 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
     var code = buildFileHeader(for: uartName)
     var memberBlockList = MemberBlockItemListSyntax()
     
+//    for register in registerGroup.register {
+//        switch register.name {
+//        case .UBRR0, .UBRR1, .UBRR2, .UBRR3:
+//            memberBlockList.append(contentsOf: generateUartBaudRegister(register))
+//            continue
+//        default:
+//            memberBlockList.append(contentsOf: generateUartRegister(register))
+//        }
+//    }
+    
     for register in registerGroup.register {
-        switch register.name {
-        case .UBRR0, .UBRR1, .UBRR2, .UBRR3:
-            memberBlockList.append(contentsOf: generateUartBaudRegister(register))
-            continue
-        default:
-            memberBlockList.append(generateUartRegister(register))
-        }
+        memberBlockList.append(contentsOf: generateUartRegister(register))
     }
     
     // Doing this in the above loop would be more efficient but I want to generate the registers before anything else
@@ -74,7 +78,7 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
     return GeneratedCodeFile(fileName: fileName, content: code)
 }
 
-func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemSyntax {
+func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
     return generateRegister(
         register: register,
         registerData: supplementalData(for:),
@@ -82,49 +86,49 @@ func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) 
     )
 }
 
-func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
-    var memberBlockList = MemberBlockItemListSyntax()
-    if register.size == AVRModules.Module.RegisterGroup.Register.Size.one {
-        memberBlockList.append(
-            generateRegister(
-                register: register,
-                variableName: "baudRateRegister",
-                registerData: supplementalData(for:),
-                bitfieldData: supplementalData(for:)
-            )
-        )
-        return memberBlockList
-    }
-    // get register and change size to 1 so uint8 registers are generated instead of 16 bit
-    var customRegister: AVRModules.Module.RegisterGroup.Register = register
-    customRegister.size = .one
-    
-    memberBlockList.append(
-        generateRegister(
-            register: customRegister,
-            variableName: "baudRateRegisterL",
-            optionalDocumentation: UARTDocs.baudRegisterLDocumentation,
-            registerData: supplementalData(for:),
-            bitfieldData: supplementalData(for:)
-        )
-    )
-    
-    // I have no idea if this is ok, I'll just assume it is since it works
-    customRegister.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
-    memberBlockList.append(
-        generateRegister(
-            register: customRegister,
-            variableName: "baudRateRegisterH",
-            optionalDocumentation: UARTDocs.baudRegisterHDocumentation,
-            registerData: supplementalData(for:),
-            bitfieldData: supplementalData(for:)
-        )
-    )
-
-    memberBlockList.append(MemberBlockItemSyntax(decl: DeclSyntax("\(raw: UARTDocs.uart16bitBaudRegister)").with(\.trailingTrivia, .newlines(2))))
-    
-    return memberBlockList
-}
+//func generateUartBaudRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
+//    var memberBlockList = MemberBlockItemListSyntax()
+//    if register.size == AVRModules.Module.RegisterGroup.Register.Size.one {
+//        memberBlockList.append(
+//            contentsOf: generateRegister(
+//                register: register,
+//                variableName: "baudRateRegister",
+//                registerData: supplementalData(for:),
+//                bitfieldData: supplementalData(for:)
+//            )
+//        )
+//        return memberBlockList
+//    }
+//    // get register and change size to 1 so uint8 registers are generated instead of 16 bit
+//    var customRegister: AVRModules.Module.RegisterGroup.Register = register
+//    customRegister.size = .one
+//    
+//    memberBlockList.append(
+//        contentsOf: generateRegister(
+//            register: customRegister,
+//            variableName: "baudRateRegisterL",
+//            optionalDocumentation: UARTDocs.baudRegisterLDocumentation,
+//            registerData: supplementalData(for:),
+//            bitfieldData: supplementalData(for:)
+//        )
+//    )
+//    
+//    // I have no idea if this is ok, I'll just assume it is since it works
+//    customRegister.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
+//    memberBlockList.append(
+//        contentsOf: generateRegister(
+//            register: customRegister,
+//            variableName: "baudRateRegisterH",
+//            optionalDocumentation: UARTDocs.baudRegisterHDocumentation,
+//            registerData: supplementalData(for:),
+//            bitfieldData: supplementalData(for:)
+//        )
+//    )
+//
+//    memberBlockList.append(MemberBlockItemSyntax(decl: DeclSyntax("\(raw: UARTDocs.uart16bitBaudRegister)").with(\.trailingTrivia, .newlines(2))))
+//    
+//    return memberBlockList
+//}
 
 let splitBitfieldAccessors: [AVRModules.Module.RegisterGroup.Register.Bitfield.Name: AVRModules.Module.RegisterGroup.Register.Bitfield.Name] = [
     //HIGH - LOW
@@ -307,8 +311,7 @@ fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.
     case .UCSR0D, .UCSR1D, .UCSR2D:
         return SupplementalRegisterData(variableName: "controlRegisterD", valueType: "", defaultValue: "", documentation: "", access: "")
     case .UBRR0, .UBRR1, .UBRR2, .UBRR3:
-        return SupplementalRegisterData(variableName: "", valueType: "", defaultValue: "", documentation: "", access: "R/W")
-        
+        return SupplementalRegisterData(variableName: "baudRateRegister", valueType: "", defaultValue: "", documentation: UARTDocs.uart16bitBaudRegisterDocumentation, access: "R/W", documentationL: UARTDocs.baudRegisterLDocumentation, documentationH: UARTDocs.baudRegisterHDocumentation)
     default :
         return SupplementalRegisterData(variableName: getVariableName(caption: register.caption?.rawValue ?? ""), valueType: "", defaultValue: "", documentation: "", access: "")
     }
@@ -625,38 +628,26 @@ public extension UARTPort where PortDataType == UInt8 {
 }
 """
     
-    static let uart16bitBaudRegister = """
-    /// UBBRn – USART Baud Rate Register
-    /// ```
-    /// --------------------------------------------------------------------------------
-    /// | Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
-    /// --------------------------------------------------------------------------------
-    /// |              |   -   |   -   |   -   |   -   |         UBRRn[12:8]           |
-    /// |              |                       UBRRn[7:0]                              |
-    /// --------------------------------------------------------------------------------
-    /// | Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
-    /// --------------------------------------------------------------------------------
-    /// | InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
-    /// --------------------------------------------------------------------------------
-    /// ```
-    /// Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero
-    /// when UBRRnH is written.
-    ///
-    /// This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the
-    /// UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receive
-    /// will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler.
-    @inlinable
-    @inline(__always)
-    public static var baudRateRegister: UInt16 {
-        get {
-            return (UInt16(baudRateRegisterH) << 8) | UInt16(baudRateRegisterL)
-        }
-        set {
-            baudRateRegisterH = UInt8((newValue & 0b11111111_00000000) >> 8)
-            baudRateRegisterL = UInt8(newValue & 0b11111111)
-        }
-    }
-"""
+    static let uart16bitBaudRegisterDocumentation = """
+        \n    /// ```
+            /// --------------------------------------------------------------------------------
+            /// | Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+            /// --------------------------------------------------------------------------------
+            /// |              |   -   |   -   |   -   |   -   |         UBRRn[12:8]           |
+            /// |              |                       UBRRn[7:0]                              |
+            /// --------------------------------------------------------------------------------
+            /// | Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |
+            /// --------------------------------------------------------------------------------
+            /// | InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |
+            /// --------------------------------------------------------------------------------
+            /// ```
+            /// Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero
+            /// when UBRRnH is written.
+            ///
+            /// This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the
+            /// UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receive
+            /// will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler.
+        """
      
     static let dataRegisterDocumentation = """
         \n    /// See ATMega328p Datasheet Section 36 Register Summary  
