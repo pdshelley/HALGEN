@@ -149,6 +149,92 @@ func generateRegister(
 
 struct BitfieldGenerator {
     var splitBitfieldA: (bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariable: AVRModules.Module.RegisterGroup.Register)? = nil
+    var bitfieldsToIgnore: [AVRModules.Module.RegisterGroup.Register.Bitfield] = []
+    
+    mutating func generateBitfieldAccessor(
+        bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
+        parentVariable: AVRModules.Module.RegisterGroup.Register,
+        registerGroup: AVRModules.Module.RegisterGroup,
+        timerInfo: TimerInfo,
+        chipName: String,
+        registerData: (_ register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData,
+        bitfieldData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData
+    ) -> MemberBlockItemSyntax {
+        
+        // The bitfield that has a splitTarget is the bitfield with the MSB(high)
+        if bitfieldData(bitfield).splitTarget != nil {
+            let bitfieldA = bitfield
+            let parentVariableA = parentVariable
+            let parentVariableB = registerGroup.register.first(where: {$0.bitfield.contains(where: {$0.name.rawValue == bitfieldData(bitfield).splitTarget})})
+            let bitfieldB = parentVariableB?.bitfield.first(where: {$0.name.rawValue == bitfieldData(bitfield).splitTarget!})
+            bitfieldsToIgnore.append(bitfieldB!)
+            return generateSplitBitfieldAccessor(bitfieldA: bitfieldA, bitfieldB: bitfieldB!, parentVariableA: parentVariableA, parentVariableB: parentVariableB!, timerInfo: timerInfo, chipName: chipName, bitfieldData: bitfieldData, registerData: registerData)
+        }
+        
+        if bitfieldsToIgnore.contains(where: {$0.name == bitfield.name}) {
+            return MemberBlockItemSyntax(decl: DeclSyntax(""))
+        }
+        
+        let parentVariableName: String = registerData(parentVariable).variableName
+        
+        let caption = bitfield.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
+        let info = bitfieldData(bitfield)
+        let bitmask = bitfield.mask.value.lowByte.binaryString
+        let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
+        let enumBitmask = (bitfield.mask.value.lowByte >> bitshift).binaryString
+        
+        var sourceForGet = """
+          get {
+                      let mode = (\(parentVariableName) & \(bitmask)) >> UInt8(\(bitshift))
+                      return \(info.valueType).init(rawValue: mode) ?? \(info.defaultValue)
+          }
+          """
+        
+        var sourceForBoolGet = """
+          get {
+              let flag = (\(parentVariableName) & \(bitmask)) >> UInt8(\(bitshift))
+              return flag == 1
+          }
+          """
+        
+        if bitfieldData(bitfield).access == .write {
+            sourceForGet = ""
+            sourceForBoolGet = ""
+        }
+        
+        let source = DeclSyntax(
+          """
+              /// \(raw: bitfield.name) – \(raw: caption) \(raw: info.documentation)
+              @inlinable
+              @inline(__always)
+              public static var \(raw: info.variableName): \(raw: info.valueType) {
+                  \(raw: sourceForGet)
+                  set {
+                      \(raw: parentVariableName) |= (newValue.rawValue & \(raw: enumBitmask)) << UInt8(\(raw: bitshift))
+                  }
+              }
+          """
+        )
+        
+        let sourceForBool = DeclSyntax(
+          """
+              /// \(raw: bitfield.name) – \(raw: caption) \(raw: info.documentation)
+              @inlinable
+              @inline(__always)
+              public static var \(raw: info.variableName): \(raw: info.valueType) {\(raw: sourceForBoolGet)
+          set {
+          \(raw: parentVariableName) |= (newValue ? 1 : 0) & \(raw: enumBitmask) << UInt8(\(raw: bitshift))
+          }
+              }
+          """
+        )
+        
+        if info.valueType == "Bool" {
+            return MemberBlockItemSyntax(decl: sourceForBool.with(\.trailingTrivia, .newlines(2)))
+        } else {
+            return MemberBlockItemSyntax(decl: source.with(\.trailingTrivia, .newlines(2)))
+        }
+    }
     
     func generateSplitBitfieldAccessor(
         bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield,
@@ -190,27 +276,11 @@ struct BitfieldGenerator {
         
         // The LSBs of WMG should always be on TCCRnA and the MSBs should be on TCCRnB.
         
-        switch parentVariableA.name {
-        case .TCCR0A, .TCCR1A, .TCCR2A, .TCCR3A, .TCCR4A, .TCCR5A:
-            lowBitfield = bitfieldA
-            lowParentVariableName = registerData(parentVariableA).variableName
-            highBitfield = bitfieldB
-            hightParentVariableName = registerData(parentVariableB).variableName
-        case .TCCR0B, .TCCR1B, .TCCR2B, .TCCR3B, .TCCR4B, .TCCR5B:
-            lowBitfield = bitfieldB
-            lowParentVariableName = registerData(parentVariableB).variableName
-            highBitfield = bitfieldA
-            hightParentVariableName = registerData(parentVariableA).variableName
-        case .TCCR2, .TCCR0, .TCCR4D: // ATmega8, ATmega16, ATmega16U4 // I think this only has one TCCR register.
-            print("Failed to generate WaveformGenerationMode Accessor.")
-            logs.addLog("Failed to generate WaveformGenerationMode Accessor. The register: \(parentVariableA.name) has something different that needs to be handled.", toChip: chipName) // TODO: Set to the correct chip name!
-            let source = DeclSyntax("")
-            return MemberBlockItemSyntax(decl: source)
-        default :
-            // By having a default case that is different from the logging case above I can have two levels of errors.
-            // Forced errors at run time that will show me every case that has issues which have been added to the case above to fail more gracefully and can be known, researched, and fixed.
-            fatalError("Unhandled parent variable name for WaveformGenerationMode: \(parentVariableA.name.rawValue)")
-        }
+       
+        highBitfield = bitfieldA
+        hightParentVariableName = registerData(parentVariableB).variableName
+        lowBitfield = bitfieldB
+        lowParentVariableName = registerData(parentVariableA).variableName
         
         // Mask Value is 16 Bits and we have to have 8. Assuming that it's a total error to have a mask with bits above 8 we will just throw those away.
         let lowBitmask = lowBitfield.mask.value.lowByte.binaryString
@@ -357,4 +427,5 @@ struct SupplementalBitfieldData {
     let defaultValue: String
     let documentation: String
     let access: Access
+    var splitTarget: String? = nil
 }

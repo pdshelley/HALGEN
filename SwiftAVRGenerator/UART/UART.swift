@@ -51,13 +51,11 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
     for register in registerGroup.register {
         memberBlockList.append(contentsOf: generateUartRegister(register, documentation: documentation))
     }
-    
+    var generator: BitfieldGenerator = BitfieldGenerator()
     // Doing this in the above loop would be more efficient but I want to generate the registers before anything else
     for register in registerGroup.register {
         for bitfield in register.bitfield {
-            if !splitBitfieldAccessors.values.contains(where: { $0 == bitfield.name}) {
-                memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register, registerGroup, chipName))
-            }
+            memberBlockList.append(generator.generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, timerInfo: TimerInfo.init(isAsynchronous: true, bitSize: TimerInfo.BitSize.eightBit), chipName: chipName, registerData: documentation.supplementalData(for:), bitfieldData: documentation.supplementalData(for:)))
         }
     }
     

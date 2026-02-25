@@ -345,7 +345,7 @@ func generateRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> M
 
 var wmgBitfieldA: (bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariable: AVRModules.Module.RegisterGroup.Register)? = nil
 
-func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield, bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableA: AVRModules.Module.RegisterGroup.Register, parentVariableB: AVRModules.Module.RegisterGroup.Register, timerInfo: TimerInfo, chipName: String) -> MemberBlockItemSyntax {
+fileprivate func generateSplitBitfieldAccessor(bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield, bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariableA: AVRModules.Module.RegisterGroup.Register, parentVariableB: AVRModules.Module.RegisterGroup.Register, timerInfo: TimerInfo, chipName: String) -> MemberBlockItemSyntax {
     
     // TODO: Some chips only seem to have 1 bite for WGM. This breaks this logic and should be accounted for.
     
@@ -569,7 +569,7 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
 }
 
 // TODO: Pass the parent register name to this function so I can set the bits on the parent register.
-func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariable: AVRModules.Module.RegisterGroup.Register, timerInfo: TimerInfo, chipName: String) -> MemberBlockItemSyntax {
+private func generateBitfieldAccessor(bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield, parentVariable: AVRModules.Module.RegisterGroup.Register, timerInfo: TimerInfo, chipName: String) -> MemberBlockItemSyntax {
     
     switch bitfield.name {
         // The WGM Bitfield is split between two registers so this takes special handling.

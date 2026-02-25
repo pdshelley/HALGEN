@@ -50,7 +50,8 @@ struct ChipDocumentation: Codable {
                 valueType: valueType ?? "",
                 defaultValue: defaultValue ?? "",
                 documentation: documentation ?? "",
-                access: Access(rawValue: access ?? "") ?? .readWrite
+                access: Access(rawValue: access ?? "") ?? .readWrite,
+                splitTarget: splitTarget
             )
         }
     }
