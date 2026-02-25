@@ -9,17 +9,19 @@ import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
 
-func buildAnalogToDigitalConverters(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
+func buildAnalogToDigitalConverters(file: AVRToolsDeviceFile, chipDocumentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
     var analogToDigitalConverterFiles: [GeneratedCodeFile] = []
     
+    chipDocumentation.load(chipName: file.devices.device.name)
+    
     if let module: AVRModules.Module = file.modules.module.first(where: { $0.name == .adc }) {
-        analogToDigitalConverterFiles.append(buildAnalogToDigitalConverter(registerGroup: module.registerGroup.first!, chipName: file.devices.device.name))
+        analogToDigitalConverterFiles.append(buildAnalogToDigitalConverter(registerGroup: module.registerGroup.first!, chipName: file.devices.device.name, chipDocumentation: chipDocumentation))
     }
     
     return analogToDigitalConverterFiles
 }
 
-func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGroup, chipName: String) -> GeneratedCodeFile {
+func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGroup, chipName: String, chipDocumentation: ChipDocumentationLoader) -> GeneratedCodeFile {
     let adcName = "AnalogToDigitalConverter"
     let fileName = "\(adcName).swift"
     var code = buildFileHeader(for: adcName)
@@ -32,9 +34,9 @@ func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGrou
     
     // Generation of registers
     for register in registerGroup.register {
-        memberBlockList.append(contentsOf: generateAnalogToDigitalConverterRegister(register: register))
+        memberBlockList.append(contentsOf: generateAnalogToDigitalConverterRegister(register: register, chipDocumentation: chipDocumentation))
         for bitfield in register.bitfield {
-            memberBlockList.append(generateBitfieldAccessor(for: bitfield, in: register, registerGroup, chipName))
+            memberBlockList.append(generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, chipName: chipName, registerData: chipDocumentation.supplementalData(for:), bitfieldData: chipDocumentation.supplementalData(for:)))
         }
     }
     
@@ -57,161 +59,12 @@ func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGrou
     return GeneratedCodeFile(fileName: fileName, content: code)
 }
 
-func generateAnalogToDigitalConverterRegister(register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
+func generateAnalogToDigitalConverterRegister(register: AVRModules.Module.RegisterGroup.Register, chipDocumentation: ChipDocumentationLoader) -> MemberBlockItemListSyntax {
     return generateRegister(
         register: register,
-        registerData: supplementalData(for:),
-        bitfieldData: supplementalData(for:)
+        registerData: chipDocumentation.supplementalData(for:),
+        bitfieldData: chipDocumentation.supplementalData(for:)
     )
-}
-
-fileprivate func generateBitfieldAccessor(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
-                              in register: AVRModules.Module.RegisterGroup.Register,
-                              _ registerGroup: AVRModules.Module.RegisterGroup,
-                              _ chipName: String) -> MemberBlockItemSyntax {
-//    if splitBitfieldAccessors.contains(where: { $0.self.key == bitfield.name}) {
-//        let bitfieldBName = splitBitfieldAccessors[bitfield.name]
-//        let registerB = registerGroup.register.first(where: {$0.bitfield.contains(where: { $0.name == bitfieldBName! })})
-//        let bitfieldB = registerB?.bitfield.first(where: {$0.name == bitfieldBName})
-//        return generateSplitBitfieldAccessorUart(bitfieldA: bitfield, bitfieldB: bitfieldB!, parentVariableA: register, parentVariableB: registerB!, chipName: chipName)
-//    }
-    
-    let supData = supplementalData(for: bitfield)
-    let variableName = (supData.variableName != "") ? supData.variableName : getVariableName(caption: bitfield.caption?.rawValue ?? "")
-    let supDataParent = supplementalData(for: register)
-    let bitmask = bitfield.mask.value.lowByte.binaryString
-    let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
-    let caption: String = bitfield.caption.map(\.rawValue.capitalized) ?? "Unknown"
-    //let enumBitmask = (bitfield.mask.value.lowByte >> bitshift).binaryString
-    
-    if supData.valueType == "Bool" {
-        var sourceForBoolGet = """
-          get {
-              return !((\(supDataParent.variableName) & \(bitmask)) == 0)
-          }
-          """
-        
-        var sourceForBoolSet = """
-          set {
-              \(supDataParent.variableName) |= UInt8(newValue.hashValue) & \(bitmask)
-          }
-          """
-        if supData.access == Access.write {
-            sourceForBoolGet = ""
-        }
-        if supData.access == Access.read {
-            sourceForBoolSet = ""
-        }
-        
-        let sourceForBool = DeclSyntax(
-          """
-              /// \(raw: bitfield.name) – \(raw: caption) \(raw: supData.documentation)
-              @inlinable
-              @inline(never)
-              public static var \(raw: variableName): \(raw: supData.valueType) {\(raw: sourceForBoolGet)\(raw: sourceForBoolSet)
-              }
-          """
-        ).with(\.trailingTrivia, .newlines(2))
-        return MemberBlockItemSyntax(decl: sourceForBool)
-    }
-    
-    if bitshift == 0 {
-        let source = DeclSyntax(
-            """
-                /// \(raw: bitfield.name) – \(raw: caption) \(raw: supData.documentation)
-                @inlinable
-                @inline(__always)
-                public static var \(raw: variableName): \(raw: supData.valueType) {
-                    get {
-                        let mode = \(raw: supDataParent.variableName) & \(raw: bitmask)
-                        return \(raw: supData.valueType).init(rawValue: mode) ?? \(raw: supData.defaultValue)
-                    }
-                    set {
-                        \(raw: supDataParent.variableName) = (\(raw: supDataParent.variableName) & ~\(raw: bitmask)) | (newValue.rawValue & \(raw: bitmask))
-                    }
-                }
-            """
-        ).with(\.trailingTrivia, .newlines(2))
-        return MemberBlockItemSyntax(decl: source)
-    }
-    
-    let source = DeclSyntax(
-        """
-            /// \(raw: bitfield.name) – \(raw: caption) \(raw: supData.documentation)
-            @inlinable
-            @inline(__always)
-            public static var \(raw: variableName): \(raw: supData.valueType) {
-                get {
-                    let mode = (\(raw: supDataParent.variableName) & \(raw: bitmask)) >> \(raw: bitshift)
-                    return \(raw: supData.valueType).init(rawValue: mode) ?? \(raw: supData.defaultValue)
-                }
-                set {
-                    \(raw: supDataParent.variableName) = (\(raw: supDataParent.variableName) & ~\(raw: bitmask)) | ((newValue.rawValue << \(raw: bitshift)) & \(raw: bitmask))
-                }
-            }
-        """
-    ).with(\.trailingTrivia, .newlines(2))
-    return MemberBlockItemSyntax(decl: source)
-}
-
-fileprivate func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
-    switch register.name {
-    case .ADMUX:
-        return SupplementalRegisterData(variableName: "multiplexerSelectionRegister", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
-    case .ADC:
-        return SupplementalRegisterData(variableName: "dataRegister", valueType: "", defaultValue: "", documentation: "", access: Access.read.rawValue)
-    case .ADCSRA:
-        return SupplementalRegisterData(variableName: "controlRegisterA", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
-    case .ADCSRB:
-        return SupplementalRegisterData(variableName: "controlRegisterB", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
-    case .ADCSRC:
-        return SupplementalRegisterData(variableName: "controlRegisterC", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
-    case .DIDR0, .DIDR1, .DIDR2:
-        return SupplementalRegisterData(variableName: "digitalInputDisableRegister", valueType: "", defaultValue: "", documentation: "", access: Access.readWrite.rawValue)
-    default :
-        return SupplementalRegisterData(variableName: getVariableName(caption: register.caption?.rawValue ?? ""), valueType: "", defaultValue: "", documentation: "", access: "")
-    }
-}
-
-fileprivate func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
-    switch bitfield.name {
-    case .REFS, .REFS0: // Is REFS0 a part of the adc?
-        return SupplementalBitfieldData(variableName: "reference", valueType: "VoltageReferenceSelection", defaultValue: ".internalTurnedOff", documentation: adcDocs.referenceDocumentation, access: .readWrite)
-    case .ADLAR:
-        return SupplementalBitfieldData(variableName: "leftAdjust", valueType: "Bool", defaultValue: "", documentation: adcDocs.leftAdjustDocumentation, access: .readWrite)
-    case .MUX, .MUX5: // Is MUX5 a part of the adc?
-        return SupplementalBitfieldData(variableName: "channel", valueType: "AnalogChannelSelection", defaultValue: ".adc0", documentation: adcDocs.channelDocumentation, access: .readWrite)
-    case .ADEN:
-        return SupplementalBitfieldData(variableName: "enabled", valueType: "Bool", defaultValue: "", documentation: adcDocs.enabledDocumentation, access: .readWrite)
-    case .ADSC:
-        return SupplementalBitfieldData(variableName: "converting", valueType: "Bool", defaultValue: "", documentation: adcDocs.convertingDocumentation, access: .readWrite)
-    case .ADATE:
-        return SupplementalBitfieldData(variableName: "autoTriggerEnabled", valueType: "Bool", defaultValue: "", documentation: adcDocs.autoTriggerEnabledDocumentation, access: .readWrite)
-    case .ADIF:
-        return SupplementalBitfieldData(variableName: "interruptFlag", valueType: "Bool", defaultValue: "", documentation: adcDocs.interruptFlagDocumentation, access: .readWrite)
-    case .ADIE:
-        return SupplementalBitfieldData(variableName: "interruptEnabled", valueType: "Bool", defaultValue: "", documentation: adcDocs.interruptEnabledDocumentation, access: .readWrite)
-    case .ADPS:
-        return SupplementalBitfieldData(variableName: "prescaler", valueType: "AnalogPrescalerSelection", defaultValue: "", documentation: adcDocs.prescalerDocumentation, access: .readWrite)
-    case .ACME:
-        return SupplementalBitfieldData(variableName: "multiplexerEnable", valueType: "Bool", defaultValue: "", documentation: adcDocs.multiplexerEnabledDocumentation, access: .readWrite)
-    case .ADTS, .ADTS0, .ADTS1, .ADTS2, .ADTS3: // Are .ADTSn a part of the adc?
-        return SupplementalBitfieldData(variableName: "autoTriggerSource", valueType: "AutoTriggerSource", defaultValue: ".freeRunning", documentation: adcDocs.autoTriggerSourceDocumentation, access: .readWrite)
-    case .ADC5D:
-        return SupplementalBitfieldData(variableName: "digitalInput5Disabled", valueType: "Bool", defaultValue: "", documentation: adcDocs.digitalInput5DisabledDocumentation, access: .readWrite)
-    case .ADC4D:
-        return SupplementalBitfieldData(variableName: "digitalInput4Disabled", valueType: "Bool", defaultValue: "", documentation: adcDocs.digitalInput4DisabledDocumentation, access: .readWrite)
-    case .ADC3D:
-        return SupplementalBitfieldData(variableName: "digitalInput3Disabled", valueType: "Bool", defaultValue: "", documentation: adcDocs.digitalInput3DisabledDocumentation, access: .readWrite)
-    case .ADC2D:
-        return SupplementalBitfieldData(variableName: "digitalInput2Disabled", valueType: "Bool", defaultValue: "", documentation: adcDocs.digitalInput2DisabledDocumentation, access: .readWrite)
-    case .ADC1D:
-        return SupplementalBitfieldData(variableName: "digitalInput1Disabled", valueType: "Bool", defaultValue: "", documentation: adcDocs.digitalInput1DisabledDocumentation, access: .readWrite)
-    case .ADC0D:
-        return SupplementalBitfieldData(variableName: "digitalInput0Disabled", valueType: "Bool", defaultValue: "", documentation: adcDocs.digitalInput0DisabledDocumentation, access: .readWrite)
-    default :
-        return SupplementalBitfieldData(variableName: "", valueType: "", defaultValue: "", documentation: "", access: .readWrite)
-    }
 }
 
 private enum adcDocs {

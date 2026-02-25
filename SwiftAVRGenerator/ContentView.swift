@@ -193,23 +193,22 @@ struct GeneratedAVRCore {
 
 func decodeATDF(data: Data, docURL: URL) -> GeneratedAVRCore {
     
+    let documentation = ChipDocumentationLoader()
+    documentation.directory = docURL
     let ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
     print("************************************************** \(ATDFObject.devices.device.name) **************************************************")
     let deviceName = ATDFObject.devices.device.name
     var generatedFiles: [GeneratedCodeFile] = []
     generatedFiles.append(buildGPIO(file: ATDFObject))
-    for file in buildTimers(file: ATDFObject) {
+    for file in buildTimers(file: ATDFObject, chipDocumentation: documentation) {
         generatedFiles.append(file)
     }
     //generatedFiles.append(buildUART(file: ATDFObject))
     
-    let documentation = ChipDocumentationLoader()
-    documentation.directory = docURL
-    
     for uartFile in buildUARTs(file: ATDFObject, chipDocumentation: documentation) {
         generatedFiles.append(uartFile)
     }
-    for file in buildAnalogToDigitalConverters(file: ATDFObject) {
+    for file in buildAnalogToDigitalConverters(file: ATDFObject, chipDocumentation: documentation) {
         generatedFiles.append(file)
     }
     
