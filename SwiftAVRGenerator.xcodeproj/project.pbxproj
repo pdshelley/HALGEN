@@ -78,7 +78,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		EE96A6502F4E7B5F00542FFD /* Documentation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Documentation; sourceTree = "<group>"; };
 		EEA880C42F431EDD00AEE20B /* UART */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UART; sourceTree = "<group>"; };
+		EEF6589F2F4E969400A32070 /* docs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = docs; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 		DAE992D12A22A6F4007656B5 = {
 			isa = PBXGroup;
 			children = (
+				EEF6589F2F4E969400A32070 /* docs */,
 				DAE992DC2A22A6F4007656B5 /* SwiftAVRGenerator */,
 				DAE992EE2A22A6F5007656B5 /* SwiftAVRGeneratorTests */,
 				DAE992F82A22A6F6007656B5 /* SwiftAVRGeneratorUITests */,
@@ -156,6 +159,7 @@
 		DAE992DC2A22A6F4007656B5 /* SwiftAVRGenerator */ = {
 			isa = PBXGroup;
 			children = (
+				EE96A6502F4E7B5F00542FFD /* Documentation */,
 				EEE974D42F4C80470072E371 /* Utils.swift */,
 				EEE974D22F4C7B160072E371 /* AnalogToDigitalConverter.swift */,
 				EEA880C42F431EDD00AEE20B /* UART */,
@@ -215,6 +219,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				EE96A6502F4E7B5F00542FFD /* Documentation */,
 				EEA880C42F431EDD00AEE20B /* UART */,
 			);
 			name = SwiftAVRGenerator;

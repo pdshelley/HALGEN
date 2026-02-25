@@ -8,12 +8,14 @@ import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
 
-func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
+func buildUARTs(file: AVRToolsDeviceFile, chipDocumentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
     var uartFiles: [GeneratedCodeFile] = []
     
     let fileName = "UART.swift"
     let code: String = buildFileHeader(for: fileName, generateTypealias: false) + UARTDocs.uartBoilerPlate
     uartFiles.append(GeneratedCodeFile(fileName: fileName, content: code))
+    
+    chipDocumentation.load(chipName: file.devices.device.name)
     
     let uartNamesDict: [AVRModules.Module.RegisterGroup.Name: String] = [
         .USART0: "UART0",
@@ -25,13 +27,13 @@ func buildUARTs(file: AVRToolsDeviceFile) -> [GeneratedCodeFile] {
     if let module: AVRModules.Module = file.modules.module.first(where: { $0.name == .usart }) {
         let registerGroups: [AVRModules.Module.RegisterGroup] = module.registerGroup.filter { uartNamesDict.keys.contains($0.name) }
         for registerGroup in registerGroups {
-            uartFiles.append(buildUART(registerGroup: registerGroup, uartName: uartNamesDict[registerGroup.name]!, chipName: file.devices.device.name))
+            uartFiles.append(buildUART(registerGroup: registerGroup, uartName: uartNamesDict[registerGroup.name]!, chipName: file.devices.device.name, documentation: chipDocumentation))
         }
     }
     return uartFiles
 }
 
-func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String, chipName: String) -> GeneratedCodeFile {
+func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String, chipName: String, documentation: ChipDocumentationLoader) -> GeneratedCodeFile {
     let fileName = "\(uartName).swift"
     var code = buildFileHeader(for: uartName)
     var memberBlockList = MemberBlockItemListSyntax()
@@ -47,7 +49,7 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
 //    }
     
     for register in registerGroup.register {
-        memberBlockList.append(contentsOf: generateUartRegister(register))
+        memberBlockList.append(contentsOf: generateUartRegister(register, documentation: documentation))
     }
     
     // Doing this in the above loop would be more efficient but I want to generate the registers before anything else
@@ -78,11 +80,11 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
     return GeneratedCodeFile(fileName: fileName, content: code)
 }
 
-func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register) -> MemberBlockItemListSyntax {
+func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register, documentation: ChipDocumentationLoader) -> MemberBlockItemListSyntax {
     return generateRegister(
         register: register,
-        registerData: supplementalData(for:),
-        bitfieldData: supplementalData(for:)
+        registerData: documentation.supplementalData(for:),
+        bitfieldData: documentation.supplementalData(for:)
     )
 }
 

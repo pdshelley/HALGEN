@@ -11,6 +11,7 @@ import SwiftUI
 struct ContentView: View {
     @State var urls: [URL] = []
     @State var showFileChooser = false
+    @State var docDir: URL? = nil
 //    @State var saveLocationURL: URL? = nil
     
     var body: some View {
@@ -24,7 +25,7 @@ struct ContentView: View {
                 }
             }
             Button {
-                decodeATDF(urls: urls)
+                decodeATDF(urls: urls, docURL: docDir!)
             } label: {
                 Text("Decode ATDF Files")
             }
@@ -41,10 +42,18 @@ struct ContentView: View {
                 panel.nameFieldLabel = "File Name:"
                 if panel.runModal() == .OK {
                     guard let url = panel.url else { return }
-                    export(fromURLs: self.urls, toURL: url)
+                    export(fromURLs: self.urls, toURL: url, docURL: docDir!)
                 }
             } label: {
                 Text("Export")
+            }
+            Button("doc dir") {
+               let panel = NSOpenPanel()
+                panel.allowsMultipleSelection = false
+                panel.canChooseDirectories = true
+                if panel.runModal() == .OK {
+                    self.docDir = panel.url
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -58,13 +67,13 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 
-func decodeATDF(urls: [URL]) -> [GeneratedAVRCore] {
+func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
     var generatedAVRCores: [GeneratedAVRCore] = []
     
     for url in urls {
         do {
             let data = try Data(contentsOf: url)
-            generatedAVRCores.append(decodeATDF(data: data))
+            generatedAVRCores.append(decodeATDF(data: data, docURL: docURL))
         } catch {
             print("Could not get data from ATDF file URL.")
         }
@@ -77,9 +86,9 @@ var listOfValues: [String] = []
 
 // Does all of the decoding - Maybe it should not?
 // Creates Sub Folder for Chip and saves all the data to files in this folder.
-func export(fromURLs: [URL], toURL: URL) {
+func export(fromURLs: [URL], toURL: URL, docURL: URL) {
     // Load ATDF Files
-    let generatedCores = decodeATDF(urls: fromURLs)
+    let generatedCores = decodeATDF(urls: fromURLs, docURL: docURL)
     
     // New
     for core in generatedCores {
@@ -182,7 +191,7 @@ struct GeneratedAVRCore {
     let files: [GeneratedCodeFile]
 }
 
-func decodeATDF(data: Data) -> GeneratedAVRCore {
+func decodeATDF(data: Data, docURL: URL) -> GeneratedAVRCore {
     
     let ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
     print("************************************************** \(ATDFObject.devices.device.name) **************************************************")
@@ -194,7 +203,10 @@ func decodeATDF(data: Data) -> GeneratedAVRCore {
     }
     //generatedFiles.append(buildUART(file: ATDFObject))
     
-    for uartFile in buildUARTs(file: ATDFObject) {
+    let documentation = ChipDocumentationLoader()
+    documentation.directory = docURL
+    
+    for uartFile in buildUARTs(file: ATDFObject, chipDocumentation: documentation) {
         generatedFiles.append(uartFile)
     }
     for file in buildAnalogToDigitalConverters(file: ATDFObject) {

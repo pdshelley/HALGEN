@@ -1,0 +1,183 @@
+{
+  "chip": "ATmega328P",
+  "datasheet": "ATmega328P Datasheet (DS40002061B)",
+  "registers": {
+    "UDR0": {
+      "variableName": "dataRegister",
+      "documentation": "\n    /// See ATMega328p Datasheet Section 36 Register Summary  \n    /// The USART Transmit Data Buffer Register and USART Receive Data Buffer Registers share the same I/O address referred to as\n    /// USART Data Register or UDRn. The Transmit Data Buffer Register (TXB) will be the destination for data written to the UDRn\n    /// Register location. Reading the UDRn Register location will return the contents of the Receive Data Buffer Register (RXB).\n    ///\n    /// For 5-, 6-, or 7-bit characters the upper unused bits will be ignored by the Transmitter and set to zero by the Receiver.\n    ///\n    /// The transmit buffer can only be written when the UDREn Flag in the UCSRnA Register is set. Data written to UDRn when the\n    /// UDREn Flag is not set, will be ignored by the USART Transmitter. When data is written to the transmit buffer, and the\n    /// Transmitter is enabled, the Transmitter will load the data into the Transmit Shift Register when the Shift Register is empty.\n    /// Then the data will be serially transmitted on the TxDn pin.\n    ///\n    /// The receive buffer consists of a two level FIFO. The FIFO will change its state whenever the receive buffer is accessed. Due\n    /// to this behavior of the receive buffer, do not use Read-Modify-Write instructions (SBI and CBI) on this location. Be careful\n    /// when using bit test instructions (SBIC and SBIS), since these also will change the state of the FIFO.",
+      "access": "R/W"
+    },
+    "UCSR0A": {
+      "variableName": "controlRegisterA",
+      "documentation": "",
+      "access": ""
+    },
+    "UCSR0B": {
+      "variableName": "controlRegisterB",
+      "documentation": "",
+      "access": ""
+    },
+    "UCSR0C": {
+      "variableName": "controlRegisterC",
+      "documentation": "",
+      "access": ""
+    },
+    "UBRR0": {
+      "variableName": "baudRateRegister",
+      "documentation": "\n    /// ```\n    /// --------------------------------------------------------------------------------\n    /// | Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |\n    /// --------------------------------------------------------------------------------\n    /// |              |   -   |   -   |   -   |   -   |         UBRRn[12:8]           |\n    /// |              |                       UBRRn[7:0]                              |\n    /// --------------------------------------------------------------------------------\n    /// | Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |\n    /// --------------------------------------------------------------------------------\n    /// | InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |\n    /// --------------------------------------------------------------------------------\n    /// ```\n    /// Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero\n    /// when UBRRnH is written.\n    ///\n    /// This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the\n    /// UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receive\n    /// will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler.",
+      "access": "R/W",
+      "documentationL": "\n    /// This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the\n    /// UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver\n    /// will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler.",
+      "documentationH": "\n    /// Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero\n    /// when UBRRnH is written.\n    ///\n    /// This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the\n    /// UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver\n    /// will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
+    }
+  },
+  "bitfields": {
+    "RXC0": {
+      "variableName": "rxDataAvailable",
+      "valueType": "Bool",
+      "defaultValue": "",
+      "documentation": "URXCn is Bit 7 on UCSRnA. See Section 20.11.2.",
+      "access": "R"
+    },
+    "TXC0": {
+      "variableName": "txComplete",
+      "valueType": "Bool",
+      "defaultValue": "",
+      "documentation": "UTXCn is Bit 6 on UCSRnA. See Section 20.11.2.",
+      "access": "R/W"
+    },
+    "UDRE0": {
+      "variableName": "dataRegisterEmpty",
+      "valueType": "Bool",
+      "defaultValue": "",
+      "documentation": "UDREn is Bit 5 on UCSRnA. See Section 20.11.2.",
+      "access": "R"
+    },
+    "FE0": {
+      "variableName": "frameError",
+      "valueType": "Bool",
+      "defaultValue": "",
+      "documentation": "UFEn is Bit 4 on UCSRnA. See Section 20.11.2.",
+      "access": "R"
+    },
+    "DOR0": {
+      "variableName": "dataOverrun",
+      "valueType": "Bool",
+      "defaultValue": "",
+      "documentation": "UDROn is Bit 3 on UCSRnA. See Section 20.11.2.",
+      "access": "R"
+    },
+    "UPE0": {
+      "variableName": "parityError",
+      "valueType": "Bool",
+      "defaultValue": "",
+      "documentation": "UPEn is Bit 2 on UCSRnA. See Section 20.11.2.",
+      "access": "R"
+    },
+    "U2X0": {
+      "variableName": "asynchronousDoubleSpeedMode",
+      "valueType": "UART.AsynchronousDoubleSpeedMode",
+      "defaultValue": ".off",
+      "documentation": "See ATMega328p Datasheet Section 20.\nU2Xn is bit 1 on UCSRnA.",
+      "access": "R/W"
+    },
+    "MPCM0": {
+      "variableName": "multiProcessorCommunication",
+      "valueType": "Bool",
+      "defaultValue": "",
+      "documentation": "See ATMega328p Datasheet Section 20.\nMPCMn is bit 0 on UCSRnA.",
+      "access": "R/W"
+    },
+    "RXCIE0": {
+      "variableName": "rxCompleteInterruptEnable",
+      "valueType": "UART.RXCompleteInterruptEnable",
+      "defaultValue": ".off",
+      "documentation": "",
+      "access": "R/W"
+    },
+    "TXCIE0": {
+      "variableName": "txCompleteInterruptEnable",
+      "valueType": "UART.TXCompleteInterruptEnable",
+      "defaultValue": ".off",
+      "documentation": "",
+      "access": "R/W"
+    },
+    "UDRIE0": {
+      "variableName": "dataRegisterEmptyInterruptEnable",
+      "valueType": "UART.DRECompleteInterruptEnable",
+      "defaultValue": ".off",
+      "documentation": "",
+      "access": "R/W"
+    },
+    "RXEN0": {
+      "variableName": "receiverEnable",
+      "valueType": "UART.ReceiverEnable",
+      "defaultValue": ".off",
+      "documentation": "",
+      "access": "R/W"
+    },
+    "TXEN0": {
+      "variableName": "transmitterEnable",
+      "valueType": "UART.TransmitterEnable",
+      "defaultValue": ".off",
+      "documentation": "",
+      "access": "R/W"
+    },
+    "UCSZ02": {
+      "variableName": "numberOfDataBits",
+      "valueType": "UART.NumberOfDataBits",
+      "defaultValue": ".eight",
+      "documentation": "See ATMega328p Datasheet Section 20.11.3 and Section 20.11.4.\nUCSZn0 and UCSZn1 are bits 1 and 2 on UCSRnC while UCSZn2 is bit 2 on UCSRnB",
+      "access": "R/W",
+      "splitTarget": "UCSZ0"
+    },
+    "RXB80": {
+      "variableName": "receiveData8thBit",
+      "valueType": "Bool",
+      "defaultValue": "",
+      "documentation": "See ATMega328p Datasheet Section 20.11.3\nRXB8n is bit 1 on UCSRnB",
+      "access": "R"
+    },
+    "TXB80": {
+      "variableName": "transmitData8thBit",
+      "valueType": "Bool",
+      "defaultValue": "",
+      "documentation": "See ATMega328p Datasheet Section 20.11.3\nTXB8n is bit 0 on UCSRnB",
+      "access": "R/W"
+    },
+    "UMSEL0": {
+      "variableName": "modeSelect",
+      "valueType": "UART.ModeSelect",
+      "defaultValue": ".asynchronous",
+      "documentation": "See ATMega328p Datasheet Section 20.11.4\nUMSELn are bit 7 and 6 on UCSRnC",
+      "access": "R/W"
+    },
+    "UPM0": {
+      "variableName": "parityMode",
+      "valueType": "UART.ParityMode",
+      "defaultValue": ".disabled",
+      "documentation": "Parity Mode\nSee ATMega328p Datasheet Section 20.11.4.\nUPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.\n\nThese bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.\n\n| UPMn1 | UPMn0 | Parity Mode          |\n|-------|-------|----------------------|\n| 0     | 0     | Disabled             |\n| 0     | 1     | Reserved             |\n| 1     | 0     | Enabled, Even Parity |\n| 1     | 1     | Enabled, Odd Parity  |",
+      "access": "R/W"
+    },
+    "USBS0": {
+      "variableName": "numberOfStopBits",
+      "valueType": "UART.NumberOfStopBits",
+      "defaultValue": ".one",
+      "documentation": "See ATMega328p Datasheet Section 20.11.4.\nUSBSn is bit 3 on UCSRnC.",
+      "access": "R/W"
+    },
+    "UCSZ0": {
+      "variableName": "numberOfDataBits",
+      "valueType": "UART.NumberOfDataBits",
+      "defaultValue": ".eight",
+      "documentation": "See ATMega328p Datasheet Section 20.11.3 and Section 20.11.4.\nUCSZn0 and UCSZn1 are bits 1 and 2 on UCSRnC while UCSZn2 is bit 2 on UCSRnB",
+      "access": "R/W"
+    },
+    "UCPOL0": {
+      "variableName": "clockPolarity",
+      "valueType": "UART.ClockPolarity",
+      "defaultValue": ".rising",
+      "documentation": "See ATMega328p Datasheet Section 20.11.4.\nUCPOLn is bit 0 on UCSRnC.",
+      "access": "R/W"
+    }
+  }
+}
