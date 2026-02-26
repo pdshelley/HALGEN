@@ -44,7 +44,7 @@ func buildGPIO(file: AVRToolsDeviceFile) -> GeneratedCodeFile {
     
     }
     """)
-    
+    // TODO: Move generation logic to the generator function in the PeripheralGenerator struct so no new instantiation is needed to get the subdir
     return GeneratedCodeFile(fileName: fileName, content: code, subdirectory: GPIOGenerator().subdirectory)
 }
 

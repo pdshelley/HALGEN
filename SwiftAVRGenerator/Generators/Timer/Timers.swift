@@ -193,7 +193,7 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String, 
     }.formatted().description)
 
 //    print(code)
-    
+    // TODO: Move generation logic to the generator function in the PeripheralGenerator struct so no new instantiation is needed to get the subdir
     return GeneratedCodeFile(fileName: fileName, content: code, subdirectory: TimerGenerator().subdirectory)
 }
 
