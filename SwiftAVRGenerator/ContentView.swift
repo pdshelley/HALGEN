@@ -90,33 +90,13 @@ func export(fromURLs: [URL], toURL: URL, docURL: URL) {
     // Load ATDF Files
     let generatedCores = decodeATDF(urls: fromURLs, docURL: docURL)
     
-    // New
     for core in generatedCores {
         let subFolderURL = toURL.appendingPathComponent(core.name, conformingTo: .directory)
-        let moduleFolderURL = subFolderURL.appendingPathComponent("module", conformingTo: .directory)
-        let timerFolderUrl = moduleFolderURL.appendingPathComponent("Timer", conformingTo: .directory)
-        let uartFolderUrl = moduleFolderURL.appendingPathComponent("UART", conformingTo: .directory)
-        //print(uartFolderUrl.lastPathComponent)
         for file in core.files {
-            //export(toURL: subFolderURL, fileName: file.fileName, fileContents: file.content)
-            if file.fileName.contains(timerFolderUrl.lastPathComponent) {
-                export(toURL: timerFolderUrl, fileName: file.fileName, fileContents: file.content)
-            } else if file.fileName.contains(uartFolderUrl.lastPathComponent) {
-                export(toURL: uartFolderUrl, fileName: file.fileName, fileContents: file.content)
-            } else {
-                export(toURL: moduleFolderURL, fileName: file.fileName, fileContents: file.content)
-            }
-            
+            let folder = subFolderURL.appendingPathComponent(file.subdirectory, conformingTo: .directory)
+            export(toURL: folder, fileName: file.fileName, fileContents: file.content)
         }
     }
-    
-    // Old
-//    for core in generatedCores {
-//        let subFolderURL = toURL.appendingPathComponent(core.name, conformingTo: .directory)
-//        for file in core.files {
-//            export(toURL: subFolderURL, fileName: file.fileName, fileContents: file.content)
-//        }
-//    }
     
     logs.saveToFile(toURL: toURL)
 }
@@ -184,6 +164,7 @@ func printValues() {
 struct GeneratedCodeFile {
     let fileName: String
     let content: String
+    let subdirectory: String
 }
 
 struct GeneratedAVRCore {
@@ -201,59 +182,8 @@ func decodeATDF(data: Data, docURL: URL) -> GeneratedAVRCore {
     //var generatedFiles: [GeneratedCodeFile] = []
     let pipeline = GenerationPipeline()
     var generatedFiles: [GeneratedCodeFile] = pipeline.run(device: ATDFObject, documentation: documentation)
-    generatedFiles.append(buildGPIO(file: ATDFObject))
-//    for file in buildTimers(file: ATDFObject, chipDocumentation: documentation) {
-//        generatedFiles.append(file)
-//    }
-    //generatedFiles.append(buildUART(file: ATDFObject))
-    
-//    for uartFile in buildUARTs(file: ATDFObject, chipDocumentation: documentation) {
-//        generatedFiles.append(uartFile)
-//    }
-//    for file in buildAnalogToDigitalConverters(file: ATDFObject, chipDocumentation: documentation) {
-//        generatedFiles.append(file)
-//    }
-    
-//    print("ATDFObject.devices.device.name = \(deviceName)")
-//    print()
-//    print(buildGPIO(file: ATDFObject).content)
-    
+
     return GeneratedAVRCore(name: deviceName, files: generatedFiles)
-    
-    
-//    for module in ATDFObject.devices.device.peripherals.module {
-//        if module.name == .port {
-//            for instance in module.instance {
-//                guard let signals = instance.signals else { break }
-//                print()
-//                for signal in signals.signal {
-//                    print(signal.pad)
-//                }
-//            }
-//        }
-//    }
-    
-//    listOfValues.append(ATDFObject.devices.device.family.rawValue)
-    
-//    if let pinouts = ATDFObject.pinouts {
-//    for module in ATDFObject.devices.device.peripherals.module {
-////        if module.name == .port {
-//            print("ATDFObject.devices.device.name = \(ATDFObject.devices.device.name)")
-//            for instance in module.instance {
-////                guard let registerGroup = instance.registerGroup else { break }
-//
-////                listOfValues.append(registerGroup.offset.rawValue)
-//                guard let signals = instance.signals else { break }
-//                for signal in signals.signal {
-//                    listOfValues.append(signal.function.rawValue)
-//                }
-//            }
-////        }
-////        for pin in module {
-////                listOfValues.append(pin.pad.rawValue)
-////            }
-//        }
-//    }
 }
 
 

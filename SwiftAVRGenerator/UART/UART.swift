@@ -10,6 +10,7 @@ import SwiftSyntaxBuilder
 
 struct UARTGenerator: PeripheralGenerator {
     let name: String = "UART"
+    let subdirectory: String = "module/UART"
     
     func supports(device: AVRToolsDeviceFile) -> Bool {
         device.modules.module.contains { $0.name == .usart }
@@ -27,7 +28,7 @@ func buildUARTs(file: AVRToolsDeviceFile, documentation: ChipDocumentationLoader
     
     let fileName = "UART.swift"
     let code: String = buildFileHeader(for: fileName, generateTypealias: false) + UARTDocs.uartBoilerPlate
-    uartFiles.append(GeneratedCodeFile(fileName: fileName, content: code))
+    uartFiles.append(GeneratedCodeFile(fileName: fileName, content: code, subdirectory: UARTGenerator().subdirectory))
             
     documentation.load(chipName: file.devices.device.name)
     
@@ -79,7 +80,7 @@ func buildUART(registerGroup: AVRModules.Module.RegisterGroup, uartName: String,
         )
     }.formatted().description)
     
-    return GeneratedCodeFile(fileName: fileName, content: code)
+    return GeneratedCodeFile(fileName: fileName, content: code, subdirectory: UARTGenerator().subdirectory)
 }
 
 func generateUartRegister(_ register: AVRModules.Module.RegisterGroup.Register, documentation: ChipDocumentationLoader) -> MemberBlockItemListSyntax {

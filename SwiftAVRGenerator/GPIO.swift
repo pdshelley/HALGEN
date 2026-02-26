@@ -7,6 +7,19 @@
 
 import Foundation
 
+struct GPIOGenerator: PeripheralGenerator {
+    let name = "GPIO"
+    let subdirectory = "module"
+    
+    func supports(device: AVRToolsDeviceFile) -> Bool {
+        device.modules.module.contains { $0.name == .port }
+    }
+    
+    func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
+        [buildGPIO(file: device)]
+    }
+}
+
 
 // TODO: Make A Generic Function where it can accept any array of anything, send it to a function that returns a string, and adds it to the middle.
 func buildGPIO(file: AVRToolsDeviceFile) -> GeneratedCodeFile {
@@ -32,7 +45,7 @@ func buildGPIO(file: AVRToolsDeviceFile) -> GeneratedCodeFile {
     }
     """)
     
-    return GeneratedCodeFile(fileName: fileName, content: code)
+    return GeneratedCodeFile(fileName: fileName, content: code, subdirectory: GPIOGenerator().subdirectory)
 }
 
 // TODO: Maybe make A Generic Function where it can accept any array of anything, send it to a function that returns a string, and adds it to the middle? Would need to account for line indentations

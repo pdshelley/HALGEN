@@ -9,6 +9,19 @@ import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
 
+struct ADCGenerator: PeripheralGenerator {
+    let name = "AnalogToDigitalConverter"
+    let subdirectory: String = "module"
+    
+    func supports(device: AVRToolsDeviceFile) -> Bool {
+        device.modules.module.contains { $0.name == .adc }
+    }
+    
+    func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
+        buildAnalogToDigitalConverters(file: device, chipDocumentation: documentation)
+    }
+}
+
 func buildAnalogToDigitalConverters(file: AVRToolsDeviceFile, chipDocumentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
     var analogToDigitalConverterFiles: [GeneratedCodeFile] = []
     
@@ -56,7 +69,7 @@ func buildAnalogToDigitalConverter(registerGroup: AVRModules.Module.RegisterGrou
         )
     }.formatted().description)
     
-    return GeneratedCodeFile(fileName: fileName, content: code)
+    return GeneratedCodeFile(fileName: fileName, content: code, subdirectory: ADCGenerator().subdirectory)
 }
 
 func generateAnalogToDigitalConverterRegister(register: AVRModules.Module.RegisterGroup.Register, chipDocumentation: ChipDocumentationLoader) -> MemberBlockItemListSyntax {
