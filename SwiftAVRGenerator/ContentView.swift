@@ -24,11 +24,11 @@ struct ContentView: View {
                     self.urls = panel.urls
                 }
             }
-            Button {
-                decodeATDF(urls: urls, docURL: docDir!)
-            } label: {
-                Text("Decode ATDF Files")
-            }
+//            Button {
+//                decodeATDF(urls: urls, docURL: docDir!)
+//            } label: {
+//                Text("Decode ATDF Files")
+//            }
             Button {
                 printValues()
             } label: {
@@ -198,19 +198,21 @@ func decodeATDF(data: Data, docURL: URL) -> GeneratedAVRCore {
     let ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
     print("************************************************** \(ATDFObject.devices.device.name) **************************************************")
     let deviceName = ATDFObject.devices.device.name
-    var generatedFiles: [GeneratedCodeFile] = []
+    //var generatedFiles: [GeneratedCodeFile] = []
+    let pipeline = GenerationPipeline()
+    var generatedFiles: [GeneratedCodeFile] = pipeline.run(device: ATDFObject, documentation: documentation)
     generatedFiles.append(buildGPIO(file: ATDFObject))
-    for file in buildTimers(file: ATDFObject, chipDocumentation: documentation) {
-        generatedFiles.append(file)
-    }
+//    for file in buildTimers(file: ATDFObject, chipDocumentation: documentation) {
+//        generatedFiles.append(file)
+//    }
     //generatedFiles.append(buildUART(file: ATDFObject))
     
-    for uartFile in buildUARTs(file: ATDFObject, chipDocumentation: documentation) {
-        generatedFiles.append(uartFile)
-    }
-    for file in buildAnalogToDigitalConverters(file: ATDFObject, chipDocumentation: documentation) {
-        generatedFiles.append(file)
-    }
+//    for uartFile in buildUARTs(file: ATDFObject, chipDocumentation: documentation) {
+//        generatedFiles.append(uartFile)
+//    }
+//    for file in buildAnalogToDigitalConverters(file: ATDFObject, chipDocumentation: documentation) {
+//        generatedFiles.append(file)
+//    }
     
 //    print("ATDFObject.devices.device.name = \(deviceName)")
 //    print()
