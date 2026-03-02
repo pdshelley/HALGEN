@@ -18,9 +18,9 @@ struct ChipDocumentation: Codable {
         let valueType: String?
         let defaultValue: String?
         let access: String?
-        let documentation: String?
-        let documentationL: String?
-        let documentationH: String?
+        let documentation: [String]?
+        let documentationL: [String]?
+        let documentationH: [String]?
         let bitfields: [String: Bitfield]?
         
         func toSupplementalData() -> SupplementalRegisterData {
@@ -28,10 +28,10 @@ struct ChipDocumentation: Codable {
                 variableName: variableName,
                 valueType: valueType ?? "",
                 defaultValue: defaultValue ?? "",
-                documentation: documentation ?? "",
+                documentation: formatDocumentation(documentation),
                 access: access ?? "",
-                documentationL: documentationL,
-                documentationH: documentationH
+                documentationL: documentationL.map { formatDocumentation($0) },
+                documentationH: documentationH.map { formatDocumentation($0) }
             )
         }
     }
@@ -41,7 +41,7 @@ struct ChipDocumentation: Codable {
         let valueType: String?
         let defaultValue: String?
         let access: String?
-        let documentation: String?
+        let documentation: [String]?
         let splitTarget: String?
         
         func toSupplementalData() -> SupplementalBitfieldData {
@@ -49,10 +49,15 @@ struct ChipDocumentation: Codable {
                 variableName: variableName,
                 valueType: valueType ?? "",
                 defaultValue: defaultValue ?? "",
-                documentation: documentation ?? "",
+                documentation: formatDocumentation(documentation),
                 access: Access(rawValue: access ?? "") ?? .readWrite,
                 splitTarget: splitTarget
             )
         }
     }
+}
+
+private func formatDocumentation(_ paragraphs: [String]?) -> String {
+    guard let paragraphs, !paragraphs.isEmpty else { return "" }
+    return paragraphs.joined(separator: "\n    /// ")
 }
