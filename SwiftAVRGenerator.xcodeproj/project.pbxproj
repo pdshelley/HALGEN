@@ -24,6 +24,20 @@
 		DAE992F02A22A6F5007656B5 /* SwiftAVRGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992EF2A22A6F5007656B5 /* SwiftAVRGeneratorTests.swift */; };
 		DAE992FA2A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992F92A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift */; };
 		DAE992FC2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE992FB2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift */; };
+		EE0C5E912F55DFB60053C834 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0C5E902F55DFB50053C834 /* main.swift */; };
+		EE0C5E922F55DFB60053C834 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0C5E902F55DFB50053C834 /* main.swift */; };
+		EECLI0032F600000000000001 /* AVRToolsDeviceFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3BB73F2A51E8F600C464C3 /* AVRToolsDeviceFile.swift */; };
+		EECLI0042F600000000000001 /* AVRVariants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA53268B2AF7578B00D7D526 /* AVRVariants.swift */; };
+		EECLI0052F600000000000001 /* AVRDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA53268D2AF757D800D7D526 /* AVRDevices.swift */; };
+		EECLI0062F600000000000001 /* AVRModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA53268F2AF7588600D7D526 /* AVRModules.swift */; };
+		EECLI0072F600000000000001 /* AVRPinouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5326912AF759EB00D7D526 /* AVRPinouts.swift */; };
+		EECLI00B2F600000000000001 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = EECLI00A2F600000000000001 /* XMLCoder */; };
+		EECLI00D2F600000000000001 /* SwiftBasicFormat in Frameworks */ = {isa = PBXBuildFile; productRef = EECLI00C2F600000000000001 /* SwiftBasicFormat */; };
+		EECLI00F2F600000000000001 /* SwiftOperators in Frameworks */ = {isa = PBXBuildFile; productRef = EECLI00E2F600000000000001 /* SwiftOperators */; };
+		EECLI0112F600000000000001 /* SwiftParser in Frameworks */ = {isa = PBXBuildFile; productRef = EECLI0102F600000000000001 /* SwiftParser */; };
+		EECLI0132F600000000000001 /* SwiftParserDiagnostics in Frameworks */ = {isa = PBXBuildFile; productRef = EECLI0122F600000000000001 /* SwiftParserDiagnostics */; };
+		EECLI0152F600000000000001 /* SwiftSyntax in Frameworks */ = {isa = PBXBuildFile; productRef = EECLI0142F600000000000001 /* SwiftSyntax */; };
+		EECLI0172F600000000000001 /* SwiftSyntaxBuilder in Frameworks */ = {isa = PBXBuildFile; productRef = EECLI0162F600000000000001 /* SwiftSyntaxBuilder */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +73,8 @@
 		DAE992F52A22A6F6007656B5 /* SwiftAVRGeneratorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftAVRGeneratorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAE992F92A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftAVRGeneratorUITests.swift; sourceTree = "<group>"; };
 		DAE992FB2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftAVRGeneratorUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		EE0C5E902F55DFB50053C834 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		EECLI0192F600000000000001 /* SwiftAVRGeneratorCLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SwiftAVRGeneratorCLI; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -99,6 +115,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EECLI0082F600000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EECLI00B2F600000000000001 /* XMLCoder in Frameworks */,
+				EECLI00D2F600000000000001 /* SwiftBasicFormat in Frameworks */,
+				EECLI00F2F600000000000001 /* SwiftOperators in Frameworks */,
+				EECLI0112F600000000000001 /* SwiftParser in Frameworks */,
+				EECLI0132F600000000000001 /* SwiftParserDiagnostics in Frameworks */,
+				EECLI0152F600000000000001 /* SwiftSyntax in Frameworks */,
+				EECLI0172F600000000000001 /* SwiftSyntaxBuilder in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -131,6 +161,7 @@
 				DAE992DA2A22A6F4007656B5 /* SwiftAVRGenerator.app */,
 				DAE992EB2A22A6F5007656B5 /* SwiftAVRGeneratorTests.xctest */,
 				DAE992F52A22A6F6007656B5 /* SwiftAVRGeneratorUITests.xctest */,
+				EECLI0192F600000000000001 /* SwiftAVRGeneratorCLI */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -144,6 +175,7 @@
 				EEE8AF9C2F5050860080C89D /* Generators */,
 				EE96A6502F4E7B5F00542FFD /* Documentation */,
 				DA5326932AF75A1700D7D526 /* AVRToolsDeviceFile */,
+				EECLI0182F600000000000001 /* CLI */,
 				DAE992E12A22A6F5007656B5 /* Assets.xcassets */,
 				DA5F51022EAAE10500AF7D48 /* SwiftAVRGenIcon.icon */,
 				DAE992E32A22A6F5007656B5 /* SwiftAVRGenerator.entitlements */,
@@ -175,6 +207,14 @@
 				DAE992FB2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift */,
 			);
 			path = SwiftAVRGeneratorUITests;
+			sourceTree = "<group>";
+		};
+		EECLI0182F600000000000001 /* CLI */ = {
+			isa = PBXGroup;
+			children = (
+				EE0C5E902F55DFB50053C834 /* main.swift */,
+			);
+			path = CLI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,6 +289,37 @@
 			productReference = DAE992F52A22A6F6007656B5 /* SwiftAVRGeneratorUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		EECLI0202F600000000000001 /* SwiftAVRGeneratorCLI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EECLI0212F600000000000001 /* Build configuration list for PBXNativeTarget "SwiftAVRGeneratorCLI" */;
+			buildPhases = (
+				EECLI0092F600000000000001 /* Sources */,
+				EECLI0082F600000000000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				EE96A6502F4E7B5F00542FFD /* Documentation */,
+				EEE8AF9C2F5050860080C89D /* Generators */,
+				EEE8AFB72F508DB30080C89D /* Extensions */,
+				EEE8AFC02F508E4F0080C89D /* CodeGeneration */,
+			);
+			name = SwiftAVRGeneratorCLI;
+			packageProductDependencies = (
+				EECLI00A2F600000000000001 /* XMLCoder */,
+				EECLI00C2F600000000000001 /* SwiftBasicFormat */,
+				EECLI00E2F600000000000001 /* SwiftOperators */,
+				EECLI0102F600000000000001 /* SwiftParser */,
+				EECLI0122F600000000000001 /* SwiftParserDiagnostics */,
+				EECLI0142F600000000000001 /* SwiftSyntax */,
+				EECLI0162F600000000000001 /* SwiftSyntaxBuilder */,
+			);
+			productName = SwiftAVRGeneratorCLI;
+			productReference = EECLI0192F600000000000001 /* SwiftAVRGeneratorCLI */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -269,6 +340,9 @@
 					DAE992F42A22A6F6007656B5 = {
 						CreatedOnToolsVersion = 14.3;
 						TestTargetID = DAE992D92A22A6F4007656B5;
+					};
+					EECLI0202F600000000000001 = {
+						CreatedOnToolsVersion = 14.3;
 					};
 				};
 			};
@@ -292,6 +366,7 @@
 				DAE992D92A22A6F4007656B5 /* SwiftAVRGenerator */,
 				DAE992EA2A22A6F5007656B5 /* SwiftAVRGeneratorTests */,
 				DAE992F42A22A6F6007656B5 /* SwiftAVRGeneratorUITests */,
+				EECLI0202F600000000000001 /* SwiftAVRGeneratorCLI */,
 			);
 		};
 /* End PBXProject section */
@@ -327,6 +402,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE0C5E912F55DFB60053C834 /* main.swift in Sources */,
 				DA3BB7402A51E8F600C464C3 /* AVRToolsDeviceFile.swift in Sources */,
 				DA53268C2AF7578B00D7D526 /* AVRVariants.swift in Sources */,
 				DA5326902AF7588600D7D526 /* AVRModules.swift in Sources */,
@@ -349,6 +425,19 @@
 			files = (
 				DAE992FC2A22A6F6007656B5 /* SwiftAVRGeneratorUITestsLaunchTests.swift in Sources */,
 				DAE992FA2A22A6F6007656B5 /* SwiftAVRGeneratorUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EECLI0092F600000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EECLI0032F600000000000001 /* AVRToolsDeviceFile.swift in Sources */,
+				EECLI0042F600000000000001 /* AVRVariants.swift in Sources */,
+				EE0C5E922F55DFB60053C834 /* main.swift in Sources */,
+				EECLI0052F600000000000001 /* AVRDevices.swift in Sources */,
+				EECLI0062F600000000000001 /* AVRModules.swift in Sources */,
+				EECLI0072F600000000000001 /* AVRPinouts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -651,6 +740,40 @@
 			};
 			name = Release;
 		};
+		EECLI0222F600000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pdshelley.SwiftAVRGeneratorCLI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		EECLI0232F600000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pdshelley.SwiftAVRGeneratorCLI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -686,6 +809,15 @@
 			buildConfigurations = (
 				DAE993062A22A6F6007656B5 /* Debug */,
 				DAE993072A22A6F6007656B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EECLI0212F600000000000001 /* Build configuration list for PBXNativeTarget "SwiftAVRGeneratorCLI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EECLI0222F600000000000001 /* Debug */,
+				EECLI0232F600000000000001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -743,6 +875,41 @@
 			productName = SwiftSyntax;
 		};
 		DA5F50FF2EAA58C000AF7D48 /* SwiftSyntaxBuilder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DA5F50F42EAA58C000AF7D48 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftSyntaxBuilder;
+		};
+		EECLI00A2F600000000000001 /* XMLCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 476CFF462A3A701D00217EC2 /* XCRemoteSwiftPackageReference "XMLCoder" */;
+			productName = XMLCoder;
+		};
+		EECLI00C2F600000000000001 /* SwiftBasicFormat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DA5F50F42EAA58C000AF7D48 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftBasicFormat;
+		};
+		EECLI00E2F600000000000001 /* SwiftOperators */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DA5F50F42EAA58C000AF7D48 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftOperators;
+		};
+		EECLI0102F600000000000001 /* SwiftParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DA5F50F42EAA58C000AF7D48 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftParser;
+		};
+		EECLI0122F600000000000001 /* SwiftParserDiagnostics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DA5F50F42EAA58C000AF7D48 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftParserDiagnostics;
+		};
+		EECLI0142F600000000000001 /* SwiftSyntax */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DA5F50F42EAA58C000AF7D48 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftSyntax;
+		};
+		EECLI0162F600000000000001 /* SwiftSyntaxBuilder */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DA5F50F42EAA58C000AF7D48 /* XCRemoteSwiftPackageReference "swift-syntax" */;
 			productName = SwiftSyntaxBuilder;

@@ -513,7 +513,8 @@
         "|        |       |       | (inverting mode).                                                |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR0A equals TOP and COM0A1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+        "Note: 1. A special case occurs when OCR0A equals TOP and COM0A1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
         "",
         "Table 3 shows the COM0A1:0 bit functionality when the WGM02:0 bits are set to phase correct PWM mode.",
         "",
@@ -534,7 +535,8 @@
         "|        |       |       | Clear OC0A on Compare Match when down-counting.                  |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR0A equals TOP and COM0A1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+        "Note: 1. A special case occurs when OCR0A equals TOP and COM0A1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
       ],
       "access": "R/W"
     },
@@ -577,7 +579,8 @@
         "|        |       |       | (inverting mode).                                                |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR0B equals TOP and COM0B1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+        "Note: 1. A special case occurs when OCR0B equals TOP and COM0B1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
         "",
         "Table 3. Compare Output Mode, Phase Correct PWM Mode",
         "```",
@@ -595,7 +598,8 @@
         "|        |       |       | Clear OC0B on Compare Match when down-counting.                  |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR0B equals TOP and COM0B1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+        "Note: 1. A special case occurs when OCR0B equals TOP and COM0B1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
       ],
       "access": "R/W"
     },
@@ -640,8 +644,11 @@
       "defaultValue": "",
       "documentation": [
         "The FOC0A bit is only active when the WGM bits specify a non-PWM mode.",
-        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR0B is written when operating in PWM mode. When writing a logical one to the FOC0A bit, an immediate Compare Match is forced on the Waveform Generation unit. The OC0A output is changed according to its COM0A bits setting.",
-        "Note that the FOC0A bit is implemented as a strobe. Therefore it is the value present in the COM0A bits that determines the effect of the forced compare.",
+        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR0B is written ",
+        "when operating in PWM mode. When writing a logical one to the FOC0A bit, an immediate Compare Match is ",
+        "forced on the Waveform Generation unit. The OC0A output is changed according to its COM0A bits setting.",
+        "Note that the FOC0A bit is implemented as a strobe. Therefore it is the value present in the COM0A bits that",
+        "determines the effect of the forced compare.",
         "A FOC0A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR0A as TOP.",
         "The FOC0A bit is always read as zero."
       ],
@@ -653,8 +660,11 @@
       "defaultValue": "",
       "documentation": [
         "The FOC0B bit is only active when the WGM bits specify a non-PWM mode.",
-        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR0B is written when operating in PWM mode. When writing a logical one to the FOC0B bit, an immediate Compare Match is forced on the Waveform Generation unit. The OC0B output is changed according to its COM0B bits setting.",
-        "Note that the FOC0B bit is implemented as a strobe. Therefore it is the value present in the COM0B bits that determines the effect of the forced compare.",
+        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR0B is written ",
+        "when operating in PWM mode. When writing a logical one to the FOC0B bit, an immediate Compare Match is ",
+        "forced on the Waveform Generation unit. The OC0B output is changed according to its COM0B bits setting.",
+        "Note that the FOC0B bit is implemented as a strobe. Therefore it is the value present in the COM0B bits that",
+        "determines the effect of the forced compare.",
         "A FOC0B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR0B as TOP.",
         "The FOC0B bit is always read as zero."
       ],
@@ -726,7 +736,11 @@
       "valueType": "Timer.TimerSynchronizationMode",
       "defaultValue": ".disabled",
       "documentation": [
-        "Writing the TSM bit to one activates the Timer/Counter Synchronization mode. In this mode, the value that is written to the PSRASY and PSRSYNC bits is kept, hence keeping the corresponding prescaler reset signals asserted. This ensures that the corresponding Timer/Counters are halted and can be configured to the same value without the risk of one of them advancing during configuration. When the TSM bit is written to zero, the PSRASY and PSRSYNC bits are cleared by hardware, and the Timer/Counters start counting simultaneously."
+        "Writing the TSM bit to one activates the Timer/Counter Synchronization mode. In this mode, the value that is",
+        "written to the PSRASY and PSRSYNC bits is kept, hence keeping the corresponding prescaler reset signals",
+        "asserted. This ensures that the corresponding Timer/Counters are halted and can be configured to the same",
+        "value without the risk of one of them advancing during configuration. When the TSM bit is written to zero, the",
+        "PSRASY and PSRSYNC bits are cleared by hardware, and the Timer/Counters start counting simultaneously."
       ],
       "access": "R/W"
     },
@@ -735,7 +749,9 @@
       "valueType": "Bool",
       "defaultValue": "",
       "documentation": [
-        "When this bit is one, Timer/Counter1 and Timer/Counter0 prescaler will be Reset. This bit is normally cleared immediately by hardware, except if the TSM bit is set. Note that Timer/Counter1 and Timer/Counter0 share the same prescaler and a reset of this prescaler will affect both timers."
+        "When this bit is one, Timer/Counter1 and Timer/Counter0 prescaler will be Reset. This bit is normally cleared",
+        "immediately by hardware, except if the TSM bit is set. Note that Timer/Counter1 and Timer/Counter0 share the",
+        "same prescaler and a reset of this prescaler will affect both timers."
       ],
       "access": "R/W"
     },
@@ -792,7 +808,8 @@
         "|        |       |       | (inverting mode).                                                |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR1A equals TOP and COM1A1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+        "Note: 1. A special case occurs when OCR1A equals TOP and COM1A1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
         "",
         "Table 3 shows the COM1A1:0 bit functionality when the WGM13:0 bits are set to phase correct or phase and frequency correct PWM mode.",
         "",
@@ -814,7 +831,8 @@
         "|        |       |       | Clear OC1A on Compare Match when down-counting.                  |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR1A equals TOP and COM1A1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+        "Note: 1. A special case occurs when OCR1A equals TOP and COM1A1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
       ],
       "access": "R/W"
     },
@@ -857,7 +875,8 @@
         "|        |       |       | (inverting mode).                                                |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR1B equals TOP and COM1B1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+        "Note: 1. A special case occurs when OCR1B equals TOP and COM1B1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
         "",
         "Table 3. Compare Output Mode, Phase Correct and Phase and Frequency Correct PWM Mode",
         "```",
@@ -875,7 +894,8 @@
         "|        |       |       | Clear OC1B on Compare Match when down-counting.                  |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR1B equals TOP and COM1B1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+        "Note: 1. A special case occurs when OCR1B equals TOP and COM1B1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
       ],
       "access": "R/W"
     },
@@ -975,8 +995,11 @@
       "defaultValue": "",
       "documentation": [
         "The FOC1A bit is only active when the WGM bits specify a non-PWM mode.",
-        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR1B is written when operating in PWM mode. When writing a logical one to the FOC1A bit, an immediate Compare Match is forced on the Waveform Generation unit. The OC1A output is changed according to its COM1A bits setting.",
-        "Note that the FOC1A bit is implemented as a strobe. Therefore it is the value present in the COM1A bits that determines the effect of the forced compare.",
+        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR1B is written ",
+        "when operating in PWM mode. When writing a logical one to the FOC1A bit, an immediate Compare Match is ",
+        "forced on the Waveform Generation unit. The OC1A output is changed according to its COM1A bits setting.",
+        "Note that the FOC1A bit is implemented as a strobe. Therefore it is the value present in the COM1A bits that",
+        "determines the effect of the forced compare.",
         "A FOC1A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR1A as TOP.",
         "The FOC1A bit is always read as zero."
       ],
@@ -988,8 +1011,11 @@
       "defaultValue": "",
       "documentation": [
         "The FOC1B bit is only active when the WGM bits specify a non-PWM mode.",
-        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR1B is written when operating in PWM mode. When writing a logical one to the FOC1B bit, an immediate Compare Match is forced on the Waveform Generation unit. The OC1B output is changed according to its COM1B bits setting.",
-        "Note that the FOC1B bit is implemented as a strobe. Therefore it is the value present in the COM1B bits that determines the effect of the forced compare.",
+        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR1B is written ",
+        "when operating in PWM mode. When writing a logical one to the FOC1B bit, an immediate Compare Match is ",
+        "forced on the Waveform Generation unit. The OC1B output is changed according to its COM1B bits setting.",
+        "Note that the FOC1B bit is implemented as a strobe. Therefore it is the value present in the COM1B bits that",
+        "determines the effect of the forced compare.",
         "A FOC1B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR1B as TOP.",
         "The FOC1B bit is always read as zero."
       ],
@@ -1099,7 +1125,8 @@
         "|        |       |       | (inverting mode).                                                |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR2A equals TOP and COM2A1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+        "Note: 1. A special case occurs when OCR2A equals TOP and COM2A1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
         "",
         "Table 3 shows the COM2A1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
         "",
@@ -1120,7 +1147,8 @@
         "|        |       |       | Clear OC2A on Compare Match when down-counting.                  |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR2A equals TOP and COM2A1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+        "Note: 1. A special case occurs when OCR2A equals TOP and COM2A1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
       ],
       "access": "R/W"
     },
@@ -1168,7 +1196,8 @@
         "|        |       |       | (inverting mode).                                                |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at BOTTOM. See \"Phase Correct PWM Mode\" for more details.",
+        "Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at BOTTOM. See \"Phase Correct PWM Mode\" for more details.",
         "",
         "Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
         "",
@@ -1188,7 +1217,8 @@
         "|        |       |       | Clear OC2B on Compare Match when down-counting.                  |",
         "---------------------------------------------------------------------------------------------",
         "```",
-        "Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is       ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" for more details."
+        "Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is ",
+        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" for more details."
       ],
       "access": "R/W"
     },
@@ -1232,8 +1262,11 @@
       "defaultValue": "",
       "documentation": [
         "The FOC2A bit is only active when the WGM bits specify a non-PWM mode.",
-        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written when operating in PWM mode. When writing a logical one to the FOC2A bit, an immediate Compare Match is forced on the Waveform Generation unit. The OC2A output is changed according to its COM2A bits setting.",
-        "Note that the FOC2A bit is implemented as a strobe. Therefore it is the value present in the COM2A bits that determines the effect of the forced compare.",
+        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written ",
+        "when operating in PWM mode. When writing a logical one to the FOC2A bit, an immediate Compare Match is ",
+        "forced on the Waveform Generation unit. The OC2A output is changed according to its COM2A bits setting.",
+        "Note that the FOC2A bit is implemented as a strobe. Therefore it is the value present in the COM2A bits that",
+        "determines the effect of the forced compare.",
         "A FOC2A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2A as TOP.",
         "The FOC2A bit is always read as zero."
       ],
@@ -1245,8 +1278,11 @@
       "defaultValue": "",
       "documentation": [
         "The FOC2B bit is only active when the WGM bits specify a non-PWM mode.",
-        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written when operating in PWM mode. When writing a logical one to the FOC2B bit, an immediate Compare Match is forced on the Waveform Generation unit. The OC2B output is changed according to its COM2B bits setting.",
-        "Note that the FOC2B bit is implemented as a strobe. Therefore it is the value present in the COM2B bits that determines the effect of the forced compare.",
+        "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written ",
+        "when operating in PWM mode. When writing a logical one to the FOC2B bit, an immediate Compare Match is ",
+        "forced on the Waveform Generation unit. The OC2B output is changed according to its COM2B bits setting.",
+        "Note that the FOC2B bit is implemented as a strobe. Therefore it is the value present in the COM2B bits that",
+        "determines the effect of the forced compare.",
         "A FOC2B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2B as TOP.",
         "The FOC2B bit is always read as zero."
       ],

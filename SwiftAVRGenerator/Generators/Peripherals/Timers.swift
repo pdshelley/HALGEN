@@ -134,7 +134,6 @@ func buildProtocolDeclarations(from info: TimerInfo) -> String {
 }
 
 func buildTimer(module: AVRModules.Module, timerName: String, chipName: String, chipDocumentation: ChipDocumentationLoader) -> GeneratedCodeFile {
-    print("------------------\(timerName)------------------")
     let fileName = "\(timerName).swift"
     var code: String = buildFileHeader(for: timerName)
     let timerInfo = gatherTimerInfo(from: module)

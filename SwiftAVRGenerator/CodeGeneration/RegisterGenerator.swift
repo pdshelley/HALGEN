@@ -93,9 +93,13 @@ func generateRegister(
           ///```
       """
     
+    let documentationFromJson = """
+      \n    /// \(documentation)
+      """
+    
     let source = DeclSyntax(
       """
-          /// \(raw: register.name) – \(raw: register.caption?.rawValue ?? variableName) \(raw: documentation) \(raw: generateRegisterTableDoc ? table : "")
+          /// \(raw: register.name) – \(raw: register.caption?.rawValue ?? variableName) \(raw: documentation != "" ? documentationFromJson : "") \(raw: generateRegisterTableDoc ? table : "")
           @inlinable
           @inline(__always)
           public static var \(raw: variableName): \(raw: bit.size) {

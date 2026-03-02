@@ -63,9 +63,13 @@ func generateBitfieldAccessor(
         sourceForBoolGet = ""
     }
     
+    let documentationFromJson = """
+      \n    /// \(info.documentation)
+      """
+    
     let source = DeclSyntax(
       """
-          /// \(raw: bitfield.name) – \(raw: caption) \(raw: info.documentation)
+          /// \(raw: bitfield.name) – \(raw: caption) \(raw: info.documentation != "" ? documentationFromJson : "")
           @inlinable
           @inline(__always)
           public static var \(raw: info.variableName): \(raw: info.valueType) {
@@ -79,7 +83,7 @@ func generateBitfieldAccessor(
     
     let sourceForBool = DeclSyntax(
       """
-          /// \(raw: bitfield.name) – \(raw: caption) \(raw: info.documentation)
+          /// \(raw: bitfield.name) – \(raw: caption) \(raw: info.documentation != "" ? documentationFromJson : "")
           @inlinable
           @inline(__always)
           public static var \(raw: info.variableName): \(raw: info.valueType) {\(raw: sourceForBoolGet)
@@ -135,35 +139,21 @@ func generateSplitBitfieldAccessor(
     var highBitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
     var hightParentVariableName: String
     
-    // The LSBs of WMG should always be on TCCRnA and the MSBs should be on TCCRnB.
-    
-   
     highBitfield = bitfieldA
-    hightParentVariableName = registerData(parentVariableB).variableName
+    hightParentVariableName = registerData(parentVariableA).variableName
     lowBitfield = bitfieldB
-    lowParentVariableName = registerData(parentVariableA).variableName
+    lowParentVariableName = registerData(parentVariableB).variableName
     
     // Mask Value is 16 Bits and we have to have 8. Assuming that it's a total error to have a mask with bits above 8 we will just throw those away.
     let lowBitmask = lowBitfield.mask.value.lowByte.binaryString
     let highBitmask = highBitfield.mask.value.lowByte.binaryString
     
-    
-    
-    
     // We then make sure that the byte is shifted all the way over to the Least Significant Bit because the value assigned will also be in the Least Significant Bits.
     let lowBitshift = UInt8(lowBitfield.mask.value.trailingZeroBitCount)
-//    let highBitshift = UInt8(highBitfield.mask.value.trailingZeroBitCount)
+    //let highBitshift = UInt8(highBitfield.mask.value.trailingZeroBitCount)
     
     // Then turn all of this into a bianary string for legibility, a bitmask should be seen as bits and not an Int or Hex value.
     let newValueLowBitmask = (lowBitfield.mask.value.lowByte >> lowBitshift).binaryString
-    
-    print()
-    print("-----------------------------------------------------------")
-    print("Low Bitmask Value: \(lowBitfield.mask.value), Mask: \(lowBitmask), Shift: \(lowBitshift)")
-//    print("high Bitmask Value: \(highBitfield.mask.value), Mask: \(highBitmask), Shift: \(highBitshift)")
-//    print("adjustedHighBitshift = \(highBitshift) - \(UInt8(lowBitfield.mask.value.nonzeroBitCount))")
-    print("-----------------------------------------------------------")
-    print()
     
     // This would give me the number of bits to shift, assuming that there is only a single group of bits and not two or more groups split by one or more 0s.
     // The difference between the Bitfield Bitmask and the newValue Bitmask This should account for shifting in either direction.
@@ -171,13 +161,16 @@ func generateSplitBitfieldAccessor(
     let getShiftDirection: String = adjustedHighBitshift >= 0 ? ">>" : "<<"
     let setShiftDirection: String = adjustedHighBitshift >= 0 ? "<<" : ">>"
     
-    
     // Make sure the high bitmask is shifted all the way to the right and then shift it back by the LSB. This should always put it in the correct position for the newValueHighBitmask
     let newValueHighBitmask = ((highBitfield.mask.value.lowByte >> highBitfield.mask.value.trailingZeroBitCount) << lowBitfield.mask.value.nonzeroBitCount).binaryString
     
+    let documentationFromJson = """
+      \n    /// \(info.documentation)
+      """
+    
     let source = DeclSyntax(
       """
-          /// \(raw: bitfieldA.name) – \(raw: caption) \(raw: info.documentation)
+          /// \(raw: bitfieldA.name) – \(raw: caption) \(raw: info.documentation != "" ? documentationFromJson : "")
           @inlinable
           @inline(__always)
           public static var \(raw: info.variableName): \(raw: (timerInfo?.timerProtocol != nil ? (timerInfo!.timerProtocol + ".") : ""))\(raw: info.valueType) {
