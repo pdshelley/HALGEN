@@ -245,7 +245,7 @@
         <interrupt index="61" name="TRX24_CCA_ED_DONE" caption="TRX24 - CCA/ED done interrupt"/>
         <interrupt index="62" name="TRX24_XAH_AMI" caption="TRX24 - XAH - AMI"/>
         <interrupt index="63" name="TRX24_TX_END" caption="TRX24 - TX_END interrupt"/>
-        <interrupt index="64" name="TRX24_AWAKE" caption="TRX24 AWAKE - tranceiver is reaching state TRX_OFF"/>
+        <interrupt index="64" name="TRX24_AWAKE" caption="TRX24 AWAKE - transceiver is reaching state TRX_OFF"/>
         <interrupt index="65" name="SCNT_CMP1" caption="Symbol counter - compare match 1 interrupt"/>
         <interrupt index="66" name="SCNT_CMP2" caption="Symbol counter - compare match 2 interrupt"/>
         <interrupt index="67" name="SCNT_CMP3" caption="Symbol counter - compare match 3 interrupt"/>
@@ -435,46 +435,46 @@
         <value caption="Int. 128kHz RC Osc.; Start-up time: 6 CK + 0 ms" name="INTRCOSC_128KHZ_6CK_0MS" value="0x03"/>
         <value caption="Int. 128kHz RC Osc.; Start-up time: 6 CK + 4.1 ms" name="INTRCOSC_128KHZ_6CK_4MS1" value="0x13"/>
         <value caption="Int. 128kHz RC Osc.; Start-up time: 6 CK + 65 ms" name="INTRCOSC_128KHZ_6CK_65MS" value="0x23"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x06"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x16"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x26"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x36"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x07"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x17"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x27"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x37"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x08"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x18"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x28"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x38"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x09"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x19"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x29"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x39"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x0A"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x1A"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x2A"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x3A"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x0B"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x1B"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x2B"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x3B"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x0C"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x1C"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x2C"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x3C"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x0D"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x1D"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x2D"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x3D"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x0E"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x1E"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x2E"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x3E"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x0F"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x1F"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x2F"/>
-        <value caption="Tranceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x3F"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x06"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x16"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x26"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x36"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x07"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x17"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x27"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x37"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x08"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x18"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x28"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x38"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x09"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x19"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x29"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x39"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x0A"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x1A"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x2A"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x3A"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x0B"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x1B"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x2B"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x3B"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x0C"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x1C"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x2C"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x3C"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x0D"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x1D"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x2D"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x3D"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 4.1 ms" name="TOSC_258CK_4MS1" value="0x0E"/>
+        <value caption="Transceiver Oscillator; Start-up time: 258 CK + 65 ms" name="TOSC_258CK_65MS" value="0x1E"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 0 ms" name="TOSC_1KCK_0MS" value="0x2E"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 4.1 ms" name="TOSC_1KCK_4MS1" value="0x3E"/>
+        <value caption="Transceiver Oscillator; Start-up time: 1K CK + 65 ms" name="TOSC_1KCK_65MS" value="0x0F"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 0 ms" name="TOSC_16KCK_0MS" value="0x1F"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 4.1 ms" name="TOSC_16KCK_4MS1" value="0x2F"/>
+        <value caption="Transceiver Oscillator; Start-up time: 16K CK + 65 ms" name="TOSC_16KCK_65MS" value="0x3F"/>
       </value-group>
       <value-group name="ENUM_BOOTSZ">
         <value caption="Boot Flash size=512 words start address=$FE00" name="512W_FE00" value="0x03"/>
@@ -549,12 +549,12 @@
       <register-group caption="USART" name="USART0">
         <register caption="USART0 I/O Data Register" name="UDR0" offset="0xC6" size="1" mask="0xFF" ocd-rw=""/>
         <register caption="USART0 Control and Status Register A" name="UCSR0A" offset="0xC0" size="1" ocd-rw="R">
-          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0"/>
+          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0" rw="R"/>
           <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC0"/>
-          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0"/>
-          <bitfield caption="Frame Error" mask="0x10" name="FE0"/>
-          <bitfield caption="Data OverRun" mask="0x08" name="DOR0"/>
-          <bitfield caption="USART Parity Error" mask="0x04" name="UPE0"/>
+          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0" rw="R"/>
+          <bitfield caption="Frame Error" mask="0x10" name="FE0" rw="R"/>
+          <bitfield caption="Data overRun" mask="0x08" name="DOR0" rw="R"/>
+          <bitfield caption="USART Parity Error" mask="0x04" name="UPE0"  rw="R"/>
           <bitfield caption="Double the USART Transmission Speed" mask="0x02" name="U2X0"/>
           <bitfield caption="Multi-processor Communication Mode" mask="0x01" name="MPCM0"/>
         </register>
@@ -659,7 +659,7 @@
         <register caption="TWI Status Register" name="TWSR" offset="0xB9" size="1">
           <bitfield caption="TWI Status" mask="0xF8" name="TWS" values="TWI_STATUS_BITF" lsb="3"/>
           <bitfield caption="Reserved Bit" mask="0x04" name="Res"/>
-          <bitfield caption="TWI Prescaler Bits" mask="0x03" name="TWPS" values="COMM_TWI_PRESACLE"/>
+          <bitfield caption="TWI Prescaler Bits" mask="0x03" name="TWPS" values="COMM_TWI_PRESCALE"/>
         </register>
         <register caption="TWI Data Register" name="TWDR" offset="0xBB" size="1" mask="0xFF"/>
         <register caption="TWI (Slave) Address Register" name="TWAR" offset="0xBA" size="1">
@@ -696,7 +696,7 @@
         <value caption="Last data byte in TWDR has been transmitted (TWEA = 0); ACK has been received." name="LAST_DATA_BYTE_IN_TWDR_HAS_BEEN_TRANSMITTED_TWEA_0_ACK_HAS_BEEN_RECEIVED" value="0xC8"/>
         <value caption="No relevant state information available; TWINT = 0." name="NO_RELEVANT_STATE_INFORMATION_AVAILABLE_TWINT_0" value="0xF8"/>
       </value-group>
-      <value-group name="COMM_TWI_PRESACLE">
+      <value-group name="COMM_TWI_PRESCALE">
         <value caption="1" name="1" value="0x00"/>
         <value caption="4" name="4" value="0x01"/>
         <value caption="16" name="16" value="0x02"/>
@@ -723,9 +723,9 @@
       </register-group>
       <register-group caption="Serial Peripheral Interface" name="USART0_SPI">
         <register caption="USART0 MSPIM Control and Status Register A" name="UCSR0A" offset="0xC0" size="1" ocd-rw="R">
-          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0"/>
+          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0" rw="R"/>
           <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC0"/>
-          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0"/>
+          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0" rw="R"/>
         </register>
         <register caption="USART0 MSPIM Control and Status Register B" name="UCSR0B" offset="0xC1" size="1">
           <bitfield caption="RX Complete Interrupt Enable" mask="0x80" name="RXCIE0"/>
@@ -761,7 +761,7 @@
       </register-group>
       <value-group name="SPI_CPOL_BITF">
         <value caption="Rising (Leading Edge), Falling (Trailing Edge)" name="RISING_LEADING_EDGE_FALLING_TRAILING_EDGE" value="0"/>
-        <value caption="Falling (Leading Egde), Rising (Trailing Edge)" name="FALLING_LEADING_EGDE_RISING_TRAILING_EDGE" value="1"/>
+        <value caption="Falling (Leading Edge), Rising (Trailing Edge)" name="FALLING_LEADING_EGDE_RISING_TRAILING_EDGE" value="1"/>
       </value-group>
       <value-group name="SPI_CPHA_BITF">
         <value caption="Sample (Leading Edge), Setup (Trailing Edge)" name="SAMPLE_LEADING_EDGE_SETUP_TRAILING_EDGE" value="0"/>
@@ -1398,7 +1398,7 @@
         </register>
         <register caption="Transceiver Reduced Power Consumption Control" name="TRX_RPC" offset="0x156" size="1">
           <bitfield caption="Smart Receiving Mode Timing" mask="0xC0" name="RX_RPC_CTRL" values="RX_RPC_CTRL_BITF"/>
-          <bitfield caption="Reciver Smart Receiving Mode Enable" mask="0x20" name="RX_RPC_EN"/>
+          <bitfield caption="Receiver Smart Receiving Mode Enable" mask="0x20" name="RX_RPC_EN"/>
           <bitfield caption="Smart Receiving Mode Reduced Sensitivity Enable" mask="0x10" name="PDT_RPC_EN"/>
           <bitfield caption="PLL Smart Receiving Mode Enable" mask="0x08" name="PLL_RPC_EN"/>
           <bitfield caption="Reserved" mask="0x04" name="Res0"/>

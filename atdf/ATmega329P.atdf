@@ -5,7 +5,7 @@
     <variant ordercode="ATmega329PV-10MU" tempmin="-40" tempmax="85" speedmax="10000000" pinout="QFN64" package="QFN64" vccmin="1.8" vccmax="5.5"/>
     <variant ordercode="ATmega329P-20AU" tempmin="-40" tempmax="85" speedmax="20000000" pinout="TQFP64" package="TQFP64" vccmin="2.7" vccmax="5.5"/>
     <variant ordercode="ATmega329P-20MU" tempmin="-40" tempmax="85" speedmax="20000000" pinout="QFN64" package="QFN64" vccmin="2.7" vccmax="5.5"/>
-    <variant ordercode="ATmega329P-20AN" tempmin="-40" tempmax="105" speedmax="20000000" pinout="TQFP64" package="TQFP64 " vccmin="1.8" vccmax="5.5"/>
+    <variant ordercode="ATmega329P-20AN" tempmin="-40" tempmax="105" speedmax="20000000" pinout="TQFP64" package="TQFP64" vccmin="1.8" vccmax="5.5"/>
     <variant ordercode="ATmega329P-20MN" tempmin="-40" tempmax="105" speedmax="20000000" pinout="QFN64" package="QFN64" vccmin="1.8" vccmax="5.5"/>
   </variants>
   <devices>
@@ -179,7 +179,7 @@
               <signal group="P" function="default" pad="PG2" index="2"/>
               <signal group="P" function="default" pad="PG3" index="3"/>
               <signal group="P" function="default" pad="PG4" index="4"/>
-              <signal group="P" function="default" pad="PG5" index="4"/>
+              <signal group="P" function="default" pad="PG5" index="5"/>
             </signals>
           </instance>
         </module>
@@ -1000,12 +1000,12 @@
       <register-group caption="USART" name="USART0">
         <register caption="USART I/O Data Register" name="UDR0" offset="0xC6" size="1" mask="0xFF" ocd-rw=""/>
         <register caption="USART Control and Status Register A" name="UCSR0A" offset="0xC0" size="1" ocd-rw="R">
-          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0"/>
+          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0" rw="R"/>
           <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC0"/>
-          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0"/>
-          <bitfield caption="Framing Error" mask="0x10" name="FE0"/>
-          <bitfield caption="Data OverRun" mask="0x08" name="DOR0"/>
-          <bitfield caption="USART Parity Error" mask="0x04" name="UPE0"/>
+          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0" rw="R"/>
+          <bitfield caption="Framing Error" mask="0x10" name="FE0" rw="R"/>
+          <bitfield caption="Data overRun" mask="0x08" name="DOR0" rw="R"/>
+          <bitfield caption="USART Parity Error" mask="0x04" name="UPE0"  rw="R"/>
           <bitfield caption="Double the USART Transmission Speed" mask="0x02" name="U2X0"/>
           <bitfield caption="Multi-processor Communication Mode" mask="0x01" name="MPCM0"/>
         </register>

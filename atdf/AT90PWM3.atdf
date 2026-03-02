@@ -1,7 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <avr-tools-device-file xmlns:xalan="http://xml.apache.org/xalan" xmlns:NumHelper="NumHelper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
   <variants>
-    <variant tempmin="0" tempmax="0" speedmax="0" package="" ordercode="standard" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="105" speedmax="16000000" package="SOIC32" ordercode="AT90PWM3-16SQ" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="105" speedmax="16000000" package="QFN32" ordercode="AT90PWM3-16MQT" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="105" speedmax="16000000" package="QFN32" ordercode="AT90PWM3-16MQ" vccmin="2.7" vccmax="5.5"/>
   </variants>
   <devices>
     <device name="AT90PWM3" architecture="AVR8" family="megaAVR">
@@ -767,10 +769,10 @@
           <bitfield caption="Timer/Counter1" mask="0xFFFF" name="TCNT1"/>
         </register>
         <register caption="Timer/Counter1 Output Compare Register Bytes" name="OCR1A" offset="0x88" size="2">
-          <bitfield caption="Timer/Counter1 Ouput Capture A" mask="0xFFFF" name="OCR1A"/>
+          <bitfield caption="Timer/Counter1 Output Capture A" mask="0xFFFF" name="OCR1A"/>
         </register>
         <register caption="Timer/Counter1 Output Compare Register Bytes" name="OCR1B" offset="0x8A" size="2">
-          <bitfield caption="Timer/Counter1 Ouput Capture B" mask="0xFFFF" name="OCR1B"/>
+          <bitfield caption="Timer/Counter1 Output Capture B" mask="0xFFFF" name="OCR1B"/>
         </register>
         <register caption="Timer/Counter1 Input Capture Register Bytes" name="ICR1" offset="0x86" size="2" mask="0xFFFF">
           <bitfield caption="Timer/Counter1 Input Capture" mask="0xFFFF" name="ICR1"/>
@@ -858,12 +860,12 @@
           <bitfield caption="USART I/O Data" mask="0xFF" name="UDR"/>
         </register>
         <register caption="USART Control and Status register A" name="UCSRA" offset="0xC0" size="1" ocd-rw="R">
-          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC"/>
-          <bitfield caption="USART Transmitt Complete" mask="0x40" name="TXC"/>
-          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE"/>
-          <bitfield caption="Framing Error" mask="0x10" name="FE"/>
-          <bitfield caption="Data Overrun" mask="0x08" name="DOR"/>
-          <bitfield caption="USART Parity Error" mask="0x04" name="UPE"/>
+          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC" rw="R"/>
+          <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC"/>
+          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE" rw="R"/>
+          <bitfield caption="Framing Error" mask="0x10" name="FE" rw="R"/>
+          <bitfield caption="Data Overrun" mask="0x08" name="DOR" rw="R"/>
+          <bitfield caption="USART Parity Error" mask="0x04" name="UPE"  rw="R"/>
           <bitfield caption="Double USART Transmission Bit" mask="0x02" name="U2X"/>
           <bitfield caption="Multi-processor Communication Mode" mask="0x01" name="MPCM"/>
         </register>
@@ -1204,7 +1206,7 @@
         <value caption="Reserved (do not use)" name="RESERVED_DO_NOT_USE" value="0x0B"/>
         <value caption="Reserved (do not use)" name="RESERVED_DO_NOT_USE" value="0x0C"/>
         <value caption="Reserved (do not use)" name="RESERVED_DO_NOT_USE" value="0x0D"/>
-        <value caption="Fixed Frequency Edge Retrigger PSC and Disactivate Output" name="FIXED_FREQUENCY_EDGE_RETRIGGER_PSC_AND_DISACTIVATE_OUTPUT" value="0x0E"/>
+        <value caption="Fixed Frequency Edge Retrigger PSC and Deactivate Output" name="FIXED_FREQUENCY_EDGE_RETRIGGER_PSC_AND_DISACTIVATE_OUTPUT" value="0x0E"/>
         <value caption="Reserved (do not use)" name="RESERVED_DO_NOT_USE" value="0x0F"/>
       </value-group>
       <value-group name="PSC_PRESCALER">

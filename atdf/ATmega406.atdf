@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <avr-tools-device-file xmlns:xalan="http://xml.apache.org/xalan" xmlns:NumHelper="NumHelper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
   <variants>
-    <variant tempmin="0" tempmax="0" speedmax="0" package="" ordercode="standard" vccmin="4.0" vccmax="5.5"/>
+    <variant tempmin="-30" tempmax="85" speedmax="1000000" package="LQFP48" ordercode="ATmega406-1AAU" vccmin="4.0" vccmax="25.0"/>
   </variants>
   <devices>
     <device name="ATmega406" architecture="AVR8" family="megaAVR">
@@ -524,7 +524,7 @@
         <register caption="CC-ADC Control and Status Register B" name="CADCSRB" offset="0xE5" size="1" ocd-rw="R">
           <bitfield mask="0x40" name="CADACIE"/>
           <bitfield caption="Regular Current Interrupt Enable" mask="0x20" name="CADRCIE"/>
-          <bitfield caption="CAD Instantenous Current Interrupt Enable" mask="0x10" name="CADICIE"/>
+          <bitfield caption="CAD Instantaneous Current Interrupt Enable" mask="0x10" name="CADICIE"/>
           <bitfield caption="CC-ADC Accumulate Current Interrupt Flag" mask="0x04" name="CADACIF"/>
           <bitfield caption="CC-ADC Accumulate Current Interrupt Flag" mask="0x02" name="CADRCIF"/>
           <bitfield caption="CC-ADC Instantaneous Current Interrupt Flag" mask="0x01" name="CADICIF"/>
@@ -725,13 +725,13 @@
           <bitfield caption="TWI Enable Acknowledge Bit" mask="0x40" name="TWEA"/>
           <bitfield caption="TWI Start Condition Bit" mask="0x20" name="TWSTA"/>
           <bitfield caption="TWI Stop Condition Bit" mask="0x10" name="TWSTO"/>
-          <bitfield caption="TWI Write Collition Flag" mask="0x08" name="TWWC"/>
+          <bitfield caption="TWI Write Collision Flag" mask="0x08" name="TWWC"/>
           <bitfield caption="TWI Enable Bit" mask="0x04" name="TWEN"/>
           <bitfield caption="TWI Interrupt Enable" mask="0x01" name="TWIE"/>
         </register>
         <register caption="TWI Status Register" name="TWSR" offset="0xB9" size="1" ocd-rw="R">
           <bitfield caption="TWI Status" mask="0xF8" name="TWS" lsb="3"/>
-          <bitfield caption="TWI Prescaler" mask="0x03" name="TWPS" values="COMM_TWI_PRESACLE"/>
+          <bitfield caption="TWI Prescaler" mask="0x03" name="TWPS" values="COMM_TWI_PRESCALE"/>
         </register>
         <register caption="TWI Data register" name="TWDR" offset="0xBB" size="1" mask="0xFF"/>
         <register caption="TWI (Slave) Address register" name="TWAR" offset="0xBA" size="1">
@@ -745,7 +745,7 @@
         <value caption="1000ms" name="1000MS" value="0x02"/>
         <value caption="2000ms" name="2000MS" value="0x03"/>
       </value-group>
-      <value-group name="COMM_TWI_PRESACLE">
+      <value-group name="COMM_TWI_PRESCALE">
         <value caption="1" name="1" value="0x00"/>
         <value caption="4" name="4" value="0x01"/>
         <value caption="16" name="16" value="0x02"/>

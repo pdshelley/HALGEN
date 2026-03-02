@@ -246,7 +246,7 @@
         <interrupt index="13" name="TIMER1_OVF" caption="Timer/Counter1 Overflow"/>
         <interrupt index="14" name="TIMER0_COMPA" caption="TimerCounter0 Compare Match A"/>
         <interrupt index="15" name="TIMER0_COMPB" caption="TimerCounter0 Compare Match B"/>
-        <interrupt index="16" name="TIMER0_OVF" caption="Timer/Couner0 Overflow"/>
+        <interrupt index="16" name="TIMER0_OVF" caption="Timer/Counter0 Overflow"/>
         <interrupt index="17" name="SPI_STC" caption="SPI Serial Transfer Complete"/>
         <interrupt index="18" name="USART_RX" caption="USART Rx Complete"/>
         <interrupt index="19" name="USART_UDRE" caption="USART, Data Register Empty"/>
@@ -549,12 +549,12 @@
       <register-group caption="USART" name="USART0">
         <register caption="USART I/O Data Register" name="UDR0" offset="0xC6" size="1" mask="0xFF" ocd-rw=""/>
         <register caption="USART Control and Status Register A" name="UCSR0A" offset="0xC0" size="1" ocd-rw="R">
-          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0"/>
-          <bitfield caption="USART Transmitt Complete" mask="0x40" name="TXC0"/>
-          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0"/>
-          <bitfield caption="Framing Error" mask="0x10" name="FE0"/>
-          <bitfield caption="Data overRun" mask="0x08" name="DOR0"/>
-          <bitfield caption="Parity Error" mask="0x04" name="UPE0"/>
+          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0" rw="R"/>
+          <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC0"/>
+          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0" rw="R"/>
+          <bitfield caption="Framing Error" mask="0x10" name="FE0" rw="R"/>
+          <bitfield caption="Data overRun" mask="0x08" name="DOR0" rw="R"/>
+          <bitfield caption="Parity Error" mask="0x04" name="UPE0" rw="R"/>
           <bitfield caption="Double the USART transmission speed" mask="0x02" name="U2X0"/>
           <bitfield caption="Multi-processor Communication Mode" mask="0x01" name="MPCM0"/>
         </register>
@@ -604,13 +604,13 @@
           <bitfield caption="TWI Enable Acknowledge Bit" mask="0x40" name="TWEA"/>
           <bitfield caption="TWI Start Condition Bit" mask="0x20" name="TWSTA"/>
           <bitfield caption="TWI Stop Condition Bit" mask="0x10" name="TWSTO"/>
-          <bitfield caption="TWI Write Collition Flag" mask="0x08" name="TWWC"/>
+          <bitfield caption="TWI Write Collision Flag" mask="0x08" name="TWWC"/>
           <bitfield caption="TWI Enable Bit" mask="0x04" name="TWEN"/>
           <bitfield caption="TWI Interrupt Enable" mask="0x01" name="TWIE"/>
         </register>
         <register caption="TWI Status Register" name="TWSR" offset="0xB9" size="1">
           <bitfield caption="TWI Status" mask="0xF8" name="TWS" lsb="3"/>
-          <bitfield caption="TWI Prescaler" mask="0x03" name="TWPS" values="COMM_TWI_PRESACLE"/>
+          <bitfield caption="TWI Prescaler" mask="0x03" name="TWPS" values="COMM_TWI_PRESCALE"/>
         </register>
         <register caption="TWI Data register" name="TWDR" offset="0xBB" size="1" mask="0xFF"/>
         <register caption="TWI (Slave) Address register" name="TWAR" offset="0xBA" size="1">
@@ -618,7 +618,7 @@
           <bitfield caption="TWI General Call Recognition Enable Bit" mask="0x01" name="TWGCE"/>
         </register>
       </register-group>
-      <value-group name="COMM_TWI_PRESACLE">
+      <value-group name="COMM_TWI_PRESCALE">
         <value caption="1" name="1" value="0x00"/>
         <value caption="4" name="4" value="0x01"/>
         <value caption="16" name="16" value="0x02"/>
@@ -689,7 +689,7 @@
         <register caption="Timer/Counter2 Control Register A" name="TCCR2A" offset="0xB0" size="1">
           <bitfield caption="Compare Output Mode bits" mask="0xC0" name="COM2A"/>
           <bitfield caption="Compare Output Mode bits" mask="0x30" name="COM2B"/>
-          <bitfield caption="Waveform Genration Mode" mask="0x03" name="WGM2"/>
+          <bitfield caption="Waveform Generation Mode" mask="0x03" name="WGM2"/>
         </register>
         <register caption="Timer/Counter2 Control Register B" name="TCCR2B" offset="0xB1" size="1">
           <bitfield caption="Force Output Compare A" mask="0x80" name="FOC2A"/>

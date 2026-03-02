@@ -1,7 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <avr-tools-device-file xmlns:xalan="http://xml.apache.org/xalan" xmlns:NumHelper="NumHelper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
   <variants>
-    <variant tempmin="0" tempmax="0" speedmax="0" package="" ordercode="standard" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="QFN32" ordercode="AT90USB162-16MU" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="QFN32" ordercode="AT90USB162-16MUR" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="TQFP32" ordercode="AT90USB162-16AU" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="TQFP32" ordercode="AT90USB162-16AUR" vccmin="2.7" vccmax="5.5"/>
   </variants>
   <devices>
     <device name="AT90USB162" architecture="AVR8" family="megaAVR">
@@ -850,7 +853,7 @@
         <register caption="USART I/O Data Register" name="UDR1" offset="0xCE" size="1" mask="0xFF" ocd-rw="W"/>
         <register caption="USART Control and Status Register A" name="UCSR1A" offset="0xC8" size="1">
           <bitfield caption="USART Receive Complete" mask="0x80" name="RXC1"/>
-          <bitfield caption="USART Transmitt Complete" mask="0x40" name="TXC1"/>
+          <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC1"/>
           <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE1"/>
           <bitfield caption="Framing Error" mask="0x10" name="FE1"/>
           <bitfield caption="Data overRun" mask="0x08" name="DOR1"/>

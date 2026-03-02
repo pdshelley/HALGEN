@@ -637,12 +637,12 @@
       <register-group caption="USART" name="USART0">
         <register caption="USART I/O Data Register" name="UDR0" offset="0xC6" size="1" mask="0xFF" ocd-rw=""/>
         <register caption="USART Control and Status Register A" name="UCSR0A" offset="0xC0" size="1" ocd-rw="R">
-          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0"/>
-          <bitfield caption="USART Transmitt Complete" mask="0x40" name="TXC0"/>
-          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0"/>
-          <bitfield caption="Framing Error" mask="0x10" name="FE0"/>
-          <bitfield caption="Data overRun" mask="0x08" name="DOR0"/>
-          <bitfield caption="Parity Error" mask="0x04" name="UPE0"/>
+          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC0" rw="R"/>
+          <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC0"/>
+          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE0" rw="R"/>
+          <bitfield caption="Framing Error" mask="0x10" name="FE0" rw="R"/>
+          <bitfield caption="Data overRun" mask="0x08" name="DOR0" rw="R"/>
+          <bitfield caption="Parity Error" mask="0x04" name="UPE0" rw="R"/>
           <bitfield caption="Double the USART transmission speed" mask="0x02" name="U2X0"/>
           <bitfield caption="Multi-processor Communication Mode" mask="0x01" name="MPCM0"/>
         </register>
@@ -669,7 +669,7 @@
         <register caption="USART I/O Data Register" name="UDR1" offset="0xCE" size="1" mask="0xFF" ocd-rw=""/>
         <register caption="USART Control and Status Register A" name="UCSR1A" offset="0xC8" size="1" ocd-rw="R">
           <bitfield caption="USART Receive Complete" mask="0x80" name="RXC1"/>
-          <bitfield caption="USART Transmitt Complete" mask="0x40" name="TXC1"/>
+          <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC1"/>
           <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE1"/>
           <bitfield caption="Framing Error" mask="0x10" name="FE1"/>
           <bitfield caption="Data overRun" mask="0x08" name="DOR1"/>
@@ -869,7 +869,7 @@
         <register caption="Timer/Counter2 Control Register A" name="TCCR2A" offset="0xB0" size="1">
           <bitfield caption="Compare Output Mode bits" mask="0xC0" name="COM2A"/>
           <bitfield caption="Compare Output Mode bits" mask="0x30" name="COM2B"/>
-          <bitfield caption="Waveform Genration Mode" mask="0x03" name="WGM2"/>
+          <bitfield caption="Waveform Generation Mode" mask="0x03" name="WGM2"/>
         </register>
         <register caption="Timer/Counter2 Control Register B" name="TCCR2B" offset="0xB1" size="1">
           <bitfield caption="Force Output Compare A" mask="0x80" name="FOC2A"/>
@@ -1004,28 +1004,28 @@
         <value caption="ADC Single Ended Input pin 5" name="ADC5" value="0x05"/>
         <value caption="ADC Single Ended Input pin 6" name="ADC6" value="0x06"/>
         <value caption="ADC Single Ended Input pin 7" name="ADC7" value="0x07"/>
-        <value caption="ADC Differential Inputs Postive pin 0 Negative pin 0 10x Gain" name="ADC0_ADC0_10X" value="0x08"/>
-        <value caption="ADC Differential Inputs Postive pin 1 Negative pin 0 10x Gain" name="ADC1_ADC0_10X" value="0x09"/>
-        <value caption="ADC Differential Inputs Postive pin 0 Negative pin 0 200x Gain" name="ADC0_ADC0_200x" value="0x0A"/>
-        <value caption="ADC Differential Inputs Postive pin 1 Negative pin 0 200x Gain" name="ADC1_ADC0_200X" value="0x0B"/>
-        <value caption="ADC Differential Inputs Postive pin 2 Negative pin 2 10x Gain" name="ADC2_ADC2_10X" value="0x0C"/>
-        <value caption="ADC Differential Inputs Postive pin 3 Negative pin 2 10x Gain" name="ADC3_ADC2_10X" value="0x0D"/>
-        <value caption="ADC Differential Inputs Postive pin 2 Negative pin 2 200x Gain" name="ADC2_ADC2_200X" value="0x0E"/>
-        <value caption="ADC Differential Inputs Postive pin 3 Negative pin 2 200x Gain" name="ADC3_ADC2_200X" value="0x0F"/>
-        <value caption="ADC Differential Inputs Postive pin 0 Negative pin 1 1x Gain" name="ADC0_ADC1_1X" value="0x10"/>
-        <value caption="ADC Differential Inputs Postive pin 1 Negative pin 1 1x Gain" name="ADC1_ADC1_1X" value="0x11"/>
-        <value caption="ADC Differential Inputs Postive pin 2 Negative pin 1 1x Gain" name="ADC2_ADC1_1X" value="0x12"/>
-        <value caption="ADC Differential Inputs Postive pin 3 Negative pin 1 1x Gain" name="ADC3_ADC1_1X" value="0x13"/>
-        <value caption="ADC Differential Inputs Postive pin 4 Negative pin 1 1x Gain" name="ADC4_ADC1_1X" value="0x14"/>
-        <value caption="ADC Differential Inputs Postive pin 5 Negative pin 1 1x Gain" name="ADC5_ADC1_1X" value="0x15"/>
-        <value caption="ADC Differential Inputs Postive pin 6 Negative pin 1 1x Gain" name="ADC6_ADC1_1X" value="0x16"/>
-        <value caption="ADC Differential Inputs Postive pin 7 Negative pin 1 1x Gain" name="ADC7_ADC1_1X" value="0x17"/>
-        <value caption="ADC Differential Inputs Postive pin 0 Negative pin 2 1x Gain" name="ADC0_ADC2_1X" value="0x18"/>
-        <value caption="ADC Differential Inputs Postive pin 1 Negative pin 2 1x Gain" name="ADC1_ADC2_1X" value="0x19"/>
-        <value caption="ADC Differential Inputs Postive pin 2 Negative pin 2 1x Gain" name="ADC2_ADC2_1X" value="0x1A"/>
-        <value caption="ADC Differential Inputs Postive pin 3 Negative pin 2 1x Gain" name="ADC3_ADC2_1X" value="0x1B"/>
-        <value caption="ADC Differential Inputs Postive pin 4 Negative pin 2 1x Gain" name="ADC4_ADC2_1X" value="0x1C"/>
-        <value caption="ADC Differential Inputs Postive pin 5 Negative pin 2 1x Gain" name="ADC5_ADC2_1X" value="0x1D"/>
+        <value caption="ADC Differential Inputs Positive pin 0 Negative pin 0 10x Gain" name="ADC0_ADC0_10X" value="0x08"/>
+        <value caption="ADC Differential Inputs Positive pin 1 Negative pin 0 10x Gain" name="ADC1_ADC0_10X" value="0x09"/>
+        <value caption="ADC Differential Inputs Positive pin 0 Negative pin 0 200x Gain" name="ADC0_ADC0_200x" value="0x0A"/>
+        <value caption="ADC Differential Inputs Positive pin 1 Negative pin 0 200x Gain" name="ADC1_ADC0_200X" value="0x0B"/>
+        <value caption="ADC Differential Inputs Positive pin 2 Negative pin 2 10x Gain" name="ADC2_ADC2_10X" value="0x0C"/>
+        <value caption="ADC Differential Inputs Positive pin 3 Negative pin 2 10x Gain" name="ADC3_ADC2_10X" value="0x0D"/>
+        <value caption="ADC Differential Inputs Positive pin 2 Negative pin 2 200x Gain" name="ADC2_ADC2_200X" value="0x0E"/>
+        <value caption="ADC Differential Inputs Positive pin 3 Negative pin 2 200x Gain" name="ADC3_ADC2_200X" value="0x0F"/>
+        <value caption="ADC Differential Inputs Positive pin 0 Negative pin 1 1x Gain" name="ADC0_ADC1_1X" value="0x10"/>
+        <value caption="ADC Differential Inputs Positive pin 1 Negative pin 1 1x Gain" name="ADC1_ADC1_1X" value="0x11"/>
+        <value caption="ADC Differential Inputs Positive pin 2 Negative pin 1 1x Gain" name="ADC2_ADC1_1X" value="0x12"/>
+        <value caption="ADC Differential Inputs Positive pin 3 Negative pin 1 1x Gain" name="ADC3_ADC1_1X" value="0x13"/>
+        <value caption="ADC Differential Inputs Positive pin 4 Negative pin 1 1x Gain" name="ADC4_ADC1_1X" value="0x14"/>
+        <value caption="ADC Differential Inputs Positive pin 5 Negative pin 1 1x Gain" name="ADC5_ADC1_1X" value="0x15"/>
+        <value caption="ADC Differential Inputs Positive pin 6 Negative pin 1 1x Gain" name="ADC6_ADC1_1X" value="0x16"/>
+        <value caption="ADC Differential Inputs Positive pin 7 Negative pin 1 1x Gain" name="ADC7_ADC1_1X" value="0x17"/>
+        <value caption="ADC Differential Inputs Positive pin 0 Negative pin 2 1x Gain" name="ADC0_ADC2_1X" value="0x18"/>
+        <value caption="ADC Differential Inputs Positive pin 1 Negative pin 2 1x Gain" name="ADC1_ADC2_1X" value="0x19"/>
+        <value caption="ADC Differential Inputs Positive pin 2 Negative pin 2 1x Gain" name="ADC2_ADC2_1X" value="0x1A"/>
+        <value caption="ADC Differential Inputs Positive pin 3 Negative pin 2 1x Gain" name="ADC3_ADC2_1X" value="0x1B"/>
+        <value caption="ADC Differential Inputs Positive pin 4 Negative pin 2 1x Gain" name="ADC4_ADC2_1X" value="0x1C"/>
+        <value caption="ADC Differential Inputs Positive pin 5 Negative pin 2 1x Gain" name="ADC5_ADC2_1X" value="0x1D"/>
         <value caption="Internal Reference (VBG)" name="ADC_VBG" value="0x1E"/>
         <value caption="0V (GND)" name="ADC_GND" value="0x1F"/>
       </value-group>  
@@ -1090,13 +1090,13 @@
           <bitfield caption="TWI Enable Acknowledge Bit" mask="0x40" name="TWEA"/>
           <bitfield caption="TWI Start Condition Bit" mask="0x20" name="TWSTA"/>
           <bitfield caption="TWI Stop Condition Bit" mask="0x10" name="TWSTO"/>
-          <bitfield caption="TWI Write Collition Flag" mask="0x08" name="TWWC"/>
+          <bitfield caption="TWI Write Collision Flag" mask="0x08" name="TWWC"/>
           <bitfield caption="TWI Enable Bit" mask="0x04" name="TWEN"/>
           <bitfield caption="TWI Interrupt Enable" mask="0x01" name="TWIE"/>
         </register>
         <register caption="TWI Status Register" name="TWSR" offset="0xB9" size="1">
           <bitfield caption="TWI Status" mask="0xF8" name="TWS" lsb="3"/>
-          <bitfield caption="TWI Prescaler" mask="0x03" name="TWPS" values="COMM_TWI_PRESACLE"/>
+          <bitfield caption="TWI Prescaler" mask="0x03" name="TWPS" values="COMM_TWI_PRESCALE"/>
         </register>
         <register caption="TWI Data register" name="TWDR" offset="0xBB" size="1" mask="0xFF"/>
         <register caption="TWI (Slave) Address register" name="TWAR" offset="0xBA" size="1">
@@ -1104,7 +1104,7 @@
           <bitfield caption="TWI General Call Recognition Enable Bit" mask="0x01" name="TWGCE"/>
         </register>
       </register-group>
-      <value-group name="COMM_TWI_PRESACLE">
+      <value-group name="COMM_TWI_PRESCALE">
         <value caption="1" name="1" value="0x00"/>
         <value caption="4" name="4" value="0x01"/>
         <value caption="16" name="16" value="0x02"/>

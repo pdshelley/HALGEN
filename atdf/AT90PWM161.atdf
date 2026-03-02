@@ -1,7 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <avr-tools-device-file xmlns:xalan="http://xml.apache.org/xalan" xmlns:NumHelper="NumHelper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
   <variants>
-    <variant tempmin="0" tempmax="0" speedmax="0" package="" ordercode="standard" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="105" speedmax="16000000" package="QFN32" ordercode="AT90PWM161-16MN" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="105" speedmax="16000000" package="SOIC20" ordercode="AT90PWM161-16SN" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="125" speedmax="16000000" package="QFN32" ordercode="AT90PWM161-16MF" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="125" speedmax="16000000" package="SOIC20" ordercode="AT90PWM161-16SF" vccmin="2.7" vccmax="5.5"/>
   </variants>
   <devices>
     <device name="AT90PWM161" architecture="AVR8" family="megaAVR">
@@ -626,18 +629,18 @@
           <bitfield caption="Analog Comparator 1 Output Bit" mask="0x02" name="AC1O"/>
         </register>
         <register name="AC3ECON" offset="0x7C" size="1">
-          <bitfield caption="Analog Comparator Ouput Invert" mask="0x20" name="AC3OI"/>
-          <bitfield caption="Analog Comparator Ouput Enable" mask="0x10" name="AC3OE"/>
+          <bitfield caption="Analog Comparator Output Invert" mask="0x20" name="AC3OI"/>
+          <bitfield caption="Analog Comparator Output Enable" mask="0x10" name="AC3OE"/>
           <bitfield caption="Analog Comparator Hysteresis Select" mask="0x07" name="AC3H"/>
         </register>
         <register name="AC2ECON" offset="0x7B" size="1">
-          <bitfield caption="Analog Comparator Ouput Invert" mask="0x20" name="AC2OI"/>
-          <bitfield caption="Analog Comparator Ouput Enable" mask="0x10" name="AC2OE"/>
+          <bitfield caption="Analog Comparator Output Invert" mask="0x20" name="AC2OI"/>
+          <bitfield caption="Analog Comparator Output Enable" mask="0x10" name="AC2OE"/>
           <bitfield caption="Analog Comparator Hysteresis Select" mask="0x07" name="AC2H"/>
         </register>
         <register name="AC1ECON" offset="0x7A" size="1">
-          <bitfield caption="Analog Comparator Ouput Invert" mask="0x20" name="AC1OI"/>
-          <bitfield caption="Analog Comparator Ouput Enable" mask="0x10" name="AC1OE"/>
+          <bitfield caption="Analog Comparator Output Invert" mask="0x20" name="AC1OI"/>
+          <bitfield caption="Analog Comparator Output Enable" mask="0x10" name="AC1OE"/>
           <bitfield caption="Analog Comparator Interrupt Capture Enable" mask="0x08" name="AC1ICE"/>
           <bitfield caption="Analog Comparator Hysteresis Select" mask="0x07" name="AC1H"/>
         </register>
