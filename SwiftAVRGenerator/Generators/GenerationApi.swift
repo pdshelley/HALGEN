@@ -49,24 +49,23 @@ struct Logs: Codable {
 
 func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
     var generatedAVRCores: [GeneratedAVRCore] = []
+    let documentation = ChipDocumentationLoader()
+    documentation.directory = docURL
+    let pipeline = GenerationPipeline()
+    var generatedFiles: [GeneratedCodeFile]
+    var data: Data
+    var ATDFObject: AVRToolsDeviceFile
     for url in urls {
         do {
-            let data = try Data(contentsOf: url)
-            generatedAVRCores.append(decodeATDF(data: data, docURL: docURL))
+            data = try Data(contentsOf: url)
+            ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
+            generatedFiles = pipeline.run(device: ATDFObject, documentation: documentation)
+            generatedAVRCores.append(GeneratedAVRCore(name: ATDFObject.devices.device.name, files: generatedFiles))
         } catch {
             print("Could not get data from ATDF file URL: \(url.lastPathComponent)")
         }
     }
     return generatedAVRCores
-}
-
-func decodeATDF(data: Data, docURL: URL) -> GeneratedAVRCore {
-    let documentation = ChipDocumentationLoader()
-    documentation.directory = docURL
-    let ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
-    let pipeline = GenerationPipeline()
-    let generatedFiles: [GeneratedCodeFile] = pipeline.run(device: ATDFObject, documentation: documentation)
-    return GeneratedAVRCore(name: ATDFObject.devices.device.name, files: generatedFiles)
 }
 
 func exportAll(fromURLs: [URL], toURL: URL, docURL: URL) {

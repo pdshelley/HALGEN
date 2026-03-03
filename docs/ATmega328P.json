@@ -552,6 +552,7 @@
         "OC0B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
         "Direction Register (DDR) bit corresponding to the OC0B pin must be set in order to enable the output driver.",
         "When OC0B is connected to the pin, the function of the COM0B1:0 bits depends on the WGM02:0 bit setting.",
+        "Table 18-5 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode (non-PWM)",
         "",
         "Table 18-5. Compare Output Mode, non-PWM Mode",
         "```",
