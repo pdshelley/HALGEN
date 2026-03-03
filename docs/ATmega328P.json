@@ -806,7 +806,9 @@
       "valueType": "Timer.CompareOutputMode",
       "defaultValue": ".normal",
       "documentation": [
-        "These bits control the Output Compare pin (OC1A) behavior. If one or both of the COM1A1:0 bits are set, the OC1A output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data Direction Register (DDR) bit corresponding to the OC1A pin must be set in order to enable the output driver.",
+        "These bits control the Output Compare pin (OC1A) behavior. If one or both of the COM1A1:0 bits are set, the",
+        "OC1A output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+        "Direction Register (DDR) bit corresponding to the OC1A pin must be set in order to enable the output driver.",
         "When OC1A is connected to the pin, the function of the COM1A1:0 bits depends on the WGM13:0 bit setting.",
         "Table 1 shows the COM1A1:0 bit functionality when the WGM13:0 bits are set to a normal or CTC mode (non-PWM).",
         "",
@@ -878,8 +880,12 @@
       "valueType": "Timer.CompareOutputMode",
       "defaultValue": ".normal",
       "documentation": [
-        "These bits control the Output Compare pin (OC1B) behavior. If one or both of the COM1B1:0 bits are set, the OC1B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data Direction Register (DDR) bit corresponding to the OC1B pin must be set in order to enable the output driver.",
+        "See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.",
+        "These bits control the Output Compare pin (OC1B) behavior. If one or both of the COM1B1:0 bits are set, the",
+        "OC1B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+        "Direction Register (DDR) bit corresponding to the OC1B pin must be set in order to enable the output driver.",
         "When OC1B is connected to the pin, the function of the COM1B1:0 bits depends on the WGM13:0 bit setting.",
+        "Table 18-5 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode(non-PWM).",
         "",
         "Table 1. Compare Output Mode, non-PWM Mode",
         "```",
@@ -896,7 +902,8 @@
         "---------------------------------------------------------------------------------------------",
         "```",
         "",
-        "Table 2. Compare Output Mode, Fast PWM Mode",
+        "Table 18-6 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to fast PWM mode.",
+        "Table 18-6. Compare Output Mode, Fast PWM Mode",
         "```",
         "---------------------------------------------------------------------------------------------",
         "|  Mode  | COM1B1| COM1B0| Description                                                      |",
@@ -913,9 +920,10 @@
         "---------------------------------------------------------------------------------------------",
         "```",
         "Note: 1. A special case occurs when OCR1B equals TOP and COM1B1 is set. In this case, the Compare Match is ",
-        "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+        "      ignored, but the set or clear is done at BOTTOM. See \"Phase Correct PWM Mode\" in datasheet for more details.",
         "",
-        "Table 3. Compare Output Mode, Phase Correct and Phase and Frequency Correct PWM Mode",
+        "Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
+        "Table 18-7. Compare Output Mode, Phase Correct PWM Mode",
         "```",
         "---------------------------------------------------------------------------------------------",
         "|  Mode  | COM1B1| COM1B0| Description                                                      |",
@@ -932,7 +940,7 @@
         "---------------------------------------------------------------------------------------------",
         "```",
         "Note: 1. A special case occurs when OCR1B equals TOP and COM1B1 is set. In this case, the Compare Match is ",
-        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" on page 157 for more details."
       ],
       "access": "R/W"
     },
@@ -941,9 +949,13 @@
       "valueType": "WaveformGenerationMode",
       "defaultValue": ".normal",
       "documentation": [
-        "Combined with the WGM13:2 bits found in the TCCR1B Register, these bits control the counting sequence of the counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
+        "Combined with the WGM13:2 bits found in the TCCR1B Register, these bits control the counting sequence of the",
+        "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
+        "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
+        "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of",
+        "Operation” on page 155).",
         "",
-        "Waveform Generation Mode Bit Description",
+        "Table 18-8. Waveform Generation Mode Bit Description",
         "```",
         "--------------------------------------------------------------------------------------------------------------",
         "|  Mode  | WGM13 | WGM12 | WGM11 | WGM10 | Mode of Operation          |  TOP   | Update of OCR1x | TOV1 Flag |",
@@ -985,14 +997,18 @@
         "Notes: 1. MAX = 0xFFFF",
         "       2. BOTTOM = 0x0000"
       ],
-      "access": "R/W"
+      "access": "R/W",
+      "splitTarget": "WGM1"
     },
     "ICNC1": {
       "variableName": "inputCaptureNoiseCanceler",
       "valueType": "Bool",
       "defaultValue": "",
       "documentation": [
-        "Setting this bit (to true) activates the Input Capture Noise Canceler. When the noise canceler is activated, the input from the Input Capture pin (ICP1) is filtered. The filter function requires four successive equal valued samples of the ICP1 pin for changing its output. The Input Capture is therefore delayed by four Oscillator cycles when the noise canceler is enabled."
+        "Setting this bit (to true) activates the Input Capture Noise Canceler. When the noise canceler is activated, the",
+        "input from the Input Capture pin (ICP1) is filtered. The filter function requires four successive equal valued",
+        "samples of the ICP1 pin for changing its output. The Input Capture is therefore delayed by four Oscillator cycles",
+        "when the noise canceler is enabled."
       ],
       "access": "R/W"
     },
@@ -1001,21 +1017,16 @@
       "valueType": "Bool",
       "defaultValue": "",
       "documentation": [
-        "This bit selects which edge on the Input Capture pin (ICP1) that is used to trigger a capture event. When the ICES1 bit is written to zero, a falling (negative) edge is used as trigger, and when the ICES1 bit is written to one, a rising (positive) edge will trigger the capture.",
-        "When a capture is triggered according to the ICES1 setting, the counter value is copied into the Input Capture Register (ICR1). The event will also set the Input Capture Flag (ICF1), and this can be used to cause an Input Capture Interrupt, if this interrupt is enabled.",
-        "When the ICR1 is used as TOP value (see description of the WGM bits located in the TCCR1A and the TCCR1B Register), the ICP1 is disconnected and consequently the Input Capture function is disabled."
+        "This bit selects which edge on the Input Capture pin (ICP1) that is used to trigger a capture event. When the",
+        "ICES1 bit is written to zero, a falling (negative) edge is used as trigger, and when the ICES1 bit is written to one,",
+        "a rising (positive) edge will trigger the capture.",
+        "When a capture is triggered according to the ICES1 setting, the counter value is copied into the Input Capture",
+        "Register (ICR1). The event will also set the Input Capture Flag (ICF1), and this can be used to cause an Input",
+        "Capture Interrupt, if this interrupt is enabled.",
+        "When the ICR1 is used as TOP value (see description of the WGM bits located in the TCCR1A and the",
+        "TCCR1B Register), the ICP1 is disconnected and consequently the Input Capture function is disabled."
       ],
       "access": "R/W"
-    },
-    "WGM13": {
-      "variableName": "waveformGenerationMode",
-      "valueType": "WaveformGenerationMode",
-      "defaultValue": ".normal",
-      "documentation": [
-        "See WGM1 on TCCR1A. These are the high bits of the waveform generation mode split across TCCR1A and TCCR1B."
-      ],
-      "access": "R/W",
-      "splitTarget": "WGM1"
     },
     "CS1": {
       "variableName": "prescaler",
@@ -1063,7 +1074,9 @@
       "valueType": "Bool",
       "defaultValue": "",
       "documentation": [
-        "When this bit is written to one, and the I-flag in the Status Register is set (interrupts globally enabled), the Timer/Counter1 Input Capture interrupt is enabled. The corresponding Interrupt Vector is executed when the ICF1 Flag, located in TIFR1, is set."
+        "When this bit is written to one, and the I-flag in the Status Register is set (interrupts globally enabled), the",
+        "Timer/Counter1 Input Capture interrupt is enabled. The corresponding Interrupt Vector is executed",
+        "when the ICF1 Flag, located in TIFR1, is set."
       ],
       "access": "R/W"
     },
@@ -1093,8 +1106,10 @@
       "valueType": "Bool",
       "defaultValue": "",
       "documentation": [
-        "This flag is set when a capture event occurs on the ICP1 pin. When the Input Capture Register (ICR1) is set by the WGM to be used as the TOP value, the ICF1 Flag is set when the counter reaches the TOP value.",
-        "ICF1 is automatically cleared when the Input Capture Interrupt Vector is executed. Alternatively, ICF1 can be cleared by writing a logic one to its bit location."
+        "This flag is set when a capture event occurs on the ICP1 pin. When the Input Capture Register (ICR1) is set by",
+        "the WGM to be used as the TOP value, the ICF1 Flag is set when the counter reaches the TOP value.",
+        "ICF1 is automatically cleared when the Input Capture Interrupt Vector is executed. Alternatively, ICF1 can be",
+        "cleared by writing a logic one to its bit location."
       ],
       "access": "R/W"
     },

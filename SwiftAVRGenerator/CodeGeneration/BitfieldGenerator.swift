@@ -21,19 +21,33 @@ func generateBitfieldAccessor(
     bitfieldData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData
 ) -> MemberBlockItemSyntax {
     
+    if bitfieldsToIgnore.contains(where: {$0.name == bitfield.name}) {
+        return MemberBlockItemSyntax(decl: DeclSyntax(""))
+    }
+    
     // The bitfield that has a splitTarget is the bitfield with the MSB(high)
     if bitfieldData(bitfield).splitTarget != nil {
         let bitfieldA = bitfield
         let parentVariableA = parentVariable
         let parentVariableB = registerGroup.register.first(where: {$0.bitfield.contains(where: {$0.name.rawValue == bitfieldData(bitfield).splitTarget})})
         let bitfieldB = parentVariableB?.bitfield.first(where: {$0.name.rawValue == bitfieldData(bitfield).splitTarget!})
-        bitfieldsToIgnore.append(bitfieldB!)
-        return generateSplitBitfieldAccessor(bitfieldA: bitfieldA, bitfieldB: bitfieldB!, parentVariableA: parentVariableA, parentVariableB: parentVariableB!, timerInfo: timerInfo, chipName: chipName, bitfieldData: bitfieldData, registerData: registerData)
-    }
-    
-    
-    if bitfieldsToIgnore.contains(where: {$0.name == bitfield.name}) {
-        return MemberBlockItemSyntax(decl: DeclSyntax(""))
+        let output = generateSplitBitfieldAccessor(
+            bitfieldA: bitfieldA,
+            bitfieldB: bitfieldB!,
+            parentVariableA: parentVariableA,
+            parentVariableB: parentVariableB!,
+            timerInfo: timerInfo,
+            chipName: chipName,
+            bitfieldData: bitfieldData,
+            registerData: registerData)
+        // Edge case when 2 split bitfields have the same name.
+        // The split bitfield would otherwise be generated twice,
+        // Once wrong (using the same register twice)
+        // And once correctly
+        if output.description != "" {
+            bitfieldsToIgnore.append(bitfieldB!)
+        }
+        return output
     }
     
     let parentVariableName: String = registerData(parentVariable).variableName
@@ -130,6 +144,11 @@ func generateSplitBitfieldAccessor(
     // New Value Bitmask:            0b00001111
     // Register B New Value Bitmask: 0b00001100
     // Register B Bitshift should be: << 2 to get back to the "Register B Bitmask" location
+    
+    // Edge case for 2 splitbitfields with the same name
+    if parentVariableA.name == parentVariableB.name {
+        return MemberBlockItemSyntax(decl: DeclSyntax(""))
+    }
     
     let caption = bitfieldA.caption?.rawValue ?? "" // .filter { $0 != " " } // TODO: Print some kind of error.
     let info = bitfieldData(bitfieldA)
