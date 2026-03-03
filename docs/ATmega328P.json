@@ -797,7 +797,11 @@
       "valueType": "Bool",
       "defaultValue": "",
       "documentation": [
-        "When this bit is one, the Timer/Counter2 prescaler will be reset. This bit is normally cleared immediately by hardware. If the bit is written when Timer/Counter2 is operating in asynchronous mode, the bit will remain one until the prescaler has been reset. The bit will not be cleared by hardware if the TSM bit is set."
+        "When this bit is one, the Timer/Counter2 prescaler will be reset. This bit is normally cleared immediately by",
+        "hardware. If the bit is written when Timer/Counter2 is operating in asynchronous mode, the bit will remain one",
+        "until the prescaler has been reset. The bit will not be cleared by hardware if the TSM bit is set. Refer to the",
+        "description of the ”Bit 7 – TSM: Timer/Counter Synchronization Mode” for a description of the",
+        "Timer/Counter Synchronization mode."
       ],
       "access": "R/W"
     },
@@ -1139,7 +1143,9 @@
       "valueType": "Timer.CompareOutputMode",
       "defaultValue": ".normal",
       "documentation": [
-        "These bits control the Output Compare pin (OC2A) behavior. If one or both of the COM2A1:0 bits are set, the OC2A output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data Direction Register (DDR) bit corresponding to the OC2A pin must be set in order to enable the output driver.",
+        "These bits control the Output Compare pin (OC2A) behavior. If one or both of the COM2A1:0 bits are set, the",
+        "OC2A output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+        "Direction Register (DDR) bit corresponding to the OC2A pin must be set in order to enable the output driver.",
         "When OC2A is connected to the pin, the function of the COM2A1:0 bits depends on the WGM22:0 bit setting.",
         "Table 1 shows the COM2A1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode (non-PWM).",
         "",
@@ -1211,7 +1217,9 @@
       "documentation": [
         "See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.",
         "",
-        "These bits control the Output Compare pin (OC2B) behavior. If one or both of the COM2B1:0 bits are set, the OC2B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data Direction Register (DDR) bit corresponding to the OC2B pin must be set in order to enable the output driver.",
+        "These bits control the Output Compare pin (OC2B) behavior. If one or both of the COM2B1:0 bits are set, the",
+        "OC2B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+        "Direction Register (DDR) bit corresponding to the OC2B pin must be set in order to enable the output driver.",
         "When OC2B is connected to the pin, the function of the COM2B1:0 bits depends on the WGM22:0 bit setting.",
         "Table 18-5 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode (non-PWM).",
         "",
@@ -1249,7 +1257,7 @@
         "---------------------------------------------------------------------------------------------",
         "```",
         "Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is ",
-        "      ignored, but the set or clear is done at BOTTOM. See \"Phase Correct PWM Mode\" for more details.",
+        "      ignored, but the set or clear is done at BOTTOM. See \"Phase Correct PWM Mode\" on page 157 for more details.",
         "",
         "Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
         "",
@@ -1270,7 +1278,7 @@
         "---------------------------------------------------------------------------------------------",
         "```",
         "Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is ",
-        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" for more details."
+        "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" on page 157 for more details."
       ],
       "access": "R/W"
     },
@@ -1279,7 +1287,11 @@
       "valueType": "WaveformGenerationMode",
       "defaultValue": ".normal",
       "documentation": [
-        "Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes.",
+        "Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the",
+        "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see",
+        "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
+        "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of",
+        "Operation” on page 155).",
         "",
         "Table 18-8. Waveform Generation Mode Bit Description",
         "```",
@@ -1306,7 +1318,8 @@
         "Notes: 1. MAX = 0xFF",
         "       2. BOTTOM = 0x00"
       ],
-      "access": "R/W"
+      "access": "R/W",
+      "splitTarget": "WGM22"
     },
     "FOC2A": {
       "variableName": "forceOutputCompareA",
@@ -1344,11 +1357,8 @@
       "variableName": "waveformGenerationMode",
       "valueType": "WaveformGenerationMode",
       "defaultValue": ".normal",
-      "documentation": [
-        "See WGM2 on TCCR2A. This is the high bit of the waveform generation mode split across TCCR2A and TCCR2B."
-      ],
-      "access": "R/W",
-      "splitTarget": "WGM2"
+      "documentation": [],
+      "access": "R/W"
     },
     "CS2": {
       "variableName": "prescaler",

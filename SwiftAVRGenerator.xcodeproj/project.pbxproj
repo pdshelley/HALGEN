@@ -402,7 +402,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE0C5E912F55DFB60053C834 /* main.swift in Sources */,
 				DA3BB7402A51E8F600C464C3 /* AVRToolsDeviceFile.swift in Sources */,
 				DA53268C2AF7578B00D7D526 /* AVRVariants.swift in Sources */,
 				DA5326902AF7588600D7D526 /* AVRModules.swift in Sources */,
