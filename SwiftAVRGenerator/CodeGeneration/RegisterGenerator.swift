@@ -9,6 +9,26 @@ import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
 
+/// Generates Swift code for a hardware register with optional documentation
+///
+/// This function creates Swift code representation for a hardware register,
+/// incorporating variable names, optional documentation comments, and supplemental
+/// data from chip documentation files. It handles both register-level and bitfield-level
+/// information to produce comprehensive register documentation.
+///
+/// - Parameter register: The register object containing metadata such as name, offset,
+///   and bitfield information from the ATDF device file.
+/// - Parameter variableName: The Swift identifier to use for the register in generated code.
+/// - Parameter optionalDocumentation: Optional array of documentation strings to include
+///   in the generated comments.
+/// - Parameter registerData: Supplemental data for the register including access type,
+///   default value, and formatted documentation from chip documentation files.
+/// - Parameter bitfieldData: Supplemental data for bitfields including access type,
+///   default value, and formatted documentation from chip documentation files.
+/// - Parameter generateRegisterTable: Boolean flag indicating whether to generate a
+///   register table for documentation purposes.
+///
+/// - Returns: Generated Swift code file containing the register definition and documentation.
 func generateRegister(
     register: AVRModules.Module.RegisterGroup.Register,
     variableName externalVariableName: String = "",

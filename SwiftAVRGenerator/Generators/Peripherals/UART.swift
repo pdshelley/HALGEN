@@ -28,9 +28,9 @@ struct UARTGenerator: PeripheralGenerator {
             )
         )
         
-        var memberBlockList = MemberBlockItemListSyntax()
         for registerGroup in device.modules.module.first(where: { $0.name == .usart })!.registerGroup {
             var code = buildFileHeader(for: "\("UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0").swift")")
+            var memberBlockList = MemberBlockItemListSyntax()
             for register in registerGroup.register {
                 memberBlockList.append(
                     contentsOf:

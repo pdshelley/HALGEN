@@ -11,9 +11,6 @@ class ChipDocumentationLoader {
     private var chipDocumentation: ChipDocumentation?
     var directory: URL?
     
-    /// Loads the documentation json for the specified chip
-    /// - Parameter chipName: The name of the chip to load the documentation for
-    /// - Returns: Whether or not the operation was successful
     @discardableResult
     func load(chipName: String) -> Bool {
         guard let fileURL = directory?.appendingPathComponent("\(chipName).json") else {

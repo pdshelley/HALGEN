@@ -47,6 +47,19 @@ struct Logs: Codable {
     }
 }
 
+/// Decodes ATDF (Atmel Device File) XML files and generates Swift code for AVR microcontroller hardware registers and bitfields.
+///
+/// - Parameters:
+///   - urls: An array of URLs pointing to ATDF XML files containing device register and bitfield definitions.
+///   - docURL: A URL pointing to chip documentation files that provide additional metadata such as variable names,
+///     access permissions, and documentation text for registers and bitfields.
+///
+/// - Returns: A dictionary mapping chip names to their generated Swift code modules, including register definitions,
+///   bitfield accessors, and hardware peripheral configurations.
+///
+/// - Note: This function is responsible for parsing the ATDF format, extracting register and bitfield information,
+///   and generating Swift code that provides type-safe access to AVR microcontroller hardware registers.
+///   The generated code includes documentation comments derived from the chip documentation files.
 func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
     var generatedAVRCores: [GeneratedAVRCore] = []
     let documentation = ChipDocumentationLoader()
@@ -68,6 +81,29 @@ func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
     return generatedAVRCores
 }
 
+/// Exports generated AVR microcontroller code files to the specified destination directory.
+///
+/// This function orchestrates the complete workflow of decoding ATDF XML files, generating
+/// Swift code modules for each chip, and exporting all generated files to disk along with
+/// a logs.json file for tracking.
+///
+/// - Parameters:
+///   - fromURLs: An array of URLs pointing to ATDF XML files containing device register
+///     and bitfield definitions for AVR microcontrollers.
+///   - toURL: A URL pointing to the destination directory where generated files will be
+///     exported. Subdirectories will be created for each chip name.
+///   - docURL: A URL pointing to chip documentation files that provide additional metadata
+///     such as variable names, access permissions, and documentation text for registers
+///     and bitfields.
+///
+/// - Note: This function creates a directory structure where each chip gets its own
+///   subdirectory, and within each subdirectory, files are organized according to their
+///   designated subdirectory paths from the generation pipeline. After all files are
+///   exported, a logs.json file containing chip operation logs is saved to the destination
+///   directory.
+///
+/// - SeeAlso: `decodeATDF(urls:docURL:)` - Decodes ATDF files and generates Swift code modules.
+/// - SeeAlso: `exportFile(toURL:fileName:fileContents:)` - Writes individual file contents to disk.
 func exportAll(fromURLs: [URL], toURL: URL, docURL: URL) {
     let generatedCores = decodeATDF(urls: fromURLs, docURL: docURL)
     for core in generatedCores {
@@ -80,6 +116,21 @@ func exportAll(fromURLs: [URL], toURL: URL, docURL: URL) {
     logs.saveToFile(toURL: toURL)
 }
 
+/// Exports a file with the specified contents to the given directory URL.
+///
+/// Creates the directory structure if it doesn't exist, then writes the file
+/// contents atomically to the destination. If an error occurs during the
+/// export process, an error message is printed to the console.
+///
+/// - Parameters:
+///   - toURL: A URL pointing to the directory where the file will be saved.
+///     The directory will be created if it does not already exist.
+///   - fileName: The name of the file to create (without path information).
+///   - fileContents: The string content to write to the file.
+///
+/// - Note: This function performs error handling by printing error messages
+///   to the console rather than throwing errors. The directory creation uses
+///   intermediate directories, allowing nested paths to be created automatically.
 func exportFile(toURL: URL, fileName: String, fileContents: String) {
     do {
         try FileManager.default.createDirectory(at: toURL, withIntermediateDirectories: true)

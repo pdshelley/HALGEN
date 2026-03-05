@@ -11,6 +11,44 @@ import SwiftSyntaxBuilder
 
 var bitfieldsToIgnore: [AVRModules.Module.RegisterGroup.Register.Bitfield] = []
 
+/// Generates Swift property accessors for a bitfield within a register.
+///
+/// This function creates the getter and setter code for a specific bitfield,
+/// wrapping the underlying register access with appropriate bit masking and shifting.
+/// The generated code includes documentation from the `ChipDocumentationLoader`
+/// when available, using the variable name and description from the chip's documentation.
+///
+/// - Parameters:
+///   - bitfield: The bitfield definition from the ATDF file, containing the name,
+///     caption, and bit position information.
+///   - parentVariable: The register variable that contains this bitfield, used to
+///     determine the register address and size.
+///   - registerGroup: The register group containing the parent register, providing
+///     context for the register's offset and address space.
+///   - timerInfo: Additional timer-specific information when this bitfield is part
+///     of a timer peripheral. May be nil for non-timer peripherals.
+///   - chipName: The name of the target chip (e.g., "ATmega328P"), used for
+///     chip-specific documentation references.
+///   - registerData: Supplemental register data loaded from the chip documentation,
+///     including variable names, access permissions, and documentation text.
+///   - bitfieldData: Supplemental bitfield data loaded from the chip documentation,
+///     including variable names, access permissions, and documentation text.
+///
+/// - Returns: A `MemberBlockItemSyntax` containing the generated Swift code for the bitfield
+///   accessor, including property declarations with documentation comments.
+///
+/// - SeeAlso: `generateSplitBitfieldAccessor`
+///
+/// - Example Generated Code:
+///   ```swift
+///   /// When this bit is written to a logic one, the digital input buffer on the
+///   /// corresponding ADC pin is disabled.
+///   ///
+///   public static var digitalInput5Disabled: Bool {
+///       get { (controlRegisterA >> 5) & 1 }
+///       set { controlRegisterA = (controlRegisterA & ~(1 << 5)) | (newValue ? 1 << 5 : 0) }
+///   }
+///   ```
 func generateBitfieldAccessor(
     bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
     parentVariable: AVRModules.Module.RegisterGroup.Register,
@@ -115,6 +153,26 @@ func generateBitfieldAccessor(
     }
 }
 
+/// Generates accessor code for a bitfield that is split across two different registers.
+///
+/// This function handles the complex case where a single logical bitfield spans multiple
+/// hardware registers, requiring special logic to read and write the combined value.
+///
+/// - Parameters:
+///   - bitfieldA: The first bitfield component (typically the MSB/high bits).
+///   - bitfieldB: The second bitfield component (typically the LSB/low bits).
+///   - parentVariableA: The register containing bitfieldA.
+///   - parentVariableB: The register containing bitfieldB.
+///   - timerInfo: Optional timer-specific information for protocol type prefixes.
+///   - chipName: The name of the target chip for context.
+///   - bitfieldData: Closure to retrieve supplemental bitfield metadata.
+///   - registerData: Closure to retrieve supplemental register metadata.
+/// - Returns: A `MemberBlockItemSyntax` containing the generated accessor declaration
+///   for the split bitfield, or an empty declaration if edge cases prevent generation.
+///
+/// - Note: This function calculates appropriate bitmasks and shifts to combine the
+///   two register values when reading, and properly distributes the value back to
+///   each register when writing.
 func generateSplitBitfieldAccessor(
     bitfieldA: AVRModules.Module.RegisterGroup.Register.Bitfield,
     bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield,
