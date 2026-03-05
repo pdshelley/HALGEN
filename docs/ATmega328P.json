@@ -6,14 +6,20 @@
       "variableName": "dataRegister",
       "documentation": [
         "See ATMega328p Datasheet Section 36 Register Summary",
-        "The USART Transmit Data Buffer Register and USART Receive Data Buffer Registers share the same I/O address referred to as USART Data Register or UDRn. The Transmit Data Buffer Register (TXB) will be the destination for data written to the UDRn Register location. Reading the UDRn Register location will return the contents of the Receive Data Buffer Register (RXB).",
+        "The USART Transmit Data Buffer Register and USART Receive Data Buffer Registers share the same I/O address referred to as",
+        "USART Data Register or UDRn. The Transmit Data Buffer Register (TXB) will be the destination for data written to the UDRn",
+        "Register location. Reading the UDRn Register location will return the contents of the Receive Data Buffer Register (RXB).",
         "",
         "For 5-, 6-, or 7-bit characters the upper unused bits will be ignored by the Transmitter and set to zero by the Receiver.",
         "",
-        "The transmit buffer can only be written when the UDREn Flag in the UCSRnA Register is set. Data written to UDRn when the UDREn Flag is not set, will be ignored by the USART Transmitter. When data is written to the transmit buffer, and the Transmitter is enabled, the Transmitter will load the data into the Transmit Shift Register when the Shift Register is empty.",
+        "The transmit buffer can only be written when the UDREn Flag in the UCSRnA Register is set. Data written to UDRn when the",
+        "UDREn Flag is not set, will be ignored by the USART Transmitter. When data is written to the transmit buffer, and the",
+        "Transmitter is enabled, the Transmitter will load the data into the Transmit Shift Register when the Shift Register is empty.",
         "Then the data will be serially transmitted on the TxDn pin.",
         "",
-        "The receive buffer consists of a two level FIFO. The FIFO will change its state whenever the receive buffer is accessed. Due to this behavior of the receive buffer, do not use Read-Modify-Write instructions (SBI and CBI) on this location. Be careful when using bit test instructions (SBIC and SBIS), since these also will change the state of the FIFO."
+        "The receive buffer consists of a two level FIFO. The FIFO will change its state whenever the receive buffer is accessed. Due",
+        "to this behavior of the receive buffer, do not use Read-Modify-Write instructions (SBI and CBI) on this location. Be careful",
+        "when using bit test instructions (SBIC and SBIS), since these also will change the state of the FIFO."
       ],
       "access": "R/W"
     },
@@ -47,18 +53,26 @@
         "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
         "--------------------------------------------------------------------------------",
         "```",
-        "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero when UBRRnH is written.",
+        "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero",
+        "when UBRRnH is written.",
         "",
-        "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receive will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
+        "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the",
+        "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receive",
+        "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
       ],
       "access": "R/W",
       "documentationL": [
-        "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
+        "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the",
+        "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver",
+        "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
       ],
       "documentationH": [
-        "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero when UBRRnH is written.",
+        "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero",
+        "when UBRRnH is written.",
         "",
-        "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
+        "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the",
+        "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver",
+        "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
       ]
     },
     "TCCR0A": {
@@ -401,7 +415,8 @@
       "valueType": "Bool",
       "defaultValue": "",
       "documentation": [
-        "See ATMega328p Datasheet Section 20.11.3 RXB8n is bit 1 on UCSRnB"
+        "See ATMega328p Datasheet Section 20.11.3",
+        "RXB8n is bit 1 on UCSRnB"
       ],
       "access": "R"
     },
@@ -410,7 +425,8 @@
       "valueType": "Bool",
       "defaultValue": "",
       "documentation": [
-        "See ATMega328p Datasheet Section 20.11.3 TXB8n is bit 0 on UCSRnB"
+        "See ATMega328p Datasheet Section 20.11.3",
+        "TXB8n is bit 0 on UCSRnB"
       ],
       "access": "R/W"
     },
@@ -419,7 +435,8 @@
       "valueType": "UART.ModeSelect",
       "defaultValue": ".asynchronous",
       "documentation": [
-        "See ATMega328p Datasheet Section 20.11.4 UMSELn are bit 7 and 6 on UCSRnC"
+        "See ATMega328p Datasheet Section 20.11.4",
+        "UMSELn are bit 7 and 6 on UCSRnC"
       ],
       "access": "R/W"
     },
@@ -430,7 +447,9 @@
       "documentation": [
         "Parity Mode See ATMega328p Datasheet Section 20.11.4.",
         "UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.",
-        "These bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.",
+        "These bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the",
+        "parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare",
+        "it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.",
         "| UPMn1 | UPMn0 | Parity Mode          |",
         "|-------|-------|----------------------|",
         "| 0     | 0     | Disabled             |",

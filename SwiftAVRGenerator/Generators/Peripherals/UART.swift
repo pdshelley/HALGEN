@@ -19,6 +19,7 @@ struct UARTGenerator: PeripheralGenerator {
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
         var files: [GeneratedCodeFile] = []
+        documentation.load(chipName: device.devices.device.name)
         files.append(
             GeneratedCodeFile(
                 fileName: "\(name).swift",
@@ -27,67 +28,53 @@ struct UARTGenerator: PeripheralGenerator {
             )
         )
         
-        documentation.load(chipName: device.devices.device.name)
-        
+        var memberBlockList = MemberBlockItemListSyntax()
         for registerGroup in device.modules.module.first(where: { $0.name == .usart })!.registerGroup {
-            files.append(
-                buildUARTFile(
-                    registerGroup: registerGroup,
-                    uartName: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0")",
-                    chipName: device.devices.device.name,
-                    documentation: documentation
+            var code = buildFileHeader(for: "\("UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0").swift")")
+            for register in registerGroup.register {
+                memberBlockList.append(
+                    contentsOf:
+                        generateRegister(
+                            register: register,
+                            registerData: documentation.supplementalData(for:),
+                            bitfieldData:documentation.supplementalData(for:)
+                        )
                 )
-            )
+                for bitfield in register.bitfield {
+                    memberBlockList.append(
+                        generateBitfieldAccessor(
+                            bitfield: bitfield,
+                            parentVariable: register,
+                            registerGroup: registerGroup,
+                            chipName: device.devices.device.name,
+                            registerData: documentation.supplementalData(for:),
+                            bitfieldData: documentation.supplementalData(for:)
+                        )
+                    )
+                }
+            }
+            
+            let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
+            
+            // Information needed to setup the Struct.
+            let InheritedType = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: "UARTPort"))
+            let inheritedTypeList = InheritedTypeListSyntax(arrayLiteral: InheritedType)
+            let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
+            
+            code.append(SourceFileSyntax {
+                StructDeclSyntax(
+                    modifiers: DeclModifierListSyntax(arrayLiteral: DeclModifierSyntax(name: "public")),
+                    name: "\(raw: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0").swift")",
+                    inheritanceClause: inheritanceClause,
+                    memberBlock: memberBlock
+                )
+            }.formatted().description)
+            
+            files.append(GeneratedCodeFile(fileName: "\("UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0").swift")", content: code, subdirectory: subdirectory))
         }
+        
         return files
     }
-}
-
-func buildUARTFile(
-    registerGroup: AVRModules.Module.RegisterGroup,
-    uartName: String,
-    chipName: String,
-    documentation: ChipDocumentationLoader
-) -> GeneratedCodeFile {
-    let fileName = "\(uartName).swift"
-    var code = buildFileHeader(for: uartName)
-    var memberBlockList = MemberBlockItemListSyntax()
-    
-    for register in registerGroup.register {
-        memberBlockList.append(
-            contentsOf:
-                generateRegister(
-                    register: register,
-                    registerData: documentation.supplementalData(for:),
-                    bitfieldData:documentation.supplementalData(for:)
-                )
-        )
-    }
-
-    // Doing this in the above loop would be more efficient but I want to generate the registers before anything else
-    for register in registerGroup.register {
-        for bitfield in register.bitfield {
-            memberBlockList.append(generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, chipName: chipName, registerData: documentation.supplementalData(for:), bitfieldData: documentation.supplementalData(for:)))
-        }
-    }
-    
-    let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
-    
-    // Information needed to setup the Struct.
-    let InheritedType = InheritedTypeSyntax(type: TypeSyntax(stringLiteral: "UARTPort"))
-    let inheritedTypeList = InheritedTypeListSyntax(arrayLiteral: InheritedType)
-    let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
-    
-    code.append(SourceFileSyntax {
-        StructDeclSyntax(
-            modifiers: DeclModifierListSyntax(arrayLiteral: DeclModifierSyntax(name: "public")),
-            name: "\(raw: uartName)",
-            inheritanceClause: inheritanceClause,
-            memberBlock: memberBlock
-        )
-    }.formatted().description)
-    
-    return GeneratedCodeFile(fileName: fileName, content: code, subdirectory: UARTGenerator().subdirectory)
 }
 
 private enum UARTDocs {

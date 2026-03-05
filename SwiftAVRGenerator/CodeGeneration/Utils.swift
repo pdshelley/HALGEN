@@ -9,6 +9,27 @@ import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
 
+/// Builds a file header string for Swift source files.
+///
+/// Creates a formatted header comment block containing the file name,
+/// creation date, and copyright information. Optionally generates a
+/// lowercase typealias for the file's main type.
+///
+/// - Parameters:
+///   - fileName: The name of the file to include in the header.
+///   - generateTypealias: When `true`, includes a typealias declaration
+///     at the end of the header. Defaults to `true`.
+/// - Returns: A formatted string containing the complete file header.
+///
+/// - Note: The function uses the current system date to populate
+///   the creation date and copyright year. The typealias generation
+///   is currently a temporary implementation and should be moved
+///   to a different location in a future refactor.
+///
+/// - Example:
+///   ```swift
+///   let header = buildFileHeader(for: "MyClass", generateTypealias: true)
+///   ```
 func buildFileHeader(for fileName: String, generateTypealias: Bool = true) -> String {
     let fullFormatter = DateFormatter()
     fullFormatter.dateFormat = "MM/dd/yyyy"
@@ -43,6 +64,46 @@ func buildFileHeader(for fileName: String, generateTypealias: Bool = true) -> St
     return fileHeader
 }
 
+/// Generates an array of access strings for each bit position in a register.
+///
+/// This function processes a register's bitfield definitions and determines the access
+/// type (read, write, or read/write) for each of the 16 possible bit positions.
+/// It uses the `supplementalData` closure to retrieve access information for each
+/// bitfield, falling back to the `parentAccess` value for bits without specific
+/// bitfield definitions.
+///
+/// - Parameters:
+///   - register: The register object containing bitfield definitions from the ATDF file.
+///   - parentAccess: The default access string to use for bits not covered by any bitfield.
+///   - supplementalData: A closure that receives a bitfield and returns its `SupplementalBitfieldData`,
+///     which includes the access type for that bitfield.
+/// - Returns: An array of 16 strings, where each element represents the access type for
+///   the corresponding bit position (0-15). Bits without a bitfield definition receive
+///   the `parentAccess` value.
+///
+/// - Note: This function handles bitfields that span multiple consecutive bits using
+///   mask values. It processes the mask to determine which bit positions belong to
+///   each bitfield and assigns the appropriate access string to each position.
+///
+/// - Example:
+///   ```swift
+///   let accessTypes = getBitAccess(
+///       from: register,
+///       parentAccess: "R/W",
+///       supplementalData: { bitfield in
+///           // Return supplemental data with access information
+///           return SupplementalBitfieldData(
+///               variableName: bitfield.name.rawValue,
+///               valueType: "UInt8",
+///               defaultValue: "0",
+///               documentation: "",
+///               access: .readWrite
+///           )
+///       }
+///   )
+///   // accessTypes[0] contains the access string for bit 0
+///   // accessTypes[15] contains the access string for bit 15
+///   ```
 func getBitAccess(from register: AVRModules.Module.RegisterGroup.Register, parentAccess: String, supplementalData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData ) -> [String] {
     var bitAccess = Array(repeating: parentAccess, count: 16)
         
@@ -71,6 +132,23 @@ func getBitAccess(from register: AVRModules.Module.RegisterGroup.Register, paren
     return bitAccess
 }
 
+/// Creates a valid Swift variable name from a caption string.
+///
+/// Filters out invalid characters (spaces, forward slashes, digits 0-5, and hyphens)
+/// and ensures the name starts with a lowercase letter.
+///
+/// - Parameter caption: The original caption or label text to convert.
+/// - Returns: A cleaned string suitable for use as a Swift variable name.
+///
+/// - Note: This function is designed to create readable variable names from
+///   human-readable captions, such as those found in hardware register
+///   documentation or user interface labels.
+///
+/// - Example:
+///   ```swift
+///   let name = getVariableName(caption: "Timer Control")
+///   // Returns: "timerControl"
+///   ```
 func getVariableName(caption: String) -> String {
     var variableName = caption
     let charactersToRemove: Set<Character> = [" ", "/", "0", "1", "2", "3", "4", "5", "-"]

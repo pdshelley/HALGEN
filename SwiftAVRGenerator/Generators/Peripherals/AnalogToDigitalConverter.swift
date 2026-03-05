@@ -18,7 +18,6 @@ struct ADCGenerator: PeripheralGenerator {
     }
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
-        let files: [GeneratedCodeFile] = []
         var code = buildFileHeader(for: name)
         code.append(adcDocs.adcEnums)
         documentation.load(chipName: device.devices.device.name)
