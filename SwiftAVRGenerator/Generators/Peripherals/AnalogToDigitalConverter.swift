@@ -18,15 +18,18 @@ struct ADCGenerator: PeripheralGenerator {
     }
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
-        var code = buildFileHeader(for: name)
+        var code = buildFileHeader(for: name, generateTypealias: false)
         code.append(adcDocs.adcEnums)
         documentation.load(chipName: device.devices.device.name)
         let adcRegisterGroup = device.modules.module.first(where: { $0.name == .adc })!.registerGroup.first!
         var memberBlockList = MemberBlockItemListSyntax()
         
-        for decl in adcDocs.adcTypealiases {
-            memberBlockList.append(MemberBlockItemSyntax(decl: decl))
-        }
+//        for decl in adcDocs.adcTypealiases {
+//            memberBlockList.append(MemberBlockItemSyntax(decl: decl))
+//        }
+        memberBlockList.append(
+            MemberBlockItemSyntax(decl: DeclSyntax("\(raw: adcDocs.adcTypealiasesString)"))
+        )
         
         for register in adcRegisterGroup.register {
             memberBlockList.append(
@@ -307,6 +310,8 @@ private enum adcDocs {
             case timer1Capture = 7
         }
         
+        public typealias adc = AnalogToDigitalConverter
+        
         
         """
     
@@ -349,4 +354,10 @@ private enum adcDocs {
             )
         )
     ]
+    
+    static let adcTypealiasesString = """
+            public typealias VoltageReferenceSelection = VoltageReference
+            public typealias AnalogChannelSelection = AnalogChannel
+            public typealias AnalogPrescalerSelection = AnalogPrescaler
+        """
 }
