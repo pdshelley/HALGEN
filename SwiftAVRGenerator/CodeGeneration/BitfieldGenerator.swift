@@ -53,7 +53,6 @@ func generateBitfieldAccessor(
     bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
     parentVariable: AVRModules.Module.RegisterGroup.Register,
     registerGroup: AVRModules.Module.RegisterGroup,
-    timerInfo: TimerInfo? = nil,
     chipName: String,
     registerData: (_ register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData,
     bitfieldData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData
@@ -74,7 +73,6 @@ func generateBitfieldAccessor(
             bitfieldB: bitfieldB!,
             parentVariableA: parentVariableA,
             parentVariableB: parentVariableB!,
-            timerInfo: timerInfo,
             chipName: chipName,
             bitfieldData: bitfieldData,
             registerData: registerData)
@@ -178,7 +176,6 @@ func generateSplitBitfieldAccessor(
     bitfieldB: AVRModules.Module.RegisterGroup.Register.Bitfield,
     parentVariableA: AVRModules.Module.RegisterGroup.Register,
     parentVariableB: AVRModules.Module.RegisterGroup.Register,
-    timerInfo: TimerInfo?,
     chipName: String,
     bitfieldData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData,
     registerData: (_ register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData
@@ -250,10 +247,10 @@ func generateSplitBitfieldAccessor(
           /// \(raw: bitfieldA.name) – \(raw: caption) \(raw: info.documentation != "" ? documentationFromJson : "")
           @inlinable
           @inline(__always)
-          public static var \(raw: info.variableName): \(raw: (timerInfo?.timerProtocol != nil ? (timerInfo!.timerProtocol + ".") : ""))\(raw: info.valueType) {
+          public static var \(raw: info.variableName): \(raw: info.valueType) {
               get {
                   let mode = ((\(raw: hightParentVariableName) & \(raw: highBitmask)) \(raw: getShiftDirection) \(raw: abs(adjustedHighBitshift))) | (\(raw: lowParentVariableName) & \(raw: lowBitmask))
-                  return \(raw: (timerInfo?.timerProtocol != nil ? (timerInfo!.timerProtocol + ".") : ""))\(raw: info.valueType)(rawValue: mode) ?? \(raw: info.defaultValue)
+                  return \(raw: info.valueType)(rawValue: mode) ?? \(raw: info.defaultValue)
               }
               set {
                   \(raw: lowParentVariableName) |= ((newValue.rawValue & \(raw: newValueLowBitmask)) << UInt8(\(raw: lowBitshift)))

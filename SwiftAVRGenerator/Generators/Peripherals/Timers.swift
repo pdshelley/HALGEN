@@ -165,10 +165,10 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String, 
                             }
                         }
                     }
-                    let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, timerInfo: timerInfo, chipName: chipName, registerData: chipDocumentation.supplementalData(for:), bitfieldData: chipDocumentation.supplementalData(for:))
+                    let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, chipName: chipName, registerData: chipDocumentation.supplementalData(for:), bitfieldData: chipDocumentation.supplementalData(for:))
                     memberBlockList.append(bitfieldMemberBlock)
                 default:
-                    let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, timerInfo: timerInfo, chipName: chipName, registerData: chipDocumentation.supplementalData(for:), bitfieldData: chipDocumentation.supplementalData(for:))
+                    let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, chipName: chipName, registerData: chipDocumentation.supplementalData(for:), bitfieldData: chipDocumentation.supplementalData(for:))
                     memberBlockList.append(bitfieldMemberBlock)
                 }
             }
@@ -194,55 +194,6 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String, 
 //    print(code)
     // TODO: Move generation logic to the generator function in the PeripheralGenerator struct so no new instantiation is needed to get the subdir
     return GeneratedCodeFile(fileName: fileName, content: code, subdirectory: TimerGenerator().subdirectory)
-}
-
-/// Adds Padding to strings for documentation. This is intended to be used for centering text in mono-spaced ASCII tables.
-/// - Parameter input: String of 7 characters or less.
-/// - Returns: A string of 7 characters, if the input string had more than 7 characters it should be unchanged.
-func padString(_ input: String, padding: Int) -> String {
-    if input.count >= padding {
-        return input
-    }
-    
-    let totalPadding = padding - input.count
-    let leftPadding = totalPadding / 2
-    let rightPadding = totalPadding - leftPadding
-    
-    return String(repeating: " ", count: leftPadding) + input + String(repeating: " ", count: rightPadding)
-}
-
-/// This takes messy string data that should be a number and tries to convert it to a UInt8. Default Value is 0.
-/// - Parameter stringValue: Hex values as a string, Intigers as a string, or anything else that will default to 0
-/// - Returns: UInt8. If the number is greater than 8 Bit Max then return 0.
-func numberFrom(value stringValue: String) -> UInt8 {
-    let trimmedString = stringValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            
-    // Empty string → default
-    guard !trimmedString.isEmpty else { return 0 }
-    
-    // Hex: either starts with "0x" or consists only of hex digits
-    let hexString: String
-    if trimmedString.hasPrefix("0x") {
-        hexString = String(trimmedString.dropFirst(2))
-    } else if trimmedString.allSatisfy({ $0.isHexDigit }) {
-        hexString = trimmedString
-    } else {
-        hexString = ""
-    }
-    
-    // Try hex first
-    if !hexString.isEmpty,
-        let value = UInt8(hexString, radix: 16), value <= 255 {
-        return value
-    }
-    
-    // Then try decimal
-    if let value = UInt8(trimmedString), value <= 255 {
-        return value
-    }
-    
-    // Anything else (text, out-of-range, etc.) → default
-    return 0
 }
 
 func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: String) -> MemberBlockItemSyntax {

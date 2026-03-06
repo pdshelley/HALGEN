@@ -737,7 +737,7 @@
     },
     "WGM0": {
       "variableName": "waveformGenerationMode",
-      "valueType": "WaveformGenerationMode",
+      "valueType": "Timer8Bit.WaveformGenerationMode",
       "defaultValue": ".normal",
       "documentation": [
         "Combined with the WGM02 bit found in the TCCR0B Register, these bits control the counting sequence of the counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
@@ -804,7 +804,7 @@
     },
     "WGM02": {
       "variableName": "waveformGenerationMode",
-      "valueType": "WaveformGenerationMode",
+      "valueType": "Timer8Bit.WaveformGenerationMode",
       "defaultValue": ".normal",
       "documentation": [
         "Combined with the WGM02 bit found in the TCCR0B Register, these bits control the counting sequence of the",
@@ -1074,7 +1074,7 @@
     },
     "WGM1": {
       "variableName": "waveformGenerationMode",
-      "valueType": "WaveformGenerationMode",
+      "valueType": "Timer16Bit.WaveformGenerationMode",
       "defaultValue": ".normal",
       "documentation": [
         "Combined with the WGM13:2 bits found in the TCCR1B Register, these bits control the counting sequence of the",
@@ -1408,7 +1408,7 @@
     },
     "WGM2": {
       "variableName": "waveformGenerationMode",
-      "valueType": "WaveformGenerationMode",
+      "valueType": "Timer8Bit.WaveformGenerationMode",
       "defaultValue": ".normal",
       "documentation": [
         "Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the",
@@ -1479,7 +1479,7 @@
     },
     "WGM22": {
       "variableName": "waveformGenerationMode",
-      "valueType": "WaveformGenerationMode",
+      "valueType": "Timer8Bit.WaveformGenerationMode",
       "defaultValue": ".normal",
       "documentation": [],
       "access": "R/W"
