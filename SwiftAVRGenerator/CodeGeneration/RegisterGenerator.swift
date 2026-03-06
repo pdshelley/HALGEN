@@ -18,7 +18,7 @@ import SwiftSyntaxBuilder
 ///
 /// - Parameter register: The register object containing metadata such as name, offset,
 ///   and bitfield information from the ATDF device file.
-/// - Parameter variableName: The Swift identifier to use for the register in generated code.
+/// - Parameter externalVariableName: The Swift identifier to use for the register in generated code.
 /// - Parameter optionalDocumentation: Optional array of documentation strings to include
 ///   in the generated comments.
 /// - Parameter registerData: Supplemental data for the register including access type,
