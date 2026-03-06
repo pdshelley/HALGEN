@@ -106,14 +106,20 @@ func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
 /// - SeeAlso: `exportFile(toURL:fileName:fileContents:)` - Writes individual file contents to disk.
 func exportAll(fromURLs: [URL], toURL: URL, docURL: URL) {
     let generatedCores = decodeATDF(urls: fromURLs, docURL: docURL)
+    let formatter = CodeFormatter()
+    var report = FormattingReport()
     for core in generatedCores {
         let subFolderURL = toURL.appendingPathComponent(core.name, isDirectory: true)
         for file in core.files {
+            let result = formatter.format(source: file.content)
+            report.add(chipName: core.name, fileName: file.fileName, diagnostics: result.diagnostics)
+            
             let folder = subFolderURL.appendingPathComponent(file.subdirectory, isDirectory: true)
-            exportFile(toURL: folder, fileName: file.fileName, fileContents: file.content)
+            exportFile(toURL: folder, fileName: file.fileName, fileContents: result.content)
         }
     }
     logs.saveToFile(toURL: toURL)
+    report.save(to: toURL)
 }
 
 /// Exports a file with the specified contents to the given directory URL.

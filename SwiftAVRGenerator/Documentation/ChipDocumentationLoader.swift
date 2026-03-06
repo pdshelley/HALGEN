@@ -11,6 +11,10 @@ class ChipDocumentationLoader {
     private var chipDocumentation: ChipDocumentation?
     var directory: URL?
     
+    /// Loads supplemental documentation for a specific chip from a JSON file.
+    /// - Parameter chipName: The name of the chip (e.g., "ATmega328P").
+    /// - Returns: `true` if the documentation was successfully loaded, `false` otherwise.
+    /// - Note: The JSON file must be named `<chipName>.json` and located in the configured directory.
     @discardableResult
     func load(chipName: String) -> Bool {
         guard let fileURL = directory?.appendingPathComponent("\(chipName).json") else {
