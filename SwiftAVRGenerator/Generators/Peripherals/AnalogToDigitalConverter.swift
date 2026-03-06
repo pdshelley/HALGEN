@@ -316,44 +316,44 @@ private enum adcDocs {
         """
     
     // Thank youu chatgpt🙏
-    static let adcTypealiases: [DeclSyntax] = [
-        DeclSyntax(
-            TypeAliasDeclSyntax(
-                modifiers: [.init(name: .keyword(.public))],
-                typealiasKeyword: .keyword(.typealias),
-                identifier: .identifier("VoltageReferenceSelection"),
-                genericParameterClause: nil,
-                initializer: TypeInitializerClauseSyntax(
-                    equal: .equalToken(),
-                    value: TypeSyntax(IdentifierTypeSyntax(name: .identifier("VoltageReference")))
-                )
-            )
-        ),
-        DeclSyntax(
-            TypeAliasDeclSyntax(
-                modifiers: [.init(name: .keyword(.public))],
-                typealiasKeyword: .keyword(.typealias),
-                identifier: .identifier("AnalogChannelSelection"),
-                genericParameterClause: nil,
-                initializer: TypeInitializerClauseSyntax(
-                    equal: .equalToken(),
-                    value: TypeSyntax(IdentifierTypeSyntax(name: .identifier("AnalogChannel")))
-                )
-            )
-        ),
-        DeclSyntax(
-            TypeAliasDeclSyntax(
-                modifiers: [.init(name: .keyword(.public))],
-                typealiasKeyword: .keyword(.typealias),
-                identifier: .identifier("AnalogPrescalerSelection"),
-                genericParameterClause: nil,
-                initializer: TypeInitializerClauseSyntax(
-                    equal: .equalToken(),
-                    value: TypeSyntax(IdentifierTypeSyntax(name: .identifier("AnalogPrescaler")))
-                )
-            )
-        )
-    ]
+//    static let adcTypealiases: [DeclSyntax] = [
+//        DeclSyntax(
+//            TypeAliasDeclSyntax(
+//                modifiers: [.init(name: .keyword(.public))],
+//                typealiasKeyword: .keyword(.typealias),
+//                identifier: .identifier("VoltageReferenceSelection"),
+//                genericParameterClause: nil,
+//                initializer: TypeInitializerClauseSyntax(
+//                    equal: .equalToken(),
+//                    value: TypeSyntax(IdentifierTypeSyntax(name: .identifier("VoltageReference")))
+//                )
+//            )
+//        ),
+//        DeclSyntax(
+//            TypeAliasDeclSyntax(
+//                modifiers: [.init(name: .keyword(.public))],
+//                typealiasKeyword: .keyword(.typealias),
+//                identifier: .identifier("AnalogChannelSelection"),
+//                genericParameterClause: nil,
+//                initializer: TypeInitializerClauseSyntax(
+//                    equal: .equalToken(),
+//                    value: TypeSyntax(IdentifierTypeSyntax(name: .identifier("AnalogChannel")))
+//                )
+//            )
+//        ),
+//        DeclSyntax(
+//            TypeAliasDeclSyntax(
+//                modifiers: [.init(name: .keyword(.public))],
+//                typealiasKeyword: .keyword(.typealias),
+//                identifier: .identifier("AnalogPrescalerSelection"),
+//                genericParameterClause: nil,
+//                initializer: TypeInitializerClauseSyntax(
+//                    equal: .equalToken(),
+//                    value: TypeSyntax(IdentifierTypeSyntax(name: .identifier("AnalogPrescaler")))
+//                )
+//            )
+//        )
+//    ]
     
     static let adcTypealiasesString = """
             public typealias VoltageReferenceSelection = VoltageReference
