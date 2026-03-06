@@ -5,8 +5,9 @@
 //  Created by Friso De Backer on 02/03/2026.
 //
 
-import XMLCoder
 import Foundation
+import Dispatch
+import XMLCoder
 
 struct GeneratedCodeFile {
     let fileName: String
@@ -17,6 +18,19 @@ struct GeneratedCodeFile {
 struct GeneratedAVRCore {
     let name: String
     let files: [GeneratedCodeFile]
+}
+
+private struct GeneratedFileJob {
+    let chipName: String
+    let file: GeneratedCodeFile
+}
+
+private struct FormattedGeneratedFile {
+    let chipName: String
+    let fileName: String
+    let subdirectory: String
+    let content: String
+    let diagnostics: [FormattingDiagnostic]
 }
 
 var logs = Logs(chips: [])
@@ -61,24 +75,31 @@ struct Logs: Codable {
 ///   and generating Swift code that provides type-safe access to AVR microcontroller hardware registers.
 ///   The generated code includes documentation comments derived from the chip documentation files.
 func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
-    var generatedAVRCores: [GeneratedAVRCore] = []
-    let documentation = ChipDocumentationLoader()
-    documentation.directory = docURL
     let pipeline = GenerationPipeline()
-    var generatedFiles: [GeneratedCodeFile]
-    var data: Data
-    var ATDFObject: AVRToolsDeviceFile
-    for url in urls {
+    let resultsLock = NSLock()
+    var generatedAVRCores = Array<GeneratedAVRCore?>(repeating: nil, count: urls.count)
+
+    DispatchQueue.concurrentPerform(iterations: urls.count) { index in
+        let url = urls[index]
+
         do {
-            data = try Data(contentsOf: url)
-            ATDFObject = try! XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
-            generatedFiles = pipeline.run(device: ATDFObject, documentation: documentation)
-            generatedAVRCores.append(GeneratedAVRCore(name: ATDFObject.devices.device.name, files: generatedFiles))
+            let documentation = ChipDocumentationLoader()
+            documentation.directory = docURL
+
+            let data = try Data(contentsOf: url)
+            let atdfObject = try XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
+            let generatedFiles = pipeline.run(device: atdfObject, documentation: documentation)
+            let generatedCore = GeneratedAVRCore(name: atdfObject.devices.device.name, files: generatedFiles)
+
+            resultsLock.lock()
+            generatedAVRCores[index] = generatedCore
+            resultsLock.unlock()
         } catch {
-            print("Could not get data from ATDF file URL: \(url.lastPathComponent)")
+            print("Could not generate from ATDF file URL: \(url.lastPathComponent) (\(error.localizedDescription))")
         }
     }
-    return generatedAVRCores
+
+    return generatedAVRCores.compactMap { $0 }
 }
 
 /// Exports generated AVR microcontroller code files to the specified destination directory.
@@ -106,18 +127,46 @@ func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
 /// - SeeAlso: `exportFile(toURL:fileName:fileContents:)` - Writes individual file contents to disk.
 func exportAll(fromURLs: [URL], toURL: URL, docURL: URL) {
     let generatedCores = decodeATDF(urls: fromURLs, docURL: docURL)
-    let formatter = CodeFormatter()
-    var report = FormattingReport()
-    for core in generatedCores {
-        let subFolderURL = toURL.appendingPathComponent(core.name, isDirectory: true)
-        for file in core.files {
-            let result = formatter.format(source: file.content)
-            report.add(chipName: core.name, fileName: file.fileName, diagnostics: result.diagnostics)
-            
-            let folder = subFolderURL.appendingPathComponent(file.subdirectory, isDirectory: true)
-            exportFile(toURL: folder, fileName: file.fileName, fileContents: result.content)
-        }
+    let generatedFiles = generatedCores.flatMap { core in
+        core.files.map { GeneratedFileJob(chipName: core.name, file: $0) }
     }
+
+    let resultsLock = NSLock()
+    var formattedFiles = Array<FormattedGeneratedFile?>(repeating: nil, count: generatedFiles.count)
+
+    DispatchQueue.concurrentPerform(iterations: generatedFiles.count) { index in
+        let generatedFile = generatedFiles[index]
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: generatedFile.file.content)
+
+        let formattedFile = FormattedGeneratedFile(
+            chipName: generatedFile.chipName,
+            fileName: generatedFile.file.fileName,
+            subdirectory: generatedFile.file.subdirectory,
+            content: result.content,
+            diagnostics: result.diagnostics
+        )
+
+        resultsLock.lock()
+        formattedFiles[index] = formattedFile
+        resultsLock.unlock()
+    }
+
+    var report = FormattingReport()
+
+    for formattedFile in formattedFiles.compactMap({ $0 }) {
+        report.add(
+            chipName: formattedFile.chipName,
+            fileName: formattedFile.fileName,
+            diagnostics: formattedFile.diagnostics
+        )
+
+        let folder = toURL
+            .appendingPathComponent(formattedFile.chipName, isDirectory: true)
+            .appendingPathComponent(formattedFile.subdirectory, isDirectory: true)
+        exportFile(toURL: folder, fileName: formattedFile.fileName, fileContents: formattedFile.content)
+    }
+
     logs.saveToFile(toURL: toURL)
     report.save(to: toURL)
 }
