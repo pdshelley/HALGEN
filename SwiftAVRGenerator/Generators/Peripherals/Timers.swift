@@ -165,11 +165,13 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String, 
                             }
                         }
                     }
-                    let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, chipName: chipName, registerData: chipDocumentation.supplementalData(for:), bitfieldData: chipDocumentation.supplementalData(for:))
-                    memberBlockList.append(bitfieldMemberBlock)
+                    if let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, registerData: chipDocumentation.supplementalData(for:), bitfieldData: chipDocumentation.supplementalData(for:)) {
+                        memberBlockList.append(bitfieldMemberBlock)
+                    }
                 default:
-                    let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, chipName: chipName, registerData: chipDocumentation.supplementalData(for:), bitfieldData: chipDocumentation.supplementalData(for:))
-                    memberBlockList.append(bitfieldMemberBlock)
+                    if let bitfieldMemberBlock = generateBitfieldAccessor(bitfield: bitfield, parentVariable: register, registerGroup: registerGroup, registerData: chipDocumentation.supplementalData(for:), bitfieldData: chipDocumentation.supplementalData(for:)) {
+                        memberBlockList.append(bitfieldMemberBlock)
+                    }
                 }
             }
         }

@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import SwiftSyntax
-import SwiftSyntaxBuilder
 
 /// Builds a file header string for Swift source files.
 ///
@@ -62,6 +60,43 @@ func buildFileHeader(for fileName: String, generateTypealias: Bool = true) -> St
     """
     // TODO: The typealias should be generated in a different location.
     return fileHeader
+}
+
+func indent(_ text: String, by spaces: Int) -> String {
+    let prefix = String(repeating: " ", count: spaces)
+    return text
+        .split(separator: "\n", omittingEmptySubsequences: false)
+        .map { line in
+            line.isEmpty ? "" : prefix + line
+        }
+        .joined(separator: "\n")
+}
+
+func joinDocumentationSections(_ sections: [String]) -> String {
+    sections
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .filter { !$0.isEmpty }
+        .joined(separator: "\n\n")
+}
+
+func makeDocumentationComment(title: String, body: String = "") -> String {
+    var lines = ["/// \(title)"]
+
+    let trimmedBody = body.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmedBody.isEmpty else {
+        return lines.joined(separator: "\n")
+    }
+
+    //lines.append("///")
+    lines.append(
+        contentsOf: trimmedBody
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map { line in
+                line.isEmpty ? "///" : "/// \(line)"
+            }
+    )
+
+    return lines.joined(separator: "\n")
 }
 
 /// Generates an array of access strings for each bit position in a register.

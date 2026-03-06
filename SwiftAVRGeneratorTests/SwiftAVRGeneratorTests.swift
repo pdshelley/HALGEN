@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import SwiftAVRGenerator
 
 final class SwiftAVRGeneratorTests: XCTestCase {
 
@@ -18,18 +19,38 @@ final class SwiftAVRGeneratorTests: XCTestCase {
     }
 
     func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public protocol UARTPort {
+            static var dataRegister: PortDataType { get set }
+            static var dataRegisterEmpty: Bool { get }
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("static var dataRegister: PortDataType { get set }"))
+        XCTAssertTrue(result.content.contains("static var dataRegisterEmpty: Bool { get }"))
     }
 
     func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum PORTD {
+            public static var dataDirection: UInt8 { get { _volatileRegisterReadUInt8(0x2A) } set { _volatileRegisterWriteUInt8(0x2A, newValue) } }
         }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("""
+        public static var dataDirection: UInt8 {
+            get {
+                _volatileRegisterReadUInt8(0x2A)
+            }
+            set {
+                _volatileRegisterWriteUInt8(0x2A, newValue)
+            }
+        }
+        """))
     }
 
 }

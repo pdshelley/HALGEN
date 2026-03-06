@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import SwiftBasicFormat
 import SwiftParser
-import SwiftSyntax
 import SwiftParserDiagnostics
+import SwiftSyntax
 
 struct FormattingResult {
     let content: String
@@ -27,6 +28,8 @@ struct FormattingDiagnostic {
 }
 
 struct CodeFormatter {
+    private let basicFormat = HALGENCodeFormat()
+
     /// Formats Swift source code and returns the result along with any parsing diagnostics.
     ///
     /// This method parses the provided source code using SwiftParser, generates any
@@ -68,8 +71,76 @@ struct CodeFormatter {
             return FormattingDiagnostic(severity: severity, message: diag.message, line: location.line)
         }
         
-        let formatted = sourceFile.formatted().description
+        let formatted = sourceFile.formatted(using: basicFormat).description
+        let normalized = normalizeIndentation(in: formatted)
         
-        return FormattingResult(content: formatted, diagnostics: diagnostics)
+        return FormattingResult(content: normalized, diagnostics: diagnostics)
+    }
+
+    private func normalizeIndentation(in source: String) -> String {
+        var indentationLevel = 0
+
+        let normalizedLines = source
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map { rawLine -> String in
+                let line = String(rawLine)
+                let trimmedLine = line.trimmingCharacters(in: .whitespaces)
+
+                guard !trimmedLine.isEmpty else {
+                    return ""
+                }
+
+                if trimmedLine.hasPrefix("//") {
+                    return String(repeating: " ", count: max(indentationLevel, 0) * 4) + trimmedLine
+                }
+
+                let leadingClosures = leadingClosingBraceCount(in: trimmedLine)
+                let lineIndentationLevel = max(indentationLevel - leadingClosures, 0)
+                let normalizedLine = String(repeating: " ", count: lineIndentationLevel * 4) + trimmedLine
+
+                indentationLevel = max(indentationLevel + braceDelta(in: trimmedLine), 0)
+                return normalizedLine
+            }
+
+        return normalizedLines.joined(separator: "\n")
+    }
+
+    private func leadingClosingBraceCount(in line: String) -> Int {
+        var count = 0
+
+        for character in line {
+            if character == "}" {
+                count += 1
+                continue
+            }
+
+            break
+        }
+
+        return count
+    }
+
+    private func braceDelta(in line: String) -> Int {
+        var delta = 0
+        var isInsideStringLiteral = false
+        var previousCharacter: Character?
+
+        for character in line {
+            if character == "\"", previousCharacter != "\\" {
+                isInsideStringLiteral.toggle()
+            }
+
+            if !isInsideStringLiteral {
+                if character == "{" {
+                    delta += 1
+                } else if character == "}" {
+                    delta -= 1
+                }
+            }
+
+            previousCharacter = character
+        }
+
+        return delta
     }
 }

@@ -23,13 +23,13 @@ struct UARTGenerator: PeripheralGenerator {
         files.append(
             GeneratedCodeFile(
                 fileName: "\(name).swift",
-                content: buildFileHeader(for: "\(name).swift", generateTypealias: false) + UARTDocs.uartBoilerPlate,
+                content: buildFileHeader(for: name, generateTypealias: false) + UARTDocs.uartBoilerPlate,
                 subdirectory: subdirectory
             )
         )
         
         for registerGroup in device.modules.module.first(where: { $0.name == .usart })!.registerGroup {
-            var code = buildFileHeader(for: "\("UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0").swift")")
+            var code = buildFileHeader(for: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0")")
             var memberBlockList = MemberBlockItemListSyntax()
             for register in registerGroup.register {
                 memberBlockList.append(
@@ -41,16 +41,15 @@ struct UARTGenerator: PeripheralGenerator {
                         )
                 )
                 for bitfield in register.bitfield {
-                    memberBlockList.append(
-                        generateBitfieldAccessor(
-                            bitfield: bitfield,
-                            parentVariable: register,
-                            registerGroup: registerGroup,
-                            chipName: device.devices.device.name,
-                            registerData: documentation.supplementalData(for:),
-                            bitfieldData: documentation.supplementalData(for:)
-                        )
-                    )
+                    if let bitfieldAccessor = generateBitfieldAccessor(
+                        bitfield: bitfield,
+                        parentVariable: register,
+                        registerGroup: registerGroup,
+                        registerData: documentation.supplementalData(for:),
+                        bitfieldData: documentation.supplementalData(for:)
+                    ) {
+                        memberBlockList.append(bitfieldAccessor)
+                    }
                 }
             }
             
@@ -64,13 +63,13 @@ struct UARTGenerator: PeripheralGenerator {
             code.append(SourceFileSyntax {
                 StructDeclSyntax(
                     modifiers: DeclModifierListSyntax(arrayLiteral: DeclModifierSyntax(name: "public")),
-                    name: "\(raw: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0").swift")",
+                    name: "\(raw: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0")")",
                     inheritanceClause: inheritanceClause,
                     memberBlock: memberBlock
                 )
             }.formatted().description)
             
-            files.append(GeneratedCodeFile(fileName: "\("UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0").swift")", content: code, subdirectory: subdirectory))
+            files.append(GeneratedCodeFile(fileName: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0").swift", content: code, subdirectory: subdirectory))
         }
         
         return files

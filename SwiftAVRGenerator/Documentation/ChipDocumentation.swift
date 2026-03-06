@@ -59,5 +59,5 @@ struct ChipDocumentation: Codable {
 
 private func formatDocumentation(_ paragraphs: [String]?) -> String {
     guard let paragraphs, !paragraphs.isEmpty else { return "" }
-    return paragraphs.joined(separator: "\n    /// ")
+    return paragraphs.joined(separator: "\n")
 }

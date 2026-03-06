@@ -41,16 +41,15 @@ struct ADCGenerator: PeripheralGenerator {
                     )
             )
             for bitfield in register.bitfield {
-                memberBlockList.append(
-                    generateBitfieldAccessor(
-                        bitfield: bitfield,
-                        parentVariable: register,
-                        registerGroup: adcRegisterGroup,
-                        chipName: device.devices.device.name,
-                        registerData: documentation.supplementalData(for:),
-                        bitfieldData: documentation.supplementalData(for:)
-                    )
-                )
+                if let bitfieldAccessor = generateBitfieldAccessor(
+                    bitfield: bitfield,
+                    parentVariable: register,
+                    registerGroup: adcRegisterGroup,
+                    registerData: documentation.supplementalData(for:),
+                    bitfieldData: documentation.supplementalData(for:)
+                ) {
+                    memberBlockList.append(bitfieldAccessor)
+                }
             }
         }
         

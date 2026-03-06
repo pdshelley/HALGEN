@@ -100,38 +100,42 @@ func generateRegister(
     }
     
     let table = """
-      \n    ///```
-          ///--------------------------------------------------------------------------------
-          ///| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
-          ///--------------------------------------------------------------------------------
-          ///| (\(register.offset.rawValue))       |\(registerName)|
-          ///--------------------------------------------------------------------------------
-          ///| Read/Write   |\(readWrite)|
-          ///--------------------------------------------------------------------------------
-          ///| InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
-          ///--------------------------------------------------------------------------------
-          ///```
-      """
+    ```
+    --------------------------------------------------------------------------------
+    | Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+    --------------------------------------------------------------------------------
+    | (\(register.offset.rawValue))       |\(registerName)|
+    --------------------------------------------------------------------------------
+    | Read/Write   |\(readWrite)|
+    --------------------------------------------------------------------------------
+    | InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    --------------------------------------------------------------------------------
+    ```
+    """
+
+    let documentationComment = makeDocumentationComment(
+        title: "\(register.name) – \(register.caption?.rawValue ?? variableName)",
+        body: joinDocumentationSections([
+            documentation,
+            generateRegisterTableDoc ? table : ""
+        ])
+    )
     
-    let documentationFromJson = """
-      \n    /// \(documentation)
-      """
-    
-    let source = DeclSyntax(
-      """
-          /// \(raw: register.name) – \(raw: register.caption?.rawValue ?? variableName) \(raw: documentation != "" ? documentationFromJson : "") \(raw: generateRegisterTableDoc ? table : "")
-          @inlinable
-          @inline(__always)
-          public static var \(raw: variableName): \(raw: bit.size) {
-              get {
-                  \(raw: bit.atomicStart)_volatileRegisterRead\(raw: bit.size)(\(raw: register.offset.rawValue))\(raw: bit.atomicEnd)
-              }
-              set {
-                  \(raw: bit.atomicStart)_volatileRegisterWrite\(raw: bit.size)(\(raw: register.offset.rawValue), newValue)\(raw: bit.atomicEnd)
-              }
-          }
-      """
-    ).with(\.trailingTrivia, .newlines(2))
+    let declaration = [
+        documentationComment,
+        "@inlinable",
+        "@inline(__always)",
+        "public static var \(variableName): \(bit.size) {",
+        "    get {",
+        "        \(bit.atomicStart)_volatileRegisterRead\(bit.size)(\(register.offset.rawValue))\(bit.atomicEnd)",
+        "    }",
+        "    set {",
+        "        \(bit.atomicStart)_volatileRegisterWrite\(bit.size)(\(register.offset.rawValue), newValue)\(bit.atomicEnd)",
+        "    }",
+        "}"
+    ].joined(separator: "\n")
+
+    let source = DeclSyntax("\(raw: declaration)").with(\.trailingTrivia, .newlines(2))
     
     memberBlockList.append(MemberBlockItemSyntax(decl: source))
     
