@@ -17,25 +17,37 @@ struct AVRPinouts: Codable {
         let pin: [Pin]
         
         struct Name: Codable, CaseIterable {
+            static let BGA16 = Name(value: "BGA_16")
             static let BGA49 = Name(value: "BGA_49")
             static let CBGA = Name(value: "CBGA")
             static let CBGA100 = Name(value: "CBGA100")
+            static let CQFP32TQFP32 = Name(value: "CQFP32TQFP32")
+            static let CQFP64 = Name(value: "CQFP64")
+            static let DIP = Name(value: "DIP")
             static let DRQFN44 = Name(value: "DRQFN_44")
             static let DRQFN64 = Name(value: "DRQFN64")
+            static let PDIP = Name(value: "PDIP")
             static let PDIP28 = Name(value: "PDIP28")
             static let PDIP40 = Name(value: "PDIP40", alternateValues: ["PDIP_40"])
+            static let QFN20 = Name(value: "QFN20", alternateValues: ["QFN_20"])
+            static let QFN24 = Name(value: "QFN24")
             static let QFP32 = Name(value: "QFP32")
             static let QFP48 = Name(value: "QFP48")
             static let QFN28 = Name(value: "QFN28")
-            static let QFN32 = Name(value: "QFN32")
+            static let QFN32 = Name(value: "QFN32", alternateValues: ["QFN_32"])
             static let QFN44 = Name(value: "QFN44")
             static let QFN48 = Name(value: "QFN48")
             static let QFN64 = Name(value: "QFN64")
             static let QFNQFP44 = Name(value: "QFN_QFP_44")
             static let QUAD = Name(value: "QUAD")
+            static let SOIC14 = Name(value: "SOIC14", alternateValues: ["SOIC_14"])
+            static let SOIC20 = Name(value: "SOIC20", alternateValues: ["SOIC_20"])
+            static let SOIC8 = Name(value: "SOIC8", alternateValues: ["SOIC_8"])
+            static let SOT236 = Name(value: "SOT23_6")
             static let SSOP28 = Name(value: "SSOP28")
             static let TQFP = Name(value: "TQFP")
             static let TQFP32 = Name(value: "TQFP32")
+            static let TQFP32QFN32 = Name(value: "TQFP32_QFN32")
             static let TQFP44 = Name(value: "TQFP44")
             static let TQFP64 = Name(value: "TQFP64")
             static let TQFP100 = Name(value: "TQFP100")
@@ -43,10 +55,14 @@ struct AVRPinouts: Codable {
             static let TQFPQFN44 = Name(value: "TQFPQFN44", alternateValues: ["TQFP_QFN_44"])
             static let TQFPQFN64 = Name(value: "TQFPQFN64")
             static let TQFPVQFN44 = Name(value: "TQFP_VQFN_44")
+            static let UDFN8 = Name(value: "UDFN8")
+            static let UFBGA = Name(value: "UFBGA")
             static let UFBGA32 = Name(value: "UFBGA32")
             static let VFBGA49 = Name(value: "VFBGA49")
+            static let VQFN = Name(value: "VQFN")
             static let VQFN32 = Name(value: "VQFN32")
             static let VQFN44 = Name(value: "VQFN44")
+            static let WLCSP = Name(value: "WLCSP")
             static let PDIP8_SOIC8 = Name(value: "PDIP8_SOIC8")
             static let MLF20 = Name(value: "MLF20")
             static let MLF10 = Name(value: "MLF10")
@@ -54,7 +70,7 @@ struct AVRPinouts: Codable {
             let rawValue: String
             private let alternateValues: [String]
             
-            static let allCases: [Name] = [BGA49, CBGA, CBGA100, DRQFN44, DRQFN64, PDIP28, PDIP40, QFP32, QFP48, QFN28, QFN32, QFN44, QFN48, QFN64, QFNQFP44, QUAD, SSOP28, TQFP, TQFP32, TQFP44, TQFP64, TQFP100, TQFPQFN32, TQFPQFN44, TQFPQFN64, TQFPVQFN44, UFBGA32, VFBGA49, VQFN32, VQFN44, PDIP8_SOIC8, MLF20, MLF10]
+            static let allCases: [Name] = [BGA16, BGA49, CBGA, CBGA100, CQFP32TQFP32, CQFP64, DIP, DRQFN44, DRQFN64, PDIP, PDIP28, PDIP40, QFN20, QFN24, QFP32, QFP48, QFN28, QFN32, QFN44, QFN48, QFN64, QFNQFP44, QUAD, SOIC14, SOIC20, SOIC8, SOT236, SSOP28, TQFP, TQFP32, TQFP32QFN32, TQFP44, TQFP64, TQFP100, TQFPQFN32, TQFPQFN44, TQFPQFN64, TQFPVQFN44, UDFN8, UFBGA, UFBGA32, VFBGA49, VQFN, VQFN32, VQFN44, WLCSP, PDIP8_SOIC8, MLF20, MLF10]
             
             init(value: String, alternateValues: [String] = []) {
                 self.rawValue = value
@@ -81,8 +97,10 @@ struct AVRPinouts: Codable {
         }
         
         struct Caption: Codable, CaseIterable {
+            static let sixtyFour = Caption(value: "64")
             static let TQFP64 = Caption(value: "TQFP64")
             static let QFN64 = Caption(value: "QFN64")
+            static let CQFP32TQFP32 = Caption(value: "CQFP32TQFP32")
             static let PDIP28 = Caption(value: "PDIP28")
             static let TQFPQFN32 = Caption(value: "TQFPQFN32")
             static let TQFPQFN44 = Caption(value: "TQFPQFN44", alternateValues: ["TQFP_QFN_44"])
@@ -110,7 +128,7 @@ struct AVRPinouts: Codable {
                 self.alternateValues = alternateValues
             }
                     
-            static let allCases: [Caption] = [TQFP64, QFN64, PDIP28, TQFPQFN32, TQFPQFN44, PDIP40, TQFP44, QFN44, TQFP32, QFN32, QFN28, UFBGA32, VQFN32, TQFPQFN64, VFBGA49, TQFPVQFN44, DRQFN64, VQFN44, TQFP100, CBGA100]
+            static let allCases: [Caption] = [sixtyFour, TQFP64, QFN64, CQFP32TQFP32, PDIP28, TQFPQFN32, TQFPQFN44, PDIP40, TQFP44, QFN44, TQFP32, QFN32, QFN28, UFBGA32, VQFN32, TQFPQFN64, VFBGA49, TQFPVQFN44, DRQFN64, VQFN44, TQFP100, CBGA100]
                     
             init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()

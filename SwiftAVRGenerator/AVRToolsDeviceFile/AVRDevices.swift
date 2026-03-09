@@ -34,13 +34,16 @@ struct AVRDevices: Codable {
         
         enum Architecture: String, Codable {
             case avr8 = "AVR8"
+            case avr8L = "AVR8L"
             case avr8X = "AVR8X"
         }
         
         enum Family: String, Codable {
             case megaAVR = "megaAVR" // TODO: Should these two be combined?
             case avrMEGA = "AVR MEGA"
+            case avrTINY = "AVR TINY"
             case tinyAVR = "tinyAVR"
+            case tinyAVR2 = "tinyAVR 2"
         }
         
         struct AddressSpaces: Codable {
@@ -139,7 +142,17 @@ struct AVRDevices: Codable {
                     case zeroX10000 = "0x10000"
                     case zeroX20000 = "0x20000"
                     case zeroX40000 = "0x40000"
-                }
+                
+    case zeroX0080 = "0x0080"
+    case zeroX00e0 = "0x00e0"
+    case zeroX0160 = "0x0160"
+    case zeroX4400 = "0x4400"
+    case zeroX4800 = "0x4800"
+    case zeroX5000 = "0x5000"
+    case zeroX8800 = "0x8800"
+    case zeroX9000 = "0x9000"
+    case zeroXA000 = "0xA000"
+}
                 
                 struct MemorySegment: Codable {
                     @Attribute var start: Start
@@ -203,7 +216,16 @@ struct AVRDevices: Codable {
                         case zeroX3f800 = "0x3f800"
                         case zeroX3f000 = "0x3f000"
                         case zeroX3e000 = "0x3e000"
-                    }
+                    
+    case zeroX0040 = "0x0040"
+    case zeroX3400 = "0x3400"
+    case zeroX3E00 = "0x3E00"
+    case zeroX3F00 = "0x3F00"
+    case zeroX3F40 = "0x3F40"
+    case zeroX3F80 = "0x3F80"
+    case zeroX3FC0 = "0x3FC0"
+    case zeroX8000 = "0x8000"
+}
                     
                     enum Size: String, Codable { // TODO: Should these be combined? Or maybe Start should be an Int or HEX value?
                         case one = "1"
@@ -250,7 +272,13 @@ struct AVRDevices: Codable {
                         case zeroX10000 = "0x10000"
                         case zeroX20000 = "0x20000"
                         case zeroX40000 = "0x40000"
-                    }
+                    
+    case zeroX0004 = "0x0004"
+    case zeroX0080 = "0x0080"
+    case zeroX200 = "0x200"
+    case zeroX80 = "0x80"
+    case zeroXC00 = "0xC00"
+}
                     
                     enum MemorySegmentType: String, Codable { // I think this is the same as another Type
                         case flash
@@ -264,7 +292,10 @@ struct AVRDevices: Codable {
                         case osccal
                         case userSignatures = "user_signatures"
                         case other
-                    }
+                    
+    case sysreg = "sysreg"
+                    
+}
                     
                     enum ReadWrite: String, Codable {
                         case readWrite = "RW"
@@ -297,7 +328,14 @@ struct AVRDevices: Codable {
                         case internalSRAM = "INTERNAL_SRAM"
                         case mappedProgramMemory = "MAPPED_PROGMEM"
                         case programMemory = "PROGMEM"
-                    }
+                    
+    case mAPPEDCALIBRATIONBITS = "MAPPED_CALIBRATION_BITS"
+    case mAPPEDCONFIGURATIONBITS = "MAPPED_CONFIGURATION_BITS"
+    case mAPPEDDEVICEIDBITS = "MAPPED_DEVICE_ID_BITS"
+    case mAPPEDFLASH = "MAPPED_FLASH"
+    case mAPPEDNVMLOCKBITS = "MAPPED_NVM_LOCK_BITS"
+    case sRAM = "SRAM"
+}
                     
                     enum PageSize: String, Codable { // TODO: Should these be combined? Or maybe Start should be an Int or HEX value?
                         case zeroX100 = "0x100"
@@ -306,7 +344,10 @@ struct AVRDevices: Codable {
                         case zeroX04 = "0x04"
                         case zeroX80 = "0x80"
                         case zeroX20 = "0x20"
-                    }
+                    
+    case zeroX02 = "0x02"
+    case zeroX10 = "0x10"
+}
                 }
             }
         }
@@ -385,7 +426,11 @@ struct AVRDevices: Codable {
                     case voltageReference = "VREF"
                     case wakeupTimer = "WAKEUP_TIMER"
                     case watchdogTimer = "WDT"
-                }
+                
+    case cURRENTSOURCE = "CURRENT_SOURCE"
+    case tCD = "TCD"
+    case tOCPM = "TOCPM"
+}
                 
                 struct Instance: Codable {
                     @Attribute var name: Name
@@ -505,7 +550,17 @@ struct AVRDevices: Codable {
                         case PSC2 = "PSC2"
                         case USART0SPI = "USART0_SPI"
                         case USART1SPI = "USART1_SPI"
-                    }
+                    
+    case aC1 = "AC1"
+    case aC2 = "AC2"
+    case aDC1 = "ADC1"
+    case cURRENTSOURCE = "CURRENT_SOURCE"
+    case dAC0 = "DAC0"
+    case dAC1 = "DAC1"
+    case dAC2 = "DAC2"
+    case tCD0 = "TCD0"
+    case tOCPM = "TOCPM"
+}
                     
                     enum Caption: String, Codable {
                         case ioPort = "I/O Port"
@@ -554,7 +609,10 @@ struct AVRDevices: Codable {
                         case liquidCrystalDisplay = "Liquid Crystal Display"
                         case peripheralTouchController = "Peripheral Touch Controller"
                         case clockFailureDetection = "Clock Failure Detection"
-                    }
+                    
+    case currentSource = "Current Source"
+    case timerCounterOutputComparePin = "Timer/Counter Output Compare Pin"
+}
                     
                     struct RegisterGroup: Codable {
                         @Attribute var name: Name
@@ -674,7 +732,17 @@ struct AVRDevices: Codable {
                             case PSC2 = "PSC2"
                             case USART0SPI = "USART0_SPI"
                             case USART1SPI = "USART1_SPI"
-                        }
+                        
+    case aC1 = "AC1"
+    case aC2 = "AC2"
+    case aDC1 = "ADC1"
+    case cURRENTSOURCE = "CURRENT_SOURCE"
+    case dAC0 = "DAC0"
+    case dAC1 = "DAC1"
+    case dAC2 = "DAC2"
+    case tCD0 = "TCD0"
+    case tOCPM = "TOCPM"
+}
                         
                         // Should be the same as the Instance.Name but is not exactly
                         enum NameInModule: String, Codable {
@@ -770,7 +838,11 @@ struct AVRDevices: Codable {
                             case PSC2 = "PSC2"
                             case USART0SPI = "USART0_SPI"
                             case USART1SPI = "USART1_SPI"
-                        }
+                        
+    case cURRENTSOURCE = "CURRENT_SOURCE"
+    case tCD = "TCD"
+    case tOCPM = "TOCPM"
+}
                         
                         enum Offset: String, Codable {
                             case hex0x00 = "0x00"
@@ -823,7 +895,19 @@ struct AVRDevices: Codable {
                             case hex0x0014 = "0x0014"
                             case hex0x0AB0 = "0x0AB0"
                             case hex0x0860 = "0x0860"
-                        }
+                        
+    case zeroX0200 = "0x0200"
+    case zeroX0640 = "0x0640"
+    case zeroX0670 = "0x0670"
+    case zeroX0688 = "0x0688"
+    case zeroX0690 = "0x0690"
+    case zeroX06A0 = "0x06A0"
+    case zeroX06A8 = "0x06A8"
+    case zeroX06B0 = "0x06B0"
+    case zeroX0810 = "0x0810"
+    case zeroX0A40 = "0x0A40"
+    case zeroX0A50 = "0x0A50"
+}
                         
                         enum AddressSpace: String, Codable {
                             case data = "data"
@@ -973,7 +1057,37 @@ struct AVRDevices: Codable {
                                 case PCINT2 = "PCINT2"
                                 case PCINT1 = "PCINT1"
                                 case PCINT0 = "PCINT0"
-                            }
+                            
+    case aCO = "ACO"
+    case aCO0 = "ACO0"
+    case aCO1 = "ACO1"
+    case aREF = "AREF"
+    case bREAK = "BREAK"
+    case bREAKALT = "BREAK_ALT"
+    case dS = "DS"
+    case eVAPA = "EVAPA"
+    case eVAPB = "EVAPB"
+    case eVAPC = "EVAPC"
+    case eVSPA = "EVSPA"
+    case eVSPB = "EVSPB"
+    case eVSPC = "EVSPC"
+    case iCP0 = "ICP0"
+    case iCP1 = "ICP1"
+    case iCP2 = "ICP2"
+    case oC1AINV = "OC1AINV"
+    case oC1BINV = "OC1BINV"
+    case oC1D = "OC1D"
+    case oC1DINV = "OC1DINV"
+    case rESETALT = "RESET_ALT"
+    case sCLTrailingSpace = "SCL "
+    case t2 = "T2"
+    case tOCC = "TOCC"
+    case uPDI = "UPDI"
+    case wOA = "WOA"
+    case wOB = "WOB"
+    case wOC = "WOC"
+    case wOD = "WOD"
+}
                             
                             enum Function: String, Codable {
                                 case DEFAULT = "default"
@@ -1024,7 +1138,64 @@ struct AVRDevices: Codable {
                                 case USART1ALT = "USART1_ALT"
                                 case USART3 = "USART3"
                                 case USART3ALT = "USART3_ALT"
-                            }
+                            
+    case aC1 = "AC1"
+    case aC2 = "AC2"
+    case aCIN = "ACIN"
+    case aCIN0 = "ACIN0"
+    case aCIN1 = "ACIN1"
+    case aCOUT = "ACOUT"
+    case aIN1 = "AIN1"
+    case aLT = "ALT"
+    case aREF = "AREF"
+    case bREAK = "BREAK"
+    case bREAKALT = "BREAK_ALT"
+    case cCLALT1 = "CCL_ALT1"
+    case cCLIN = "CCL_IN"
+    case cS = "CS"
+    case dAC0 = "DAC0"
+    case dEF = "DEF"
+    case eVAINCH0 = "EVAINCH0"
+    case eVAINCH1 = "EVAINCH1"
+    case eVAINCH2 = "EVAINCH2"
+    case eVSINCH0 = "EVSINCH0"
+    case eVSINCH1 = "EVSINCH1"
+    case eVSYSALT1 = "EVSYS_ALT1"
+    case eXTINT = "EXTINT"
+    case i2CALT1 = "I2C_ALT1"
+    case iCP = "ICP"
+    case oC = "OC"
+    case pDI = "PDI"
+    case pORTA = "PORTA"
+    case pORTB = "PORTB"
+    case pTCDS = "PTC_DS"
+    case pTCX = "PTC_X"
+    case pTCY = "PTC_Y"
+    case sPI0 = "SPI0"
+    case sPI0ALT = "SPI0_ALT"
+    case sPIALT1 = "SPI_ALT1"
+    case t0 = "T0"
+    case t1 = "T1"
+    case tCA0 = "TCA0"
+    case tCA0ALT = "TCA0_ALT"
+    case tCAALT1 = "TCA_ALT1"
+    case tCB0ALT1 = "TCB0_ALT1"
+    case tCB1ALT1 = "TCB1_ALT1"
+    case tCB2ALT1 = "TCB2_ALT1"
+    case tCB3ALT1 = "TCB3_ALT1"
+    case tCD0 = "TCD0"
+    case tWI = "TWI"
+    case tWI0 = "TWI0"
+    case tWI0ALT = "TWI0_ALT"
+    case uSART = "USART"
+    case uSART0ALT1 = "USART0_ALT1"
+    case uSART1ALT1 = "USART1_ALT1"
+    case uSART2ALT1 = "USART2_ALT1"
+    case uSART3ALT1 = "USART3_ALT1"
+    case uSARTALT = "USART_ALT"
+    case uSI = "USI"
+    case uSIALT = "USI_ALT"
+}
                             
                             enum Pad: String, Codable {
                                 case pa0 = "PA0"
@@ -1209,7 +1380,12 @@ struct AVRDevices: Codable {
                                 case v3 = "V3"
                                 case v4 = "V4"
                                 case lpm = "lpm rd,z+"
-                            }
+                            
+    case aVR8L0 = "AVR8L_0"
+    case v0E = "V0E"
+    case v1 = "V1"
+    case lpmRdZ = "lpm rd,z"
+}
                         }
                     }
                 }
@@ -1511,7 +1687,46 @@ struct AVRDevices: Codable {
                     case WCOMP = "WCOMP"
                     case EE = "EE"
                     case NOT_USED = "NOT_USED"
-                }
+                
+    case aDCADC = "ADC_ADC"
+    case aDCREADY = "ADC_READY"
+    case aNACOMP0 = "ANA_COMP0"
+    case aNACOMP1 = "ANA_COMP1"
+    case eEPROMReady = "EEPROM_Ready"
+    case eRROR = "ERROR"
+    case eXTINT0 = "EXT_INT0"
+    case fAULTPROTECTION = "FAULT_PROTECTION"
+    case iOPINS = "IO_PINS"
+    case pCINT = "PCINT"
+    case pCINTA = "PCINT_A"
+    case pCINTB = "PCINT_B"
+    case pCINTD = "PCINT_D"
+    case qTRIP = "QTRIP"
+    case sAMPRDY = "SAMPRDY"
+    case sPI = "SPI"
+    case tIM0CAPT = "TIM0_CAPT"
+    case tIM1CAPT = "TIM1_CAPT"
+    case tIM1COMPA = "TIM1_COMPA"
+    case tIM1COMPB = "TIM1_COMPB"
+    case tIMER0CAPT = "TIMER0_CAPT"
+    case tIMER0OVF0 = "TIMER0_OVF0"
+    case tIMER1CMPA = "TIMER1_CMPA"
+    case tIMER1CMPB = "TIMER1_CMPB"
+    case tIMER1COMP = "TIMER1_COMP"
+    case tIMER1COMPD = "TIMER1_COMPD"
+    case tIMER1OVF1 = "TIMER1_OVF1"
+    case tIMER2CAPT = "TIMER2_CAPT"
+    case tRIG = "TRIG"
+    case tWISLAVE = "TWI_SLAVE"
+    case uSART0DRE = "USART0_DRE"
+    case uSART1DRE = "USART1_DRE"
+    case uSARTDRE = "USART_DRE"
+    case uSARTRXS = "USART_RXS"
+    case uSIOVF = "USI_OVF"
+    case uSISTR = "USI_STR"
+    case uSISTRT = "USI_STRT"
+    case wDTOVERFLOW = "WDT_OVERFLOW"
+}
                 
                 enum Caption: String, Codable {
                     case externalPinPowerOnResetBrownOutResetWatchdogResetAndJTAGAVRReset = "External Pin, Power-on Reset, Brown-out Reset, Watchdog Reset and JTAG AVR Reset"
@@ -1733,7 +1948,47 @@ struct AVRDevices: Codable {
                     case timer0CompareMatch = "Timer 0 Compare Match"
                     case externalInterrupt1 = "External Interrupt 1"
                     case watchdogTimeOut = "Watchdog Time-out"
-                }
+                
+    case leadingSpaceTimerCounter1CompareMatchA = " Timer/Counter1 Compare Match A"
+    case leadingSpaceTimerCounter1CompareMatchB = " Timer/Counter1 Compare Match B"
+    case aDCConversionReady = "ADC Conversion Ready"
+    case aDCConversionComplete = "ADC Conversion complete"
+    case aDCConversionReady2 = "ADC Conversion ready"
+    case analogComparator4 = "Analog comparator"
+    case conversionComplete = "Conversion Complete"
+    case externalPinPowerOnResetBrownOutResetWatchdogReset = "External Pin, Power-on Reset, Brown-out Reset,Watchdog Reset"
+    case pinChangeInterrupt = "Pin Change Interrupt"
+    case pinChangeInterruptRequestA = "Pin Change Interrupt Request A"
+    case pinChangeInterruptRequestB = "Pin Change Interrupt Request B"
+    case pinChangeInterruptRequestD = "Pin Change Interrupt Request D"
+    case pinChangeInterruptRequest02 = "Pin change Interrupt Request 0"
+    case serialPeripheralInterface = "Serial Peripheral Interface"
+    case tRX24AWAKETransceiverIsReachingStateTRXOFF = "TRX24 AWAKE - transceiver is reaching state TRX_OFF"
+    case timer0CompareMatchA = "Timer 0 Compare Match A"
+    case timerCounter0CompareMatch0A = "Timer/Counter0 Compare Match 0A"
+    case timerCounter0InputCapture = "Timer/Counter0 Input Capture"
+    case timerCounter1CompareMatch2 = "Timer/Counter1 Compare Match"
+    case timerCounter1CompareMatch1A = "Timer/Counter1 Compare Match 1A"
+    case timerCounter1CompareMatch1B = "Timer/Counter1 Compare Match 1B"
+    case timerCounter1CompareMatchD = "Timer/Counter1 Compare Match D"
+    case timerCounter1FaultProtection = "Timer/Counter1 Fault Protection"
+    case timerCounter1InputCapture = "Timer/Counter1 Input Capture"
+    case touchSensing = "Touch Sensing"
+    case twoWireInterface = "Two-Wire Interface"
+    case uSARTDataRegisterEmpty = "USART Data register empty"
+    case uSARTRXComplete = "USART RX Complete"
+    case uSARTRXStart = "USART RX Start"
+    case uSARTStart = "USART, Start"
+    case uSART0Start = "USART0, Start"
+    case uSART1Start = "USART1, Start"
+    case uSICounterOverflow = "USI Counter Overflow"
+    case uSISTART = "USI START"
+    case uSIStart = "USI Start"
+    case uSIStartConditionDetection = "USI Start Condition Detection"
+    case vccVoltageLevelMonitor = "Vcc Voltage Level Monitor"
+    case watchdogTimeOut2 = "Watchdog Time-Out"
+    case watchdogTimerOverflow = "Watchdog Timer Overflow"
+}
             }
         }
         
@@ -1751,7 +2006,10 @@ struct AVRDevices: Codable {
                     case debugWIRE = "debugWIRE"
                     case hvsp = "HVSP"
                     case updi = "UPDI"
-                }
+                
+    case tPI = "TPI"
+                
+}
                 
                 enum InterfaceType: String, Codable {
                     case isp
@@ -1760,7 +2018,10 @@ struct AVRDevices: Codable {
                     case dw
                     case hvsp
                     case updi
-                }
+                
+    case tpi = "tpi"
+                
+}
             }
         }
         

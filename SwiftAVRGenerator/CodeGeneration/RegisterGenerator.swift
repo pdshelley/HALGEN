@@ -96,6 +96,8 @@ func generateRegister(
             return (size: "UInt8", atomicStart: "", atomicEnd: "")
         case .two:
             return (size: "UInt16", atomicStart: "atomic {", atomicEnd: " }")
+        case .value4:
+            return (size: "UInt32", atomicStart: "atomic {", atomicEnd: " }")
         }
     }
     
