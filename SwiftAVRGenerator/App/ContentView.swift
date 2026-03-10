@@ -47,6 +47,7 @@ struct ContentView: View {
                     self.docDir = panel.url
                 }
             }
+            Text("Select the docs/ directory, not the .json files")
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
