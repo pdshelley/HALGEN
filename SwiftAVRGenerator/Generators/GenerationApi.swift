@@ -96,6 +96,7 @@ func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
             resultsLock.unlock()
         } catch {
             print("Could not generate from ATDF file URL: \(url.lastPathComponent) (\(error.localizedDescription))")
+            print(error)
         }
     }
 
