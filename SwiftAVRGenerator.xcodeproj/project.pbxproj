@@ -839,10 +839,10 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		476CFF462A3A701D00217EC2 /* XCRemoteSwiftPackageReference "XMLCoder" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:CoreOffice/XMLCoder.git";
+			repositoryURL = "https://github.com/CoreOffice/XMLCoder.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.17.1;
+				minimumVersion = 0.18.0;
 			};
 		};
 		DA5F50F42EAA58C000AF7D48 /* XCRemoteSwiftPackageReference "swift-syntax" */ = {
