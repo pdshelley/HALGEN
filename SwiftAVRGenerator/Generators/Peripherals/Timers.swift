@@ -34,9 +34,7 @@ func buildTimers(file: AVRToolsDeviceFile, chipDocumentation: ChipDocumentationL
     
     // TODO: Are there timers A and B? What does TCA stand for?
     // Classic AVR does not use timers A and B, this is an indication of a "new" AVR. These cases need to be handled.
-    
-    chipDocumentation.load(chipName: file.devices.device.name)
-    
+        
     // Filter for Modules named "PORT" // TODO: Find a better way to filter.
     for module in file.modules.module {
         for registerGroup in module.registerGroup {

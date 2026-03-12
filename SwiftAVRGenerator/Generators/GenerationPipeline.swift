@@ -13,6 +13,8 @@ struct GenerationPipeline {
     /// - Returns: An array of generated Swift code files ready for export.
     func run(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
         var files: [GeneratedCodeFile] = []
+        documentation.loadGeneral()
+        documentation.load(chipName: device.devices.device.name)
         for generator in GeneratorRegistry.allGenerators where generator.supports(device: device) {
             files.append(contentsOf: generator.generate(device: device, documentation: documentation))
         }

@@ -1,0 +1,18 @@
+{
+    "registers": [
+        {
+            "aliases": [
+                "UDR0"
+            ],
+            "variableName": "test"
+        }
+    ],
+    "bitfields": [
+        {
+            "aliases": [
+                "RXC0"
+            ],
+            "variableName": "test"
+        }
+    ]
+}

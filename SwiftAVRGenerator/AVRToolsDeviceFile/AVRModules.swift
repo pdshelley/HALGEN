@@ -3968,7 +3968,7 @@ struct AVRModules: Codable {
                     static let watchdogTimerControlRegister = Caption(value: "Watchdog Timer Control Register")
                     static let usartIODataRegister = Caption(value: "USART I/O Data Register", alternateValues: ["EUSART I/O Data Register"])
                     static let timerCounter1ControlRegisterB = Caption(value: "Timer/Counter1 Control Register B", alternateValues: ["Timer/Counter1", "Timer/Counter1 "])
-                    static let usartControlAndStatusRegisterA = Caption(value: "USART Control and Status Register A", alternateValues: ["EUSART Control and Status Register A", "USART Control and Status register A"])
+                    static let usartControlAndStatusRegisterA = Caption(value: "USART Control and Status Register A", alternateValues: ["EUSART Control and Status Register A", "USART Control and Status register A"]) // TODO: FIX THIS 
                     static let usartControlAndStatusRegisterB = Caption(value: "USART Control and Status Register B")
                     static let usartControlAndStatusRegisterC = Caption(value: "USART Control and Status Register C")
                     static let spiControlRegister = Caption(value: "SPI Control Register")

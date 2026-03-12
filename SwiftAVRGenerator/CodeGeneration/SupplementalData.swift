@@ -13,6 +13,8 @@ struct SupplementalRegisterData {
     let access: String
     var documentationL: String? = nil
     var documentationH: String? = nil
+    
+    var isMissing: Bool = false
 }
 
 struct SupplementalBitfieldData {

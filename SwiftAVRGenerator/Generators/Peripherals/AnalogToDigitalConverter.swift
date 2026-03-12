@@ -20,7 +20,6 @@ struct ADCGenerator: PeripheralGenerator {
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
         var code = buildFileHeader(for: name, generateTypealias: false)
         code.append(adcDocs.adcEnums)
-        documentation.load(chipName: device.devices.device.name)
         let adcRegisterGroup = device.modules.module.first(where: { $0.name == .ADC })!.registerGroup.first!
         var memberBlockList = MemberBlockItemListSyntax()
         
