@@ -65,7 +65,7 @@ func generateBitfieldAccessor(
     }
 
     let parentVariableName = registerData(parentVariable).variableName
-    let caption = bitfield.caption?.rawValue ?? ""
+    let caption = bitfield.caption ?? ""
     let registerMask = bitfield.mask.value.lowByte
     let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
     let valueMask = registerMask >> bitshift
@@ -84,7 +84,7 @@ func generateBitfieldAccessor(
     )
 
     let source = makeAccessorDeclaration(
-        bitfieldName: bitfield.name.rawValue,
+        bitfieldName: bitfield.name,
         caption: caption,
         info: info,
         getter: getter,
@@ -136,7 +136,7 @@ func generateSplitBitfieldAccessor(
     // Register B New Value Bitmask: 0b00001100
     // Register B Bitshift should be: << 2 to get back to the "Register B Bitmask" location
 
-    let caption = bitfieldA.caption?.rawValue ?? ""
+    let caption = bitfieldA.caption ?? ""
     let info = bitfieldData(bitfieldA)
 
     let highBitfield = bitfieldA
@@ -182,7 +182,7 @@ func generateSplitBitfieldAccessor(
     )
 
     let source = makeAccessorDeclaration(
-        bitfieldName: bitfieldA.name.rawValue,
+        bitfieldName: bitfieldA.name,
         caption: caption,
         info: info,
         getter: getter,
@@ -228,7 +228,7 @@ private func shouldSkipBitfieldAccessor(
     }
 
     for register in registerGroup.register where register.name != parentVariable.name {
-        if register.bitfield.contains(where: { bitfieldData($0).splitTarget == bitfield.name.rawValue }) {
+        if register.bitfield.contains(where: { bitfieldData($0).splitTarget == bitfield.name }) {
             return true
         }
     }
@@ -255,7 +255,7 @@ private func resolveSplitBitfieldPair(
     bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
 )? {
     for register in registerGroup.register {
-        if let bitfield = register.bitfield.first(where: { $0.name.rawValue == splitTarget }) {
+        if let bitfield = register.bitfield.first(where: { $0.name == splitTarget }) {
             return (register, bitfield)
         }
     }

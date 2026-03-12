@@ -12,7 +12,7 @@ struct GPIOGenerator: PeripheralGenerator {
     let subdirectory = "module"
     
     func supports(device: AVRToolsDeviceFile) -> Bool {
-        device.modules.module.contains { $0.name == .PORT }
+        device.modules.module.contains { $0.name == "PORT" }
     }
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
@@ -32,7 +32,7 @@ func buildGPIO(file: AVRToolsDeviceFile) -> GeneratedCodeFile {
     
     // Filter for Modules named "PORT" // TODO: Find a better way to filter.
     for module in file.modules.module {
-        if module.name == .PORT {
+        if module.name == "PORT" {
             for registerGroup in module.registerGroup {
                 code.append(buildPort(port: registerGroup))
             }
@@ -53,7 +53,7 @@ func buildPort(port: AVRModules.Module.RegisterGroup) -> String {
     var code: String = """
     
     
-        public enum \(port.name.rawValue): Port {
+        public enum \(port.name): Port {
     """
     
     for register in port.register {
@@ -71,7 +71,7 @@ func buildPadsForPort(file: AVRToolsDeviceFile) -> String {
     var code: String = "\n\n"
     
     for module in file.devices.device.peripherals.module {
-        if module.name == .PORT {
+        if module.name == "PORT" {
             
             for instance in module.instance {
                 let portName = instance.name
@@ -80,7 +80,7 @@ func buildPadsForPort(file: AVRToolsDeviceFile) -> String {
                 
                 for signal in signal.signal {
                     guard let index = signal.index else { break }
-                    code.append("    public typealias \(signal.pad) = DigitalPin<\(portName.rawValue),Bit\(index.rawValue)>\n")
+                    code.append("    public typealias \(signal.pad) = DigitalPin<\(portName),Bit\(index)>\n")
                 }
                 code.append("\n")
             }
@@ -127,37 +127,37 @@ func buildPadsForPort(file: AVRToolsDeviceFile) -> String {
 
 func buildPortRegister(register: AVRModules.Module.RegisterGroup.Register) -> String {
     switch register.name {
-    case .PORTA, .PORTB, .PORTC, .PORTD, .PORTE, .PORTF, .PORTG, .PORTH, .PORTJ, .PORTK, .PORTL:
+    case "PORTA", "PORTB", "PORTC", "PORTD", "PORTE", "PORTF", "PORTG", "PORTH", "PORTJ", "PORTK", "PORTL":
         let variableName = "dataRegister"
         return """
     
     
-            /// AKA: \(register.name.rawValue). See ATMega328p Datasheet section 14.4.2. // TODO: How should we make the Datasheet refrence more generic? Include more of this documentation directly in the code?
-            // Note: Should we make an alias for this named \(register.name.rawValue) for people that want to have "Direct Access" to ports? This is more important for registers that are used for
+            /// AKA: \(register.name). See ATMega328p Datasheet section 14.4.2. // TODO: How should we make the Datasheet refrence more generic? Include more of this documentation directly in the code?
+            // Note: Should we make an alias for this named \(register.name) for people that want to have "Direct Access" to ports? This is more important for registers that are used for
             // multiple things but could maintain naming consistancy.
             @inlinable
             @inline(__always)
-            public static var \(variableName): UInt8 { get { _volatileRegisterReadUInt8(\(register.offset.rawValue)) } set { _volatileRegisterWriteUInt8(\(register.offset.rawValue), newValue) } }
+            public static var \(variableName): UInt8 { get { _volatileRegisterReadUInt8(\(register.offset)) } set { _volatileRegisterWriteUInt8(\(register.offset), newValue) } }
     """
-    case .DDRA, .DDRB, .DDRC, .DDRD, .DDRE, .DDRF, .DDRG, .DDRH, .DDRJ, .DDRK, .DDRL:
+    case "DDRA", "DDRB", "DDRC", "DDRD", "DDRE", "DDRF", "DDRG", "DDRH", "DDRJ", "DDRK", "DDRL":
         let variableName = "dataDirection"
         return """
     
     
-            /// AKA: \(register.name.rawValue). See ATMega328p Datasheet section 14.4.3. // TODO: How should we make the Datasheet refrence more generic? Include more of this documentation directly in the code?
+            /// AKA: \(register.name). See ATMega328p Datasheet section 14.4.3. // TODO: How should we make the Datasheet refrence more generic? Include more of this documentation directly in the code?
             @inlinable
             @inline(__always)
-            public static var \(variableName): UInt8 { get { _volatileRegisterReadUInt8(\(register.offset.rawValue)) } set { _volatileRegisterWriteUInt8(\(register.offset.rawValue), newValue) } }
+            public static var \(variableName): UInt8 { get { _volatileRegisterReadUInt8(\(register.offset)) } set { _volatileRegisterWriteUInt8(\(register.offset), newValue) } }
     """
-    case .PINA, .PINB, .PINC, .PIND, .PINE, .PINF, .PING, .PINH, .PINJ, .PINK, .PINL:
+    case "PINA", "PINB", "PINC", "PIND", "PINE", "PINF", "PING", "PINH", "PINJ", "PINK", "PINL":
         let variableName = "inputAddress"
         return """
     
     
-            /// AKA: \(register.name.rawValue). See ATMega328p Datasheet section 14.4.4. // TODO: How should we make the Datasheet refrence more generic? Include more of this documentation directly in the code?
+            /// AKA: \(register.name). See ATMega328p Datasheet section 14.4.4. // TODO: How should we make the Datasheet refrence more generic? Include more of this documentation directly in the code?
             @inlinable
             @inline(__always)
-            public static var \(variableName): UInt8 { get { _volatileRegisterReadUInt8(\(register.offset.rawValue)) } set { _volatileRegisterWriteUInt8(\(register.offset.rawValue), newValue) } }\n
+            public static var \(variableName): UInt8 { get { _volatileRegisterReadUInt8(\(register.offset)) } set { _volatileRegisterWriteUInt8(\(register.offset), newValue) } }\n
     """
     default:
         return ""
@@ -352,4 +352,3 @@ func buildPortRegister(register: AVRModules.Module.RegisterGroup.Register) -> St
 //        typealias pin32 = pd2
 //    }
 //}
-

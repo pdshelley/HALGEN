@@ -14,13 +14,13 @@ struct ADCGenerator: PeripheralGenerator {
     let subdirectory: String = "module"
     
     func supports(device: AVRToolsDeviceFile) -> Bool {
-        device.modules.module.contains { $0.name == .ADC }
+        device.modules.module.contains { $0.name == "ADC" }
     }
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
         var code = buildFileHeader(for: name, generateTypealias: false)
         code.append(adcDocs.adcEnums)
-        let adcRegisterGroup = device.modules.module.first(where: { $0.name == .ADC })!.registerGroup.first!
+        let adcRegisterGroup = device.modules.module.first(where: { $0.name == "ADC" })!.registerGroup.first!
         var memberBlockList = MemberBlockItemListSyntax()
         
 //        for decl in adcDocs.adcTypealiases {

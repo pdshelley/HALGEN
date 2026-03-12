@@ -16,7 +16,7 @@ struct TimerGenerator: PeripheralGenerator {
     func supports(device: AVRToolsDeviceFile) -> Bool {
         device.modules.module.contains { module in
             switch module.name {
-            case .TC8, .TC10, .TC16, .TC8_ASYNC:
+            case "TC8", "TC10", "TC16", "TC8_ASYNC":
                 return true
             default:
                 return false
@@ -39,17 +39,17 @@ func buildTimers(file: AVRToolsDeviceFile, chipDocumentation: ChipDocumentationL
     for module in file.modules.module {
         for registerGroup in module.registerGroup {
             switch registerGroup.name {
-            case .TC0:
+            case "TC0":
                 timerFiles.append(buildTimer(module: module, timerName: "Timer0", chipName: file.devices.device.name, chipDocumentation: chipDocumentation))
-            case .TC1:
+            case "TC1":
                 timerFiles.append(buildTimer(module: module, timerName: "Timer1", chipName: file.devices.device.name, chipDocumentation: chipDocumentation))
-            case .TC2:
+            case "TC2":
                 timerFiles.append(buildTimer(module: module, timerName: "Timer2", chipName: file.devices.device.name, chipDocumentation: chipDocumentation))
-            case .TC3:
+            case "TC3":
                 timerFiles.append(buildTimer(module: module, timerName: "Timer3", chipName: file.devices.device.name, chipDocumentation: chipDocumentation))
-            case .TC4:
+            case "TC4":
                 timerFiles.append(buildTimer(module: module, timerName: "Timer4", chipName: file.devices.device.name, chipDocumentation: chipDocumentation))
-            case .TC5:
+            case "TC5":
                 timerFiles.append(buildTimer(module: module, timerName: "Timer5", chipName: file.devices.device.name, chipDocumentation: chipDocumentation))
             default:
                 break
@@ -89,14 +89,14 @@ func gatherTimerInfo(from module: AVRModules.Module) -> TimerInfo {
     // The name of the module indicates if it is 8 or 16 bit as well as if it is Async.
     // TODO: Check to see if any 16 bit timers have
     switch module.name {
-    case .TC8_ASYNC:
+    case "TC8_ASYNC":
         isAsync = true
         bitSize = .eightBit
-    case .TC8:
+    case "TC8":
         bitSize = .eightBit
-    case .TC10:
+    case "TC10":
         bitSize = .tenBit
-    case .TC16:
+    case "TC16":
         bitSize = .sixteenBit
     default: ()
     }
@@ -152,13 +152,13 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String, 
             for bitfield in register.bitfield {
                 
                 switch bitfield.name {
-                case .CS0, .CS1, .CS2, .CS3, .CS4, .CS5:
+                case "CS0", "CS1", "CS2", "CS3", "CS4", "CS5":
                     // Generate The Enum
-                    if let valueGroupName = bitfield.values?.rawValue {
+                    if let valueGroupName = bitfield.values {
                         for valueGroup in module.valueGroup {
                             // Make sure that the name of the valueGroup matches
-                            if valueGroup.name.rawValue == valueGroupName {
-                                let bitfieldMemberBlock = generateEnum(from: valueGroup, bitfieldName: bitfield.name.rawValue)
+                            if valueGroup.name == valueGroupName {
+                                let bitfieldMemberBlock = generateEnum(from: valueGroup, bitfieldName: bitfield.name)
                                 memberBlockList.append(bitfieldMemberBlock)
                             }
                         }
@@ -211,37 +211,37 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
         var enumValue = ""
         
         switch value.name {
-        case .NO_CLOCK_SOURCE_STOPPED, .NO_CLOCK_SOURCE_TIMER_COUNTER_STOPPED, .NO_CLOCK_SOURCE_TIMER_COUNTER0_STOPPED, .NO_CLOCK_SOURCE_TIMER_COUNTER2_STOPPED:
+        case "NO_CLOCK_SOURCE_STOPPED", "NO_CLOCK_SOURCE_TIMER_COUNTER_STOPPED", "NO_CLOCK_SOURCE_TIMER_COUNTER0_STOPPED", "NO_CLOCK_SOURCE_TIMER_COUNTER2_STOPPED":
             description = "No Clock Source (Stopped)"
             enumValue = "stopped"
-        case .RUNNING_NO_PRESCALING:
+        case "RUNNING_NO_PRESCALING":
             description = "Running, No Prescaling"
             enumValue = "runningWithoutPrescaling"
-        case .RUNNING_CLK_8:
+        case "RUNNING_CLK_8":
             description = "Running, CLK/8"
             enumValue = "running8"
-        case .RUNNING_CLK_16:
+        case "RUNNING_CLK_16":
             description = "Running, CLK/16"
             enumValue = "running16"
-        case .RUNNING_CLK_32:
+        case "RUNNING_CLK_32":
             description = "Running, CLK/32"
             enumValue = "running32"
-        case .RUNNING_CLK_64:
+        case "RUNNING_CLK_64":
             description = "Running, CLK/64"
             enumValue = "running64"
-        case .RUNNING_CLK_128:
+        case "RUNNING_CLK_128":
             description = "Running, CLK/128"
             enumValue = "running128"
-        case .RUNNING_CLK_256:
+        case "RUNNING_CLK_256":
             description = "Running, CLK/256"
             enumValue = "running256"
-        case .RUNNING_CLK_1024:
+        case "RUNNING_CLK_1024":
             description = "Running, CLK/1024"
             enumValue = "running1024"
-        case .RUNNING_EXTCLK_TN_FALLING_EDGE:
+        case "RUNNING_EXTCLK_TN_FALLING_EDGE":
             description = "External clock source. Clock on falling edge."
             enumValue = "runningExternalFallingEdge"
-        case .RUNNING_EXTCLK_TN_RISING_EDGE:
+        case "RUNNING_EXTCLK_TN_RISING_EDGE":
             description = "External clock source. Clock on rising edge."
             enumValue = "runningExternalRisingEdge"
         default:
@@ -249,7 +249,7 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
         }
         
         // Note: Can't Convert in the Codable conversion because there is messy data that is not always numbers.
-        let number = numberFrom(value: value.value.rawValue)
+        let number = numberFrom(value: value.value)
         
         let documentationRow = """
         

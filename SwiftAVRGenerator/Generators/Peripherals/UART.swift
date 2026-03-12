@@ -14,7 +14,7 @@ struct UARTGenerator: PeripheralGenerator {
     let subdirectory: String = "module/UART"
     
     func supports(device: AVRToolsDeviceFile) -> Bool {
-        device.modules.module.contains { $0.name == .USART }
+        device.modules.module.contains { $0.name == "USART" }
     }
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
@@ -27,8 +27,8 @@ struct UARTGenerator: PeripheralGenerator {
             )
         )
         
-        for registerGroup in device.modules.module.first(where: { $0.name == .USART })!.registerGroup {
-            var code = buildFileHeader(for: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0")")
+        for registerGroup in device.modules.module.first(where: { $0.name == "USART" })!.registerGroup {
+            var code = buildFileHeader(for: "UART\(registerGroup.name.first(where: { $0.isNumber }) ?? "0")")
             var memberBlockList = MemberBlockItemListSyntax()
             for register in registerGroup.register {
                 memberBlockList.append(
@@ -62,13 +62,13 @@ struct UARTGenerator: PeripheralGenerator {
             code.append(SourceFileSyntax {
                 StructDeclSyntax(
                     modifiers: DeclModifierListSyntax(arrayLiteral: DeclModifierSyntax(name: "public")),
-                    name: "\(raw: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0")")",
+                    name: "\(raw: "UART\(registerGroup.name.first(where: { $0.isNumber }) ?? "0")")",
                     inheritanceClause: inheritanceClause,
                     memberBlock: memberBlock
                 )
             }.formatted().description)
             
-            files.append(GeneratedCodeFile(fileName: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0").swift", content: code, subdirectory: subdirectory))
+            files.append(GeneratedCodeFile(fileName: "UART\(registerGroup.name.first(where: { $0.isNumber }) ?? "0").swift", content: code, subdirectory: subdirectory))
         }
         
         return files

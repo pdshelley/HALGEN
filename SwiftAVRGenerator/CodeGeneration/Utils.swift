@@ -203,7 +203,7 @@ func getBitNames(from register: AVRModules.Module.RegisterGroup.Register) -> [St
         
     for bitField in register.bitfield {
         var mask: UInt16 = bitField.mask.value
-        let name = bitField.name.rawValue
+        let name = bitField.name
         
         // 0b0100100
         

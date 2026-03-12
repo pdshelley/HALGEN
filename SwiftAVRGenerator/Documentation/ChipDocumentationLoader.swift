@@ -54,10 +54,10 @@ class ChipDocumentationLoader {
     }
     
     func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
-        guard let docs = chipDocumentation?.registers[register.name.rawValue] else {
+        guard let docs = chipDocumentation?.registers[register.name] else {
             return SupplementalRegisterData(
                 variableName: getVariableName(
-                    caption: register.caption?.rawValue ?? register.name.rawValue),
+                    caption: register.caption ?? register.name),
                 valueType: "",
                 defaultValue: "",
                 documentation: "",
@@ -65,10 +65,10 @@ class ChipDocumentationLoader {
             )
         }
         
-        var supData = docs.toSupplementalData()
+        let supData = docs.toSupplementalData()
         
         if generalDocumentation != nil {
-            if let generalDocs = registerVariableName(for: register.name.rawValue, in: generalDocumentation!) {
+            if let generalDocs = registerVariableName(for: register.name, in: generalDocumentation!) {
                 return SupplementalRegisterData(
                     variableName: generalDocs,
                     valueType: supData.valueType,
@@ -83,9 +83,9 @@ class ChipDocumentationLoader {
     }
     
     func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
-        guard let docs = chipDocumentation?.bitfields[bitfield.name.rawValue] else {
+        guard let docs = chipDocumentation?.bitfields[bitfield.name] else {
             return SupplementalBitfieldData(
-                variableName: getVariableName(caption: bitfield.caption?.rawValue ?? bitfield.name.rawValue),
+                variableName: getVariableName(caption: bitfield.caption ?? bitfield.name),
                 valueType: "",
                 defaultValue: "",
                 documentation: "",
@@ -96,7 +96,7 @@ class ChipDocumentationLoader {
         let supData = docs.toSupplementalData()
         
         if generalDocumentation != nil {
-            if let generalDocs = bitfieldVariableName(for: bitfield.name.rawValue, in: generalDocumentation!) {
+            if let generalDocs = bitfieldVariableName(for: bitfield.name, in: generalDocumentation!) {
                 return SupplementalBitfieldData(variableName: generalDocs, valueType: supData.valueType, defaultValue: supData.defaultValue, documentation: supData.documentation, access: supData.access)
             }
         }
