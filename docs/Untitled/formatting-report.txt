@@ -1,4 +1,0 @@
-HALGEN Formatting Report
-========================
-
-All generated files parsed and formatted without issues.
