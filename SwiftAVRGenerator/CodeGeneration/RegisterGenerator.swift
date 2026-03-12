@@ -98,6 +98,8 @@ func generateRegister(
             return (size: "UInt16", atomicStart: "atomic {", atomicEnd: " }")
         case .value4:
             return (size: "UInt32", atomicStart: "atomic {", atomicEnd: " }")
+        default:
+            preconditionFailure("Unsupported register size: \(register.size.rawValue)")
         }
     }
     
