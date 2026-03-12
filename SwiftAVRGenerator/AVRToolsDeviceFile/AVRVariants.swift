@@ -2,15 +2,14 @@
 //  AVRVariants.swift
 //  SwiftAVRGenerator
 //
-//  Created by Paul Shelley on 11/4/23.
+//  Created by HALGEN on 03/12/2026.
 //
 
 import Foundation
 import XMLCoder
-
 struct AVRVariants: Codable {
     let variant: [Variant]
-    
+
     struct Variant: Codable {
         @Attribute var ordercode: String
         @Attribute var tempmin: String
