@@ -16,7 +16,7 @@ struct TimerGenerator: PeripheralGenerator {
     func supports(device: AVRToolsDeviceFile) -> Bool {
         device.modules.module.contains { module in
             switch module.name {
-            case .tc8, .tc10, .tc16, .tc8Async:
+            case .TC8, .TC10, .TC16, .TC8_ASYNC:
                 return true
             default:
                 return false
@@ -91,14 +91,14 @@ func gatherTimerInfo(from module: AVRModules.Module) -> TimerInfo {
     // The name of the module indicates if it is 8 or 16 bit as well as if it is Async.
     // TODO: Check to see if any 16 bit timers have
     switch module.name {
-    case .tc8Async:
+    case .TC8_ASYNC:
         isAsync = true
         bitSize = .eightBit
-    case .tc8:
+    case .TC8:
         bitSize = .eightBit
-    case .tc10:
+    case .TC10:
         bitSize = .tenBit
-    case .tc16:
+    case .TC16:
         bitSize = .sixteenBit
     default: ()
     }
@@ -213,37 +213,37 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
         var enumValue = ""
         
         switch value.name {
-        case .NOCLOCKSOURCESTOPPED, .NOCLOCKSOURCETIMERCOUNTERSTOPPED, .NOCLOCKSOURCETIMERCOUNTER0STOPPED, .NOCLOCKSOURCETIMERCOUNTER2STOPPED:
+        case .NO_CLOCK_SOURCE_STOPPED, .NO_CLOCK_SOURCE_TIMER_COUNTER_STOPPED, .NO_CLOCK_SOURCE_TIMER_COUNTER0_STOPPED, .NO_CLOCK_SOURCE_TIMER_COUNTER2_STOPPED:
             description = "No Clock Source (Stopped)"
             enumValue = "stopped"
-        case .RUNNINGNOPRESCALING:
+        case .RUNNING_NO_PRESCALING:
             description = "Running, No Prescaling"
             enumValue = "runningWithoutPrescaling"
-        case .RUNNINGCLK8:
+        case .RUNNING_CLK_8:
             description = "Running, CLK/8"
             enumValue = "running8"
-        case .RUNNINGCLK16:
+        case .RUNNING_CLK_16:
             description = "Running, CLK/16"
             enumValue = "running16"
-        case .RUNNINGCLK32:
+        case .RUNNING_CLK_32:
             description = "Running, CLK/32"
             enumValue = "running32"
-        case .RUNNINGCLK64:
+        case .RUNNING_CLK_64:
             description = "Running, CLK/64"
             enumValue = "running64"
-        case .RUNNINGCLK128:
+        case .RUNNING_CLK_128:
             description = "Running, CLK/128"
             enumValue = "running128"
-        case .RUNNINGCLK256:
+        case .RUNNING_CLK_256:
             description = "Running, CLK/256"
             enumValue = "running256"
-        case .RUNNINGCLK1024:
+        case .RUNNING_CLK_1024:
             description = "Running, CLK/1024"
             enumValue = "running1024"
-        case .RUNNINGEXTCLKTNFALLINGEDGE:
+        case .RUNNING_EXTCLK_TN_FALLING_EDGE:
             description = "External clock source. Clock on falling edge."
             enumValue = "runningExternalFallingEdge"
-        case .RUNNINGEXTCLKTNRISINGEDGE:
+        case .RUNNING_EXTCLK_TN_RISING_EDGE:
             description = "External clock source. Clock on rising edge."
             enumValue = "runningExternalRisingEdge"
         default:

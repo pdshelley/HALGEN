@@ -14,7 +14,7 @@ struct UARTGenerator: PeripheralGenerator {
     let subdirectory: String = "module/UART"
     
     func supports(device: AVRToolsDeviceFile) -> Bool {
-        device.modules.module.contains { $0.name == .usart }
+        device.modules.module.contains { $0.name == .USART }
     }
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
@@ -28,7 +28,7 @@ struct UARTGenerator: PeripheralGenerator {
             )
         )
         
-        for registerGroup in device.modules.module.first(where: { $0.name == .usart })!.registerGroup {
+        for registerGroup in device.modules.module.first(where: { $0.name == .USART })!.registerGroup {
             var code = buildFileHeader(for: "UART\(registerGroup.name.rawValue.first(where: { $0.isNumber }) ?? "0")")
             var memberBlockList = MemberBlockItemListSyntax()
             for register in registerGroup.register {

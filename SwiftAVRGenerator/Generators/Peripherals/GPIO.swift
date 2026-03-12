@@ -12,7 +12,7 @@ struct GPIOGenerator: PeripheralGenerator {
     let subdirectory = "module"
     
     func supports(device: AVRToolsDeviceFile) -> Bool {
-        device.modules.module.contains { $0.name == .port }
+        device.modules.module.contains { $0.name == .PORT }
     }
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
@@ -32,7 +32,7 @@ func buildGPIO(file: AVRToolsDeviceFile) -> GeneratedCodeFile {
     
     // Filter for Modules named "PORT" // TODO: Find a better way to filter.
     for module in file.modules.module {
-        if module.name == .port {
+        if module.name == .PORT {
             for registerGroup in module.registerGroup {
                 code.append(buildPort(port: registerGroup))
             }
@@ -71,7 +71,7 @@ func buildPadsForPort(file: AVRToolsDeviceFile) -> String {
     var code: String = "\n\n"
     
     for module in file.devices.device.peripherals.module {
-        if module.name == .port {
+        if module.name == .PORT {
             
             for instance in module.instance {
                 let portName = instance.name
@@ -352,5 +352,4 @@ func buildPortRegister(register: AVRModules.Module.RegisterGroup.Register) -> St
 //        typealias pin32 = pd2
 //    }
 //}
-
 

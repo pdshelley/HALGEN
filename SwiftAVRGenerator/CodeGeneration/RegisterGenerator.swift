@@ -64,7 +64,8 @@ func generateRegister(
         var customRegisterH: AVRModules.Module.RegisterGroup.Register = register
         customRegisterH.size = .one
         // I have no idea if this is ok, I'll just assume it is since it works
-        customRegisterH.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex()) ?? .zeroX
+        customRegisterH.offset = .init(rawValue: (register.offset.rawValue.hexValue() + 1).toHex())
+            ?? AVRModules.Module.RegisterGroup.Register.Offset(value: "0x0")
         memberBlockList.append(
             contentsOf: generateRegister(
                 register: customRegisterH,
@@ -96,7 +97,7 @@ func generateRegister(
             return (size: "UInt8", atomicStart: "", atomicEnd: "")
         case .two:
             return (size: "UInt16", atomicStart: "atomic {", atomicEnd: " }")
-        case .value4:
+        case .four:
             return (size: "UInt32", atomicStart: "atomic {", atomicEnd: " }")
         default:
             preconditionFailure("Unsupported register size: \(register.size.rawValue)")

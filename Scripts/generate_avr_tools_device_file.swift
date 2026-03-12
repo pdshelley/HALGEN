@@ -769,7 +769,6 @@ private func renderStringValueType(typeName: String, valueCounts: [String: Int],
     var usedNames: Set<String> = []
     var memberNames: [String] = []
     var lines: [String] = []
-    var firstHexIdentifier: String?
 
     for group in groupedValues(valueCounts, strategy: mergeStrategy) {
         let candidates = candidateMemberNames(for: group.canonical)
@@ -783,26 +782,11 @@ private func renderStringValueType(typeName: String, valueCounts: [String: Int],
         usedNames.insert(identifier)
         memberNames.append(identifier)
 
-        if firstHexIdentifier == nil,
-           group.canonical.range(of: "^0[xX][0-9A-Fa-f]+$", options: .regularExpression) != nil {
-            firstHexIdentifier = identifier
-        }
-
         let alternateList = group.alternates.isEmpty
             ? ""
             : ", alternateValues: [\(group.alternates.map { "\"\(escapedStringLiteral($0))\"" }.joined(separator: ", "))]"
 
         lines.append("static let \(identifier) = \(typeName)(value: \"\(escapedStringLiteral(group.canonical))\"\(alternateList))")
-
-        for alias in candidates.dropFirst() where usedNames.contains(alias) == false {
-            usedNames.insert(alias)
-            lines.append("static let \(alias) = \(identifier)")
-        }
-    }
-
-    if let firstHexIdentifier, usedNames.contains("zeroX") == false {
-        usedNames.insert("zeroX")
-        lines.append("static let zeroX = \(firstHexIdentifier)")
     }
 
     lines.append("")
