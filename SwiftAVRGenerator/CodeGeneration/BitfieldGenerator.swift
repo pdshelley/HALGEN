@@ -54,6 +54,10 @@ func generateBitfieldAccessor(
             return nil
         }
 
+        if parentVariable.name == splitPair.register.name {
+            return nil
+        }
+        
         return generateSplitBitfieldAccessor(
             bitfieldA: bitfield,
             bitfieldB: splitPair.bitfield,
