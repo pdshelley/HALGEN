@@ -268,7 +268,7 @@ private func makeAccessorDeclaration(
     caption: String,
     info: SupplementalBitfieldData,
     getter: String?,
-    setter: String
+    setter: String?
 ) -> DeclSyntax {
     let documentationComment = makeDocumentationComment(
         bitfieldName: bitfieldName,
@@ -286,8 +286,11 @@ private func makeAccessorDeclaration(
     if let getter {
         declarationLines.append(indent(getter, by: 4))
     }
+    
+    if let setter {
+        declarationLines.append(indent(setter, by: 4))
+    }
 
-    declarationLines.append(indent(setter, by: 4))
     declarationLines.append("}")
 
     let declaration = declarationLines.joined(separator: "\n")
@@ -407,19 +410,23 @@ private func accessorSetterSource(
     parentVariableName: String,
     valueMask: UInt8,
     bitshift: UInt8
-) -> String {
+) -> String? {
     let assignedValue: String
     if info.valueType == "Bool" {
         assignedValue = "(newValue ? 1 : 0)"
     } else {
         assignedValue = "newValue.rawValue"
     }
-
-    return """
-    set {
-        \(parentVariableName) |= (\(assignedValue) & \(valueMask.binaryString)) << UInt8(\(bitshift))
+    
+    if info.access == .read {
+        return nil
+    } else {
+        return """
+        set {
+            \(parentVariableName) |= (\(assignedValue) & \(valueMask.binaryString)) << UInt8(\(bitshift))
+        }
+        """
     }
-    """
 }
 
 private func splitAccessorGetterSource(
