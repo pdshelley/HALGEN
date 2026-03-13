@@ -97,7 +97,7 @@ class ChipDocumentationLoader {
         
         if generalDocumentation != nil {
             if let generalDocs = bitfieldVariableName(for: bitfield.name, in: generalDocumentation!) {
-                return SupplementalBitfieldData(variableName: generalDocs, valueType: supData.valueType, defaultValue: supData.defaultValue, documentation: supData.documentation, access: supData.access)
+                return SupplementalBitfieldData(variableName: generalDocs.variableName, valueType: (generalDocs.valueType ?? supData.valueType), defaultValue: (generalDocs.defaultValue ?? supData.defaultValue), documentation: supData.documentation, access: supData.access)
             }
         }
         return docs.toSupplementalData()
@@ -107,7 +107,7 @@ class ChipDocumentationLoader {
         doc.registers.first { $0.aliases.contains(alias) }?.variableName
     }
     
-    private func bitfieldVariableName(for alias: String, in doc: GeneralDocumentation) -> String? {
-        doc.registers.first { $0.aliases.contains(alias) }?.variableName
+    private func bitfieldVariableName(for alias: String, in doc: GeneralDocumentation) -> GeneralBitfield? {
+        doc.bitfields.first { $0.aliases.contains(alias) }
     }
 }

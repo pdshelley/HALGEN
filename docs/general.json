@@ -12,7 +12,9 @@
             "aliases": [
                 "RXC0"
             ],
-            "variableName": "test"
+            "variableName": "test",
+            "valueType": "Bool",
+            "defaultValue": "test"
         }
     ]
 }

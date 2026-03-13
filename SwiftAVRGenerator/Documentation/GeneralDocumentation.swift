@@ -21,4 +21,6 @@ struct GeneralRegister: Codable {
 struct GeneralBitfield: Codable {
     let aliases: [String]
     let variableName: String
+    let valueType: String?
+    let defaultValue: String?
 }
