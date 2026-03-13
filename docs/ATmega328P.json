@@ -3,7 +3,6 @@
   "datasheet": "ATmega328P Datasheet (DS40002061B)",
   "registers": {
     "UDR0": {
-      "variableName": "dataRegister",
       "documentation": [
         "See ATMega328p Datasheet Section 36 Register Summary",
         "The USART Transmit Data Buffer Register and USART Receive Data Buffer Registers share the same I/O address referred to as",
@@ -20,26 +19,9 @@
         "The receive buffer consists of a two level FIFO. The FIFO will change its state whenever the receive buffer is accessed. Due",
         "to this behavior of the receive buffer, do not use Read-Modify-Write instructions (SBI and CBI) on this location. Be careful",
         "when using bit test instructions (SBIC and SBIS), since these also will change the state of the FIFO."
-      ],
-      "access": "R/W"
-    },
-    "UCSR0A": {
-      "variableName": "controlRegisterA",
-      "documentation": [],
-      "access": ""
-    },
-    "UCSR0B": {
-      "variableName": "controlRegisterB",
-      "documentation": [],
-      "access": ""
-    },
-    "UCSR0C": {
-      "variableName": "controlRegisterC",
-      "documentation": [],
-      "access": ""
+      ]
     },
     "UBRR0": {
-      "variableName": "baudRateRegister",
       "documentation": [
         "```",
         "--------------------------------------------------------------------------------",
@@ -60,7 +42,6 @@
         "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receive",
         "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
       ],
-      "access": "R/W",
       "documentationL": [
         "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the",
         "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver",
@@ -75,133 +56,7 @@
         "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
       ]
     },
-    "TCCR0A": {
-      "variableName": "controlRegisterA",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCCR0B": {
-      "variableName": "controlRegisterB",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCNT0": {
-      "variableName": "count",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCR0A": {
-      "variableName": "outputCompareRegisterA",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCR0B": {
-      "variableName": "outputCompareRegisterB",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TIMSK0": {
-      "variableName": "interruptMaskRegister",
-      "documentation": [],
-      "access": "R"
-    },
-    "TIFR0": {
-      "variableName": "interruptFlagRegister",
-      "documentation": [],
-      "access": "R"
-    },
-    "GTCCR": {
-      "variableName": "generalControlRegister",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCCR1A": {
-      "variableName": "controlRegisterA",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCCR1B": {
-      "variableName": "controlRegisterB",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCCR1C": {
-      "variableName": "controlRegisterC",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCNT1": {
-      "variableName": "count",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCR1A": {
-      "variableName": "outputCompareRegisterA",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCR1B": {
-      "variableName": "outputCompareRegisterB",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "ICR1": {
-      "variableName": "inputCaptureRegister",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TIMSK1": {
-      "variableName": "interruptMaskRegister",
-      "documentation": [],
-      "access": "R"
-    },
-    "TIFR1": {
-      "variableName": "interruptFlagRegister",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCCR2A": {
-      "variableName": "controlRegisterA",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCCR2B": {
-      "variableName": "controlRegisterB",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCNT2": {
-      "variableName": "count",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCR2A": {
-      "variableName": "outputCompareRegisterA",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCR2B": {
-      "variableName": "outputCompareRegisterB",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "ASSR": {
-      "variableName": "asynchronousStatusRegister",
-      "documentation": [],
-      "access": "R"
-    },
-    "TIMSK2": {
-      "variableName": "interruptMaskRegister",
-      "documentation": [],
-      "access": "R"
-    },
-    "TIFR2": {
-      "variableName": "interruptFlagRegister",
-      "documentation": [],
-      "access": "R"
-    },
     "ADMUX": {
-      "variableName": "multiplexerSelectionRegister",
       "documentation": [
         "ADMUX - ADC Multiplexer Selection Register",
         "```",
@@ -215,11 +70,9 @@
         "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
         "--------------------------------------------------------------------------------",
         "```"
-      ],
-      "access": "R/W"
+      ]
     },
     "ADC": {
-      "variableName": "dataRegister",
       "documentation": [
         "```",
         "--------------------------------------------------------------------------------",
@@ -240,7 +93,6 @@
         "--------------------------------------------------------------------------------",
         "```"
       ],
-      "access": "R",
       "documentationL": [
         "ADCL - ADC Data Register (low bits)",
         "```",
@@ -277,7 +129,6 @@
       ]
     },
     "ADCSRA": {
-      "variableName": "controlRegisterA",
       "documentation": [
         "ADCSRA - ADC Control and Status Register A",
         "```",
@@ -291,11 +142,9 @@
         "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
         "--------------------------------------------------------------------------------",
         "```"
-      ],
-      "access": "R/W"
+      ]
     },
     "ADCSRB": {
-      "variableName": "controlRegisterB",
       "documentation": [
         "ADCSRB - ADC Control and Status Register B",
         "```",
@@ -309,11 +158,9 @@
         "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
         "--------------------------------------------------------------------------------",
         "```"
-      ],
-      "access": "R/W"
+      ]
     },
     "DIDR0": {
-      "variableName": "digitalInputDisableRegister",
       "documentation": [
         "DIDR0 - Digital Input Disable Register 0",
         "```",
@@ -327,228 +174,123 @@
         "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
         "--------------------------------------------------------------------------------",
         "```"
-      ],
-      "access": "R/W"
+      ]
     },
     "PORTB": {
-      "variableName": "dataRegister",
       "documentation": [
         "See ATMega328p Datasheet section 14.4.2."
-      ],
-      "access": "R/W"
+      ]
     },
     "DDRB": {
-      "variableName": "dataDirection",
       "documentation": [
         "See ATMega328p Datasheet section 14.4.3."
-      ],
-      "access": "R/W"
+      ]
     },
     "PINB": {
-      "variableName": "inputAddress",
       "documentation": [
         "See ATMega328p Datasheet section 14.4.4."
-      ],
-      "access": "R/W"
+      ]
     },
     "PORTC": {
-      "variableName": "dataRegister",
       "documentation": [
         "See ATMega328p Datasheet section 14.4.5."
-      ],
-      "access": "R/W"
+      ]
     },
     "DDRC": {
-      "variableName": "dataDirection",
       "documentation": [
         "See ATMega328p Datasheet section 14.4.6."
-      ],
-      "access": "R/W"
+      ]
     },
     "PINC": {
-      "variableName": "inputAddress",
       "documentation": [
         "See ATMega328p Datasheet section 14.4.7."
-      ],
-      "access": "R/W"
+      ]
     },
     "PORTD": {
-      "variableName": "dataRegister",
       "documentation": [
         "See ATMega328p Datasheet section 14.4.8."
-      ],
-      "access": "R/W"
+      ]
     },
     "DDRD": {
-      "variableName": "dataDirection",
       "documentation": [
         "See ATMega328p Datasheet section 14.4.9."
-      ],
-      "access": "R/W"
+      ]
     },
     "PIND": {
-      "variableName": "inputAddress",
       "documentation": [
         "See ATMega328p Datasheet section 14.4.10."
-      ],
-      "access": "R/W"
+      ]
     }
   },
   "bitfields": {
     "RXC0": {
-      "variableName": "rxDataAvailable",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "URXCn is Bit 7 on UCSRnA. See Section 20.11.2."
-      ],
-      "access": "R"
+      ]
     },
     "TXC0": {
-      "variableName": "txComplete",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "UTXCn is Bit 6 on UCSRnA. See Section 20.11.2."
-      ],
-      "access": "R/W"
+      ]
     },
     "UDRE0": {
-      "variableName": "dataRegisterEmpty",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "UDREn is Bit 5 on UCSRnA. See Section 20.11.2."
-      ],
-      "access": "R"
+      ]
     },
     "FE0": {
-      "variableName": "frameError",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "UFEn is Bit 4 on UCSRnA. See Section 20.11.2."
-      ],
-      "access": "R"
+      ]
     },
     "DOR0": {
-      "variableName": "dataOverrun",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "UDROn is Bit 3 on UCSRnA. See Section 20.11.2."
-      ],
-      "access": "R"
+      ]
     },
     "UPE0": {
-      "variableName": "parityError",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "UPEn is Bit 2 on UCSRnA. See Section 20.11.2."
-      ],
-      "access": "R"
+      ]
     },
     "U2X0": {
-      "variableName": "asynchronousDoubleSpeedMode",
-      "valueType": "UART.AsynchronousDoubleSpeedMode",
-      "defaultValue": ".off",
       "documentation": [
         "See ATMega328p Datasheet Section 20.",
         "U2Xn is bit 1 on UCSRnA."
-      ],
-      "access": "R/W"
+      ]
     },
     "MPCM0": {
-      "variableName": "multiProcessorCommunication",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "See ATMega328p Datasheet Section 20.",
         "MPCMn is bit 0 on UCSRnA."
-      ],
-      "access": "R/W"
-    },
-    "RXCIE0": {
-      "variableName": "rxCompleteInterruptEnable",
-      "valueType": "UART.RXCompleteInterruptEnable",
-      "defaultValue": ".off",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TXCIE0": {
-      "variableName": "txCompleteInterruptEnable",
-      "valueType": "UART.TXCompleteInterruptEnable",
-      "defaultValue": ".off",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "UDRIE0": {
-      "variableName": "dataRegisterEmptyInterruptEnable",
-      "valueType": "UART.DRECompleteInterruptEnable",
-      "defaultValue": ".off",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "RXEN0": {
-      "variableName": "receiverEnable",
-      "valueType": "UART.ReceiverEnable",
-      "defaultValue": ".off",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TXEN0": {
-      "variableName": "transmitterEnable",
-      "valueType": "UART.TransmitterEnable",
-      "defaultValue": ".off",
-      "documentation": [],
-      "access": "R/W"
+      ]
     },
     "UCSZ02": {
-      "variableName": "numberOfDataBits",
-      "valueType": "UART.NumberOfDataBits",
-      "defaultValue": ".eight",
       "documentation": [
         "See ATMega328p Datasheet Section 20.11.3 and Section 20.11.4.",
         "UCSZn0 and UCSZn1 are bits 1 and 2 on UCSRnC while UCSZn2 is bit 2 on UCSRnB"
       ],
-      "access": "R/W",
       "splitTarget": "UCSZ0"
     },
     "RXB80": {
-      "variableName": "receiveData8thBit",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "See ATMega328p Datasheet Section 20.11.3",
         "RXB8n is bit 1 on UCSRnB"
-      ],
-      "access": "R"
+      ]
     },
     "TXB80": {
-      "variableName": "transmitData8thBit",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "See ATMega328p Datasheet Section 20.11.3",
         "TXB8n is bit 0 on UCSRnB"
-      ],
-      "access": "R/W"
+      ]
     },
     "UMSEL0": {
-      "variableName": "modeSelect",
-      "valueType": "UART.ModeSelect",
-      "defaultValue": ".asynchronous",
       "documentation": [
         "See ATMega328p Datasheet Section 20.11.4",
         "UMSELn are bit 7 and 6 on UCSRnC"
-      ],
-      "access": "R/W"
+      ]
     },
     "UPM0": {
-      "variableName": "parityMode",
-      "valueType": "UART.ParityMode",
-      "defaultValue": ".disabled",
       "documentation": [
         "Parity Mode See ATMega328p Datasheet Section 20.11.4.",
         "UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.",
@@ -561,38 +303,25 @@
         "| 0     | 1     | Reserved             |",
         "| 1     | 0     | Enabled, Even Parity |",
         "| 1     | 1     | Enabled, Odd Parity  |"
-      ],
-      "access": "R/W"
+      ]
     },
     "USBS0": {
-      "variableName": "numberOfStopBits",
-      "valueType": "UART.NumberOfStopBits",
-      "defaultValue": ".one",
       "documentation": [
         "See ATMega328p Datasheet Section 20.11.4.",
         "USBSn is bit 3 on UCSRnC."
-      ],
-      "access": "R/W"
+      ]
     },
     "UCSZ0": {
-      "variableName": "numberOfDataBits",
-      "valueType": "UART.NumberOfDataBits",
-      "defaultValue": ".eight",
       "documentation": [
         "See ATMega328p Datasheet Section 20.11.3 and Section 20.11.4.",
         "UCSZn0 and UCSZn1 are bits 1 and 2 on UCSRnC while UCSZn2 is bit 2 on UCSRnB"
-      ],
-      "access": "R/W"
+      ]
     },
     "UCPOL0": {
-      "variableName": "clockPolarity",
-      "valueType": "UART.ClockPolarity",
-      "defaultValue": ".rising",
       "documentation": [
         "See ATMega328p Datasheet Section 20.11.4.",
         "UCPOLn is bit 0 on UCSRnC."
-      ],
-      "access": "R/W"
+      ]
     },
     "COM0A": {
       "variableName": "compareOutputModeA",
@@ -773,7 +502,6 @@
     "FOC0A": {
       "variableName": "forceOutputCompareA",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "The FOC0A bit is only active when the WGM bits specify a non-PWM mode.",
         "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR0B is written ",
@@ -789,7 +517,6 @@
     "FOC0B": {
       "variableName": "forceOutputCompareB",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "The FOC0B bit is only active when the WGM bits specify a non-PWM mode.",
         "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR0B is written ",
@@ -810,8 +537,8 @@
         "Combined with the WGM02 bit found in the TCCR0B Register, these bits control the counting sequence of the",
         "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
         "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
-        "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes. (see ”Modes of",
-        "Operation” on page 155).",
+        "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes. (see \u201dModes of",
+        "Operation\u201d on page 155).",
         "",
         "Table 18-8. Waveform Generation Mode Bit Description",
         "```",
@@ -840,94 +567,6 @@
       ],
       "access": "R/W",
       "splitTarget": "WGM0"
-    },
-    "CS0": {
-      "variableName": "prescaler",
-      "valueType": "Prescaling",
-      "defaultValue": ".stopped",
-      "documentation": [
-        "The three Clock Select bits select the clock source to be used by the Timer/Counter."
-      ],
-      "access": "R/W"
-    },
-    "OCIE0B": {
-      "variableName": "outputCompareMatchBInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCIE0A": {
-      "variableName": "outputCompareMatchAInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TOIE0": {
-      "variableName": "overflowInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCF0B": {
-      "variableName": "outputCompareFlagB",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCF0A": {
-      "variableName": "outputCompareFlagA",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TOV0": {
-      "variableName": "overflowFlag",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TSM": {
-      "variableName": "timerSynchronizationMode",
-      "valueType": "Timer.TimerSynchronizationMode",
-      "defaultValue": ".disabled",
-      "documentation": [
-        "Writing the TSM bit to one activates the Timer/Counter Synchronization mode. In this mode, the value that is",
-        "written to the PSRASY and PSRSYNC bits is kept, hence keeping the corresponding prescaler reset signals",
-        "asserted. This ensures that the corresponding Timer/Counters are halted and can be configured to the same",
-        "value without the risk of one of them advancing during configuration. When the TSM bit is written to zero, the",
-        "PSRASY and PSRSYNC bits are cleared by hardware, and the Timer/Counters start counting simultaneously."
-      ],
-      "access": "R/W"
-    },
-    "PSRSYNC": {
-      "variableName": "prescalerResetSync",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [
-        "When this bit is one, Timer/Counter1 and Timer/Counter0 prescaler will be Reset. This bit is normally cleared",
-        "immediately by hardware, except if the TSM bit is set. Note that Timer/Counter1 and Timer/Counter0 share the",
-        "same prescaler and a reset of this prescaler will affect both timers."
-      ],
-      "access": "R/W"
-    },
-    "PSRASY": {
-      "variableName": "prescalerReset",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [
-        "When this bit is one, the Timer/Counter2 prescaler will be reset. This bit is normally cleared immediately by",
-        "hardware. If the bit is written when Timer/Counter2 is operating in asynchronous mode, the bit will remain one",
-        "until the prescaler has been reset. The bit will not be cleared by hardware if the TSM bit is set. Refer to the",
-        "description of the ”Bit 7 – TSM: Timer/Counter Synchronization Mode” for a description of the",
-        "Timer/Counter Synchronization mode."
-      ],
-      "access": "R/W"
     },
     "COM1A": {
       "variableName": "compareOutputModeA",
@@ -1080,8 +719,8 @@
         "Combined with the WGM13:2 bits found in the TCCR1B Register, these bits control the counting sequence of the",
         "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
         "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
-        "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of",
-        "Operation” on page 155).",
+        "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see \u201dModes of",
+        "Operation\u201d on page 155).",
         "",
         "Table 18-8. Waveform Generation Mode Bit Description",
         "```",
@@ -1131,7 +770,6 @@
     "ICNC1": {
       "variableName": "inputCaptureNoiseCanceler",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "Setting this bit (to true) activates the Input Capture Noise Canceler. When the noise canceler is activated, the",
         "input from the Input Capture pin (ICP1) is filtered. The filter function requires four successive equal valued",
@@ -1143,7 +781,6 @@
     "ICES1": {
       "variableName": "inputCaptureEdgeSelect",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "This bit selects which edge on the Input Capture pin (ICP1) that is used to trigger a capture event. When the",
         "ICES1 bit is written to zero, a falling (negative) edge is used as trigger, and when the ICES1 bit is written to one,",
@@ -1156,19 +793,9 @@
       ],
       "access": "R/W"
     },
-    "CS1": {
-      "variableName": "prescaler",
-      "valueType": "Prescaling",
-      "defaultValue": ".stopped",
-      "documentation": [
-        "The three Clock Select bits select the clock source to be used by the Timer/Counter."
-      ],
-      "access": "R/W"
-    },
     "FOC1A": {
       "variableName": "forceOutputCompareA",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "The FOC1A bit is only active when the WGM bits specify a non-PWM mode.",
         "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR1B is written ",
@@ -1184,7 +811,6 @@
     "FOC1B": {
       "variableName": "forceOutputCompareB",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "The FOC1B bit is only active when the WGM bits specify a non-PWM mode.",
         "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR1B is written ",
@@ -1198,69 +824,19 @@
       "access": "R/W"
     },
     "ICIE1": {
-      "variableName": "inputCaptureInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "When this bit is written to one, and the I-flag in the Status Register is set (interrupts globally enabled), the",
         "Timer/Counter1 Input Capture interrupt is enabled. The corresponding Interrupt Vector is executed",
         "when the ICF1 Flag, located in TIFR1, is set."
-      ],
-      "access": "R/W"
-    },
-    "OCIE1B": {
-      "variableName": "outputCompareMatchBInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCIE1A": {
-      "variableName": "outputCompareMatchAInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TOIE1": {
-      "variableName": "overflowInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
+      ]
     },
     "ICF1": {
-      "variableName": "inputCaptureFlag",
-      "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "This flag is set when a capture event occurs on the ICP1 pin. When the Input Capture Register (ICR1) is set by",
         "the WGM to be used as the TOP value, the ICF1 Flag is set when the counter reaches the TOP value.",
         "ICF1 is automatically cleared when the Input Capture Interrupt Vector is executed. Alternatively, ICF1 can be",
         "cleared by writing a logic one to its bit location."
-      ],
-      "access": "R/W"
-    },
-    "OCF1B": {
-      "variableName": "outputCompareFlagB",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCF1A": {
-      "variableName": "outputCompareFlagA",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TOV1": {
-      "variableName": "overflowFlag",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
+      ]
     },
     "COM2A": {
       "variableName": "compareOutputModeA",
@@ -1414,8 +990,8 @@
         "Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the",
         "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see",
         "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
-        "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see ”Modes of",
-        "Operation” on page 155).",
+        "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see \u201dModes of",
+        "Operation\u201d on page 155).",
         "",
         "Table 18-8. Waveform Generation Mode Bit Description",
         "```",
@@ -1448,7 +1024,6 @@
     "FOC2A": {
       "variableName": "forceOutputCompareA",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "The FOC2A bit is only active when the WGM bits specify a non-PWM mode.",
         "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written ",
@@ -1464,7 +1039,6 @@
     "FOC2B": {
       "variableName": "forceOutputCompareB",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "The FOC2B bit is only active when the WGM bits specify a non-PWM mode.",
         "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written ",
@@ -1481,108 +1055,7 @@
       "variableName": "waveformGenerationMode",
       "valueType": "Timer8Bit.WaveformGenerationMode",
       "defaultValue": ".normal",
-      "documentation": [],
       "access": "R/W"
-    },
-    "CS2": {
-      "variableName": "prescaler",
-      "valueType": "Prescaling",
-      "defaultValue": ".stopped",
-      "documentation": [
-        "The three Clock Select bits select the clock source to be used by the Timer/Counter."
-      ],
-      "access": "R/W"
-    },
-    "OCIE2B": {
-      "variableName": "outputCompareMatchBInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCIE2A": {
-      "variableName": "outputCompareMatchAInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TOIE2": {
-      "variableName": "overflowInterruptEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCF2B": {
-      "variableName": "outputCompareFlagB",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "OCF2A": {
-      "variableName": "outputCompareFlagA",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TOV2": {
-      "variableName": "overflowFlag",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "EXCLK": {
-      "variableName": "enableExternalClockInput",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "AS2": {
-      "variableName": "asynchronousTimerCounter",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R/W"
-    },
-    "TCN2UB": {
-      "variableName": "updateBusy",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R"
-    },
-    "OCR2AUB": {
-      "variableName": "outputCompareRegisterAUpdateBusy",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R"
-    },
-    "OCR2BUB": {
-      "variableName": "outputCompareRegisterBUpdateBusy",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCR2AUB": {
-      "variableName": "controlRegisterAUpdateBusy",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R"
-    },
-    "TCR2BUB": {
-      "variableName": "controlRegisterBUpdateBusy",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [],
-      "access": "R"
     },
     "REFS": {
       "variableName": "reference",
@@ -1601,18 +1074,6 @@
         "|   1   |   0   | Reserved                                                            |",
         "|   1   |   1   | Internal 1.1V Voltage Reference with external capacitor at AREF pin |",
         "```"
-      ],
-      "access": "R/W"
-    },
-    "ADLAR": {
-      "variableName": "leftAdjust",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [
-        "The ADLAR bit affects the presentation of the ADC conversion result in the ADC Data Register.",
-        "Write one to ADLAR to left adjust the result.",
-        "Otherwise, the result is right adjusted.",
-        "Changing the ADLAR bit will affect the ADC Data Register immediately, regardless of any ongoing conversions."
       ],
       "access": "R/W"
     },
@@ -1646,97 +1107,6 @@
       ],
       "access": "R/W"
     },
-    "ADEN": {
-      "variableName": "enabled",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [
-        "Writing this bit to one enables the ADC.",
-        "By writing it to zero, the ADC is turned off.",
-        "Turning off the ADC off while a conversion is in progress, will terminate this conversion."
-      ],
-      "access": "R/W"
-    },
-    "ADSC": {
-      "variableName": "converting",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [
-        "In Single Conversion mode, write this bit to one to start each conversion.",
-        "In Free Running mode, write this bit to one to start the first conversion.",
-        "The first conversion after ADSC has been written after the ADC has been enabled, or if ADSC is written at the same time as the ADC is enabled, will take 25 ADC clock cycles instead of the normal 13.",
-        "This first conversion performs initialization of the ADC.",
-        "",
-        "ADSC will read as one as long as a conversion is in progress. When the conversion is complete, it returns to zero.",
-        "Writing zero to this bit has no effect."
-      ],
-      "access": "R/W"
-    },
-    "ADATE": {
-      "variableName": "autoTriggerEnabled",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [
-        "When this bit is written to one, Auto Triggering of the ADC is enabled.",
-        "The ADC will start a conversion on a positive edge of the selected trigger signal. The trigger source is selected by setting the ADC Trigger Select bits, ADTS in ADCSRB."
-      ],
-      "access": "R/W"
-    },
-    "ADIF": {
-      "variableName": "interruptFlag",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [
-        "This bit is set when an ADC conversion completes and the Data Registers are updated.",
-        "The ADC Conversion Complete Interrupt is executed if the ADIE bit and the I-bit in SREG are set.",
-        "ADIF is cleared by hardware when executing the corresponding interrupt handling vector.",
-        "Alternatively, ADIF is cleared by writing a logical one to the flag.",
-        "Beware that if doing a Read-Modify-Write on ADCSRA, a pending interrupt can be disabled.",
-        "This also applies if the SBI and CBI instructions are used."
-      ],
-      "access": "R/W"
-    },
-    "ADIE": {
-      "variableName": "interruptEnabled",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [
-        "When this bit is written to one and the I-bit in SREG is set, the ADC Conversion Complete Interrupt is activated."
-      ],
-      "access": "R/W"
-    },
-    "ADPS": {
-      "variableName": "prescaler",
-      "valueType": "AnalogPrescalerSelection",
-      "defaultValue": ".divide2",
-      "documentation": [
-        "These bits determine the division factor between the system clock frequency and the input clock to the ADC.",
-        "",
-        "```",
-        "| ADPS2 | ADPS1 | ADPS0 | Division Factor |",
-        "|-------|-------|-------|-----------------|",
-        "|   0   |   0   |   0   | 2               |",
-        "|   0   |   0   |   1   | 2               |",
-        "|   0   |   1   |   0   | 4               |",
-        "|   0   |   1   |   1   | 8               |",
-        "|   1   |   0   |   0   | 16              |",
-        "|   1   |   0   |   1   | 32              |",
-        "|   1   |   1   |   0   | 64              |",
-        "|   1   |   1   |   1   | 128             |",
-        "```"
-      ],
-      "access": "R/W"
-    },
-    "ACME": {
-      "variableName": "multiplexerEnable",
-      "valueType": "Bool",
-      "defaultValue": "",
-      "documentation": [
-        "When this bit is written logic one and the ADC is switched off (ADEN in ADCSRA is zero), the ADC multiplexer selects the negative input to the Analog Comparator.",
-        "When this bit is written logic zero, AIN1 is applied to the negative input of the Analog Comparator."
-      ],
-      "access": "R/W"
-    },
     "ADTS": {
       "variableName": "autoTriggerSource",
       "valueType": "AutoTriggerSource",
@@ -1767,7 +1137,6 @@
     "ADC5D": {
       "variableName": "digitalInput5Disabled",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
         "The corresponding PIN Register bit will always read as zero when this bit is set.",
@@ -1778,7 +1147,6 @@
     "ADC4D": {
       "variableName": "digitalInput4Disabled",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
         "The corresponding PIN Register bit will always read as zero when this bit is set.",
@@ -1789,7 +1157,6 @@
     "ADC3D": {
       "variableName": "digitalInput3Disabled",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
         "The corresponding PIN Register bit will always read as zero when this bit is set.",
@@ -1800,7 +1167,6 @@
     "ADC2D": {
       "variableName": "digitalInput2Disabled",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
         "The corresponding PIN Register bit will always read as zero when this bit is set.",
@@ -1811,7 +1177,6 @@
     "ADC1D": {
       "variableName": "digitalInput1Disabled",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
         "The corresponding PIN Register bit will always read as zero when this bit is set.",
@@ -1822,13 +1187,113 @@
     "ADC0D": {
       "variableName": "digitalInput0Disabled",
       "valueType": "Bool",
-      "defaultValue": "",
       "documentation": [
         "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
         "The corresponding PIN Register bit will always read as zero when this bit is set.",
         "When an analog signal is applied to the ADC0 pin and the digital input from this pin is not needed, this bit should be written to logic one to reduce power consumption in the digital input buffer."
       ],
       "access": "R/W"
+    },
+    "CS0": {
+      "documentation": [
+        "The three Clock Select bits select the clock source to be used by the Timer/Counter."
+      ]
+    },
+    "TSM": {
+      "documentation": [
+        "Writing the TSM bit to one activates the Timer/Counter Synchronization mode. In this mode, the value that is",
+        "written to the PSRASY and PSRSYNC bits is kept, hence keeping the corresponding prescaler reset signals",
+        "asserted. This ensures that the corresponding Timer/Counters are halted and can be configured to the same",
+        "value without the risk of one of them advancing during configuration. When the TSM bit is written to zero, the",
+        "PSRASY and PSRSYNC bits are cleared by hardware, and the Timer/Counters start counting simultaneously."
+      ]
+    },
+    "PSRSYNC": {
+      "documentation": [
+        "When this bit is one, Timer/Counter1 and Timer/Counter0 prescaler will be Reset. This bit is normally cleared",
+        "immediately by hardware, except if the TSM bit is set. Note that Timer/Counter1 and Timer/Counter0 share the",
+        "same prescaler and a reset of this prescaler will affect both timers."
+      ]
+    },
+    "PSRASY": {
+      "documentation": [
+        "When this bit is one, the Timer/Counter2 prescaler will be reset. This bit is normally cleared immediately by",
+        "hardware. If the bit is written when Timer/Counter2 is operating in asynchronous mode, the bit will remain one",
+        "until the prescaler has been reset. The bit will not be cleared by hardware if the TSM bit is set. Refer to the",
+        "description of the \u201dBit 7 \u2013 TSM: Timer/Counter Synchronization Mode\u201d for a description of the",
+        "Timer/Counter Synchronization mode."
+      ]
+    },
+    "ADLAR": {
+      "documentation": [
+        "The ADLAR bit affects the presentation of the ADC conversion result in the ADC Data Register.",
+        "Write one to ADLAR to left adjust the result.",
+        "Otherwise, the result is right adjusted.",
+        "Changing the ADLAR bit will affect the ADC Data Register immediately, regardless of any ongoing conversions."
+      ]
+    },
+    "ADEN": {
+      "documentation": [
+        "Writing this bit to one enables the ADC.",
+        "By writing it to zero, the ADC is turned off.",
+        "Turning off the ADC off while a conversion is in progress, will terminate this conversion."
+      ]
+    },
+    "ADSC": {
+      "documentation": [
+        "In Single Conversion mode, write this bit to one to start each conversion.",
+        "In Free Running mode, write this bit to one to start the first conversion.",
+        "The first conversion after ADSC has been written after the ADC has been enabled, or if ADSC is written at the same time as the ADC is enabled, will take 25 ADC clock cycles instead of the normal 13.",
+        "This first conversion performs initialization of the ADC.",
+        "",
+        "ADSC will read as one as long as a conversion is in progress. When the conversion is complete, it returns to zero.",
+        "Writing zero to this bit has no effect."
+      ]
+    },
+    "ADATE": {
+      "documentation": [
+        "When this bit is written to one, Auto Triggering of the ADC is enabled.",
+        "The ADC will start a conversion on a positive edge of the selected trigger signal. The trigger source is selected by setting the ADC Trigger Select bits, ADTS in ADCSRB."
+      ]
+    },
+    "ADIF": {
+      "documentation": [
+        "This bit is set when an ADC conversion completes and the Data Registers are updated.",
+        "The ADC Conversion Complete Interrupt is executed if the ADIE bit and the I-bit in SREG are set.",
+        "ADIF is cleared by hardware when executing the corresponding interrupt handling vector.",
+        "Alternatively, ADIF is cleared by writing a logical one to the flag.",
+        "Beware that if doing a Read-Modify-Write on ADCSRA, a pending interrupt can be disabled.",
+        "This also applies if the SBI and CBI instructions are used."
+      ]
+    },
+    "ADIE": {
+      "documentation": [
+        "When this bit is written to one and the I-bit in SREG is set, the ADC Conversion Complete Interrupt is activated."
+      ]
+    },
+    "ADPS": {
+      "documentation": [
+        "These bits determine the division factor between the system clock frequency and the input clock to the ADC.",
+        "",
+        "```",
+        "| ADPS2 | ADPS1 | ADPS0 | Division Factor |",
+        "|-------|-------|-------|-----------------|",
+        "|   0   |   0   |   0   | 2               |",
+        "|   0   |   0   |   1   | 2               |",
+        "|   0   |   1   |   0   | 4               |",
+        "|   0   |   1   |   1   | 8               |",
+        "|   1   |   0   |   0   | 16              |",
+        "|   1   |   0   |   1   | 32              |",
+        "|   1   |   1   |   0   | 64              |",
+        "|   1   |   1   |   1   | 128             |",
+        "```"
+      ]
+    },
+    "ACME": {
+      "documentation": [
+        "When this bit is written logic one and the ADC is switched off (ADEN in ADCSRA is zero), the ADC multiplexer selects the negative input to the Analog Comparator.",
+        "When this bit is written logic zero, AIN1 is applied to the negative input of the Analog Comparator."
+      ]
     }
   }
 }

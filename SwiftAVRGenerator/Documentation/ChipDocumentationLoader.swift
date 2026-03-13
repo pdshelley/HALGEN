@@ -138,10 +138,10 @@ class ChipDocumentationLoader {
             variableName: preferredVariableName(chipDocs?.variableName, generalDocs?.variableName, fallback: fallbackVariableName),
             valueType: chipDocs?.valueType ?? generalDocs?.valueType ?? "",
             defaultValue: chipDocs?.defaultValue ?? generalDocs?.defaultValue ?? "",
-            documentation: formatDocumentation(chipDocs?.documentation ?? generalDocs?.documentation),
+            documentation: formatDocumentation(chipDocs?.documentation),
             access: chipDocs?.access ?? generalDocs?.access ?? register.rw ?? "R/W",
-            documentationL: formatOptionalDocumentation(chipDocs?.documentationL ?? generalDocs?.documentationL),
-            documentationH: formatOptionalDocumentation(chipDocs?.documentationH ?? generalDocs?.documentationH)
+            documentationL: formatOptionalDocumentation(chipDocs?.documentationL),
+            documentationH: formatOptionalDocumentation(chipDocs?.documentationH)
         )
 
         registerCache[register.name] = resolvedData
@@ -167,9 +167,9 @@ class ChipDocumentationLoader {
             variableName: preferredVariableName(chipDocs?.variableName, generalDocs?.variableName, fallback: fallbackVariableName),
             valueType: chipDocs?.valueType ?? generalDocs?.valueType ?? "",
             defaultValue: chipDocs?.defaultValue ?? generalDocs?.defaultValue ?? "",
-            documentation: formatDocumentation(chipDocs?.documentation ?? generalDocs?.documentation),
+            documentation: formatDocumentation(chipDocs?.documentation),
             access: Access(rawValue: chipDocs?.access ?? generalDocs?.access ?? bitfield.rw ?? "") ?? .readWrite,
-            splitTarget: chipDocs?.splitTarget ?? generalDocs?.splitTarget
+            splitTarget: chipDocs?.splitTarget
         )
 
         bitfieldCache[bitfield.name] = resolvedData

@@ -59,7 +59,6 @@ final class SwiftAVRGeneratorTests: XCTestCase {
                 {
                   "aliases": ["UDR0"],
                   "variableName": "generalDataRegister",
-                  "documentation": ["General register docs"],
                   "access": "R"
                 }
               ],
@@ -69,7 +68,6 @@ final class SwiftAVRGeneratorTests: XCTestCase {
                   "variableName": "generalReceiveComplete",
                   "valueType": "Bool",
                   "defaultValue": "",
-                  "documentation": ["General bitfield docs"],
                   "access": "R"
                 }
               ]
@@ -84,12 +82,16 @@ final class SwiftAVRGeneratorTests: XCTestCase {
               "datasheet": "Test Datasheet",
               "registers": {
                 "UDR0": {
-                  "variableName": "chipDataRegister",
                   "documentation": ["Chip register docs"],
                   "access": "R/W"
                 }
               },
-              "bitfields": {}
+              "bitfields": {
+                "RXC0": {
+                  "variableName": "chipReceiveComplete",
+                  "documentation": ["Chip bitfield docs"]
+                }
+              }
             }
             """,
             to: docsDirectory.appendingPathComponent("ATmega328P.json")
@@ -104,19 +106,69 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertTrue(loader.load(chipName: "ATmega328P"))
 
         let registerData = loader.supplementalData(for: register)
-        XCTAssertEqual(registerData.variableName, "chipDataRegister")
+        XCTAssertEqual(registerData.variableName, "generalDataRegister")
         XCTAssertEqual(registerData.documentation, "Chip register docs")
         XCTAssertEqual(registerData.access, "R/W")
 
         let bitfieldData = loader.supplementalData(for: bitfield)
-        XCTAssertEqual(bitfieldData.variableName, "generalReceiveComplete")
+        XCTAssertEqual(bitfieldData.variableName, "chipReceiveComplete")
         XCTAssertEqual(bitfieldData.valueType, "Bool")
-        XCTAssertEqual(bitfieldData.documentation, "General bitfield docs")
+        XCTAssertEqual(bitfieldData.documentation, "Chip bitfield docs")
         XCTAssertEqual(bitfieldData.access, .read)
 
         XCTAssertTrue(loader.generationLog.exported)
         XCTAssertTrue(loader.generationLog.missingRegisters.isEmpty)
         XCTAssertTrue(loader.generationLog.missingBitfields.isEmpty)
+    }
+
+    func testSplitTargetsStayChipSpecific() throws {
+        let docsDirectory = try makeTemporaryDirectory()
+        try write(
+            """
+            {
+              "registers": [],
+              "bitfields": [
+                {
+                  "aliases": ["UCSZ02"],
+                  "variableName": "numberOfDataBits",
+                  "valueType": "UART.NumberOfDataBits",
+                  "defaultValue": ".eight",
+                  "access": "R/W"
+                }
+              ]
+            }
+            """,
+            to: docsDirectory.appendingPathComponent("general.json")
+        )
+        try write(
+            """
+            {
+              "chip": "ATmega328P",
+              "datasheet": "Test Datasheet",
+              "registers": {},
+              "bitfields": {
+                "UCSZ02": {
+                  "documentation": ["Chip split bitfield docs"],
+                  "splitTarget": "UCSZ0"
+                }
+              }
+            }
+            """,
+            to: docsDirectory.appendingPathComponent("ATmega328P.json")
+        )
+
+        let bitfield = try sampleSplitBitfield()
+        let loader = ChipDocumentationLoader()
+        loader.directory = docsDirectory
+
+        XCTAssertTrue(loader.loadGeneral())
+        XCTAssertTrue(loader.load(chipName: "ATmega328P"))
+
+        let bitfieldData = loader.supplementalData(for: bitfield)
+        XCTAssertEqual(bitfieldData.variableName, "numberOfDataBits")
+        XCTAssertEqual(bitfieldData.valueType, "UART.NumberOfDataBits")
+        XCTAssertEqual(bitfieldData.splitTarget, "UCSZ0")
+        XCTAssertEqual(bitfieldData.documentation, "Chip split bitfield docs")
     }
 
     func testExportAllSkipsChipWhenSupplementalDocsAreMissing() throws {
@@ -175,6 +227,21 @@ final class SwiftAVRGeneratorTests: XCTestCase {
             AVRModules.Module.RegisterGroup.Register.self,
             from: Data(xml.utf8)
         )
+    }
+
+    private func sampleSplitBitfield() throws -> AVRModules.Module.RegisterGroup.Register.Bitfield {
+        let xml = """
+        <register name="UCSR0B" offset="0x0A" size="1" caption="USART Control and Status Register B" rw="R/W">
+            <bitfield name="UCSZ02" mask="0x04" caption="Character Size Bit 2" rw="R/W"/>
+        </register>
+        """
+
+        let register = try XMLDecoder().decode(
+            AVRModules.Module.RegisterGroup.Register.self,
+            from: Data(xml.utf8)
+        )
+
+        return try XCTUnwrap(register.bitfield.first)
     }
 
     private func makeTemporaryDirectory() throws -> URL {

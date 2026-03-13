@@ -19,9 +19,6 @@ struct GeneralRegister: Codable {
     let valueType: String?
     let defaultValue: String?
     let access: String?
-    let documentation: [String]?
-    let documentationL: [String]?
-    let documentationH: [String]?
 }
 
 struct GeneralBitfield: Codable {
@@ -30,6 +27,4 @@ struct GeneralBitfield: Codable {
     let valueType: String?
     let defaultValue: String?
     let access: String?
-    let documentation: [String]?
-    let splitTarget: String?
 }

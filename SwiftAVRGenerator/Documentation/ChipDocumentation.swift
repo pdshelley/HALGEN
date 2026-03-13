@@ -14,7 +14,7 @@ struct ChipDocumentation: Codable {
     let bitfields: [String: Bitfield]
     
     struct Register: Codable {
-        let variableName: String
+        let variableName: String?
         let valueType: String?
         let defaultValue: String?
         let access: String?
@@ -25,7 +25,7 @@ struct ChipDocumentation: Codable {
         
         func toSupplementalData() -> SupplementalRegisterData {
             return SupplementalRegisterData(
-                variableName: variableName,
+                variableName: variableName ?? "",
                 valueType: valueType ?? "",
                 defaultValue: defaultValue ?? "",
                 documentation: formatDocumentation(documentation),
@@ -37,7 +37,7 @@ struct ChipDocumentation: Codable {
     }
     
     struct Bitfield: Codable {
-        let variableName: String
+        let variableName: String?
         let valueType: String?
         let defaultValue: String?
         let access: String?
@@ -46,7 +46,7 @@ struct ChipDocumentation: Codable {
         
         func toSupplementalData() -> SupplementalBitfieldData {
             return SupplementalBitfieldData(
-                variableName: variableName,
+                variableName: variableName ?? "",
                 valueType: valueType ?? "",
                 defaultValue: defaultValue ?? "",
                 documentation: formatDocumentation(documentation),
