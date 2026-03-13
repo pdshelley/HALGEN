@@ -7,13 +7,72 @@
 
 import Foundation
 
+struct MissingRegisterLog: Codable {
+    let name: String
+    let caption: String
+    let offset: String
+    let suggestedVariableName: String
+}
+
+struct MissingBitfieldLog: Codable {
+    let name: String
+    let caption: String
+    let mask: String
+    let suggestedVariableName: String
+}
+
+struct ChipGenerationLog: Codable {
+    let name: String
+    let exported: Bool
+    let missingRegisters: [MissingRegisterLog]
+    let missingBitfields: [MissingBitfieldLog]
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case exported
+        case missingRegisters
+        case missingBitfields
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(exported, forKey: .exported)
+        try container.encode(missingRegisters, forKey: .missingRegisters)
+        try container.encode(missingBitfields, forKey: .missingBitfields)
+    }
+}
+
 class ChipDocumentationLoader {
     private var chipDocumentation: ChipDocumentation?
     private var generalDocumentation: GeneralDocumentation?
+    private var chipName: String = ""
+    private var missingRegisters: [String: MissingRegisterLog] = [:]
+    private var missingBitfields: [String: MissingBitfieldLog] = [:]
+    private var registerCache: [String: SupplementalRegisterData] = [:]
+    private var bitfieldCache: [String: SupplementalBitfieldData] = [:]
     var directory: URL?
+
+    var hasMissingSupplementalData: Bool {
+        missingRegisters.isEmpty == false || missingBitfields.isEmpty == false
+    }
+
+    var generationLog: ChipGenerationLog {
+        let sortedMissingRegisters = missingRegisters.values.sorted { $0.name < $1.name }
+        let sortedMissingBitfields = missingBitfields.values.sorted { $0.name < $1.name }
+
+        return ChipGenerationLog(
+            name: chipName,
+            exported: sortedMissingRegisters.isEmpty && sortedMissingBitfields.isEmpty,
+            missingRegisters: sortedMissingRegisters,
+            missingBitfields: sortedMissingBitfields
+        )
+    }
     
     @discardableResult
     func loadGeneral() -> Bool {
+        generalDocumentation = nil
+
         guard let fileURL = directory?.appendingPathComponent("general.json") else {
             return false
         }
@@ -36,6 +95,13 @@ class ChipDocumentationLoader {
     /// - Note: The JSON file must be named `<chipName>.json` and located in the configured directory.
     @discardableResult
     func load(chipName: String) -> Bool {
+        self.chipName = chipName
+        chipDocumentation = nil
+        missingRegisters.removeAll()
+        missingBitfields.removeAll()
+        registerCache.removeAll()
+        bitfieldCache.removeAll()
+
         guard let fileURL = directory?.appendingPathComponent("\(chipName).json") else {
             return false
         }
@@ -54,60 +120,126 @@ class ChipDocumentationLoader {
     }
     
     func supplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
-        guard let docs = chipDocumentation?.registers[register.name] else {
-            return SupplementalRegisterData(
-                variableName: getVariableName(
-                    caption: register.caption ?? register.name),
-                valueType: "",
-                defaultValue: "",
-                documentation: "",
-                access: "R/W"
-            )
+        if let cachedData = registerCache[register.name] {
+            return cachedData
         }
-        
-        let supData = docs.toSupplementalData()
-        
-        if generalDocumentation != nil {
-            if let generalDocs = registerVariableName(for: register.name, in: generalDocumentation!) {
-                return SupplementalRegisterData(
-                    variableName: generalDocs,
-                    valueType: supData.valueType,
-                    defaultValue: supData.defaultValue,
-                    documentation: supData.documentation,
-                    access: supData.access
-                )
-            }
+
+        let chipDocs = chipDocumentation?.registers[register.name]
+        let generalDocs = generalRegister(for: register.name)
+
+        guard chipDocs != nil || generalDocs != nil else {
+            let fallbackData = missingSupplementalData(for: register)
+            registerCache[register.name] = fallbackData
+            return fallbackData
         }
-        
-        return docs.toSupplementalData()
+
+        let fallbackVariableName = getVariableName(caption: register.caption ?? register.name)
+        let resolvedData = SupplementalRegisterData(
+            variableName: preferredVariableName(chipDocs?.variableName, generalDocs?.variableName, fallback: fallbackVariableName),
+            valueType: chipDocs?.valueType ?? generalDocs?.valueType ?? "",
+            defaultValue: chipDocs?.defaultValue ?? generalDocs?.defaultValue ?? "",
+            documentation: formatDocumentation(chipDocs?.documentation ?? generalDocs?.documentation),
+            access: chipDocs?.access ?? generalDocs?.access ?? register.rw ?? "R/W",
+            documentationL: formatOptionalDocumentation(chipDocs?.documentationL ?? generalDocs?.documentationL),
+            documentationH: formatOptionalDocumentation(chipDocs?.documentationH ?? generalDocs?.documentationH)
+        )
+
+        registerCache[register.name] = resolvedData
+        return resolvedData
     }
     
     func supplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
-        guard let docs = chipDocumentation?.bitfields[bitfield.name] else {
-            return SupplementalBitfieldData(
-                variableName: getVariableName(caption: bitfield.caption ?? bitfield.name),
-                valueType: "",
-                defaultValue: "",
-                documentation: "",
-                access: .readWrite
-            )
+        if let cachedData = bitfieldCache[bitfield.name] {
+            return cachedData
         }
-        
-        let supData = docs.toSupplementalData()
-        
-        if generalDocumentation != nil {
-            if let generalDocs = bitfieldVariableName(for: bitfield.name, in: generalDocumentation!) {
-                return SupplementalBitfieldData(variableName: generalDocs.variableName, valueType: (generalDocs.valueType ?? supData.valueType), defaultValue: (generalDocs.defaultValue ?? supData.defaultValue), documentation: supData.documentation, access: supData.access)
-            }
+
+        let chipDocs = chipDocumentation?.bitfields[bitfield.name]
+        let generalDocs = generalBitfield(for: bitfield.name)
+
+        guard chipDocs != nil || generalDocs != nil else {
+            let fallbackData = missingSupplementalData(for: bitfield)
+            bitfieldCache[bitfield.name] = fallbackData
+            return fallbackData
         }
-        return docs.toSupplementalData()
+
+        let fallbackVariableName = getVariableName(caption: bitfield.caption ?? bitfield.name)
+        let resolvedData = SupplementalBitfieldData(
+            variableName: preferredVariableName(chipDocs?.variableName, generalDocs?.variableName, fallback: fallbackVariableName),
+            valueType: chipDocs?.valueType ?? generalDocs?.valueType ?? "",
+            defaultValue: chipDocs?.defaultValue ?? generalDocs?.defaultValue ?? "",
+            documentation: formatDocumentation(chipDocs?.documentation ?? generalDocs?.documentation),
+            access: Access(rawValue: chipDocs?.access ?? generalDocs?.access ?? bitfield.rw ?? "") ?? .readWrite,
+            splitTarget: chipDocs?.splitTarget ?? generalDocs?.splitTarget
+        )
+
+        bitfieldCache[bitfield.name] = resolvedData
+        return resolvedData
     }
-    
-    private func registerVariableName(for alias: String, in doc: GeneralDocumentation) -> String? {
-        doc.registers.first { $0.aliases.contains(alias) }?.variableName
+
+    private func generalRegister(for alias: String) -> GeneralRegister? {
+        generalDocumentation?.registers.first { $0.aliases.contains(alias) }
     }
-    
-    private func bitfieldVariableName(for alias: String, in doc: GeneralDocumentation) -> GeneralBitfield? {
-        doc.bitfields.first { $0.aliases.contains(alias) }
+
+    private func generalBitfield(for alias: String) -> GeneralBitfield? {
+        generalDocumentation?.bitfields.first { $0.aliases.contains(alias) }
+    }
+
+    private func preferredVariableName(_ primary: String?, _ secondary: String?, fallback: String) -> String {
+        if let primary, primary.isEmpty == false {
+            return primary
+        }
+
+        if let secondary, secondary.isEmpty == false {
+            return secondary
+        }
+
+        return fallback
+    }
+
+    private func formatOptionalDocumentation(_ paragraphs: [String]?) -> String? {
+        guard let paragraphs else {
+            return nil
+        }
+
+        return formatDocumentation(paragraphs)
+    }
+
+    private func missingSupplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
+        let suggestedVariableName = getVariableName(caption: register.caption ?? register.name)
+
+        missingRegisters[register.name] = MissingRegisterLog(
+            name: register.name,
+            caption: register.caption ?? "",
+            offset: register.offset,
+            suggestedVariableName: suggestedVariableName
+        )
+
+        return SupplementalRegisterData(
+            variableName: suggestedVariableName,
+            valueType: "",
+            defaultValue: "",
+            documentation: "",
+            access: register.rw ?? "R/W",
+            isMissing: true
+        )
+    }
+
+    private func missingSupplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
+        let suggestedVariableName = getVariableName(caption: bitfield.caption ?? bitfield.name)
+
+        missingBitfields[bitfield.name] = MissingBitfieldLog(
+            name: bitfield.name,
+            caption: bitfield.caption ?? "",
+            mask: Int(bitfield.mask.value).toHex(),
+            suggestedVariableName: suggestedVariableName
+        )
+
+        return SupplementalBitfieldData(
+            variableName: suggestedVariableName,
+            valueType: "",
+            defaultValue: "",
+            documentation: "",
+            access: Access(rawValue: bitfield.rw ?? "") ?? .readWrite
+        )
     }
 }

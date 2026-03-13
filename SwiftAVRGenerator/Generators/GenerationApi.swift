@@ -18,6 +18,11 @@ struct GeneratedCodeFile {
 struct GeneratedAVRCore {
     let name: String
     let files: [GeneratedCodeFile]
+    let log: ChipGenerationLog
+
+    var shouldExport: Bool {
+        log.exported
+    }
 }
 
 private struct GeneratedFileJob {
@@ -33,32 +38,94 @@ private struct FormattedGeneratedFile {
     let diagnostics: [FormattingDiagnostic]
 }
 
-var logs = Logs(chips: [])
-
 struct Logs: Codable {
-    var chips: [Chip]
+    let chips: [ChipGenerationLog]
 
-    struct Chip: Codable {
-        let name: String
-        var logs: [String]
-    }
-
-    mutating func addLog(_ text: String, toChip name: String) {
-        if let index = chips.firstIndex(where: { $0.name == name }) {
-            chips[index].logs.append(text)
-        } else {
-            chips.append(Chip(name: name, logs: [text]))
+    func saveToFile(toURL: URL) {
+        do {
+            let jsonString = try prettyPrintedJSONString()
+            exportFile(toURL: toURL, fileName: "logs.json", fileContents: jsonString)
+            print("Saved pretty-printed logs.json")
+        } catch {
+            print("Could not save logs.json (\(error.localizedDescription))")
         }
     }
 
-    func saveToFile(toURL: URL) {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
-        let jsonData = try! encoder.encode(logs)
-        let jsonString = String(data: jsonData, encoding: .utf8)!
-        exportFile(toURL: toURL, fileName: "logs.json", fileContents: jsonString)
-        print("Saved pretty-printed logs.json")
+    private func prettyPrintedJSONString() throws -> String {
+        let chipLines = try chips.enumerated().map { index, chip in
+            let suffix = index == chips.index(before: chips.endIndex) ? "" : ","
+            return try chip.prettyPrintedJSONString(indentation: "    ") + suffix
+        }
+
+        let chipsBody = chipLines.isEmpty ? "" : "\n" + chipLines.joined(separator: "\n") + "\n"
+
+        return """
+        {
+          \"chips\" : [\(chipsBody)  ]
+        }
+        """
     }
+}
+
+private extension ChipGenerationLog {
+    func prettyPrintedJSONString(indentation: String) throws -> String {
+        let registerLines = try missingRegisters.enumerated().map { index, register in
+            let suffix = index == missingRegisters.index(before: missingRegisters.endIndex) ? "" : ","
+            return try register.prettyPrintedJSONString(indentation: indentation + "    ") + suffix
+        }
+        let bitfieldLines = try missingBitfields.enumerated().map { index, bitfield in
+            let suffix = index == missingBitfields.index(before: missingBitfields.endIndex) ? "" : ","
+            return try bitfield.prettyPrintedJSONString(indentation: indentation + "    ") + suffix
+        }
+
+        let registersBody = registerLines.isEmpty ? "" : "\n" + registerLines.joined(separator: "\n") + "\n" + indentation + "  "
+        let bitfieldsBody = bitfieldLines.isEmpty ? "" : "\n" + bitfieldLines.joined(separator: "\n") + "\n" + indentation + "  "
+
+        return """
+        \(indentation){
+        \(indentation)  \"name\" : \(try jsonStringLiteral(name)),
+        \(indentation)  \"exported\" : \(exported ? "true" : "false"),
+        \(indentation)  \"missingRegisters\" : [\(registersBody)],
+        \(indentation)  \"missingBitfields\" : [\(bitfieldsBody)]
+        \(indentation)}
+        """
+    }
+}
+
+private extension MissingRegisterLog {
+    func prettyPrintedJSONString(indentation: String) throws -> String {
+        """
+        \(indentation){
+        \(indentation)  \"name\" : \(try jsonStringLiteral(name)),
+        \(indentation)  \"caption\" : \(try jsonStringLiteral(caption)),
+        \(indentation)  \"offset\" : \(try jsonStringLiteral(offset)),
+        \(indentation)  \"suggestedVariableName\" : \(try jsonStringLiteral(suggestedVariableName))
+        \(indentation)}
+        """
+    }
+}
+
+private extension MissingBitfieldLog {
+    func prettyPrintedJSONString(indentation: String) throws -> String {
+        """
+        \(indentation){
+        \(indentation)  \"name\" : \(try jsonStringLiteral(name)),
+        \(indentation)  \"caption\" : \(try jsonStringLiteral(caption)),
+        \(indentation)  \"mask\" : \(try jsonStringLiteral(mask)),
+        \(indentation)  \"suggestedVariableName\" : \(try jsonStringLiteral(suggestedVariableName))
+        \(indentation)}
+        """
+    }
+}
+
+private func jsonStringLiteral(_ value: String) throws -> String {
+    let data = try JSONEncoder().encode(value)
+
+    guard let encoded = String(data: data, encoding: .utf8) else {
+        throw NSError(domain: "GenerationApi", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not encode JSON string literal"])
+    }
+
+    return encoded
 }
 
 /// Decodes ATDF (Atmel Device File) XML files and generates Swift code for AVR microcontroller hardware registers and bitfields.
@@ -89,7 +156,11 @@ func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
             let data = try Data(contentsOf: url)
             let atdfObject = try XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
             let generatedFiles = pipeline.run(device: atdfObject, documentation: documentation)
-            let generatedCore = GeneratedAVRCore(name: atdfObject.devices.device.name, files: generatedFiles)
+            let generatedCore = GeneratedAVRCore(
+                name: atdfObject.devices.device.name,
+                files: generatedFiles,
+                log: documentation.generationLog
+            )
 
             resultsLock.lock()
             generatedAVRCores[index] = generatedCore
@@ -128,29 +199,33 @@ func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
 /// - SeeAlso: `exportFile(toURL:fileName:fileContents:)` - Writes individual file contents to disk.
 func exportAll(fromURLs: [URL], toURL: URL, docURL: URL) {
     let generatedCores = decodeATDF(urls: fromURLs, docURL: docURL)
-    let generatedFiles = generatedCores.flatMap { core in
+    let skippedChipNames = generatedCores.filter { $0.shouldExport == false }.map { $0.name }.sorted()
+    let exportableCores = generatedCores.filter { $0.shouldExport }
+    let generatedFiles = exportableCores.flatMap { core in
         core.files.map { GeneratedFileJob(chipName: core.name, file: $0) }
     }
 
     let resultsLock = NSLock()
     var formattedFiles = Array<FormattedGeneratedFile?>(repeating: nil, count: generatedFiles.count)
 
-    DispatchQueue.concurrentPerform(iterations: generatedFiles.count) { index in
-        let generatedFile = generatedFiles[index]
-        let formatter = CodeFormatter()
-        let result = formatter.format(source: generatedFile.file.content)
+    if generatedFiles.isEmpty == false {
+        DispatchQueue.concurrentPerform(iterations: generatedFiles.count) { index in
+            let generatedFile = generatedFiles[index]
+            let formatter = CodeFormatter()
+            let result = formatter.format(source: generatedFile.file.content)
 
-        let formattedFile = FormattedGeneratedFile(
-            chipName: generatedFile.chipName,
-            fileName: generatedFile.file.fileName,
-            subdirectory: generatedFile.file.subdirectory,
-            content: result.content,
-            diagnostics: result.diagnostics
-        )
+            let formattedFile = FormattedGeneratedFile(
+                chipName: generatedFile.chipName,
+                fileName: generatedFile.file.fileName,
+                subdirectory: generatedFile.file.subdirectory,
+                content: result.content,
+                diagnostics: result.diagnostics
+            )
 
-        resultsLock.lock()
-        formattedFiles[index] = formattedFile
-        resultsLock.unlock()
+            resultsLock.lock()
+            formattedFiles[index] = formattedFile
+            resultsLock.unlock()
+        }
     }
 
     var report = FormattingReport()
@@ -168,7 +243,11 @@ func exportAll(fromURLs: [URL], toURL: URL, docURL: URL) {
         exportFile(toURL: folder, fileName: formattedFile.fileName, fileContents: formattedFile.content)
     }
 
-    logs.saveToFile(toURL: toURL)
+    if skippedChipNames.isEmpty == false {
+        print("Skipped export for \(skippedChipNames.joined(separator: ", ")) - see logs.json")
+    }
+
+    Logs(chips: generatedCores.map { $0.log }).saveToFile(toURL: toURL)
     report.save(to: toURL)
 }
 
