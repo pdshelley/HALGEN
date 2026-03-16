@@ -512,7 +512,7 @@
         "A FOC0A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR0A as TOP.",
         "The FOC0A bit is always read as zero."
       ],
-      "access": "R/W"
+      "access": "W"
     },
     "FOC0B": {
       "variableName": "forceOutputCompareB",

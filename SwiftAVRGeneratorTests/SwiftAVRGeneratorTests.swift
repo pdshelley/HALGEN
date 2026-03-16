@@ -171,6 +171,50 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertEqual(bitfieldData.documentation, "Chip split bitfield docs")
     }
 
+    func testWriteOnlyBitfieldGeneratesValidComputedProperty() throws {
+        let registerGroup = try sampleWriteOnlyRegisterGroup()
+        let register = try XCTUnwrap(registerGroup.register.first)
+        let bitfield = try XCTUnwrap(register.bitfield.first)
+
+        let accessor = try XCTUnwrap(
+            generateBitfieldAccessor(
+                bitfield: bitfield,
+                parentVariable: register,
+                registerGroup: registerGroup,
+                registerData: { register in
+                    SupplementalRegisterData(
+                        variableName: register.name == "TCCR0B" ? "controlRegisterB" : register.name,
+                        valueType: "UInt8",
+                        defaultValue: "0",
+                        documentation: "",
+                        access: register.rw ?? "R/W"
+                    )
+                },
+                bitfieldData: { _ in
+                    SupplementalBitfieldData(
+                        variableName: "forceOutputCompareA",
+                        valueType: "Bool",
+                        defaultValue: "false",
+                        documentation: "",
+                        access: .write
+                    )
+                }
+            )
+        )
+
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum Timer0 {
+        \(indent(accessor.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("public static var forceOutputCompareA: Bool {"))
+        XCTAssertTrue(result.content.contains("get {"))
+        XCTAssertTrue(result.content.contains("set {"))
+    }
+
     func testExportAllSkipsChipWhenSupplementalDocsAreMissing() throws {
         let docsDirectory = try makeTemporaryDirectory()
         let outputDirectory = try makeTemporaryDirectory()
@@ -242,6 +286,21 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         )
 
         return try XCTUnwrap(register.bitfield.first)
+    }
+
+    private func sampleWriteOnlyRegisterGroup() throws -> AVRModules.Module.RegisterGroup {
+        let xml = """
+        <register-group name="TC0">
+            <register name="TCCR0B" offset="0x45" size="1" caption="Timer/Counter Control Register B" rw="R/W">
+                <bitfield name="FOC0A" mask="0x80" caption="Force Output Compare A" rw="W"/>
+            </register>
+        </register-group>
+        """
+
+        return try XMLDecoder().decode(
+            AVRModules.Module.RegisterGroup.self,
+            from: Data(xml.utf8)
+        )
     }
 
     private func makeTemporaryDirectory() throws -> URL {

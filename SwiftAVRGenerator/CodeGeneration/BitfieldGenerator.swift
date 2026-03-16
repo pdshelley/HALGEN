@@ -356,8 +356,7 @@ private func makeDocumentationComment(
 ///   - parentVariableName: The name of the parent register variable to read from.
 ///   - registerMask: The bitmask to extract the bitfield bits from the register.
 ///   - bitshift: The number of bit positions to shift the extracted value.
-/// - Returns: A string containing the generated getter code, or `nil` if the
-///   bitfield is write-only and should not have a getter.
+/// - Returns: A string containing the generated getter code.
 ///
 /// - SeeAlso: `accessorSetterSource`, `makeAccessorDeclaration`
 private func accessorGetterSource(
@@ -366,10 +365,6 @@ private func accessorGetterSource(
     registerMask: UInt8,
     bitshift: UInt8
 ) -> String? {
-    guard info.access != .write else {
-        return nil
-    }
-
     if info.valueType == "Bool" {
         return """
         get {
