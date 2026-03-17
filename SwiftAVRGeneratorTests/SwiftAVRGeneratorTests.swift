@@ -171,6 +171,154 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertEqual(bitfieldData.documentation, "Chip split bitfield docs")
     }
 
+    func testUARTNumberOfDataBitsAccessorNormalizesSplitFields() throws {
+        let registerGroup = try sampleUARTRegisterGroup()
+        let register = try XCTUnwrap(registerGroup.register.first(where: { $0.name == "UCSR0B" }))
+        let bitfield = try XCTUnwrap(register.bitfield.first(where: { $0.name == "UCSZ02" }))
+
+        let accessor = try XCTUnwrap(
+            generateBitfieldAccessor(
+                bitfield: bitfield,
+                parentVariable: register,
+                registerGroup: registerGroup,
+                registerData: { register in
+                    switch register.name {
+                    case "UCSR0B":
+                        return SupplementalRegisterData(
+                            variableName: "controlRegisterB",
+                            valueType: "UInt8",
+                            defaultValue: "0",
+                            documentation: "",
+                            access: "R/W"
+                        )
+                    case "UCSR0C":
+                        return SupplementalRegisterData(
+                            variableName: "controlRegisterC",
+                            valueType: "UInt8",
+                            defaultValue: "0",
+                            documentation: "",
+                            access: "R/W"
+                        )
+                    default:
+                        return SupplementalRegisterData(
+                            variableName: register.name,
+                            valueType: "UInt8",
+                            defaultValue: "0",
+                            documentation: "",
+                            access: "R/W"
+                        )
+                    }
+                },
+                bitfieldData: { bitfield in
+                    if bitfield.name == "UCSZ02" {
+                        return SupplementalBitfieldData(
+                            variableName: "numberOfDataBits",
+                            valueType: "UART.NumberOfDataBits",
+                            defaultValue: ".eight",
+                            documentation: "",
+                            access: .readWrite,
+                            splitTarget: "UCSZ0"
+                        )
+                    }
+
+                    return SupplementalBitfieldData(
+                        variableName: "numberOfDataBits",
+                        valueType: "UART.NumberOfDataBits",
+                        defaultValue: ".eight",
+                        documentation: "",
+                        access: .readWrite
+                    )
+                }
+            )
+        )
+
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum UART0 {
+        \(indent(accessor.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("let mode = (controlRegisterB & 0b00000100) | ((controlRegisterC & 0b00000110) >> UInt8(1))"))
+        XCTAssertTrue(result.content.contains("controlRegisterC = (controlRegisterC & ~0b00000110) | ((newValue.rawValue & 0b00000011) << UInt8(1))"))
+        XCTAssertTrue(result.content.contains("controlRegisterB = (controlRegisterB & ~0b00000100) | ((newValue.rawValue << UInt8(2)) & 0b00000100)"))
+    }
+
+    func testSplitAccessorSupportsLowPrimaryBitfield() throws {
+        let registerGroup = try sampleTimer2RegisterGroup()
+        let register = try XCTUnwrap(registerGroup.register.first(where: { $0.name == "TCCR2A" }))
+        let bitfield = try XCTUnwrap(register.bitfield.first(where: { $0.name == "WGM2" }))
+
+        let accessor = try XCTUnwrap(
+            generateBitfieldAccessor(
+                bitfield: bitfield,
+                parentVariable: register,
+                registerGroup: registerGroup,
+                registerData: { register in
+                    switch register.name {
+                    case "TCCR2A":
+                        return SupplementalRegisterData(
+                            variableName: "controlRegisterA",
+                            valueType: "UInt8",
+                            defaultValue: "0",
+                            documentation: "",
+                            access: "R/W"
+                        )
+                    case "TCCR2B":
+                        return SupplementalRegisterData(
+                            variableName: "controlRegisterB",
+                            valueType: "UInt8",
+                            defaultValue: "0",
+                            documentation: "",
+                            access: "R/W"
+                        )
+                    default:
+                        return SupplementalRegisterData(
+                            variableName: register.name,
+                            valueType: "UInt8",
+                            defaultValue: "0",
+                            documentation: "",
+                            access: "R/W"
+                        )
+                    }
+                },
+                bitfieldData: { bitfield in
+                    if bitfield.name == "WGM2" {
+                        return SupplementalBitfieldData(
+                            variableName: "waveformGenerationMode",
+                            valueType: "Timer8Bit.WaveformGenerationMode",
+                            defaultValue: ".normal",
+                            documentation: "",
+                            access: .readWrite,
+                            splitTarget: "WGM22"
+                        )
+                    }
+
+                    return SupplementalBitfieldData(
+                        variableName: "waveformGenerationMode",
+                        valueType: "Timer8Bit.WaveformGenerationMode",
+                        defaultValue: ".normal",
+                        documentation: "",
+                        access: .readWrite
+                    )
+                }
+            )
+        )
+
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum Timer2 {
+        \(indent(accessor.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("let mode = ((controlRegisterB & 0b00001000) >> UInt8(1)) | (controlRegisterA & 0b00000011)"))
+        XCTAssertTrue(result.content.contains("controlRegisterA = (controlRegisterA & ~0b00000011) | (newValue.rawValue & 0b00000011)"))
+        XCTAssertTrue(result.content.contains("controlRegisterB = (controlRegisterB & ~0b00001000) | ((newValue.rawValue & 0b00000100) << UInt8(1))"))
+    }
+
     func testWriteOnlyBitfieldGeneratesValidComputedProperty() throws {
         let registerGroup = try sampleWriteOnlyRegisterGroup()
         let register = try XCTUnwrap(registerGroup.register.first)
@@ -286,6 +434,42 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         )
 
         return try XCTUnwrap(register.bitfield.first)
+    }
+
+    private func sampleUARTRegisterGroup() throws -> AVRModules.Module.RegisterGroup {
+        let xml = """
+        <register-group name="USART0">
+            <register name="UCSR0B" offset="0x0A" size="1" caption="USART Control and Status Register B" rw="R/W">
+                <bitfield name="UCSZ02" mask="0x04" caption="Character Size Bit 2" rw="R/W"/>
+            </register>
+            <register name="UCSR0C" offset="0x0B" size="1" caption="USART Control and Status Register C" rw="R/W">
+                <bitfield name="UCSZ0" mask="0x06" caption="Character Size Bits 1:0" rw="R/W"/>
+            </register>
+        </register-group>
+        """
+
+        return try XMLDecoder().decode(
+            AVRModules.Module.RegisterGroup.self,
+            from: Data(xml.utf8)
+        )
+    }
+
+    private func sampleTimer2RegisterGroup() throws -> AVRModules.Module.RegisterGroup {
+        let xml = """
+        <register-group name="TC2">
+            <register name="TCCR2A" offset="0x0A" size="1" caption="Timer/Counter2 Control Register A" rw="R/W">
+                <bitfield name="WGM2" mask="0x03" caption="Waveform Generation Mode" rw="R/W"/>
+            </register>
+            <register name="TCCR2B" offset="0x0B" size="1" caption="Timer/Counter2 Control Register B" rw="R/W">
+                <bitfield name="WGM22" mask="0x08" caption="Waveform Generation Mode" rw="R/W"/>
+            </register>
+        </register-group>
+        """
+
+        return try XMLDecoder().decode(
+            AVRModules.Module.RegisterGroup.self,
+            from: Data(xml.utf8)
+        )
     }
 
     private func sampleWriteOnlyRegisterGroup() throws -> AVRModules.Module.RegisterGroup {

@@ -120,70 +120,39 @@ func generateSplitBitfieldAccessor(
     bitfieldData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData,
     registerData: (_ register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData
 ) -> MemberBlockItemSyntax {
-
-    // TODO: Some chips only seem to have 1 bite for WGM. This breaks this logic and should be accounted for.
-
-    // Example Data:
-    // Register A Bitmask:           0b00000011
-    // Register B Bitmask:           0b00001000
-    // New Value Bitmask:            0b00000111
-    // Register B New Value Bitmask: 0b00000100
-    // Register B Bitshift should be: << 1 to get back to the "Register B Bitmask" location
-
-
-    // The Below logic does not work for this second example
-
-    // Another Example:
-    // Register A Bitmask:           0b00000011
-    // Register B Bitmask:           0b00000011
-    // New Value Bitmask:            0b00001111
-    // Register B New Value Bitmask: 0b00001100
-    // Register B Bitshift should be: << 2 to get back to the "Register B Bitmask" location
-
     let caption = bitfieldA.caption ?? ""
     let info = bitfieldData(bitfieldA)
 
-    let highBitfield = bitfieldA
-    let highParentVariableName = registerData(parentVariableA).variableName
-    let lowBitfield = bitfieldB
-    let lowParentVariableName = registerData(parentVariableB).variableName
+    let fragmentA = makeSplitBitfieldFragment(
+        bitfield: bitfieldA,
+        parentVariable: parentVariableA,
+        pairedBitfield: bitfieldB,
+        registerData: registerData
+    )
+    let fragmentB = makeSplitBitfieldFragment(
+        bitfield: bitfieldB,
+        parentVariable: parentVariableB,
+        pairedBitfield: bitfieldA,
+        registerData: registerData
+    )
 
-    // Mask Value is 16 Bits and we have to have 8. Assuming that it's a total error to have a mask with bits above 8 we will just throw those away.
-    let lowBitmask = lowBitfield.mask.value.lowByte
-    let highBitmask = highBitfield.mask.value.lowByte
+    let highFragment: SplitBitfieldFragment
+    let lowFragment: SplitBitfieldFragment
 
-    // We then make sure that the byte is shifted all the way over to the Least Significant Bit because the value assigned will also be in the Least Significant Bits.
-    let lowBitshift = UInt8(lowBitfield.mask.value.trailingZeroBitCount)
-
-    // Then turn all of this into a binary string for legibility, a bitmask should be seen as bits and not an Int or Hex value.
-    let newValueLowBitmask = lowBitmask >> lowBitshift
-
-    // This would give me the number of bits to shift, assuming that there is only a single group of bits and not two or more groups split by one or more 0s.
-    // The difference between the Bitfield Bitmask and the newValue Bitmask This should account for shifting in either direction.
-    let adjustedHighBitshift = Int8(highBitfield.mask.value.trailingZeroBitCount) - Int8(lowBitfield.mask.value.nonzeroBitCount)
-    let getShiftDirection = adjustedHighBitshift >= 0 ? ">>" : "<<"
-    // Make sure the high bitmask is shifted all the way to the right and then shift it back by the LSB. This should always put it in the correct position for the newValueHighBitmask
-    let newValueHighBitmask = (highBitmask >> highBitfield.mask.value.trailingZeroBitCount) << lowBitfield.mask.value.nonzeroBitCount
+    if fragmentA.semanticBitshift >= fragmentB.semanticBitshift {
+        highFragment = fragmentA
+        lowFragment = fragmentB
+    } else {
+        highFragment = fragmentB
+        lowFragment = fragmentA
+    }
 
     let getter = splitAccessorGetterSource(
         info: info,
-        highParentVariableName: highParentVariableName,
-        highBitmask: highBitmask,
-        getShiftDirection: getShiftDirection,
-        adjustedHighBitshift: adjustedHighBitshift,
-        lowParentVariableName: lowParentVariableName,
-        lowBitmask: lowBitmask
+        highFragment: highFragment,
+        lowFragment: lowFragment
     )
-    let setter = splitAccessorSetterSource(
-        lowParentVariableName: lowParentVariableName,
-        lowBitmask: lowBitmask,
-        newValueLowBitmask: newValueLowBitmask,
-        lowBitshift: lowBitshift,
-        highParentVariableName: highParentVariableName,
-        highBitmask: highBitmask,
-        newValueHighBitmask: newValueHighBitmask,
-        adjustedHighBitshift: adjustedHighBitshift
-    )
+    let setter = info.access == .read ? nil : splitAccessorSetterSource(highFragment: highFragment, lowFragment: lowFragment)
 
     let source = makeAccessorDeclaration(
         bitfieldName: bitfieldA.name,
@@ -428,45 +397,113 @@ private func accessorSetterSource(
     }
 }
 
+private struct SplitBitfieldFragment {
+    let parentVariableName: String
+    let registerMask: UInt8
+    let registerBitshift: UInt8
+    let valueMask: UInt8
+    let semanticBitshift: UInt8
+}
+
+private func makeSplitBitfieldFragment(
+    bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
+    parentVariable: AVRModules.Module.RegisterGroup.Register,
+    pairedBitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
+    registerData: (_ register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData
+) -> SplitBitfieldFragment {
+    let registerMask = bitfield.mask.value.lowByte
+    let registerBitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
+    let valueMask = registerMask >> registerBitshift
+    let semanticBitshift = UInt8(resolveSplitSemanticBitshift(for: bitfield, pairedWith: pairedBitfield))
+
+    return SplitBitfieldFragment(
+        parentVariableName: registerData(parentVariable).variableName,
+        registerMask: registerMask,
+        registerBitshift: registerBitshift,
+        valueMask: valueMask,
+        semanticBitshift: semanticBitshift
+    )
+}
+
+private func resolveSplitSemanticBitshift(
+    for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
+    pairedWith pairedBitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
+) -> Int {
+    if let lsb = bitfield.lsb {
+        return lsb
+    }
+
+    if let pairedLSB = pairedBitfield.lsb {
+        return pairedLSB == 0 ? pairedBitfield.mask.value.nonzeroBitCount : 0
+    }
+
+    let bitfieldWidth = bitfield.mask.value.nonzeroBitCount
+    let pairedWidth = pairedBitfield.mask.value.nonzeroBitCount
+
+    if bitfieldWidth != pairedWidth {
+        return bitfieldWidth > pairedWidth ? 0 : pairedWidth
+    }
+
+    let bitfieldRegisterBitshift = bitfield.mask.value.trailingZeroBitCount
+    let pairedRegisterBitshift = pairedBitfield.mask.value.trailingZeroBitCount
+    return bitfieldRegisterBitshift < pairedRegisterBitshift ? 0 : pairedWidth
+}
+
 private func splitAccessorGetterSource(
     info: SupplementalBitfieldData,
-    highParentVariableName: String,
-    highBitmask: UInt8,
-    getShiftDirection: String,
-    adjustedHighBitshift: Int8,
-    lowParentVariableName: String,
-    lowBitmask: UInt8
+    highFragment: SplitBitfieldFragment,
+    lowFragment: SplitBitfieldFragment
 ) -> String {
     """
     get {
-        let mode = ((\(highParentVariableName) & \(highBitmask.binaryString)) \(getShiftDirection) \(abs(adjustedHighBitshift))) | (\(lowParentVariableName) & \(lowBitmask.binaryString))
+        let mode = \(splitAccessorGetterExpression(for: highFragment)) | \(splitAccessorGetterExpression(for: lowFragment))
         return \(info.valueType)(rawValue: mode) ?? \(info.defaultValue)
     }
     """
 }
 
 private func splitAccessorSetterSource(
-    lowParentVariableName: String,
-    lowBitmask: UInt8,
-    newValueLowBitmask: UInt8,
-    lowBitshift: UInt8,
-    highParentVariableName: String,
-    highBitmask: UInt8,
-    newValueHighBitmask: UInt8,
-    adjustedHighBitshift: Int8
+    highFragment: SplitBitfieldFragment,
+    lowFragment: SplitBitfieldFragment
 ) -> String {
-    let highValueExpression: String
-
-    if adjustedHighBitshift >= 0 {
-        highValueExpression = "(((newValue.rawValue & \(newValueHighBitmask.binaryString)) << UInt8(\(adjustedHighBitshift))) & \(highBitmask.binaryString))"
-    } else {
-        highValueExpression = "(((newValue.rawValue & \(newValueHighBitmask.binaryString)) >> UInt8(\(abs(adjustedHighBitshift)))) & \(highBitmask.binaryString))"
-    }
-
     return """
     set {
-        \(lowParentVariableName) = (\(lowParentVariableName) & ~\(lowBitmask.binaryString)) | (((newValue.rawValue & \(newValueLowBitmask.binaryString)) << UInt8(\(lowBitshift))) & \(lowBitmask.binaryString))
-        \(highParentVariableName) = (\(highParentVariableName) & ~\(highBitmask.binaryString)) | \(highValueExpression)
+        \(lowFragment.parentVariableName) = (\(lowFragment.parentVariableName) & ~\(lowFragment.registerMask.binaryString)) | \(splitAccessorSetterExpression(for: lowFragment))
+        \(highFragment.parentVariableName) = (\(highFragment.parentVariableName) & ~\(highFragment.registerMask.binaryString)) | \(splitAccessorSetterExpression(for: highFragment))
     }
     """
+}
+
+private func splitAccessorGetterExpression(for fragment: SplitBitfieldFragment) -> String {
+    let maskedRegister = "\(fragment.parentVariableName) & \(fragment.registerMask.binaryString)"
+    let shiftDelta = Int(fragment.registerBitshift) - Int(fragment.semanticBitshift)
+
+    if shiftDelta == 0 {
+        return "(\(maskedRegister))"
+    }
+
+    if shiftDelta > 0 {
+        return "((\(maskedRegister)) >> UInt8(\(shiftDelta)))"
+    }
+
+    return "((\(maskedRegister)) << UInt8(\(-shiftDelta)))"
+}
+
+private func splitAccessorSetterExpression(for fragment: SplitBitfieldFragment) -> String {
+    let rawValueMask = fragment.valueMask << fragment.semanticBitshift
+    let shiftDelta = Int(fragment.registerBitshift) - Int(fragment.semanticBitshift)
+
+    if shiftDelta == 0 {
+        if fragment.valueMask == 1 && fragment.semanticBitshift > 0 {
+            return "((newValue.rawValue << UInt8(\(fragment.semanticBitshift))) & \(fragment.registerMask.binaryString))"
+        }
+
+        return "(newValue.rawValue & \(rawValueMask.binaryString))"
+    }
+
+    if shiftDelta > 0 {
+        return "((newValue.rawValue & \(rawValueMask.binaryString)) << UInt8(\(shiftDelta)))"
+    }
+
+    return "((newValue.rawValue & \(rawValueMask.binaryString)) >> UInt8(\(-shiftDelta)))"
 }

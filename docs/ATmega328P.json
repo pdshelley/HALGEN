@@ -527,7 +527,7 @@
         "A FOC0B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR0B as TOP.",
         "The FOC0B bit is always read as zero."
       ],
-      "access": "R/W"
+      "access": "W"
     },
     "WGM02": {
       "variableName": "waveformGenerationMode",
