@@ -83,6 +83,7 @@ func generateBitfieldAccessor(
     let setter = accessorSetterSource(
         info: info,
         parentVariableName: parentVariableName,
+        registerMask: registerMask,
         valueMask: valueMask,
         bitshift: bitshift
     )
@@ -376,6 +377,7 @@ private func accessorGetterSource(
 private func accessorSetterSource(
     info: SupplementalBitfieldData,
     parentVariableName: String,
+    registerMask: UInt8,
     valueMask: UInt8,
     bitshift: UInt8
 ) -> String? {
@@ -389,9 +391,16 @@ private func accessorSetterSource(
     if info.access == .read {
         return nil
     } else {
+        let shiftedValue: String
+        if bitshift == 0 {
+            shiftedValue = "(\(assignedValue) & \(valueMask.binaryString))"
+        } else {
+            shiftedValue = "((\(assignedValue) & \(valueMask.binaryString)) << UInt8(\(bitshift)))"
+        }
+
         return """
         set {
-            \(parentVariableName) |= (\(assignedValue) & \(valueMask.binaryString)) << UInt8(\(bitshift))
+            \(parentVariableName) = (\(parentVariableName) & ~\(registerMask.binaryString)) | \(shiftedValue)
         }
         """
     }

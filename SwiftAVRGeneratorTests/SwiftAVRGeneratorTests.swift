@@ -363,6 +363,48 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertTrue(result.content.contains("set {"))
     }
 
+    func testSingleRegisterEnumSetterClearsBitsBeforeWriting() throws {
+        let registerGroup = try sampleSingleBitUARTRegisterGroup()
+        let register = try XCTUnwrap(registerGroup.register.first)
+        let bitfield = try XCTUnwrap(register.bitfield.first)
+
+        let accessor = try XCTUnwrap(
+            generateBitfieldAccessor(
+                bitfield: bitfield,
+                parentVariable: register,
+                registerGroup: registerGroup,
+                registerData: { _ in
+                    SupplementalRegisterData(
+                        variableName: "controlRegisterA",
+                        valueType: "UInt8",
+                        defaultValue: "0",
+                        documentation: "",
+                        access: "R/W"
+                    )
+                },
+                bitfieldData: { _ in
+                    SupplementalBitfieldData(
+                        variableName: "asynchronousDoubleSpeedMode",
+                        valueType: "UART.AsynchronousDoubleSpeedMode",
+                        defaultValue: ".off",
+                        documentation: "",
+                        access: .readWrite
+                    )
+                }
+            )
+        )
+
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum UART0 {
+        \(indent(accessor.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("controlRegisterA = (controlRegisterA & ~0b00000010) | ((newValue.rawValue & 0b00000001) << UInt8(1))"))
+    }
+
     func testExportAllSkipsChipWhenSupplementalDocsAreMissing() throws {
         let docsDirectory = try makeTemporaryDirectory()
         let outputDirectory = try makeTemporaryDirectory()
@@ -477,6 +519,21 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         <register-group name="TC0">
             <register name="TCCR0B" offset="0x45" size="1" caption="Timer/Counter Control Register B" rw="R/W">
                 <bitfield name="FOC0A" mask="0x80" caption="Force Output Compare A" rw="W"/>
+            </register>
+        </register-group>
+        """
+
+        return try XMLDecoder().decode(
+            AVRModules.Module.RegisterGroup.self,
+            from: Data(xml.utf8)
+        )
+    }
+
+    private func sampleSingleBitUARTRegisterGroup() throws -> AVRModules.Module.RegisterGroup {
+        let xml = """
+        <register-group name="USART0">
+            <register name="UCSR0A" offset="0x0B" size="1" caption="USART Control and Status Register A" rw="R/W">
+                <bitfield name="U2X0" mask="0x02" caption="Double the USART transmission speed" rw="R/W"/>
             </register>
         </register-group>
         """
