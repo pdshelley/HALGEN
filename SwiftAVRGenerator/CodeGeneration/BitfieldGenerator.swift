@@ -247,15 +247,20 @@ private func makeAccessorDeclaration(
     let documentationComment = makeDocumentationComment(
         bitfieldName: bitfieldName,
         caption: caption,
-        documentation: info.documentation
+        documentation: info.documentation,
+        overrideGeneratedDocumentation: info.overrideGeneratedDocumentation
     )
 
-    var declarationLines = [
-        documentationComment,
+    var declarationLines: [String] = []
+    if documentationComment.isEmpty == false {
+        declarationLines.append(documentationComment)
+    }
+
+    declarationLines.append(contentsOf: [
         "@inlinable",
-        "@inline(__always)",
+        "@inline(\(info.inline))",
         "public static var \(info.variableName): \(info.valueType) {"
-    ]
+    ])
 
     if let getter {
         declarationLines.append(indent(getter, by: 4))
@@ -300,9 +305,14 @@ private func makeAccessorDeclaration(
 private func makeDocumentationComment(
     bitfieldName: String,
     caption: String,
-    documentation: String
+    documentation: String,
+    overrideGeneratedDocumentation: Bool
 ) -> String {
-    makeDocumentationComment(
+    if overrideGeneratedDocumentation {
+        return makeDocumentationComment(body: documentation)
+    }
+
+    return makeDocumentationComment(
         title: "\(bitfieldName) - \(caption)",
         body: documentation
     )

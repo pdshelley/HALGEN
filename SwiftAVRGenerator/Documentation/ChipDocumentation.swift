@@ -22,6 +22,7 @@ struct ChipDocumentation: Codable {
         let documentationL: [String]?
         let documentationH: [String]?
         let bitfields: [String: Bitfield]?
+        let overrideGeneratedDocumentation: Bool?
         
         func toSupplementalData() -> SupplementalRegisterData {
             return SupplementalRegisterData(
@@ -31,7 +32,8 @@ struct ChipDocumentation: Codable {
                 documentation: formatDocumentation(documentation),
                 access: access ?? "",
                 documentationL: documentationL.map { formatDocumentation($0) },
-                documentationH: documentationH.map { formatDocumentation($0) }
+                documentationH: documentationH.map { formatDocumentation($0) },
+                overrideGeneratedDocumentation: overrideGeneratedDocumentation ?? false
             )
         }
     }
@@ -42,7 +44,9 @@ struct ChipDocumentation: Codable {
         let defaultValue: String?
         let access: String?
         let documentation: [String]?
+        let inline: String?
         let splitTarget: String?
+        let overrideGeneratedDocumentation: Bool?
         
         func toSupplementalData() -> SupplementalBitfieldData {
             return SupplementalBitfieldData(
@@ -51,7 +55,9 @@ struct ChipDocumentation: Codable {
                 defaultValue: defaultValue ?? "",
                 documentation: formatDocumentation(documentation),
                 access: Access(rawValue: access ?? "") ?? .readWrite,
-                splitTarget: splitTarget
+                inline: inline ?? "__always",
+                splitTarget: splitTarget,
+                overrideGeneratedDocumentation: overrideGeneratedDocumentation ?? false
             )
         }
     }

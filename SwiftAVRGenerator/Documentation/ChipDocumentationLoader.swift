@@ -141,7 +141,8 @@ class ChipDocumentationLoader {
             documentation: formatDocumentation(chipDocs?.documentation),
             access: chipDocs?.access ?? generalDocs?.access ?? register.rw ?? "R/W",
             documentationL: formatOptionalDocumentation(chipDocs?.documentationL),
-            documentationH: formatOptionalDocumentation(chipDocs?.documentationH)
+            documentationH: formatOptionalDocumentation(chipDocs?.documentationH),
+            overrideGeneratedDocumentation: chipDocs?.overrideGeneratedDocumentation ?? false
         )
 
         registerCache[register.name] = resolvedData
@@ -169,7 +170,9 @@ class ChipDocumentationLoader {
             defaultValue: chipDocs?.defaultValue ?? generalDocs?.defaultValue ?? "",
             documentation: formatDocumentation(chipDocs?.documentation),
             access: Access(rawValue: chipDocs?.access ?? generalDocs?.access ?? bitfield.rw ?? "") ?? .readWrite,
-            splitTarget: chipDocs?.splitTarget
+            inline: preferredInline(chipDocs?.inline, generalDocs?.inline),
+            splitTarget: chipDocs?.splitTarget,
+            overrideGeneratedDocumentation: chipDocs?.overrideGeneratedDocumentation ?? false
         )
 
         bitfieldCache[bitfield.name] = resolvedData
@@ -202,6 +205,23 @@ class ChipDocumentationLoader {
         }
 
         return formatDocumentation(paragraphs)
+    }
+
+    private func preferredInline(_ primary: String?, _ secondary: String?) -> String {
+        normalizedNonEmpty(primary) ?? normalizedNonEmpty(secondary) ?? "__always"
+    }
+
+    private func normalizedNonEmpty(_ value: String?) -> String? {
+        guard let value else {
+            return nil
+        }
+
+        let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedValue.isEmpty == false else {
+            return nil
+        }
+
+        return trimmedValue
     }
 
     private func missingSupplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {

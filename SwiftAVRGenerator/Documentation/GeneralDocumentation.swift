@@ -27,4 +27,5 @@ struct GeneralBitfield: Codable {
     let valueType: String?
     let defaultValue: String?
     let access: String?
+    let inline: String?
 }

@@ -99,6 +99,20 @@ func makeDocumentationComment(title: String, body: String = "") -> String {
     return lines.joined(separator: "\n")
 }
 
+func makeDocumentationComment(body: String) -> String {
+    let trimmedBody = body.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmedBody.isEmpty else {
+        return ""
+    }
+
+    return trimmedBody
+        .split(separator: "\n", omittingEmptySubsequences: false)
+        .map { line in
+            line.isEmpty ? "///" : "/// \(line)"
+        }
+        .joined(separator: "\n")
+}
+
 /// Generates an array of access strings for each bit position in a register.
 ///
 /// This function processes a register's bitfield definitions and determines the access

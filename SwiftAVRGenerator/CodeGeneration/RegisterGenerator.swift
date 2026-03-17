@@ -47,13 +47,14 @@ func generateRegister(
         preconditionFailure("Unsupported register size: \(register.size)")
     }
 
+    let supplementalRegisterData = registerData(register)
     
     // If the register has bitfields then generate each bit name, if not then there is just one name for all of the bits.
     var registerName = ""
     var readWrite = ""
-    let registerAccess = registerData(register).access
-    let documentation = (optionalDocumentation.isEmpty == false) ? optionalDocumentation : registerData(register).documentation
-    let variableName = (externalVariableName.isEmpty == false) ? externalVariableName : registerData(register).variableName
+    let registerAccess = supplementalRegisterData.access
+    let documentation = (optionalDocumentation.isEmpty == false) ? optionalDocumentation : supplementalRegisterData.documentation
+    let variableName = (externalVariableName.isEmpty == false) ? externalVariableName : supplementalRegisterData.variableName
     var memberBlockList = MemberBlockItemListSyntax()
     var generateRegisterTableDoc = generateRegisterTable
     
@@ -64,8 +65,8 @@ func generateRegister(
         memberBlockList.append(
             contentsOf: generateRegister(
                 register: customRegisterL,
-                variableName: "\(registerData(register).variableName)L",
-                optionalDocumentation: "\(registerData(register).documentationL ?? "")",
+                variableName: "\(supplementalRegisterData.variableName)L",
+                optionalDocumentation: "\(supplementalRegisterData.documentationL ?? "")",
                 registerData: registerData,
                 bitfieldData: bitfieldData
             )
@@ -78,8 +79,8 @@ func generateRegister(
         memberBlockList.append(
             contentsOf: generateRegister(
                 register: customRegisterH,
-                variableName: "\(registerData(register).variableName)H",
-                optionalDocumentation: "\(registerData(register).documentationH ?? "")",
+                variableName: "\(supplementalRegisterData.variableName)H",
+                optionalDocumentation: "\(supplementalRegisterData.documentationH ?? "")",
                 registerData: registerData,
                 bitfieldData: bitfieldData
             )
@@ -125,13 +126,18 @@ func generateRegister(
     ```
     """
 
-    let documentationComment = makeDocumentationComment(
-        title: "\(register.name) – \(register.caption ?? variableName)",
-        body: joinDocumentationSections([
-            documentation,
-            generateRegisterTableDoc ? table : ""
-        ])
-    )
+    let documentationComment: String
+    if supplementalRegisterData.overrideGeneratedDocumentation {
+        documentationComment = makeDocumentationComment(body: documentation)
+    } else {
+        documentationComment = makeDocumentationComment(
+            title: "\(register.name) – \(register.caption ?? variableName)",
+            body: joinDocumentationSections([
+                documentation,
+                generateRegisterTableDoc ? table : ""
+            ])
+        )
+    }
     
     let setterLines: [String]
     if registerAccess == Access.read.rawValue {
@@ -145,19 +151,24 @@ func generateRegister(
         ]
     }
 
-    let declaration = (
-        [
-            documentationComment,
-            "@inlinable",
-            "@inline(__always)",
-            "public static var \(variableName): \(bit.size) {",
-            "    get {",
-            "        \(bit.atomicStart)_volatileRegisterRead\(bit.size)(\(register.offset))\(bit.atomicEnd)",
-            "    }"
-        ] + setterLines + [
-            "}"
-        ]
-    ).joined(separator: "\n")
+    var declarationLines: [String] = []
+    if documentationComment.isEmpty == false {
+        declarationLines.append(documentationComment)
+    }
+
+    declarationLines.append(contentsOf: [
+        "@inlinable",
+        "@inline(__always)",
+        "public static var \(variableName): \(bit.size) {",
+        "    get {",
+        "        \(bit.atomicStart)_volatileRegisterRead\(bit.size)(\(register.offset))\(bit.atomicEnd)",
+        "    }"
+    ])
+
+    declarationLines.append(contentsOf: setterLines)
+    declarationLines.append("}")
+
+    let declaration = declarationLines.joined(separator: "\n")
 
     let source = DeclSyntax("\(raw: declaration)").with(\.trailingTrivia, .newlines(2))
     

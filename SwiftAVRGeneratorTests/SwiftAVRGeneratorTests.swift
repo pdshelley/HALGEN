@@ -68,7 +68,8 @@ final class SwiftAVRGeneratorTests: XCTestCase {
                   "variableName": "generalReceiveComplete",
                   "valueType": "Bool",
                   "defaultValue": "",
-                  "access": "R"
+                  "access": "R",
+                  "inline": "__always"
                 }
               ]
             }
@@ -83,13 +84,16 @@ final class SwiftAVRGeneratorTests: XCTestCase {
               "registers": {
                 "UDR0": {
                   "documentation": ["Chip register docs"],
-                  "access": "R/W"
+                  "access": "R/W",
+                  "overrideGeneratedDocumentation": true
                 }
               },
               "bitfields": {
                 "RXC0": {
                   "variableName": "chipReceiveComplete",
-                  "documentation": ["Chip bitfield docs"]
+                  "documentation": ["Chip bitfield docs"],
+                  "inline": "__never",
+                  "overrideGeneratedDocumentation": true
                 }
               }
             }
@@ -109,12 +113,15 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertEqual(registerData.variableName, "generalDataRegister")
         XCTAssertEqual(registerData.documentation, "Chip register docs")
         XCTAssertEqual(registerData.access, "R/W")
+        XCTAssertTrue(registerData.overrideGeneratedDocumentation)
 
         let bitfieldData = loader.supplementalData(for: bitfield)
         XCTAssertEqual(bitfieldData.variableName, "chipReceiveComplete")
         XCTAssertEqual(bitfieldData.valueType, "Bool")
         XCTAssertEqual(bitfieldData.documentation, "Chip bitfield docs")
         XCTAssertEqual(bitfieldData.access, .read)
+        XCTAssertEqual(bitfieldData.inline, "__never")
+        XCTAssertTrue(bitfieldData.overrideGeneratedDocumentation)
 
         XCTAssertTrue(loader.generationLog.exported)
         XCTAssertTrue(loader.generationLog.missingRegisters.isEmpty)
@@ -403,6 +410,174 @@ final class SwiftAVRGeneratorTests: XCTestCase {
 
         XCTAssertTrue(result.diagnostics.isEmpty)
         XCTAssertTrue(result.content.contains("controlRegisterA = (controlRegisterA & ~0b00000010) | ((newValue.rawValue & 0b00000001) << UInt8(1))"))
+    }
+
+    func testBitfieldInlineDefaultsToAlwaysWhenUnspecified() throws {
+        let registerGroup = try sampleSingleBitUARTRegisterGroup()
+        let register = try XCTUnwrap(registerGroup.register.first)
+        let bitfield = try XCTUnwrap(register.bitfield.first)
+
+        let accessor = try XCTUnwrap(
+            generateBitfieldAccessor(
+                bitfield: bitfield,
+                parentVariable: register,
+                registerGroup: registerGroup,
+                registerData: { _ in
+                    SupplementalRegisterData(
+                        variableName: "controlRegisterA",
+                        valueType: "UInt8",
+                        defaultValue: "0",
+                        documentation: "",
+                        access: "R/W"
+                    )
+                },
+                bitfieldData: { _ in
+                    SupplementalBitfieldData(
+                        variableName: "asynchronousDoubleSpeedMode",
+                        valueType: "UART.AsynchronousDoubleSpeedMode",
+                        defaultValue: ".off",
+                        documentation: "",
+                        access: .readWrite
+                    )
+                }
+            )
+        )
+
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum UART0 {
+        \(indent(accessor.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("@inline(__always)"))
+    }
+
+    func testBitfieldInlineUsesOverrideValue() throws {
+        let registerGroup = try sampleSingleBitUARTRegisterGroup()
+        let register = try XCTUnwrap(registerGroup.register.first)
+        let bitfield = try XCTUnwrap(register.bitfield.first)
+
+        let accessor = try XCTUnwrap(
+            generateBitfieldAccessor(
+                bitfield: bitfield,
+                parentVariable: register,
+                registerGroup: registerGroup,
+                registerData: { _ in
+                    SupplementalRegisterData(
+                        variableName: "controlRegisterA",
+                        valueType: "UInt8",
+                        defaultValue: "0",
+                        documentation: "",
+                        access: "R/W"
+                    )
+                },
+                bitfieldData: { _ in
+                    SupplementalBitfieldData(
+                        variableName: "asynchronousDoubleSpeedMode",
+                        valueType: "UART.AsynchronousDoubleSpeedMode",
+                        defaultValue: ".off",
+                        documentation: "",
+                        access: .readWrite,
+                        inline: "__never"
+                    )
+                }
+            )
+        )
+
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum UART0 {
+        \(indent(accessor.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("@inline(__never)"))
+    }
+
+    func testRegisterDocumentationOverrideSuppressesGeneratedTitleAndTable() throws {
+        let register = try sampleRegister()
+
+        let members = generateRegister(
+            register: register,
+            registerData: { _ in
+                SupplementalRegisterData(
+                    variableName: "dataRegister",
+                    valueType: "UInt8",
+                    defaultValue: "0",
+                    documentation: "Chip register docs",
+                    access: "R/W",
+                    overrideGeneratedDocumentation: true
+                )
+            },
+            bitfieldData: { _ in
+                SupplementalBitfieldData(
+                    variableName: "rxDataAvailable",
+                    valueType: "Bool",
+                    defaultValue: "false",
+                    documentation: "",
+                    access: .read
+                )
+            }
+        )
+
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum UART0 {
+        \(indent(members.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("/// Chip register docs"))
+        XCTAssertFalse(result.content.contains("/// UDR0"))
+        XCTAssertFalse(result.content.contains("/// | Bit"))
+    }
+
+    func testBitfieldDocumentationOverrideSuppressesGeneratedTitle() throws {
+        let registerGroup = try sampleSingleBitUARTRegisterGroup()
+        let register = try XCTUnwrap(registerGroup.register.first)
+        let bitfield = try XCTUnwrap(register.bitfield.first)
+
+        let accessor = try XCTUnwrap(
+            generateBitfieldAccessor(
+                bitfield: bitfield,
+                parentVariable: register,
+                registerGroup: registerGroup,
+                registerData: { _ in
+                    SupplementalRegisterData(
+                        variableName: "controlRegisterA",
+                        valueType: "UInt8",
+                        defaultValue: "0",
+                        documentation: "",
+                        access: "R/W"
+                    )
+                },
+                bitfieldData: { _ in
+                    SupplementalBitfieldData(
+                        variableName: "asynchronousDoubleSpeedMode",
+                        valueType: "UART.AsynchronousDoubleSpeedMode",
+                        defaultValue: ".off",
+                        documentation: "Chip bitfield docs",
+                        access: .readWrite,
+                        overrideGeneratedDocumentation: true
+                    )
+                }
+            )
+        )
+
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum UART0 {
+        \(indent(accessor.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("/// Chip bitfield docs"))
+        XCTAssertFalse(result.content.contains("/// U2X0 - Double the USART transmission speed"))
     }
 
     func testExportAllSkipsChipWhenSupplementalDocsAreMissing() throws {

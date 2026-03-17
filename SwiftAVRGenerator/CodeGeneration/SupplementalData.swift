@@ -13,6 +13,7 @@ struct SupplementalRegisterData {
     let access: String
     var documentationL: String? = nil
     var documentationH: String? = nil
+    var overrideGeneratedDocumentation: Bool = false
     
     var isMissing: Bool = false
 }
@@ -23,7 +24,9 @@ struct SupplementalBitfieldData {
     let defaultValue: String
     let documentation: String
     let access: Access
+    var inline: String = "__always"
     var splitTarget: String? = nil
+    var overrideGeneratedDocumentation: Bool = false
 }
 
 enum Access: String {
