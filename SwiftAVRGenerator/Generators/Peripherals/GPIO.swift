@@ -29,6 +29,8 @@ func buildGPIO(file: AVRToolsDeviceFile) -> GeneratedCodeFile {
     // See ATMega328p Datasheet Figure 1-1.
     public struct GPIO { // TODO: I think I want to rename this struct to AVR5 or something similar. This will probably be the HAL layer for the avr5 core and I'll make a wrapper with a common HAL API that wraps this.
     """
+
+    code.append(buildMCUControlRegister(file: file))
     
     // Filter for Modules named "PORT" // TODO: Find a better way to filter.
     for module in file.modules.module {
@@ -46,6 +48,21 @@ func buildGPIO(file: AVRToolsDeviceFile) -> GeneratedCodeFile {
     """)
     // TODO: Move generation logic to the generator function in the PeripheralGenerator struct so no new instantiation is needed to get the subdir
     return GeneratedCodeFile(fileName: fileName, content: code, subdirectory: GPIOGenerator().subdirectory)
+}
+
+func buildMCUControlRegister(file: AVRToolsDeviceFile) -> String {
+    guard let register = findRegister(named: "MCUCR", in: file) else {
+        return ""
+    }
+
+    return """
+
+
+        /// AKA: MCUCR. See ATMega328p Datasheet section 14.4.1. // TODO: How should we make the Datasheet refrence more generic? Include more of this documentation directly in the code?
+        @inlinable
+        @inline(__always)
+        public static var mcuControlRegister: UInt8 { get { _volatileRegisterReadUInt8(\(register.offset)) } set { _volatileRegisterWriteUInt8(\(register.offset), newValue) } }
+    """
 }
 
 // TODO: Maybe make A Generic Function where it can accept any array of anything, send it to a function that returns a string, and adds it to the middle? Would need to account for line indentations
@@ -80,7 +97,7 @@ func buildPadsForPort(file: AVRToolsDeviceFile) -> String {
                 
                 for signal in signal.signal {
                     guard let index = signal.index else { break }
-                    code.append("    public typealias \(signal.pad) = DigitalPin<\(portName),Bit\(index)>\n")
+                    code.append("    public typealias \(signal.pad.lowercased()) = DigitalPin<\(portName),Bit\(index)>\n")
                 }
                 code.append("\n")
             }
@@ -114,6 +131,18 @@ func buildPadsForPort(file: AVRToolsDeviceFile) -> String {
 //    let text = "typealias \(pad) = DigitalPin<\(port),Bit\(index)>\n"
     
     return code
+}
+
+func findRegister(named registerName: String, in file: AVRToolsDeviceFile) -> AVRModules.Module.RegisterGroup.Register? {
+    for module in file.modules.module {
+        for registerGroup in module.registerGroup {
+            if let register = registerGroup.register.first(where: { $0.name == registerName }) {
+                return register
+            }
+        }
+    }
+
+    return nil
 }
 
 // TODO: implement 'size' Note: `UInt8` should be used when this is an 8 bit port. I believe that the `size` of 1 indicates 8 bit, and 2 would indicate 16 bit.
