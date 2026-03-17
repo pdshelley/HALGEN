@@ -218,7 +218,8 @@
       "aliases": [
         "ADC"
       ],
-      "variableName": "dataRegister"
+      "variableName": "dataRegister",
+      "access": "R"
     },
     {
       "aliases": [
@@ -764,7 +765,7 @@
       "aliases": [
         "ACME"
       ],
-      "variableName": "multiplexerEnable",
+      "variableName": "multiplexerEnabled",
       "valueType": "Bool",
       "access": "R/W"
     }

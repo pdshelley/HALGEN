@@ -133,19 +133,31 @@ func generateRegister(
         ])
     )
     
-    let declaration = [
-        documentationComment,
-        "@inlinable",
-        "@inline(__always)",
-        "public static var \(variableName): \(bit.size) {",
-        "    get {",
-        "        \(bit.atomicStart)_volatileRegisterRead\(bit.size)(\(register.offset))\(bit.atomicEnd)",
-        "    }",
-        "    set {",
-        "        \(bit.atomicStart)_volatileRegisterWrite\(bit.size)(\(register.offset), newValue)\(bit.atomicEnd)",
-        "    }",
-        "}"
-    ].joined(separator: "\n")
+    let setterLines: [String]
+    if registerAccess == Access.read.rawValue {
+        setterLines = [
+        ]
+    } else {
+        setterLines = [
+            "    set {",
+            "        \(bit.atomicStart)_volatileRegisterWrite\(bit.size)(\(register.offset), newValue)\(bit.atomicEnd)",
+            "    }"
+        ]
+    }
+
+    let declaration = (
+        [
+            documentationComment,
+            "@inlinable",
+            "@inline(__always)",
+            "public static var \(variableName): \(bit.size) {",
+            "    get {",
+            "        \(bit.atomicStart)_volatileRegisterRead\(bit.size)(\(register.offset))\(bit.atomicEnd)",
+            "    }"
+        ] + setterLines + [
+            "}"
+        ]
+    ).joined(separator: "\n")
 
     let source = DeclSyntax("\(raw: declaration)").with(\.trailingTrivia, .newlines(2))
     
