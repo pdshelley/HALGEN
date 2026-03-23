@@ -206,7 +206,7 @@
             ],
             "variableName": "forceOutputCompareA",
             "valueType": "Bool",
-            "access": "W"
+            "access": "R/W"
         },
         {
             "aliases": [
@@ -216,7 +216,7 @@
             ],
             "variableName": "forceOutputCompareB",
             "valueType": "Bool",
-            "access": "W"
+            "access": "R/W"
         },
         {
             "aliases": [
