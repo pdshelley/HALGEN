@@ -51,7 +51,9 @@ struct UARTGenerator: PeripheralGenerator {
                     }
                 }
             }
-            
+
+            memberBlockList = normalizeMemberSpacing(memberBlockList)
+             
             let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
             
             // Information needed to setup the Struct.

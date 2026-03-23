@@ -3,6 +3,16 @@
     "datasheet": "ATmega328P Datasheet (DS40002061B)",
     "registers": {
         "UDR0": {
+            "initialValues": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
             "documentation": [
                 "See ATMega328p Datasheet Section 36 Register Summary",
                 "The USART Transmit Data Buffer Register and USART Receive Data Buffer Registers share the same I/O address referred to as",
@@ -110,6 +120,18 @@
                 "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
                 "--------------------------------------------------------------------------------",
                 "```"
+            ]
+        },
+        "TCCR0B": {
+            "initialValues": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
             ]
         }
     },

@@ -107,6 +107,9 @@ Each register entry supports this structure:
   "documentation": [],
   "documentationL": [],
   "documentationH": [],
+  "initialValues": [],
+  "initialValuesL": [],
+  "initialValuesH": [],
   "access": "R/W"
 }
 ```
@@ -184,6 +187,39 @@ Implications:
 
 - If omitted, the high-byte property gets no custom split-register prose
 - Use this when the high byte needs different wording than the low byte
+
+### `initialValues`
+
+- Optional
+- Array of strings
+- Supplies the generated `InitialValue` table row for byte-sized register docs
+
+Implications:
+
+- Values are read left-to-right as bit 7 through bit 0
+- If omitted, the generator keeps `?` for every bit
+- If fewer than 8 values are provided, the remaining cells stay `?`
+- Empty string entries are treated as `?`
+
+Example:
+
+```json
+"TCCR0B": {
+  "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+}
+```
+
+### `initialValuesL`
+
+- Optional
+- Array of strings
+- Supplies the generated `InitialValue` row for the low-byte `...L` property of a split 16-bit register
+
+### `initialValuesH`
+
+- Optional
+- Array of strings
+- Supplies the generated `InitialValue` row for the high-byte `...H` property of a split 16-bit register
 
 ### `access`
 
@@ -377,6 +413,8 @@ For a new register entry:
 - add `access`
 - add `documentation` if needed
 - add `documentationL` and `documentationH` only for split 16-bit docs
+- add `initialValues` when you want the generated register table to show real reset values
+- add `initialValuesL` and `initialValuesH` only for split 16-bit byte views
 
 For a new bitfield entry:
 

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftSyntax
 
 /// Builds a file header string for Swift source files.
 ///
@@ -111,6 +112,31 @@ func makeDocumentationComment(body: String) -> String {
             line.isEmpty ? "///" : "/// \(line)"
         }
         .joined(separator: "\n")
+}
+
+func makeInitialValueRow(from values: [String]?) -> String {
+    let normalizedValues = formatInitialValues(values) ?? Array(repeating: "?", count: 8)
+    let cells = normalizedValues.map { padString($0, padding: 7) }
+    return "\(cells[0])|\(cells[1])|\(cells[2])|\(cells[3])|\(cells[4])|\(cells[5])|\(cells[6])|\(cells[7])"
+}
+
+func normalizeMemberSpacing(_ members: MemberBlockItemListSyntax) -> MemberBlockItemListSyntax {
+    guard let lastMember = members.last else {
+        return members
+    }
+
+    var normalizedMembers = MemberBlockItemListSyntax()
+    for member in members.dropLast() {
+        normalizedMembers.append(member)
+    }
+
+    let normalizedLastMember = lastMember.with(
+        \.decl,
+        lastMember.decl.with(\.trailingTrivia, .newlines(1))
+    )
+    normalizedMembers.append(normalizedLastMember)
+
+    return normalizedMembers
 }
 
 /// Generates an array of access strings for each bit position in a register.

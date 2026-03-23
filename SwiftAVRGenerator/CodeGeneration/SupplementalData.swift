@@ -13,6 +13,9 @@ struct SupplementalRegisterData {
     let access: String
     var documentationL: String? = nil
     var documentationH: String? = nil
+    var initialValues: [String]? = nil
+    var initialValuesL: [String]? = nil
+    var initialValuesH: [String]? = nil
     var overrideGeneratedDocumentation: Bool = false
     
     var isMissing: Bool = false

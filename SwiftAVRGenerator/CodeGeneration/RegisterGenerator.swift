@@ -39,6 +39,7 @@ func generateRegister(
     register: AVRModules.Module.RegisterGroup.Register,
     variableName externalVariableName: String = "",
     optionalDocumentation: String = "",
+    optionalInitialValues: [String]? = nil,
     registerData: (_ register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData,
     bitfieldData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData,
     generateRegisterTable: Bool = true
@@ -54,6 +55,7 @@ func generateRegister(
     var readWrite = ""
     let registerAccess = supplementalRegisterData.access
     let documentation = (optionalDocumentation.isEmpty == false) ? optionalDocumentation : supplementalRegisterData.documentation
+    let initialValues = optionalInitialValues ?? supplementalRegisterData.initialValues
     let variableName = (externalVariableName.isEmpty == false) ? externalVariableName : supplementalRegisterData.variableName
     var memberBlockList = MemberBlockItemListSyntax()
     var generateRegisterTableDoc = generateRegisterTable
@@ -67,6 +69,7 @@ func generateRegister(
                 register: customRegisterL,
                 variableName: "\(supplementalRegisterData.variableName)L",
                 optionalDocumentation: "\(supplementalRegisterData.documentationL ?? "")",
+                optionalInitialValues: supplementalRegisterData.initialValuesL,
                 registerData: registerData,
                 bitfieldData: bitfieldData
             )
@@ -81,6 +84,7 @@ func generateRegister(
                 register: customRegisterH,
                 variableName: "\(supplementalRegisterData.variableName)H",
                 optionalDocumentation: "\(supplementalRegisterData.documentationH ?? "")",
+                optionalInitialValues: supplementalRegisterData.initialValuesH,
                 registerData: registerData,
                 bitfieldData: bitfieldData
             )
@@ -121,7 +125,7 @@ func generateRegister(
     --------------------------------------------------------------------------------
     | Read/Write   |\(readWrite)|
     --------------------------------------------------------------------------------
-    | InitialValue |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |   ?   |
+    | InitialValue |\(makeInitialValueRow(from: initialValues))|
     --------------------------------------------------------------------------------
     ```
     """

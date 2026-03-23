@@ -21,6 +21,9 @@ struct ChipDocumentation: Codable {
         let documentation: [String]?
         let documentationL: [String]?
         let documentationH: [String]?
+        let initialValues: [String]?
+        let initialValuesL: [String]?
+        let initialValuesH: [String]?
         let bitfields: [String: Bitfield]?
         let overrideGeneratedDocumentation: Bool?
         
@@ -33,6 +36,9 @@ struct ChipDocumentation: Codable {
                 access: access ?? "",
                 documentationL: documentationL.map { formatDocumentation($0) },
                 documentationH: documentationH.map { formatDocumentation($0) },
+                initialValues: formatInitialValues(initialValues),
+                initialValuesL: formatInitialValues(initialValuesL),
+                initialValuesH: formatInitialValues(initialValuesH),
                 overrideGeneratedDocumentation: overrideGeneratedDocumentation ?? false
             )
         }
@@ -66,4 +72,21 @@ struct ChipDocumentation: Codable {
 func formatDocumentation(_ paragraphs: [String]?) -> String {
     guard let paragraphs, !paragraphs.isEmpty else { return "" }
     return paragraphs.joined(separator: "\n")
+}
+
+func formatInitialValues(_ values: [String]?) -> [String]? {
+    guard let values, values.isEmpty == false else {
+        return nil
+    }
+
+    var normalizedValues = values.prefix(8).map { value -> String in
+        let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmedValue.isEmpty ? "?" : trimmedValue
+    }
+
+    if normalizedValues.count < 8 {
+        normalizedValues.append(contentsOf: repeatElement("?", count: 8 - normalizedValues.count))
+    }
+
+    return normalizedValues
 }

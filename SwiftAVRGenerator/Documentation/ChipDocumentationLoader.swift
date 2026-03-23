@@ -142,6 +142,9 @@ class ChipDocumentationLoader {
             access: chipDocs?.access ?? generalDocs?.access ?? register.rw ?? "R/W",
             documentationL: formatOptionalDocumentation(chipDocs?.documentationL),
             documentationH: formatOptionalDocumentation(chipDocs?.documentationH),
+            initialValues: formatInitialValues(chipDocs?.initialValues),
+            initialValuesL: formatInitialValues(chipDocs?.initialValuesL),
+            initialValuesH: formatInitialValues(chipDocs?.initialValuesH),
             overrideGeneratedDocumentation: chipDocs?.overrideGeneratedDocumentation ?? false
         )
 
