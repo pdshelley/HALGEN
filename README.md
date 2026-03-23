@@ -13,6 +13,8 @@ atdf/*.atdf + docs/general.json + docs/<Chip>.json
 The repository includes both a SwiftUI macOS app target and a command-line
 generator. The CLI is the primary workflow.
 
+Bundled ATDF files originate from: http://packs.download.atmel.com
+
 ## Requirements
 
 - macOS with Xcode installed
