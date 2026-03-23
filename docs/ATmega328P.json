@@ -248,6 +248,9 @@
         },
         "UCSR0C": {
             "initialValues": ["0", "0", "0", "0", "0", "1", "1", "0"]
+        },
+        "ADCSRA": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
         }
     },
     "bitfields": {
@@ -455,6 +458,15 @@
                 "asserted. This ensures that the corresponding Timer/Counters are halted and can be configured to the same",
                 "value without the risk of one of them advancing during configuration. When the TSM bit is written to zero, the",
                 "PSRASY and PSRSYNC bits are cleared by hardware, and the Timer/Counters start counting simultaneously."
+            ]
+        },
+        "PSRASY": {
+            "documentation": [
+                "When this bit is one, the Timer/Counter2 prescaler will be reset. This bit is normally cleared immediately by",
+                "hardware. If the bit is written when Timer/Counter2 is operating in asynchronous mode, the bit will remain one",
+                "until the prescaler has been reset. The bit will not be cleared by hardware if the TSM bit is set. Refer to the",
+                "description of the \"Bit 7 - TSM: Timer/Counter Synchronization Mode\" for a description of the",
+                "Timer/Counter Synchronization mode."
             ]
         },
         "PSRSYNC": {
