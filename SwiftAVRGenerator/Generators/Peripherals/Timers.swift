@@ -274,7 +274,7 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
           public enum Prescaling: UInt8 {
       \(raw: enumValues)}
       """
-    )
+    ).with(\.trailingTrivia, .newlines(2))
     
     return MemberBlockItemSyntax(decl: source)
 }
