@@ -154,7 +154,7 @@ func makeDocumentationComment(body: String) -> String {
 ///   // accessTypes[15] contains the access string for bit 15
 ///   ```
 func getBitAccess(from register: AVRModules.Module.RegisterGroup.Register, parentAccess: String, supplementalData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData ) -> [String] {
-    var bitAccess = Array(repeating: parentAccess, count: 16)
+    var bitAccess = Array(repeating: Access.read.rawValue, count: 16)
         
     for bitField in register.bitfield {
         var mask: UInt16 = bitField.mask.value

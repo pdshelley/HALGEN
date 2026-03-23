@@ -498,6 +498,7 @@
             ]
         },
         "WGM1": {
+            "valueType": "Timer16Bit.WaveformGenerationMode",
             "documentation": [
                 "Combined with the WGM13:2 bits found in the TCCR1B Register, these bits control the counting sequence of the",
                 "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
@@ -769,31 +770,37 @@
             "splitTarget": "WGM22"
         },
         "RXC0": {
+            "inline": "never",
             "documentation": [
                 "URXCn is Bit 7 on UCSRnA. See Section 20.11.2."
             ]
         },
         "TXC0": {
+            "inline": "never",
             "documentation": [
                 "UTXCn is Bit 6 on UCSRnA. See Section 20.11.2."
             ]
         },
         "UDRE0": {
+            "inline": "never",
             "documentation": [
                 "UDREn is Bit 5 on UCSRnA. See Section 20.11.2."
             ]
         },
         "FE0": {
+            "inline": "never",
             "documentation": [
                 "UFEn is Bit 4 on UCSRnA. See Section 20.11.2."
             ]
         },
         "DOR0": {
+            "inline": "never",
             "documentation": [
                 "UDROn is Bit 3 on UCSRnA. See Section 20.11.2."
             ]
         },
         "UPE0": {
+            "inline": "never",
             "documentation": [
                 "UPEn is Bit 2 on UCSRnA. See Section 20.11.2."
             ]
