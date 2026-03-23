@@ -1,82 +1,52 @@
-# AGENTS.md — HALGEN Agent Guide
+# AGENTS.md - HALGEN Agent Guide
 
 ## Project Summary
-
-HALGEN is a macOS Swift code generator for AVR microcontrollers.
-It reads Microchip ATDF XML files and emits Swift HAL source files.
-
+HALGEN is a macOS Swift code generator for AVR microcontrollers. It reads ATDF XML plus supplemental JSON docs and emits Swift HAL source files.
 Targets:
-- `SwiftAVRGenerator` — SwiftUI macOS app
-- `SwiftAVRGeneratorCLI` — command-line generator
-
+- `SwiftAVRGenerator` - SwiftUI macOS app
+- `SwiftAVRGeneratorCLI` - command-line generator
+Dependencies: `swift-syntax`, `XMLCoder`
 Key paths:
-- `atdf/` — source ATDF device descriptions
-- `docs/` — supplemental JSON documentation per chip
-- `Output/` — generated Swift output
-
-Primary workflow:
-- `generate.sh` builds the CLI in Release and runs it.
-
-Dependencies used by the generator:
-- `swift-syntax`
-- `XMLCoder`
+- `atdf/` - source ATDF device descriptions
+- `docs/` - supplemental JSON docs (`general.json` plus per-chip files)
+- `Output/` - generated Swift output
+- `Scripts/generate_avr_tools_device_file.swift` - ATDF model regeneration helper
+Data flow: `atdf/*.atdf` -> `XMLDecoder` -> `AVRToolsDeviceFile` -> `GenerationPipeline` -> peripheral generators -> formatted Swift output in `Output/<ChipName>/...`
 
 ## Extra Rule Files
-
-Checked these locations for additional instructions:
+Checked:
 - `.cursorrules`
 - `.cursor/rules/`
 - `.github/copilot-instructions.md`
-
 No Cursor or Copilot rule files were found.
 
 ## Repository Layout
+- `SwiftAVRGenerator/CLI/main.swift` - CLI entry point
+- `SwiftAVRGenerator/App/` - SwiftUI app target
+- `SwiftAVRGenerator/Generators/` - pipeline, registry, peripheral generators
+- `SwiftAVRGenerator/CodeGeneration/` - register/bitfield generation and formatter
+- `SwiftAVRGenerator/Documentation/` - supplemental doc models and loader
+- `SwiftAVRGenerator/AVRToolsDeviceFile/` - ATDF decoding models
+- `SwiftAVRGeneratorTests/` - XCTest coverage
+- `SwiftAVRGeneratorUITests/` - UI test stubs
+Schemes: `SwiftAVRGenerator`, `SwiftAVRGeneratorCLI`
 
-```text
-SwiftAVRGenerator/
-├── CLI/main.swift
-├── App/
-├── Generators/
-│   ├── GenerationApi.swift
-│   ├── GenerationPipeline.swift
-│   ├── GeneratorRegistry.swift
-│   ├── PeripheralGenerator.swift
-│   └── Peripherals/
-├── CodeGeneration/
-├── Documentation/
-├── Extensions/
-└── AVRToolsDeviceFile/
-SwiftAVRGeneratorTests/
-SwiftAVRGeneratorUITests/
-atdf/
-docs/
-Output/
-```
-
-## Build Commands
-
-Recommended build-and-run flow:
-
+## Build And Run
 ```bash
 ./generate.sh
 ./generate.sh --all
-./generate.sh --output /some/path
-```
+./generate.sh --output /tmp/halgen-test
+./generate.sh --all --output /tmp/halgen-test
 
-Build the CLI only:
-
-```bash
 xcodebuild \
   -project SwiftAVRGenerator.xcodeproj \
   -scheme SwiftAVRGeneratorCLI \
   -configuration Release \
   -destination "platform=macOS,arch=arm64" \
   -derivedDataPath .build
-```
 
-Build the macOS app:
+.build/Build/Products/Release/SwiftAVRGeneratorCLI [--all] [--output <path>]
 
-```bash
 xcodebuild \
   -project SwiftAVRGenerator.xcodeproj \
   -scheme SwiftAVRGenerator \
@@ -84,77 +54,53 @@ xcodebuild \
   -destination "platform=macOS,arch=arm64" \
   -derivedDataPath .build
 ```
-
-Run the built CLI directly:
-
-```bash
-.build/Build/Products/Release/SwiftAVRGeneratorCLI [--all] [--output <path>]
-```
+`./generate.sh --help` was verified locally and successfully built the CLI.
 
 ## Test Commands
-
-Tests use XCTest through Xcode.
-
-Run all tests:
-
 ```bash
 xcodebuild test \
   -project SwiftAVRGenerator.xcodeproj \
   -scheme SwiftAVRGenerator \
   -destination "platform=macOS,arch=arm64"
-```
 
-Run a single unit test class:
-
-```bash
 xcodebuild test \
   -project SwiftAVRGenerator.xcodeproj \
   -scheme SwiftAVRGenerator \
   -destination "platform=macOS,arch=arm64" \
   -only-testing:SwiftAVRGeneratorTests/SwiftAVRGeneratorTests
-```
 
-Run a single unit test method:
-
-```bash
 xcodebuild test \
   -project SwiftAVRGenerator.xcodeproj \
   -scheme SwiftAVRGenerator \
   -destination "platform=macOS,arch=arm64" \
   -only-testing:SwiftAVRGeneratorTests/SwiftAVRGeneratorTests/testExample
-```
 
-Run a single UI test method:
-
-```bash
 xcodebuild test \
   -project SwiftAVRGenerator.xcodeproj \
   -scheme SwiftAVRGenerator \
   -destination "platform=macOS,arch=arm64" \
-  -only-testing:SwiftAVRGeneratorUITests/SwiftAVRGeneratorUITests/testExample
+  -only-testing:SwiftAVRGeneratorUITests/SwiftAVRGeneratorUITests/testLaunchPerformance
 ```
-
-Current tests are mostly Xcode stubs. Add new tests under `SwiftAVRGeneratorTests/`
-or `SwiftAVRGeneratorUITests/`.
+If `xcodebuild test` fails with `No signing certificate "Mac Development" found`, append `CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM=""`.
+A single unit test succeeded locally with that signing-disabled suffix.
+Add new tests under `SwiftAVRGeneratorTests/` unless the work is specifically UI behavior.
 
 ## Linting And Formatting
-
-There is no configured lint or formatting step.
-Do not assume SwiftLint or SwiftFormat is available.
-Match surrounding style manually.
+- No `SwiftLint`, `SwiftFormat`, or other standalone repo-wide lint config is present.
+- There is no separate lint command to run.
+- Generated code is normalized by `CodeFormatter` and `HALGENCodeFormat` in `SwiftAVRGenerator/CodeGeneration/Linter/`.
+- Export runs also write `formatting-report.txt` and `logs.json`.
 
 ## Workflow Notes
-
-- Prefer changing generator inputs or templates over hand-editing generated output.
-- Do not hand-edit files in `Output/` unless the task is explicitly about generated output inspection.
-- Before broad generation changes, inspect existing generated files for style and API shape.
-- When changing docs behavior, check both generator code and `docs/<Chip>.json` to avoid duplicate tables or prose.
+- Prefer changing generator code or documentation inputs over hand-editing generated files.
+- Do not edit `Output/` unless the task is specifically about generated output inspection.
+- When changing docs behavior, check both `docs/general.json` and `docs/<Chip>.json`.
+- If you need to update the ATDF decode layer, inspect `Scripts/generate_avr_tools_device_file.swift` first.
 - Keep changes scoped; generator logic is shared across many chips.
+- Match local style in the file you touch; newer code uses `SwiftSyntaxBuilder`, older files sometimes build strings directly.
 
 ## Swift Source Style
-
-Every Swift source file should begin with:
-
+File header:
 ```swift
 //
 //  FileName.swift
@@ -163,87 +109,54 @@ Every Swift source file should begin with:
 //  Created by <Author> on <date>.
 //
 ```
-
 Imports:
-- Import only what is needed.
-- Keep `Foundation` first when used.
-- Put package imports next: `SwiftSyntax`, `SwiftSyntaxBuilder`, `XMLCoder`.
-- Put `SwiftUI` last, and only in app or UI files.
+- Import only what the file uses.
+- Put `Foundation` first when needed, Apple modules like `Dispatch` next, package imports after that, and `SwiftUI` last.
+- In tests, keep `@testable import SwiftAVRGenerator` after normal imports.
 - Remove unused imports.
-
 Formatting:
-- Follow the indentation, spacing, and brace style already used in the file.
-- Prefer readable line breaks over dense one-liners.
-- Keep doc comments aligned with the declarations they describe.
-- Match surrounding access-control placement and attribute ordering.
-- Use ASCII unless a file already requires something else.
-- Use `.formatted().description` on `SwiftSyntaxBuilder` output before writing files.
-
+- Match surrounding indentation and brace style; 4 spaces are standard.
+- Prefer readable multiline code over dense one-liners, and keep blank lines/doc comments intentional.
+- Prefer ASCII unless the file already uses something else.
+- When building `SwiftSyntaxBuilder` output, call `.formatted().description` before emitting text.
+- `exportAll` also runs generated content through `CodeFormatter`; do not assume a separate formatter step exists.
 Types and modeling:
-- Prefer `struct` over `class` for generators and model types.
-- Use `class` only when shared mutable reference semantics are required.
-- Keep ATDF decoding models as `Codable` structs.
-- Prefer `let` over `var` unless mutation is required.
-- Use `enum` raw values for constrained XML attributes, matching source strings exactly.
-- Use XMLCoder's `@Attribute` wrapper for XML attributes.
-- Avoid adding new module-level mutable globals.
-
-Known intentional globals:
-- `logs`
-- `listOfValues`
-- `bitfieldsToIgnore`
-
+- Prefer `struct` for generators, value types, report types, and decode models.
+- Use `class` only when shared mutable state or caching is needed, such as `ChipDocumentationLoader`.
+- Keep ATDF/XML models as nested `Codable` structs and use XMLCoder's `@Attribute` wrapper for XML attributes.
+- Prefer `let` over `var`; mutate only when decoding or generation logic requires it.
+- Use `String`-backed enums when exact source tokens matter.
+- Avoid new module-level mutable globals; `listOfValues` is the main legacy exception.
 Naming:
-- Types and protocols: `UpperCamelCase`
-- Functions, methods, variables, and properties: `lowerCamelCase`
-- Boolean names should read clearly, such as `isEnabled` or `supports(device:)`
-- Enum cases for Swift concepts: `lowerCamelCase`
-- Enum cases mirroring XML tokens should preserve the source meaning/casing requirements
-- Static constants: `lowerCamelCase`
-
+- Types and protocols use `UpperCamelCase`.
+- Functions, methods, properties, and locals use `lowerCamelCase`.
+- Boolean names should read as predicates, such as `hasMissingSupplementalData`, `shouldExport`, or `supports(device:)`.
+- Static constants usually use `lowerCamelCase`, for example `allGenerators`.
+- Preserve meaningful XML terms where they matter, such as `nameInModule`, `bitAddressable`, or `ocdRw`.
 Documentation:
-- Use `///` for public API and generated register docs.
+- Use `///` for public APIs and generated register/bitfield docs.
 - Include datasheet section references when known.
-- Use `// TODO:` for follow-up work.
-- Keep docs additive; avoid duplicating the same table or prose from two sources.
-
+- Keep supplemental docs additive; avoid duplicating the same prose in both generator code and JSON docs.
+- Use `// TODO:` for genuine follow-up work only.
 Error handling:
-- In CLI code, prefer `do/catch` around throwing operations.
-- For fatal CLI failures, print to `stderr` with `fputs("error: ...\n", stderr)` and `exit(1)`.
-- In library and generator code, do not call `exit`.
-- Avoid `try!` in new code.
-- Do not swallow errors silently; print or log a useful diagnostic.
-- Prefer explicit handling over `try?` unless failure is genuinely unimportant.
+- In CLI code and helper scripts, validate arguments explicitly, print fatal errors to `stderr` with `fputs`, and exit nonzero.
+- In library and generator code, prefer `do/catch` and useful diagnostics over `exit`.
+- Avoid `try!`; use `try?` only when failure is genuinely optional.
+- `preconditionFailure` is acceptable for impossible internal states, but prefer validating external input first.
+- Never swallow errors silently when a user or agent needs to know what failed.
 
 ## Generator Guidance
-
 - New peripherals belong in `SwiftAVRGenerator/Generators/Peripherals/`.
-- Conform to `PeripheralGenerator` with `name`, `subdirectory`, `supports(device:)`, and `generate(device:documentation:)`.
+- Conform new peripherals to `PeripheralGenerator` with `name`, `subdirectory`, `supports(device:)`, and `generate(device:documentation:)`.
 - Register new generators in `GeneratorRegistry.allGenerators`.
 - Generated files export under `Output/<ChipName>/<subdirectory>/`.
-- Generated register accessors should follow existing conventions: `@inlinable`, `@inline(__always)`, `public static var`, and `_volatileRegisterReadUInt8` / `_volatileRegisterWriteUInt8` or 16-bit equivalents.
-- Prefer `SwiftSyntaxBuilder` for multi-declaration output; string interpolation is acceptable for small fragments.
+- Keep generated register accessors consistent with the current style: `@inlinable`, `@inline(__always)`, `public static var`, and `_volatileRegisterReadUInt8` or `_volatileRegisterWriteUInt8`.
+- Prefer `SwiftSyntaxBuilder` for structured multi-declaration output; small string fragments are acceptable in older files when that matches local style.
 
-## Validation Tips
-
+## Validation Checklist
 - Run focused tests for the area you changed when practical.
-- If no meaningful automated test exists, say so plainly.
-- For generator changes, `./generate.sh` is often the most useful verification step.
-- Check at least one representative chip, typically `ATmega328P`, unless the task targets another device.
+- For generator changes, `./generate.sh` is usually the most valuable verification step.
+- Inspect both `logs.json` and `formatting-report.txt` after generation.
+- Check at least one representative chip, usually `ATmega328P`, unless the task targets another device.
 - If you touch CLI path handling or documentation loading, verify with `./generate.sh --output /tmp/halgen-test`.
-- Do not claim linting was run; there is no configured lint step.
-
-## Data Flow
-
-```text
-atdf/*.atdf
-  -> XMLDecoder
-  -> AVRToolsDeviceFile
-  -> GenerationPipeline.run(device:documentation:)
-  -> peripheral generators
-  -> [GeneratedCodeFile]
-  -> export to Output/<ChipName>/...
-```
-
-Supplemental JSON docs from `docs/<ChipName>.json` are loaded through
-`ChipDocumentationLoader` and merged into generated register and bitfield docs.
+- If full tests are not practical, say exactly what you ran and what you could not verify.
