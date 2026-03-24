@@ -24,6 +24,21 @@
         },
         {
             "aliases": [
+                "OCR2"
+            ],
+            "variableName": "outputCompareRegister"
+        },
+        {
+            "aliases": [
+                "OCR1C",
+                "OCR3C",
+                "OCR4C",
+                "OCR5C"
+            ],
+            "variableName": "outputCompareRegisterC"
+        },
+        {
+            "aliases": [
                 "TCNT0",
                 "TCNT1",
                 "TCNT2",
@@ -61,7 +76,8 @@
                 "TIMSK2",
                 "TIMSK3",
                 "TIMSK4",
-                "TIMSK5"
+                "TIMSK5",
+                "TIMSK"
             ],
             "variableName": "interruptMaskRegister"
         },
@@ -72,7 +88,8 @@
                 "TIFR2",
                 "TIFR3",
                 "TIFR4",
-                "TIFR5"
+                "TIFR5",
+                "TIFR"
             ],
             "variableName": "interruptFlagRegister"
         },
@@ -154,7 +171,8 @@
         },
         {
             "aliases": [
-                "OCR1D"
+                "OCR1D",
+                "OCR4D"
             ],
             "variableName": "outputCompareRegisterD"
         },
@@ -169,6 +187,67 @@
                 "OCR1AL"
             ],
             "variableName": "outputCompareRegisterALow"
+        },
+        {
+            "aliases": [
+                "PLLCSR"
+            ],
+            "variableName": "pllControlRegister"
+        },
+        {
+            "aliases": [
+                "TC4H"
+            ],
+            "variableName": "timerCounter"
+        },
+        {
+            "aliases": [
+                "TCCR0",
+                "TCCR1",
+                "TCCR2"
+            ],
+            "variableName": "timerCounterControlRegister"
+        },
+        {
+            "aliases": [
+                "TCCR1D",
+                "TCCR4D"
+            ],
+            "variableName": "timerCounterControlRegisterD"
+        },
+        {
+            "aliases": [
+                "TCCR1E",
+                "TCCR4E"
+            ],
+            "variableName": "timerCounterControlRegisterE"
+        },
+        {
+            "aliases": [
+                "DT1",
+                "DT4"
+            ],
+            "variableName": "timerCounterDeadTimeValue"
+        },
+        {
+            "aliases": [
+                "TCNT0H",
+                "TCNT1H"
+            ],
+            "variableName": "timerCounterHigh"
+        },
+        {
+            "aliases": [
+                "TCNT0L",
+                "TCNT1L"
+            ],
+            "variableName": "timerCounterLow"
+        },
+        {
+            "aliases": [
+                "TC1H"
+            ],
+            "variableName": "counterRegisterHigh"
         },
         {
             "aliases": [

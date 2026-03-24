@@ -13,35 +13,10 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 
 - Exported chips: 13
 - Skipped chips: 200
-- Register groups: 16 from 25 missing aliases
+- Register groups: 0 from 0 missing aliases
 - Bitfield groups: 259 from 388 missing aliases
 
 ## Registers
-
-### Timer
-
-- Groups: 16
-- Aliases: 25
-- Chips touched: 61
-
-| Proposed variableName | Aliases | Chips | Instances | Samples | Notes |
-| --- | --- | ---: | ---: | --- | --- |
-| `outputCompareRegister` | `OCR1D` | 6 | 6 | `OCR1D`: outputCompareRegister | - |
-| `pllControlAndStatusRegister` | `PLLCSR` | 1 | 1 | `PLLCSR`: pllControlAndStatusRegister | - |
-| `timerCounter` | `TC4H` | 2 | 2 | `TC4H`: timerCounter | - |
-| `timerCounterControlRegister` | `TCCR0`, `TCCR1`, `TCCR2` | 21 | 35 | `TCCR0`: timerCounterControlRegister; `TCCR1`: timerCounterControlRegister; +1 more | `TCCR0`: 3 captions; `TCCR2`: 2 captions |
-| `timerCounterControlRegisterD` | `TCCR1D`, `TCCR4D` | 10 | 10 | `TCCR1D`: timerCounterControlRegisterD; `TCCR4D`: timerCounterControlRegisterD | `TCCR1D`: 2 captions |
-| `timerCounterControlRegisterE` | `TCCR1E`, `TCCR4E` | 8 | 8 | `TCCR1E`: timerCounterControlRegisterE; `TCCR4E`: timerCounterControlRegisterE | - |
-| `timerCounterDeadTimeValue` | `DT1`, `DT4` | 8 | 8 | `DT1`: timerCounterDeadTimeValue; `DT4`: timerCounterDeadTimeValue | - |
-| `timerCounterHigh` | `TCNT0H`, `TCNT1H` | 7 | 7 | `TCNT0H`: timerCounterHigh; `TCNT1H`: timerCounterHigh | - |
-| `timerCounterInterruptFlagRegister` | `TIFR` | 33 | 33 | `TIFR`: timerCounterInterruptFlagRegister | `TIFR`: 3 captions |
-| `timerCounterInterruptMaskRegister` | `TIMSK` | 33 | 33 | `TIMSK`: timerCounterInterruptMaskRegister | `TIMSK`: 2 captions |
-| `timerCounterLow` | `TCNT0L`, `TCNT1L` | 7 | 7 | `TCNT0L`: timerCounterLow; `TCNT1L`: timerCounterLow | - |
-| `timerCounterOutputCompareRegister` | `OCR2` | 13 | 13 | `OCR2`: timerCounterOutputCompareRegister | `OCR2`: 2 captions |
-| `timerCounterOutputCompareRegisterB` | `OCR3C` | 26 | 26 | `OCR3C`: timerCounterOutputCompareRegisterCBytes | `OCR3C`: 3 captions |
-| `timerCounterOutputCompareRegisterC` | `OCR1C`, `OCR4C`, `OCR5C` | 41 | 67 | `OCR1C`: timerCounterOutputCompareRegisterCBytes; `OCR4C`: timerCounterOutputCompareRegisterCBytes; +1 more | `OCR1C`: 3 captions; `OCR4C`: 3 captions; `OCR5C`: 2 captions |
-| `timerCounterOutputCompareRegisterD` | `OCR4D` | 2 | 2 | `OCR4D`: timerCounterOutputCompareRegisterD | - |
-| `timerCounterRegisterHigh` | `TC1H` | 6 | 6 | `TC1H`: timerCounterRegisterHigh | - |
 
 ## Bitfields
 
