@@ -169,7 +169,8 @@
         {
             "aliases": [
                 "ADCSR",
-                "ADCSRA"
+                "ADCSRA",
+                "ADCRA"
             ],
             "variableName": "controlRegisterA"
         },
@@ -182,9 +183,29 @@
         },
         {
             "aliases": [
-                "ADCSRB"
+                "ADCSRB",
+                "ADCRB"
             ],
             "variableName": "controlRegisterB"
+        },
+        {
+            "aliases": [
+                "ADCSRC",
+                "ADCRC"
+            ],
+            "variableName": "controlRegisterC"
+        },
+        {
+            "aliases": [
+                "ADCRD"
+            ],
+            "variableName": "controlRegisterD"
+        },
+        {
+            "aliases": [
+                "ADCRE"
+            ],
+            "variableName": "controlRegisterE"
         },
         {
             "aliases": [
@@ -195,6 +216,233 @@
                 "DIDR3"
             ],
             "variableName": "digitalInputDisableRegister"
+        },
+        {
+            "aliases": [
+                "RES"
+            ],
+            "variableName": "accumulatorResult"
+        },
+        {
+            "aliases": [
+                "ADCL"
+            ],
+            "variableName": "dataRegisterLow"
+        },
+        {
+            "aliases": [
+                "ADCH"
+            ],
+            "variableName": "dataRegisterHigh"
+        },
+        {
+            "aliases": [
+                "ADIFR"
+            ],
+            "variableName": "interruptFlagRegister"
+        },
+        {
+            "aliases": [
+                "ADIMR"
+            ],
+            "variableName": "interruptMaskRegister"
+        },
+        {
+            "aliases": [
+                "ADMUXA"
+            ],
+            "variableName": "multiplexerSelectionRegisterA"
+        },
+        {
+            "aliases": [
+                "ADMUXB"
+            ],
+            "variableName": "multiplexerSelectionRegisterB"
+        },
+        {
+            "aliases": [
+                "ADSCSRA"
+            ],
+            "variableName": "synchronizationControlAndStatusRegisterA"
+        },
+        {
+            "aliases": [
+                "ADSCSRB"
+            ],
+            "variableName": "synchronizationControlAndStatusRegisterB"
+        },
+        {
+            "aliases": [
+                "AMP0CSR",
+                "AMP1CSR",
+                "AMP2CSR"
+            ],
+            "variableName": "amplifierControlAndStatusRegister"
+        },
+        {
+            "aliases": [
+                "AMISCR"
+            ],
+            "variableName": "analogMiscellaneousControlRegister"
+        },
+        {
+            "aliases": [
+                "CADAC0",
+                "CADAC1",
+                "CADAC2",
+                "CADAC3"
+            ],
+            "variableName": "accumulatedConversionResult"
+        },
+        {
+            "aliases": [
+                "CADIC"
+            ],
+            "variableName": "instantaneousConversionResult"
+        },
+        {
+            "aliases": [
+                "CALIB"
+            ],
+            "variableName": "calibration"
+        },
+        {
+            "aliases": [
+                "CADRCL"
+            ],
+            "variableName": "regulatorCurrentComparatorThresholdLevel"
+        },
+        {
+            "aliases": [
+                "COMMAND"
+            ],
+            "variableName": "command"
+        },
+        {
+            "aliases": [
+                "CTRLD"
+            ],
+            "variableName": "controlD"
+        },
+        {
+            "aliases": [
+                "CTRLE"
+            ],
+            "variableName": "controlE"
+        },
+        {
+            "aliases": [
+                "CTRLF"
+            ],
+            "variableName": "controlF"
+        },
+        {
+            "aliases": [
+                "INTCTRL"
+            ],
+            "variableName": "interruptControl"
+        },
+        {
+            "aliases": [
+                "INTFLAGS"
+            ],
+            "variableName": "interruptFlags"
+        },
+        {
+            "aliases": [
+                "MUXNEG"
+            ],
+            "variableName": "negativeMultiplexerInput"
+        },
+        {
+            "aliases": [
+                "PGACTRL"
+            ],
+            "variableName": "pgaControl"
+        },
+        {
+            "aliases": [
+                "MUXPOS"
+            ],
+            "variableName": "positiveMultiplexerInput"
+        },
+        {
+            "aliases": [
+                "RESULT"
+            ],
+            "variableName": "result"
+        },
+        {
+            "aliases": [
+                "SAMPLE"
+            ],
+            "variableName": "sample"
+        },
+        {
+            "aliases": [
+                "SAMPCTRL"
+            ],
+            "variableName": "sampleControl"
+        },
+        {
+            "aliases": [
+                "SFIOR"
+            ],
+            "variableName": "specialFunctionIoRegister"
+        },
+        {
+            "aliases": [
+                "TEMP",
+                "TEMP0",
+                "TEMP1",
+                "TEMP2"
+            ],
+            "variableName": "temporaryData"
+        },
+        {
+            "aliases": [
+                "VADAC0",
+                "VADAC1",
+                "VADAC2",
+                "VADAC3"
+            ],
+            "variableName": "accumulatedConversionResult"
+        },
+        {
+            "aliases": [
+                "VADCSR"
+            ],
+            "variableName": "vControlAndStatusRegister"
+        },
+        {
+            "aliases": [
+                "VADC"
+            ],
+            "variableName": "vDataRegister"
+        },
+        {
+            "aliases": [
+                "VADIC"
+            ],
+            "variableName": "vInstantaneousConversionResult"
+        },
+        {
+            "aliases": [
+                "VADMUX"
+            ],
+            "variableName": "vMultiplexerSelectionRegister"
+        },
+        {
+            "aliases": [
+                "WINHT"
+            ],
+            "variableName": "windowComparatorHighThreshold"
+        },
+        {
+            "aliases": [
+                "WINLT"
+            ],
+            "variableName": "windowComparatorLowThreshold"
         }
     ],
     "bitfields": [

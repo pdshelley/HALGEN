@@ -13,98 +13,48 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 
 - Exported chips: 13
 - Skipped chips: 200
-- Register groups: 83 from 113 missing aliases
+- Register groups: 41 from 58 missing aliases
 - Bitfield groups: 259 from 388 missing aliases
 
 ## Registers
 
-### ADC
-
-- Groups: 40
-- Aliases: 53
-- Chips touched: 85
-
-| Proposed variableName | Aliases | Chips | Instances | Samples | Notes |
-| --- | --- | ---: | ---: | --- | --- |
-| `adcAccumulatorResult` | `RES` | 33 | 33 | `RES`: aDCAccumulatorResult | - |
-| `adcControlAndStatusRegisterC` | `ADCSRC` | 7 | 7 | `ADCSRC`: theADCControlandStatusRegisterC | - |
-| `adcControlRegisterA` | `ADCRA` | 1 | 1 | `ADCRA`: aDCControlRegisterA | - |
-| `adcControlRegisterB` | `ADCRB`, `ADCRC` | 1 | 2 | `ADCRB`: aDCControlRegisterB; `ADCRC`: aDCControlRegisterB | - |
-| `adcControlRegisterD` | `ADCRD` | 1 | 1 | `ADCRD`: aDCControlRegisterD | - |
-| `adcControlRegisterE` | `ADCRE` | 1 | 1 | `ADCRE`: aDCControlRegisterE | - |
-| `adcDataRegister` | `ADCL` | 4 | 4 | `ADCL`: aDCDataRegister | `ADCL`: 2 captions |
-| `adcDataRegisterHigh` | `ADCH` | 2 | 2 | `ADCH`: aDCDataRegisterHigh | - |
-| `adcInterruptFlagRegister` | `ADIFR` | 1 | 1 | `ADIFR`: aDCInterruptFlagRegister | - |
-| `adcInterruptMaskRegister` | `ADIMR` | 1 | 1 | `ADIMR`: aDCInterruptMaskRegister | - |
-| `adcMultiplexerSelectionRegisterA` | `ADMUXA` | 3 | 3 | `ADMUXA`: theADCmultiplexerSelectionRegisterA | - |
-| `adcMultiplexerSelectionRegisterB` | `ADMUXB` | 3 | 3 | `ADMUXB`: theADCmultiplexerSelectionRegisterB | - |
-| `adcSynchronizationControlAndStatusRegister` | `ADSCSRA`, `ADSCSRB` | 1 | 2 | `ADSCSRA`: aDCSynchronizationControlandStatusRegister; `ADSCSRB`: aDCSynchronizationControlandStatusRegister | - |
-| `amplifierControlAndStatusRegister` | `AMP0CSR`, `AMP1CSR`, `AMP2CSR` | 14 | 32 | `AMP0CSR`: aMPCSR; `AMP1CSR`: aMPCSR; +1 more | `AMP0CSR`: blank caption; `AMP1CSR`: blank caption; `AMP2CSR`: blank caption |
-| `analogMiscellaneousControlRegister` | `AMISCR` | 2 | 2 | `AMISCR`: analogMiscellaneousControlRegister(SharedwithCURRENT_SOURCEIO_MODULE) | - |
-| `cadcAccumulatedConversionResult` | `CADAC0`, `CADAC1`, `CADAC2`, `CADAC3` | 1 | 4 | `CADAC0`: cADCAccumulatedConversionResult; `CADAC1`: cADCAccumulatedConversionResult; +2 more | - |
-| `cadcInstantaneousConversionResult` | `CADIC` | 1 | 1 | `CADIC`: cADCInstantaneousConversionResult | - |
-| `calibration` | `CALIB` | 33 | 33 | `CALIB`: calibration | - |
-| `ccAdcRegulatorCurrentComparatorThresholdLevel` | `CADRCL` | 1 | 1 | `CADRCL`: cCADCRegulatorCurrentComparatorThresholdLevel | - |
-| `command` | `COMMAND` | 45 | 45 | `COMMAND`: command | `COMMAND`: 2 captions |
-| `controlD` | `CTRLD` | 25 | 25 | `CTRLD`: controlD | - |
-| `controlE` | `CTRLE` | 45 | 45 | `CTRLE`: controlE | - |
-| `controlF` | `CTRLF` | 12 | 12 | `CTRLF`: controlF | - |
-| `interruptControl` | `INTCTRL` | 45 | 45 | `INTCTRL`: interruptControl | - |
-| `interruptFlags` | `INTFLAGS` | 45 | 45 | `INTFLAGS`: interruptFlags | - |
-| `negativeMultiplexerInput` | `MUXNEG` | 12 | 12 | `MUXNEG`: negativemuxinput | - |
-| `pgaControl` | `PGACTRL` | 12 | 12 | `PGACTRL`: pGAControl | - |
-| `positiveMultiplexerInput` | `MUXPOS` | 45 | 45 | `MUXPOS`: positivemuxinput | - |
-| `result` | `RESULT` | 12 | 12 | `RESULT`: result | - |
-| `sample` | `SAMPLE` | 12 | 12 | `SAMPLE`: sample | - |
-| `sampleControl` | `SAMPCTRL` | 33 | 33 | `SAMPCTRL`: sampleControl | - |
-| `specialFunctionIoRegister` | `SFIOR` | 2 | 2 | `SFIOR`: specialFunctionIORegister | - |
-| `temporaryData` | `TEMP`, `TEMP0`, `TEMP1`, `TEMP2` | 45 | 69 | `TEMP`: temporaryData; `TEMP0`: temporaryData; +2 more | - |
-| `vadcAccumulatedConversionResult` | `VADAC0`, `VADAC1`, `VADAC2`, `VADAC3` | 1 | 4 | `VADAC0`: vADCAccumulatedConversionResult; `VADAC1`: vADCAccumulatedConversionResult; +2 more | - |
-| `vadcControlAndStatusRegister` | `VADCSR` | 7 | 7 | `VADCSR`: theVADCControlandStatusregister | - |
-| `vadcDataRegister` | `VADC` | 7 | 7 | `VADC`: vADCDataRegisterBytes | - |
-| `vadcInstantaneousConversionResult` | `VADIC` | 1 | 1 | `VADIC`: vADCInstantaneousConversionResult | - |
-| `vadcMultiplexerSelectionRegister` | `VADMUX` | 7 | 7 | `VADMUX`: theVADCmultiplexerSelectionRegister | - |
-| `windowComparatorHighThreshold` | `WINHT` | 45 | 45 | `WINHT`: windowcomparatorhighthreshold | `WINHT`: 2 captions |
-| `windowComparatorLowThreshold` | `WINLT` | 45 | 45 | `WINLT`: windowcomparatorlowthreshold | `WINLT`: 2 captions |
-
 ### Timer
 
-- Groups: 25
-- Aliases: 35
+- Groups: 24
+- Aliases: 34
 - Chips touched: 68
 
 | Proposed variableName | Aliases | Chips | Instances | Samples | Notes |
 | --- | --- | ---: | ---: | --- | --- |
-| `deadTimePrescalerRegister` | `DTPS` | 3 | 3 | `DTPS`: deadtimeprescalerregister | - |
-| `deadTimeValueB` | `DT1B` | 3 | 3 | `DT1B`: deadtimevalueB | - |
-| `deadTimeValueRegister` | `DT1A` | 3 | 3 | `DT1A`: deadtimevalueregister | - |
-| `extendedTimerCounterInterruptFlagRegister` | `ETIFR` | 6 | 6 | `ETIFR`: extendedTimerCounterInterruptFlagregister | - |
+| `deadTimePrescalerRegister` | `DTPS` | 3 | 3 | `DTPS`: deadTimePrescalerRegister | - |
+| `deadTimeValueB` | `DT1B` | 3 | 3 | `DT1B`: deadTimeValueB | - |
+| `deadTimeValueRegister` | `DT1A` | 3 | 3 | `DT1A`: deadTimeValueRegister | - |
+| `extendedTimerCounterInterruptFlagRegister` | `ETIFR` | 6 | 6 | `ETIFR`: extendedTimerCounterInterruptFlagRegister | - |
 | `extendedTimerCounterInterruptMaskRegister` | `ETIMSK` | 6 | 6 | `ETIMSK`: extendedTimerCounterInterruptMaskRegister | - |
 | `inputCaptureRegister` | `ICR0` | 6 | 6 | `ICR0`: inputCaptureRegisterBytes | - |
-| `outputCompareRegister` | `OCR0`, `OCR1D` | 18 | 18 | `OCR0`: outputCompareRegister; `OCR1D`: outputcompareregister | `OCR0`: 3 captions |
-| `outputCompareRegisterAHigh` | `OCR1AH` | 1 | 1 | `OCR1AH`: outputCompareRegisterAHighbyte | - |
-| `outputCompareRegisterALow` | `OCR1AL` | 1 | 1 | `OCR1AL`: outputCompareRegisterALowbyte | - |
-| `pllControlAndStatusRegister` | `PLLCSR` | 1 | 1 | `PLLCSR`: pLLControlandStatusRegister | - |
-| `specialFunctionIoRegister` | `SFIOR` | 11 | 11 | `SFIOR`: specialFunctionIORegister | - |
+| `outputCompareRegister` | `OCR0`, `OCR1D` | 18 | 18 | `OCR0`: outputCompareRegister; `OCR1D`: outputCompareRegister | `OCR0`: 3 captions |
+| `outputCompareRegisterAHigh` | `OCR1AH` | 1 | 1 | `OCR1AH`: outputCompareRegisterAHighByte | - |
+| `outputCompareRegisterALow` | `OCR1AL` | 1 | 1 | `OCR1AL`: outputCompareRegisterALowByte | - |
+| `pllControlAndStatusRegister` | `PLLCSR` | 1 | 1 | `PLLCSR`: pllControlAndStatusRegister | - |
 | `timerCounter` | `TC4H` | 2 | 2 | `TC4H`: timerCounter | - |
 | `timerCounterControlRegister` | `TCCR0`, `TCCR1`, `TCCR2` | 21 | 35 | `TCCR0`: timerCounterControlRegister; `TCCR1`: timerCounterControlRegister; +1 more | `TCCR0`: 3 captions; `TCCR2`: 2 captions |
 | `timerCounterControlRegisterD` | `TCCR1D`, `TCCR4D` | 10 | 10 | `TCCR1D`: timerCounterControlRegisterD; `TCCR4D`: timerCounterControlRegisterD | `TCCR1D`: 2 captions |
 | `timerCounterControlRegisterE` | `TCCR1E`, `TCCR4E` | 8 | 8 | `TCCR1E`: timerCounterControlRegisterE; `TCCR4E`: timerCounterControlRegisterE | - |
 | `timerCounterDeadTimeValue` | `DT1`, `DT4` | 8 | 8 | `DT1`: timerCounterDeadTimeValue; `DT4`: timerCounterDeadTimeValue | - |
 | `timerCounterHigh` | `TCNT0H`, `TCNT1H` | 7 | 7 | `TCNT0H`: timerCounterHigh; `TCNT1H`: timerCounterHigh | - |
-| `timerCounterInterruptFlagRegister` | `TIFR` | 33 | 33 | `TIFR`: timerCounterInterruptFlagregister | `TIFR`: 3 captions |
+| `timerCounterInterruptFlagRegister` | `TIFR` | 33 | 33 | `TIFR`: timerCounterInterruptFlagRegister | `TIFR`: 3 captions |
 | `timerCounterInterruptMaskRegister` | `TIMSK` | 33 | 33 | `TIMSK`: timerCounterInterruptMaskRegister | `TIMSK`: 2 captions |
 | `timerCounterLow` | `TCNT0L`, `TCNT1L` | 7 | 7 | `TCNT0L`: timerCounterLow; `TCNT1L`: timerCounterLow | - |
 | `timerCounterOutputCompareRegister` | `OCR2` | 13 | 13 | `OCR2`: timerCounterOutputCompareRegister | `OCR2`: 2 captions |
-| `timerCounterOutputCompareRegisterB` | `OCR3C` | 26 | 26 | `OCR3C`: timerCounterOutputCompareRegisterBBytes | `OCR3C`: 3 captions |
+| `timerCounterOutputCompareRegisterB` | `OCR3C` | 26 | 26 | `OCR3C`: timerCounterOutputCompareRegisterCBytes | `OCR3C`: 3 captions |
 | `timerCounterOutputCompareRegisterC` | `OCR1C`, `OCR4C`, `OCR5C` | 41 | 67 | `OCR1C`: timerCounterOutputCompareRegisterCBytes; `OCR4C`: timerCounterOutputCompareRegisterCBytes; +1 more | `OCR1C`: 3 captions; `OCR4C`: 3 captions; `OCR5C`: 2 captions |
 | `timerCounterOutputCompareRegisterD` | `OCR4D` | 2 | 2 | `OCR4D`: timerCounterOutputCompareRegisterD | - |
 | `timerCounterRegisterHigh` | `TC1H` | 6 | 6 | `TC1H`: timerCounterRegisterHigh | - |
 
 ### UART
 
-- Groups: 18
-- Aliases: 25
+- Groups: 17
+- Aliases: 24
 - Chips touched: 82
 
 | Proposed variableName | Aliases | Chips | Instances | Samples | Notes |
@@ -113,20 +63,19 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 | `controlA` | `CTRLA` | 45 | 45 | `CTRLA`: controlA | - |
 | `controlB` | `CTRLB` | 45 | 45 | `CTRLB`: controlB | - |
 | `controlC` | `CTRLC` | 45 | 45 | `CTRLC`: controlC | - |
-| `controlD` | `CTRLD` | 20 | 20 | `CTRLD`: controlD | - |
 | `debugControl` | `DBGCTRL` | 45 | 45 | `DBGCTRL`: debugControl | - |
 | `eventControl` | `EVCTRL` | 45 | 45 | `EVCTRL`: eventControl | - |
-| `ircomReceiverPulseLengthControl` | `RXPLCTRL` | 45 | 45 | `RXPLCTRL`: iRCOMReceiverPulseLengthControl | - |
-| `ircomTransmitterPulseLengthControl` | `TXPLCTRL` | 45 | 45 | `TXPLCTRL`: iRCOMTransmitterPulseLengthControl | - |
+| `ircomReceiverPulseLengthControl` | `RXPLCTRL` | 45 | 45 | `RXPLCTRL`: ircomReceiverPulseLengthControl | - |
+| `ircomTransmitterPulseLengthControl` | `TXPLCTRL` | 45 | 45 | `TXPLCTRL`: ircomTransmitterPulseLengthControl | - |
 | `receiveDataHigh` | `RXDATAH` | 45 | 45 | `RXDATAH`: receiveDataHighByte | - |
 | `receiveDataLow` | `RXDATAL` | 45 | 45 | `RXDATAL`: receiveDataLowByte | - |
 | `remapPortPins` | `REMAP` | 2 | 2 | `REMAP`: remapPortPins | - |
 | `status` | `STATUS` | 45 | 45 | `STATUS`: status | - |
 | `transmitDataHigh` | `TXDATAH` | 45 | 45 | `TXDATAH`: transmitDataHighByte | - |
 | `transmitDataLow` | `TXDATAL` | 45 | 45 | `TXDATAL`: transmitDataLowByte | - |
-| `usartBaudRateRegisterHigh` | `UBRR0H`, `UBRR1H`, `UBRRH` | 19 | 25 | `UBRR0H`: uSARTBaudRateRegisterHighByte; `UBRR1H`: uSARTBaudRateRegisterHighByte; +1 more | `UBRRH`: 2 captions |
-| `usartBaudRateRegisterLow` | `UBRR0L`, `UBRR1L`, `UBRRL` | 19 | 25 | `UBRR0L`: uSARTBaudRateRegisterLowByte; `UBRR1L`: uSARTBaudRateRegisterLowByte; +1 more | `UBRRL`: 2 captions |
-| `usartControlAndStatusRegisterD` | `UCSR0D`, `UCSR1D`, `UCSR2D`, `UCSRD` | 18 | 24 | `UCSR0D`: uSARTControlandStatusRegisterD; `UCSR1D`: uSARTControlandStatusRegisterD; +2 more | - |
+| `usartBaudRateRegisterHigh` | `UBRR0H`, `UBRR1H`, `UBRRH` | 19 | 25 | `UBRR0H`: usartBaudRateRegisterHighByte; `UBRR1H`: usartBaudRateRegisterHighByte; +1 more | `UBRRH`: 2 captions |
+| `usartBaudRateRegisterLow` | `UBRR0L`, `UBRR1L`, `UBRRL` | 19 | 25 | `UBRR0L`: usartBaudRateRegisterLowByte; `UBRR1L`: usartBaudRateRegisterLowByte; +1 more | `UBRRL`: 2 captions |
+| `usartControlAndStatusRegisterD` | `UCSR0D`, `UCSR1D`, `UCSR2D`, `UCSRD` | 18 | 24 | `UCSR0D`: usartControlAndStatusRegisterD; `UCSR1D`: usartControlAndStatusRegisterD; +2 more | - |
 
 ## Bitfields
 
@@ -140,114 +89,114 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 | --- | --- | ---: | ---: | --- | --- |
 | `accumulatedDecimationRatioSelect` | `ADADES` | 1 | 1 | `ADADES`: accumulatedDecimationRatioSelect | - |
 | `accumulationSamples` | `SAMPNUM` | 45 | 45 | `SAMPNUM`: accumulationSamples | `SAMPNUM`: 2 captions |
-| `acmpmd` | `ACMP1MD` | 2 | 2 | `ACMP1MD`: aCMPMD | `ACMP1MD`: blank caption |
-| `acmpPinDigitalInputDisable` | `ACMP0D` | 12 | 12 | `ACMP0D`: aCMPD | `ACMP0D`: blank caption |
-| `adcAutoTriggerSourceSelection` | `ADTS0`, `ADTS1`, `ADTS2`, `ADTS3` | 3 | 12 | `ADTS0`: aDCAutoTriggerSourceSelection; `ADTS1`: aDCAutoTriggerSourceSelection; +2 more | - |
-| `adcBusy` | `ADCBUSY` | 12 | 12 | `ADCBUSY`: aDCBusy | - |
-| `adcData` | `ADC` | 12 | 12 | `ADC`: aDCDatabits | `ADC`: 2 captions |
-| `adcDigitalInputDisable` | `ADC6D`, `ADC7D`, `ADC8D`, `ADC9D`, `ADC10D`, `ADC16D`, `ADC17D`, `ADC18D`, `ADC19D`, `ADC20D`, `ADC21D`, `ADC22D`, `ADC23D`, `ADC24D`, `ADC25D`, `ADC26D`, `ADC27D` | 101 | 332 | `ADC6D`: aDC6DigitalinputDisable; `ADC7D`: aDC7DigitalinputDisable; +15 more | `ADC6D`: 5 captions, blank caption; `ADC7D`: 4 captions, blank caption; `ADC8D`: 3 captions, blank caption; ... |
-| `adcen` | `ADC0EN` | 1 | 1 | `ADC0EN`: aDCEN | `ADC0EN`: blank caption |
-| `adcEnable` | `ENABLE` | 45 | 45 | `ENABLE`: aDCEnable | - |
-| `adcFreerunMode` | `FREERUN` | 45 | 45 | `FREERUN`: aDCFreerunmode | `FREERUN`: 2 captions |
-| `adcFreeRunningSelect` | `ADFR` | 7 | 7 | `ADFR`: aDCFreeRunningSelect | - |
-| `adcHighSpeedMode` | `ADHSM` | 23 | 23 | `ADHSM`: aDCHighSpeedMode | - |
-| `adcLowLatencyMode` | `LOWLAT` | 12 | 12 | `LOWLAT`: aDCLowlatencymode | - |
-| `adcNoiseCancelerDisable` | `ADNCDIS` | 2 | 2 | `ADNCDIS`: aDCNoiseCancellerDisable | - |
-| `adcPgaSampleDuration` | `ADCPGASAMPDUR` | 12 | 12 | `ADCPGASAMPDUR`: aDCPGASampleDuration | - |
-| `adcPolaritySelect` | `ADPSEL` | 1 | 1 | `ADPSEL`: aDCPolaritySelect | - |
-| `adcResolution` | `RESSEL` | 33 | 33 | `RESSEL`: aDCResolution | - |
-| `adcSingleShotEnableOnPscSSynchronisationSignals` | `ADSSEN` | 2 | 2 | `ADSSEN`: aDCSingleShotEnableonPSC'sSynchronisationSignals | - |
-| `adcStartConversion` | `ADASCR` | 2 | 2 | `ADASCR`: aDCStartConversion | `ADASCR`: 2 captions |
-| `adcStartUpTime` | `ADSUT` | 7 | 7 | `ADSUT`: aDCStartupTime | - |
-| `adcTrackAndHoldTime` | `ADTHT` | 7 | 7 | `ADTHT`: aDCTrackandHoldTime | - |
-| `ainDigitalInputDisable` | `AIN0D`, `AIN1D` | 4 | 8 | `AIN0D`: aIND; `AIN1D`: aIND | `AIN0D`: 2 captions, blank caption; `AIN1D`: 2 captions, blank caption |
-| `ampgs` | `AMP0GS` | 2 | 2 | `AMP0GS`: aMPGS | `AMP0GS`: blank caption |
-| `amplifierClockSourceSelection` | `AMP0TS`, `AMP1TS`, `AMP2TS` | 14 | 32 | `AMP0TS`: aMPTS; `AMP1TS`: aMPTS; +1 more | `AMP0TS`: blank caption; `AMP1TS`: blank caption; `AMP2TS`: blank caption |
-| `amplifierComparatorConnection` | `AMPCMP0`, `AMPCMP1`, `AMPCMP2` | 6 | 18 | `AMPCMP0`: amplifierComparatorconnection; `AMPCMP1`: amplifierComparatorConnection; +1 more | - |
-| `amplifierEnable` | `AMP0EN`, `AMP1EN`, `AMP2EN` | 14 | 32 | `AMP0EN`: aMPEN; `AMP1EN`: aMPEN; +1 more | `AMP0EN`: blank caption; `AMP1EN`: blank caption; `AMP2EN`: blank caption |
-| `amplifierGainSelection` | `AMP0G`, `AMP1G`, `AMP2G` | 14 | 32 | `AMP0G`: aMPG; `AMP1G`: aMPG; +1 more | `AMP0G`: blank caption; `AMP1G`: blank caption; `AMP2G`: blank caption |
-| `amplifierInputShunt` | `AMP0IS`, `AMP1IS`, `AMP2IS` | 14 | 32 | `AMP0IS`: aMPIS; `AMP1IS`: aMPIS; +1 more | `AMP0IS`: blank caption; `AMP1IS`: blank caption; `AMP2IS`: blank caption |
-| `ampNPinDigitalInputDisable` | `AMP0ND` | 12 | 12 | `AMP0ND`: aMPND | `AMP0ND`: blank caption |
-| `ampposd` | `AMP0POSD` | 1 | 1 | `AMP0POSD`: aMPPOSD | `AMP0POSD`: blank caption |
-| `ampPPinDigitalInputDisable` | `AMP0PD`, `AMP2PD` | 13 | 19 | `AMP0PD`: aMPPD; `AMP2PD`: aMPPPinDigitalinputDisable | `AMP0PD`: blank caption |
-| `analogChannelAndGainSelection` | `MUX5`, `VADMUX` | 29 | 29 | `MUX5`: analogChannelandGainSelectionBits; `VADMUX`: analogChannelandGainSelectionBits | `MUX5`: 3 captions, blank caption; `VADMUX`: 2 captions |
+| `acmpmd` | `ACMP1MD` | 2 | 2 | `ACMP1MD`: acmpmd | `ACMP1MD`: blank caption |
+| `acmpPinDigitalInputDisable` | `ACMP0D` | 12 | 12 | `ACMP0D`: acmpd | `ACMP0D`: blank caption |
+| `adcAutoTriggerSourceSelection` | `ADTS0`, `ADTS1`, `ADTS2`, `ADTS3` | 3 | 12 | `ADTS0`: adcAutoTriggerSourceSelection; `ADTS1`: adcAutoTriggerSourceSelection; +2 more | - |
+| `adcBusy` | `ADCBUSY` | 12 | 12 | `ADCBUSY`: adcBusy | - |
+| `adcData` | `ADC` | 12 | 12 | `ADC`: adcDataBits | `ADC`: 2 captions |
+| `adcDigitalInputDisable` | `ADC6D`, `ADC7D`, `ADC8D`, `ADC9D`, `ADC10D`, `ADC16D`, `ADC17D`, `ADC18D`, `ADC19D`, `ADC20D`, `ADC21D`, `ADC22D`, `ADC23D`, `ADC24D`, `ADC25D`, `ADC26D`, `ADC27D` | 101 | 332 | `ADC6D`: adcDigitalInputDisable; `ADC7D`: adcDigitalInputDisable; +15 more | `ADC6D`: 5 captions, blank caption; `ADC7D`: 4 captions, blank caption; `ADC8D`: 3 captions, blank caption; ... |
+| `adcen` | `ADC0EN` | 1 | 1 | `ADC0EN`: adcen | `ADC0EN`: blank caption |
+| `adcEnable` | `ENABLE` | 45 | 45 | `ENABLE`: adcEnable | - |
+| `adcFreerunMode` | `FREERUN` | 45 | 45 | `FREERUN`: adcFreerunMode | `FREERUN`: 2 captions |
+| `adcFreeRunningSelect` | `ADFR` | 7 | 7 | `ADFR`: adcFreeRunningSelect | - |
+| `adcHighSpeedMode` | `ADHSM` | 23 | 23 | `ADHSM`: adcHighSpeedMode | - |
+| `adcLowLatencyMode` | `LOWLAT` | 12 | 12 | `LOWLAT`: adcLowLatencyMode | - |
+| `adcNoiseCancelerDisable` | `ADNCDIS` | 2 | 2 | `ADNCDIS`: adcNoiseCancellerDisable | - |
+| `adcPgaSampleDuration` | `ADCPGASAMPDUR` | 12 | 12 | `ADCPGASAMPDUR`: adcPgaSampleDuration | - |
+| `adcPolaritySelect` | `ADPSEL` | 1 | 1 | `ADPSEL`: adcPolaritySelect | - |
+| `adcResolution` | `RESSEL` | 33 | 33 | `RESSEL`: adcResolution | - |
+| `adcSingleShotEnableOnPscSSynchronisationSignals` | `ADSSEN` | 2 | 2 | `ADSSEN`: adcSingleShotEnableOnPscSSynchronisationSignals | - |
+| `adcStartConversion` | `ADASCR` | 2 | 2 | `ADASCR`: adcStartConversion | `ADASCR`: 2 captions |
+| `adcStartUpTime` | `ADSUT` | 7 | 7 | `ADSUT`: adcStartUpTime | - |
+| `adcTrackAndHoldTime` | `ADTHT` | 7 | 7 | `ADTHT`: adcTrackAndHoldTime | - |
+| `ainDigitalInputDisable` | `AIN0D`, `AIN1D` | 4 | 8 | `AIN0D`: aind; `AIN1D`: aind | `AIN0D`: 2 captions, blank caption; `AIN1D`: 2 captions, blank caption |
+| `ampgs` | `AMP0GS` | 2 | 2 | `AMP0GS`: ampgs | `AMP0GS`: blank caption |
+| `amplifierClockSourceSelection` | `AMP0TS`, `AMP1TS`, `AMP2TS` | 14 | 32 | `AMP0TS`: ampts; `AMP1TS`: ampts; +1 more | `AMP0TS`: blank caption; `AMP1TS`: blank caption; `AMP2TS`: blank caption |
+| `amplifierComparatorConnection` | `AMPCMP0`, `AMPCMP1`, `AMPCMP2` | 6 | 18 | `AMPCMP0`: amplifierComparatorConnection; `AMPCMP1`: amplifierComparatorConnection; +1 more | - |
+| `amplifierEnable` | `AMP0EN`, `AMP1EN`, `AMP2EN` | 14 | 32 | `AMP0EN`: ampen; `AMP1EN`: ampen; +1 more | `AMP0EN`: blank caption; `AMP1EN`: blank caption; `AMP2EN`: blank caption |
+| `amplifierGainSelection` | `AMP0G`, `AMP1G`, `AMP2G` | 14 | 32 | `AMP0G`: ampg; `AMP1G`: ampg; +1 more | `AMP0G`: blank caption; `AMP1G`: blank caption; `AMP2G`: blank caption |
+| `amplifierInputShunt` | `AMP0IS`, `AMP1IS`, `AMP2IS` | 14 | 32 | `AMP0IS`: ampis; `AMP1IS`: ampis; +1 more | `AMP0IS`: blank caption; `AMP1IS`: blank caption; `AMP2IS`: blank caption |
+| `ampNPinDigitalInputDisable` | `AMP0ND` | 12 | 12 | `AMP0ND`: ampnd | `AMP0ND`: blank caption |
+| `ampposd` | `AMP0POSD` | 1 | 1 | `AMP0POSD`: ampposd | `AMP0POSD`: blank caption |
+| `ampPPinDigitalInputDisable` | `AMP0PD`, `AMP2PD` | 13 | 19 | `AMP0PD`: amppd; `AMP2PD`: amppPinDigitalInputDisable | `AMP0PD`: blank caption |
+| `analogChannelAndGainSelection` | `MUX5`, `VADMUX` | 29 | 29 | `MUX5`: analogChannelAndGainSelectionBits; `VADMUX`: analogChannelAndGainSelectionBits | `MUX5`: 3 captions, blank caption; `VADMUX`: 2 captions |
 | `analogChannelChange` | `ACCH` | 7 | 7 | `ACCH`: analogChannelChange | - |
 | `analogChannelSelection` | `MUXNEG`, `MUXPOS` | 45 | 57 | `MUXNEG`: analogChannelSelectionBits; `MUXPOS`: analogChannelSelectionBits | - |
-| `analogReferencePinEnable` | `AREFEN` | 8 | 8 | `AREFEN`: analogReferencepinEnable | `AREFEN`: 2 captions |
-| `arefDigitalInputDisable` | `AREFD` | 7 | 7 | `AREFD`: aREFDigitalInputDisable | - |
+| `analogReferencePinEnable` | `AREFEN` | 8 | 8 | `AREFEN`: analogReferencePinEnable | `AREFEN`: 2 captions |
+| `arefDigitalInputDisable` | `AREFD` | 7 | 7 | `AREFD`: arefDigitalInputDisable | - |
 | `automaticSamplingDelayVariation` | `ASDV` | 33 | 33 | `ASDV`: automaticSamplingDelayVariation | - |
-| `avddSupplyVoltageOk` | `AVDDOK` | 7 | 7 | `AVDDOK`: aVDDSupplyVoltageOK | - |
+| `avddSupplyVoltageOk` | `AVDDOK` | 7 | 7 | `AVDDOK`: avddSupplyVoltageOk | - |
 | `bipolarInputMode` | `BIN` | 17 | 17 | `BIN`: bipolarInputMode | - |
 | `boostRegulatorStatus` | `BVRON` | 1 | 1 | `BVRON`: boostRegulatorStatusBit | - |
-| `cadacDataReadOutBusy` | `CADACRB` | 1 | 1 | `CADACRB`: cADACDataReadOutBusy | - |
-| `cadcAccumulatedCurrentInterruptEnable` | `CADACIE` | 1 | 1 | `CADACIE`: cADCAccumulatedCurrentInterruptEnable | - |
-| `cadcAccumulatedCurrentInterruptFlag` | `CADACIF` | 1 | 1 | `CADACIF`: cADCAccumulatedCurrentInterruptFlag | - |
-| `cadcChopperModeSelect` | `ADCMS` | 1 | 1 | `ADCMS`: cADCChopperModeSelect | - |
-| `cadcDiagnosticsChannelSelect` | `CADDSEL` | 1 | 1 | `CADDSEL`: cADCDiagnosticsChannelSelect | - |
-| `cadcEnable` | `CADEN` | 1 | 1 | `CADEN`: cADCEnable | - |
-| `cadcGain` | `CADG` | 1 | 1 | `CADG`: cADCGain | - |
-| `cadcInstantaneousConversionPolarityStatus` | `CADICPS` | 1 | 1 | `CADICPS`: cADCInstantaneousConversionPolarityStatus | - |
-| `cadcInstantaneousCurrentInterruptEnable` | `CADICIE` | 1 | 1 | `CADICIE`: cADCInstantaneousCurrentInterruptEnable | - |
-| `cadcInstantaneousCurrentInterruptFlag` | `CADICIF` | 1 | 1 | `CADICIF`: cADCInstantaneousCurrentInterruptFlag | - |
-| `cadcPinDiagnosticsMode` | `CADPDM` | 1 | 1 | `CADPDM`: cADCPinDiagnosticsMode | - |
-| `cadcRegularCurrentComparatorMode` | `CADRCM` | 1 | 1 | `CADRCM`: cADCRegularCurrentComparatorMode | - |
-| `cadcRegularCurrentCountThreshold` | `CADRCT` | 1 | 1 | `CADRCT`: cADCRegularCurrentCountThreshold | - |
-| `cadcRegulatorCurrentInterruptEnable` | `CADRCIE` | 1 | 1 | `CADRCIE`: cADCRegulatorCurrentInterruptEnable | - |
-| `cadcRegulatorCurrentInterruptFlag` | `CADRCIF` | 1 | 1 | `CADRCIF`: cADCRegulatorCurrentInterruptFlag | - |
-| `cadicDataReadOutBusy` | `CADICRB` | 1 | 1 | `CADICRB`: cADICDataReadOutBusy | - |
-| `clockPreScaler` | `PRESC` | 45 | 45 | `PRESC`: clockPrescaler | `PRESC`: 2 captions |
+| `cadacDataReadOutBusy` | `CADACRB` | 1 | 1 | `CADACRB`: cadacDataReadOutBusy | - |
+| `cadcAccumulatedCurrentInterruptEnable` | `CADACIE` | 1 | 1 | `CADACIE`: cAdcAccumulatedCurrentInterruptEnable | - |
+| `cadcAccumulatedCurrentInterruptFlag` | `CADACIF` | 1 | 1 | `CADACIF`: cAdcAccumulatedCurrentInterruptFlag | - |
+| `cadcChopperModeSelect` | `ADCMS` | 1 | 1 | `ADCMS`: cAdcChopperModeSelect | - |
+| `cadcDiagnosticsChannelSelect` | `CADDSEL` | 1 | 1 | `CADDSEL`: cAdcDiagnosticsChannelSelect | - |
+| `cadcEnable` | `CADEN` | 1 | 1 | `CADEN`: cAdcEnable | - |
+| `cadcGain` | `CADG` | 1 | 1 | `CADG`: cAdcGain | - |
+| `cadcInstantaneousConversionPolarityStatus` | `CADICPS` | 1 | 1 | `CADICPS`: cAdcInstantaneousConversionPolarityStatus | - |
+| `cadcInstantaneousCurrentInterruptEnable` | `CADICIE` | 1 | 1 | `CADICIE`: cAdcInstantaneousCurrentInterruptEnable | - |
+| `cadcInstantaneousCurrentInterruptFlag` | `CADICIF` | 1 | 1 | `CADICIF`: cAdcInstantaneousCurrentInterruptFlag | - |
+| `cadcPinDiagnosticsMode` | `CADPDM` | 1 | 1 | `CADPDM`: cAdcPinDiagnosticsMode | - |
+| `cadcRegularCurrentComparatorMode` | `CADRCM` | 1 | 1 | `CADRCM`: cAdcRegularCurrentComparatorMode | - |
+| `cadcRegularCurrentCountThreshold` | `CADRCT` | 1 | 1 | `CADRCT`: cAdcRegularCurrentCountThreshold | - |
+| `cadcRegulatorCurrentInterruptEnable` | `CADRCIE` | 1 | 1 | `CADRCIE`: cAdcRegulatorCurrentInterruptEnable | - |
+| `cadcRegulatorCurrentInterruptFlag` | `CADRCIF` | 1 | 1 | `CADRCIF`: cAdcRegulatorCurrentInterruptFlag | - |
+| `cadicDataReadOutBusy` | `CADICRB` | 1 | 1 | `CADICRB`: cadicDataReadOutBusy | - |
+| `clockPreScaler` | `PRESC` | 45 | 45 | `PRESC`: clockPreScaler | `PRESC`: 2 captions |
 | `currentSourceEnable` | `ISRCEN` | 6 | 6 | `ISRCEN`: currentSourceEnable | - |
-| `differentialMode` | `DIFF` | 12 | 12 | `DIFF`: differentialmode | - |
+| `differentialMode` | `DIFF` | 12 | 12 | `DIFF`: differentialMode | - |
 | `dutyCycle` | `DUTYCYC` | 33 | 33 | `DUTYCYC`: dutyCycle | - |
-| `enableGpioFunctionOfPe` | `GPIOEN` | 1 | 1 | `GPIOEN`: enableGPIOfunctionofPE | - |
+| `enableGpioFunctionOfPe` | `GPIOEN` | 1 | 1 | `GPIOEN`: enableGpioFunctionOfPe | - |
 | `gain` | `GAIN` | 12 | 12 | `GAIN`: gain | - |
 | `gainSelect` | `GSEL` | 8 | 8 | `GSEL`: gainSelect | `GSEL`: 2 captions |
 | `initialDelaySelection` | `INITDLY` | 33 | 33 | `INITDLY`: initialDelaySelection | - |
 | `inputPolarityMode` | `IPR` | 9 | 9 | `IPR`: inputPolarityMode | - |
 | `instantaneousDecimationRatioSelect` | `ADIDES` | 1 | 1 | `ADIDES`: instantaneousDecimationRatioSelect | - |
 | `internalVoltageReferenceOutputEnable` | `XREFEN` | 2 | 2 | `XREFEN`: internalVoltageReferenceOutputEnable | - |
-| `leftAdjust` | `LEFTADJ` | 12 | 12 | `LEFTADJ`: leftadjust | - |
+| `leftAdjust` | `LEFTADJ` | 12 | 12 | `LEFTADJ`: leftAdjust | - |
 | `mode` | `MODE` | 12 | 12 | `MODE`: mode | - |
-| `pgaBiasSelect` | `PGABIASSEL` | 12 | 12 | `PGABIASSEL`: pGABIASSelect | - |
-| `pgaEnable` | `PGAEN` | 12 | 12 | `PGAEN`: pGAEnable | - |
-| `refen` | `REFEN` | 1 | 1 | `REFEN`: rEFEN | `REFEN`: blank caption |
-| `referenceSelection` | `REFS0`, `REFS2`, `REFSEL`, `TIMEBASE` | 58 | 70 | `REFS0`: referenceSelectionBit; `REFS2`: rEFS; +2 more | `REFS2`: 2 captions, blank caption; `REFSEL`: 2 captions |
-| `referenceVoltageOk` | `REFOK` | 7 | 7 | `REFOK`: referenceVoltageOK | - |
+| `pgaBiasSelect` | `PGABIASSEL` | 12 | 12 | `PGABIASSEL`: pgaBiasSelect | - |
+| `pgaEnable` | `PGAEN` | 12 | 12 | `PGAEN`: pgaEnable | - |
+| `refen` | `REFEN` | 1 | 1 | `REFEN`: refen | `REFEN`: blank caption |
+| `referenceSelection` | `REFS0`, `REFS2`, `REFSEL`, `TIMEBASE` | 58 | 70 | `REFS0`: referenceSelectionBit; `REFS2`: refs; +2 more | `REFS2`: 2 captions, blank caption; `REFSEL`: 2 captions |
+| `referenceVoltageOk` | `REFOK` | 7 | 7 | `REFOK`: referenceVoltageOk | - |
 | `reserved` | `ADC11D`, `ADC12D`, `ADC13D`, `ADC14D`, `ADC15D`, `Res0` | 18 | 81 | `ADC11D`: reservedBits; `ADC12D`: reservedBits; +4 more | `ADC11D`: 2 captions, blank caption; `ADC12D`: 2 captions, blank caption; `ADC13D`: 2 captions, blank caption; ... |
 | `resultOverwrittenInterruptEnable` | `RESOVR` | 12 | 12 | `RESOVR`: resultOverwrittenInterruptEnable | - |
 | `resultReadyInterruptEnable` | `RESRDY` | 45 | 45 | `RESRDY`: resultReadyInterruptEnable | - |
-| `runStandbyMode` | `RUNSTBY`, `RUNSTDBY` | 45 | 45 | `RUNSTBY`: runstandbymode; `RUNSTDBY`: runstandbymode | - |
+| `runStandbyMode` | `RUNSTBY`, `RUNSTDBY` | 45 | 45 | `RUNSTBY`: runStandbyMode; `RUNSTDBY`: runStandbyMode | - |
 | `sampleCapacitanceSelection` | `SAMPCAP` | 33 | 33 | `SAMPCAP`: sampleCapacitanceSelection | - |
-| `sampleLength` | `SAMPLEN` | 33 | 33 | `SAMPLEN`: samplelenght | `SAMPLEN`: 2 captions |
+| `sampleLength` | `SAMPLEN` | 33 | 33 | `SAMPLEN`: sampleLenght | `SAMPLEN`: 2 captions |
 | `sampleOverwrittenInterruptEnable` | `SAMPOVR` | 12 | 12 | `SAMPOVR`: sampleOverwrittenInterruptEnable | - |
 | `sampleReadyInterruptEnable` | `SAMPRDY` | 12 | 12 | `SAMPRDY`: sampleReadyInterruptEnable | - |
 | `samplingClockSelect` | `CKSEL` | 1 | 1 | `CKSEL`: samplingClockSelect | - |
 | `samplingDelaySelection` | `SAMPDLY` | 33 | 33 | `SAMPDLY`: samplingDelaySelection | - |
-| `samplingTime` | `SAMPDUR` | 12 | 12 | `SAMPDUR`: samplingtime | - |
-| `startCommand` | `START` | 12 | 12 | `START`: startcommand | - |
+| `samplingTime` | `SAMPDUR` | 12 | 12 | `SAMPDUR`: samplingTime | - |
+| `startCommand` | `START` | 12 | 12 | `START`: startCommand | - |
 | `startConversionOperation` | `STCONV` | 33 | 33 | `STCONV`: startConversionOperation | - |
 | `startEventInputEnable` | `STARTEI` | 33 | 33 | `STARTEI`: startEventInputEnable | - |
 | `synchronizationBusy` | `SBSY` | 1 | 1 | `SBSY`: synchronizationBusy | - |
 | `synchronizationCommand` | `SCMD` | 1 | 1 | `SCMD`: synchronizationCommand | - |
 | `temporary` | `TEMP` | 45 | 45 | `TEMP`: temporary | - |
 | `triggerOverrunInterruptEnable` | `TRIGOVR` | 12 | 12 | `TRIGOVR`: triggerOverrunInterruptEnable | - |
-| `vadacDataReadOutBusy` | `VADACRB` | 1 | 1 | `VADACRB`: vADACDataReadOutBusy | - |
-| `vadcAccumulatedVoltageInterruptEnable` | `VADACIE` | 1 | 1 | `VADACIE`: vADCAccumulatedVoltageInterruptEnable | - |
-| `vadcAccumulatedVoltageInterruptFlag` | `VADACIF` | 1 | 1 | `VADACIF`: vADCAccumulatedVoltageInterruptFlag | - |
-| `vadcConversionCompleteInterruptEnable` | `VADCCIE` | 7 | 7 | `VADCCIE`: vADCConversionCompleteInterruptEnable | - |
-| `vadcConversionCompleteInterruptFlag` | `VADCCIF` | 7 | 7 | `VADCCIF`: vADCConversionCompleteInterruptFlag | - |
-| `vadcData` | `VADC` | 3 | 3 | `VADC`: vADCDatabits | - |
-| `vadcEnable` | `VADEN` | 8 | 8 | `VADEN`: vADCEnable | `VADEN`: 2 captions |
-| `vadcInstantaneousConversionPolarityStatus` | `VADICPS` | 1 | 1 | `VADICPS`: vADCInstantaneousConversionPolarityStatus | - |
-| `vadcPinDiagnosticsMode` | `VADPDM` | 1 | 1 | `VADPDM`: vADCPinDiagnosticsMode | - |
-| `vadcReferenceSelect` | `VADREFS` | 1 | 1 | `VADREFS`: vADCReferenceSelect | - |
-| `vadcStartConversion` | `VADSC` | 7 | 7 | `VADSC`: vADCSatrtConversion | - |
-| `vadicDataReadOutBusy` | `VADICRB` | 1 | 1 | `VADICRB`: vADICDataReadOutBusy | - |
-| `vdacInstantaneousVoltageInterruptEnable` | `VADICIE` | 1 | 1 | `VADICIE`: vDACInstantaneousVoltageInterruptEnable | - |
-| `vdacInstantaneousVoltageInterruptFlag` | `VADICIF` | 1 | 1 | `VADICIF`: vDACInstantaneousVoltageInterruptFlag | - |
-| `vden` | `VDEN` | 1 | 1 | `VDEN`: vDEN | `VDEN`: blank caption |
-| `vdpd` | `VDPD` | 1 | 1 | `VDPD`: vDPD | `VDPD`: blank caption |
-| `via` | `VIA` | 12 | 12 | `VIA`: vIA | - |
+| `vadacDataReadOutBusy` | `VADACRB` | 1 | 1 | `VADACRB`: vadacDataReadOutBusy | - |
+| `vadcAccumulatedVoltageInterruptEnable` | `VADACIE` | 1 | 1 | `VADACIE`: vAdcAccumulatedVoltageInterruptEnable | - |
+| `vadcAccumulatedVoltageInterruptFlag` | `VADACIF` | 1 | 1 | `VADACIF`: vAdcAccumulatedVoltageInterruptFlag | - |
+| `vadcConversionCompleteInterruptEnable` | `VADCCIE` | 7 | 7 | `VADCCIE`: vadcConversionCompleteInterruptEnable | - |
+| `vadcConversionCompleteInterruptFlag` | `VADCCIF` | 7 | 7 | `VADCCIF`: vadcConversionCompleteInterruptFlag | - |
+| `vadcData` | `VADC` | 3 | 3 | `VADC`: vadcDataBits | - |
+| `vadcEnable` | `VADEN` | 8 | 8 | `VADEN`: vadcEnable | `VADEN`: 2 captions |
+| `vadcInstantaneousConversionPolarityStatus` | `VADICPS` | 1 | 1 | `VADICPS`: vAdcInstantaneousConversionPolarityStatus | - |
+| `vadcPinDiagnosticsMode` | `VADPDM` | 1 | 1 | `VADPDM`: vAdcPinDiagnosticsMode | - |
+| `vadcReferenceSelect` | `VADREFS` | 1 | 1 | `VADREFS`: vAdcReferenceSelect | - |
+| `vadcStartConversion` | `VADSC` | 7 | 7 | `VADSC`: vadcSatrtConversion | - |
+| `vadicDataReadOutBusy` | `VADICRB` | 1 | 1 | `VADICRB`: vadicDataReadOutBusy | - |
+| `vdacInstantaneousVoltageInterruptEnable` | `VADICIE` | 1 | 1 | `VADICIE`: vDacInstantaneousVoltageInterruptEnable | - |
+| `vdacInstantaneousVoltageInterruptFlag` | `VADICIF` | 1 | 1 | `VADICIF`: vDacInstantaneousVoltageInterruptFlag | - |
+| `vden` | `VDEN` | 1 | 1 | `VDEN`: vden | `VDEN`: blank caption |
+| `vdpd` | `VDPD` | 1 | 1 | `VDPD`: vdpd | `VDPD`: blank caption |
+| `via` | `VIA` | 12 | 12 | `VIA`: via | - |
 | `windowComparatorInterruptEnable` | `WCMP` | 45 | 45 | `WCMP`: windowComparatorInterruptEnable | - |
 | `windowComparatorMode` | `WINCM` | 45 | 45 | `WINCM`: windowComparatorMode | - |
 | `windowModeSource` | `WINSRC` | 12 | 12 | `WINSRC`: windowModeSource | - |
@@ -262,31 +211,31 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 | --- | --- | ---: | ---: | --- | --- |
 | `analogComparatorInputCaptureEnable` | `ACIC0` | 6 | 6 | `ACIC0`: analogComparatorInputCaptureEnable | - |
 | `asynchronousTimerCounter` | `AS0` | 7 | 7 | `AS0`: asynchronousTimerCounter | `AS0`: 2 captions |
-| `clearTimerCounterOnCompareMatch` | `CTC1` | 7 | 7 | `CTC1`: clearTimerCounteronCompareMatch | `CTC1`: 2 captions |
-| `clearTimerOnCompareMatch` | `CTC0` | 2 | 2 | `CTC0`: clearTimeronCompareMatch | - |
-| `clockSelect` | `CS00`, `CS01`, `CS02` | 12 | 36 | `CS00`: clockSelectbit; `CS01`: clockSelectbit; +1 more | - |
-| `clockSelectBis` | `CS` | 7 | 7 | `CS`: clockSelectbis | - |
-| `comAShadow` | `COM1A0S`, `COM1A1S` | 6 | 12 | `COM1A0S`: cOMAShadowBit; `COM1A1S`: cOMAShadowBit | - |
-| `comBShadow` | `COM1B0S`, `COM1B1S` | 6 | 12 | `COM1B0S`: cOMBShadowBit; `COM1B1S`: cOMBShadowBit | - |
+| `clearTimerCounterOnCompareMatch` | `CTC1` | 7 | 7 | `CTC1`: clearTimerCounterOnCompareMatch | `CTC1`: 2 captions |
+| `clearTimerOnCompareMatch` | `CTC0` | 2 | 2 | `CTC0`: clearTimerOnCompareMatch | - |
+| `clockSelect` | `CS00`, `CS01`, `CS02` | 12 | 36 | `CS00`: clockSelectBit; `CS01`: clockSelectBit; +1 more | - |
+| `clockSelectBis` | `CS` | 7 | 7 | `CS`: clockSelectBis | - |
+| `comAShadow` | `COM1A0S`, `COM1A1S` | 6 | 12 | `COM1A0S`: comaShadowBit; `COM1A1S`: comaShadowBit | - |
+| `comBShadow` | `COM1B0S`, `COM1B1S` | 6 | 12 | `COM1B0S`: combShadowBit; `COM1B1S`: combShadowBit | - |
 | `comparatorAOutputMode` | `COM4A0S`, `COM4A1S` | 2 | 4 | `COM4A0S`: comparatorAOutputMode; `COM4A1S`: comparatorAOutputMode | - |
 | `comparatorBOutputMode` | `COM4B0S`, `COM4B1S` | 2 | 4 | `COM4B0S`: comparatorBOutputMode; `COM4B1S`: comparatorBOutputMode | - |
-| `comparatorDOutputMode` | `COM1D`, `COM4D` | 8 | 8 | `COM1D`: comparatorDoutputmode; `COM4D`: comparatorDOutputMode | - |
+| `comparatorDOutputMode` | `COM1D`, `COM4D` | 8 | 8 | `COM1D`: comparatorDOutputMode; `COM4D`: comparatorDOutputMode | - |
 | `compareMatchOutputModes` | `COM0` | 12 | 12 | `COM0`: compareMatchOutputModes | - |
-| `compareOutputMode` | `COM2` | 13 | 13 | `COM2`: compareOutputModebits | `COM2`: 2 captions |
-| `compareOutputModeA` | `COM3A`, `COM4A` | 31 | 47 | `COM3A`: compareOutputModeA,bits; `COM4A`: compareOutputModeA,bits | `COM3A`: 4 captions; `COM4A`: 4 captions |
-| `compareOutputModeB` | `COM3B`, `COM4B` | 31 | 47 | `COM3B`: compareOutputModeB,bits; `COM4B`: compareOutputModeB,bits | `COM3B`: 3 captions; `COM4B`: 3 captions |
-| `compareOutputModeC` | `COM1C`, `COM3C` | 31 | 57 | `COM1C`: compareOutputModeC,bits; `COM3C`: compareOutputModeC,bits | `COM1C`: 2 captions; `COM3C`: 2 captions |
-| `compareOutputModeForChannelA` | `COM5A` | 12 | 12 | `COM5A`: compareOutputModeforChannelA | `COM5A`: 2 captions |
-| `compareOutputModeForChannelB` | `COM5B` | 12 | 12 | `COM5B`: compareOutputModeforChannelB | `COM5B`: 2 captions |
-| `compareOutputModeForChannelC` | `COM4C`, `COM5C` | 12 | 24 | `COM4C`: compareOutputModeforChannelC; `COM5C`: compareOutputModeforChannelC | `COM4C`: 2 captions; `COM5C`: 2 captions |
+| `compareOutputMode` | `COM2` | 13 | 13 | `COM2`: compareOutputModeBits | `COM2`: 2 captions |
+| `compareOutputModeA` | `COM3A`, `COM4A` | 31 | 47 | `COM3A`: compareOutputModeABits; `COM4A`: compareOutputModeABits | `COM3A`: 4 captions; `COM4A`: 4 captions |
+| `compareOutputModeB` | `COM3B`, `COM4B` | 31 | 47 | `COM3B`: compareOutputModeBBits; `COM4B`: compareOutputModeBBits | `COM3B`: 3 captions; `COM4B`: 3 captions |
+| `compareOutputModeC` | `COM1C`, `COM3C` | 31 | 57 | `COM1C`: compareOutputModeCBits; `COM3C`: compareOutputModeCBits | `COM1C`: 2 captions; `COM3C`: 2 captions |
+| `compareOutputModeForChannelA` | `COM5A` | 12 | 12 | `COM5A`: compareOutputModeForChannelA | `COM5A`: 2 captions |
+| `compareOutputModeForChannelB` | `COM5B` | 12 | 12 | `COM5B`: compareOutputModeForChannelB | `COM5B`: 2 captions |
+| `compareOutputModeForChannelC` | `COM4C`, `COM5C` | 12 | 24 | `COM4C`: compareOutputModeForChannelC; `COM5C`: compareOutputModeForChannelC | `COM4C`: 2 captions; `COM5C`: 2 captions |
 | `deadTimePrescaler` | `DTPS1`, `DTPS4` | 8 | 8 | `DTPS1`: deadTimePrescaler; `DTPS4`: deadTimePrescalerBits | - |
-| `dth` | `DT1H` | 6 | 6 | `DT1H`: dTH | `DT1H`: blank caption |
-| `dtl` | `DT1L` | 6 | 6 | `DT1L`: dTL | `DT1L`: blank caption |
-| `dtps` | `DTPS` | 3 | 3 | `DTPS`: dTPS | `DTPS`: blank caption |
-| `dtvh` | `DTVH` | 3 | 3 | `DTVH`: dTVH | `DTVH`: blank caption |
-| `dtvl` | `DTVL` | 3 | 3 | `DTVL`: dTVL | `DTVL`: blank caption |
-| `enableExternalClockInputForAmr` | `EXCLKAMR` | 7 | 7 | `EXCLKAMR`: enableExternalClockInputforAMR | - |
-| `enhancedComparePwmMode` | `ENHC4` | 2 | 2 | `ENHC4`: enhancedComparePWMMode | - |
+| `dth` | `DT1H` | 6 | 6 | `DT1H`: dth | `DT1H`: blank caption |
+| `dtl` | `DT1L` | 6 | 6 | `DT1L`: dtl | `DT1L`: blank caption |
+| `dtps` | `DTPS` | 3 | 3 | `DTPS`: dtps | `DTPS`: blank caption |
+| `dtvh` | `DTVH` | 3 | 3 | `DTVH`: dtvh | `DTVH`: blank caption |
+| `dtvl` | `DTVL` | 3 | 3 | `DTVL`: dtvl | `DTVL`: blank caption |
+| `enableExternalClockInputForAmr` | `EXCLKAMR` | 7 | 7 | `EXCLKAMR`: enableExternalClockInputForAmr | - |
+| `enhancedComparePwmMode` | `ENHC4` | 2 | 2 | `ENHC4`: enhancedComparePwmMode | - |
 | `faultProtectionAnalogComparatorEnable` | `FPAC1`, `FPAC4` | 8 | 8 | `FPAC1`: faultProtectionAnalogComparatorEnable; `FPAC4`: faultProtectionAnalogComparatorEnable | - |
 | `faultProtectionEdgeSelect` | `FPES1`, `FPES4` | 8 | 8 | `FPES1`: faultProtectionEdgeSelect; `FPES4`: faultProtectionEdgeSelect | - |
 | `faultProtectionInterruptEnable` | `FPIE1`, `FPIE4` | 8 | 8 | `FPIE1`: faultProtectionInterruptEnable; `FPIE4`: faultProtectionInterruptEnable | - |
@@ -294,72 +243,72 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 | `faultProtectionModeEnable` | `FPEN1`, `FPEN4` | 8 | 8 | `FPEN1`: faultProtectionModeEnable; `FPEN4`: faultProtectionModeEnable | - |
 | `faultProtectionNoiseCanceler` | `FPNC1`, `FPNC4` | 8 | 8 | `FPNC1`: faultProtectionNoiseCanceler; `FPNC4`: faultProtectionNoiseCanceler | - |
 | `forceOutputCompare` | `FOC0`, `FOC2` | 14 | 25 | `FOC0`: forceOutputCompare; `FOC2`: forceOutputCompare | - |
-| `forceOutputCompareA` | `FOC3A` | 31 | 31 | `FOC3A`: forceOutputCompareA | `FOC3A`: 2 captions |
-| `forceOutputCompareB` | `FOC3B` | 31 | 31 | `FOC3B`: forceOutputCompareB | `FOC3B`: 2 captions |
+| `forceOutputCompareA` | `FOC3A` | 31 | 31 | `FOC3A`: forceOutputCompareForChannelA | `FOC3A`: 2 captions |
+| `forceOutputCompareB` | `FOC3B` | 31 | 31 | `FOC3B`: forceOutputCompareForChannelB | `FOC3B`: 2 captions |
 | `forceOutputCompareC` | `FOC1C`, `FOC3C` | 31 | 57 | `FOC1C`: forceOutputCompareC; `FOC3C`: forceOutputCompareC | `FOC1C`: 2 captions; `FOC3C`: 2 captions |
-| `forceOutputCompareForChannelA` | `FOC4A`, `FOC5A` | 16 | 28 | `FOC4A`: forceOutputCompareforChannelA; `FOC5A`: forceOutputCompareforChannelA | `FOC4A`: 3 captions; `FOC5A`: 2 captions |
-| `forceOutputCompareForChannelB` | `FOC4B`, `FOC5B` | 16 | 28 | `FOC4B`: forceOutputCompareforChannelB; `FOC5B`: forceOutputCompareforChannelB | `FOC4B`: 3 captions; `FOC5B`: 2 captions |
-| `forceOutputCompareForChannelC` | `FOC4C`, `FOC5C` | 12 | 24 | `FOC4C`: forceOutputCompareforChannelC; `FOC5C`: forceOutputCompareforChannelC | `FOC4C`: 2 captions; `FOC5C`: 2 captions |
+| `forceOutputCompareForChannelA` | `FOC4A`, `FOC5A` | 16 | 28 | `FOC4A`: forceOutputCompareForChannelA; `FOC5A`: forceOutputCompareForChannelA | `FOC4A`: 3 captions; `FOC5A`: 2 captions |
+| `forceOutputCompareForChannelB` | `FOC4B`, `FOC5B` | 16 | 28 | `FOC4B`: forceOutputCompareForChannelB; `FOC5B`: forceOutputCompareForChannelB | `FOC4B`: 3 captions; `FOC5B`: 2 captions |
+| `forceOutputCompareForChannelC` | `FOC4C`, `FOC5C` | 12 | 24 | `FOC4C`: forceOutputCompareForChannelC; `FOC5C`: forceOutputCompareForChannelC | `FOC4C`: 2 captions; `FOC5C`: 2 captions |
 | `forceOutputCompareMatchD` | `FOC1D`, `FOC4D` | 8 | 8 | `FOC1D`: forceOutputCompareMatchD; `FOC4D`: forceOutputCompareMatchD | - |
 | `inputCaptureEdgeSelect` | `ICES0`, `ICES2`, `ICES3`, `ICES4`, `ICES5` | 52 | 78 | `ICES0`: inputCaptureEdgeSelect; `ICES2`: inputCaptureEdgeSelect; +3 more | `ICES3`: 2 captions; `ICES4`: 2 captions |
 | `inputCaptureFlag` | `ICF0` | 19 | 19 | `ICF0`: timerCounterInputCaptureFlag | `ICF0`: 4 captions |
 | `inputCaptureModeEnable` | `ICEN0`, `ICEN1` | 14 | 21 | `ICEN0`: inputCaptureModeEnable; `ICEN1`: inputCaptureModeEnable | - |
 | `inputCaptureNoiseCanceler` | `ICNC0`, `ICNC2`, `ICNC3`, `ICNC4`, `ICNC5` | 52 | 78 | `ICNC0`: inputCaptureNoiseCanceler; `ICNC2`: inputCaptureNoiseCanceler; +3 more | `ICNC0`: 2 captions; `ICNC3`: 3 captions; `ICNC4`: 3 captions; ... |
 | `inputCaptureSelect` | `ICS0`, `ICS1` | 7 | 14 | `ICS0`: inputCaptureSelect; `ICS1`: inputCaptureSelect | - |
-| `ocieDTimerCounterOutputCompareInterruptEnable` | `OCIE1D` | 6 | 6 | `OCIE1D`: oCIED:TimerCounterOutputCompareInterruptEnable | - |
-| `outputCompare` | `OCR0` | 1 | 1 | `OCR0`: outputComparebits | - |
+| `ocieDTimerCounterOutputCompareInterruptEnable` | `OCIE1D` | 6 | 6 | `OCIE1D`: ociedTimerCounterOutputCompareInterruptEnable | - |
+| `outputCompare` | `OCR0` | 1 | 1 | `OCR0`: outputCompareBits | - |
 | `outputCompareFlag` | `OCF0`, `OCF2` | 14 | 25 | `OCF0`: outputCompareFlag; `OCF2`: outputCompareFlag | - |
 | `outputCompareFlagC` | `OCF1C`, `OCF3C` | 31 | 57 | `OCF1C`: outputCompareFlagC; `OCF3C`: outputCompareFlagC | `OCF1C`: 3 captions; `OCF3C`: 2 captions |
 | `outputCompareFlagD` | `OCF4D` | 2 | 2 | `OCF4D`: outputCompareFlagD | - |
-| `outputCompareOverrideEnable` | `OC1OE`, `OC4OE` | 8 | 8 | `OC1OE`: ouputCompareOverrideEnableBits; `OC4OE`: outputCompareOverrideEnablebit | - |
+| `outputCompareOverrideEnable` | `OC1OE`, `OC4OE` | 8 | 8 | `OC1OE`: ouputCompareOverrideEnableBits; `OC4OE`: outputCompareOverrideEnableBit | - |
 | `outputCompareRegisterAUpdateBusy` | `OCR0AUB` | 2 | 2 | `OCR0AUB`: outputCompareRegisterAUpdateBusy | - |
-| `outputCompareRegisterBusy` | `OCR0UB` | 5 | 5 | `OCR0UB`: outputCompareregisterBusy | - |
+| `outputCompareRegisterBusy` | `OCR0UB` | 5 | 5 | `OCR0UB`: outputCompareRegisterBusy | - |
 | `outputCompareRegisterUpdateBusy` | `OCR2UB` | 45 | 45 | `OCR2UB`: outputCompareRegisterUpdateBusy | - |
 | `overflowInterruptEnable` | `TOIE` | 2 | 2 | `TOIE`: overflowInterruptEnable | - |
-| `pckEnable` | `PCKE` | 1 | 1 | `PCKE`: pCKEnable | - |
-| `pllEnable` | `PLLE` | 1 | 1 | `PLLE`: pLLEnable | - |
-| `pllLockDetector` | `PLOCK` | 1 | 1 | `PLOCK`: pLLLockDetector | - |
+| `pckEnable` | `PCKE` | 1 | 1 | `PCKE`: pckEnable | - |
+| `pllEnable` | `PLLE` | 1 | 1 | `PLLE`: pllEnable | - |
+| `pllLockDetector` | `PLOCK` | 1 | 1 | `PLOCK`: pllLockDetector | - |
 | `prescalerReset` | `PSR` | 10 | 10 | `PSR`: prescalerReset | `PSR`: 3 captions |
-| `prescalerResetTcTcTc` | `PSR321` | 5 | 5 | `PSR321`: prescalerReset,TC,TC,TC | - |
+| `prescalerResetTcTcTc` | `PSR321` | 5 | 5 | `PSR321`: prescalerResetTCTCTC | - |
 | `prescalerResetTimerCounter` | `PSR0`, `PSR2`, `PSR4` | 62 | 62 | `PSR0`: prescalerResetTimerCounter; `PSR2`: prescalerResetTimerCounter; +1 more | `PSR0`: 4 captions |
-| `prescalerResetTimerCounterAndTimerCounter` | `PSR10`, `PSR310` | 56 | 56 | `PSR10`: prescalerResetTimerCounterandTimerCounter; `PSR310`: prescalerResetTimerCounterandTimerCounter | `PSR10`: 3 captions |
+| `prescalerResetTimerCounterAndTimerCounter` | `PSR10`, `PSR310` | 56 | 56 | `PSR10`: prescalerResetTimerCounterAndTimerCounter; `PSR310`: prescalerResetTimerCounterAndTimerCounter | `PSR10`: 3 captions |
 | `pulseWidthModulatorDEnable` | `PWM1D`, `PWM4D` | 8 | 8 | `PWM1D`: pulseWidthModulatorDEnable; `PWM4D`: pulseWidthModulatorDEnable | - |
 | `pulseWidthModulatorEnable` | `PWM1`, `PWM1A`, `PWM1B` | 11 | 21 | `PWM1`: pulseWidthModulatorEnable; `PWM1A`: pulseWidthModulatorEnable; +1 more | `PWM1A`: 2 captions; `PWM1B`: 2 captions |
-| `pwma` | `PWM4A` | 2 | 2 | `PWM4A`: pWMA | `PWM4A`: blank caption |
-| `pwmb` | `PWM4B` | 2 | 2 | `PWM4B`: pWMB | `PWM4B`: blank caption |
-| `pwmInversionMode` | `PWM1X`, `PWM4X` | 8 | 8 | `PWM1X`: pWMInversionMode; `PWM4X`: pWMInversionMode | - |
+| `pwma` | `PWM4A` | 2 | 2 | `PWM4A`: pwma | `PWM4A`: blank caption |
+| `pwmb` | `PWM4B` | 2 | 2 | `PWM4B`: pwmb | `PWM4B`: blank caption |
+| `pwmInversionMode` | `PWM1X`, `PWM4X` | 8 | 8 | `PWM1X`: pwmInversionMode; `PWM4X`: pwmInversionMode | - |
 | `registerUpdateLock` | `TLOCK4` | 2 | 2 | `TLOCK4`: registerUpdateLock | - |
-| `remapBitForPinPart` | `REMAP` | 2 | 2 | `REMAP`: remapBitforpinpartonly | - |
+| `remapBitForPinPart` | `REMAP` | 2 | 2 | `REMAP`: remapBitForPinPartOnly | - |
 | `reserved` | `Res` | 6 | 6 | `Res`: reservedBit | - |
-| `tcrUbTimerCounterControlRegisterUpdateBusy` | `TCR2UB` | 45 | 45 | `TCR2UB`: tCRUB:TimerCounterControlRegisterUpdateBusy | `TCR2UB`: 2 captions |
-| `timerCounter` | `TC4`, `TCNT0`, `TCNT1`, `TCNT2`, `TCNT3` | 19 | 45 | `TC4`: timerCounterbits; `TCNT0`: timerCounterbits; +3 more | `TCNT0`: 4 captions; `TCNT1`: 4 captions; `TCNT2`: 2 captions |
+| `tcrUbTimerCounterControlRegisterUpdateBusy` | `TCR2UB` | 45 | 45 | `TCR2UB`: tcrubTimerCounterControlRegisterUpdateBusy | `TCR2UB`: 2 captions |
+| `timerCounter` | `TC4`, `TCNT0`, `TCNT1`, `TCNT2`, `TCNT3` | 19 | 45 | `TC4`: timerCounterBits; `TCNT0`: timerCounterBits; +3 more | `TCNT0`: 4 captions; `TCNT1`: 4 captions; `TCNT2`: 2 captions |
 | `timerCounterControlRegisterAUpdateBusy` | `TCR0AUB` | 2 | 2 | `TCR0AUB`: timerCounterControlRegisterAUpdateBusy | - |
 | `timerCounterControlRegisterBUpdateBusy` | `TCR0BUB` | 2 | 2 | `TCR0BUB`: timerCounterControlRegisterBUpdateBusy | - |
 | `timerCounterControlRegisterUpdateBusy` | `TCR0UB` | 5 | 5 | `TCR0UB`: timerCounterControlRegisterUpdateBusy | - |
 | `timerCounterDeadTimeValue` | `DT4L` | 2 | 2 | `DT4L`: timerCounterDeadTimeValueBits | - |
-| `timerCounterInputCapture` | `ICR1`, `ICR3` | 15 | 17 | `ICR1`: timerCounterInputCapturebits; `ICR3`: timerCounterInputCapturebits | `ICR1`: 3 captions |
+| `timerCounterInputCapture` | `ICR1`, `ICR3` | 15 | 17 | `ICR1`: timerCounterInputCaptureBits; `ICR3`: timerCounterInputCaptureBits | `ICR1`: 3 captions |
 | `timerCounterInputCaptureInterruptEnable` | `TICIE0`, `TICIE1`, `TICIE3` | 20 | 26 | `TICIE0`: timerCounterInputCaptureInterruptEnable; `TICIE1`: timerCounterInputCaptureInterruptEnable; +1 more | - |
-| `timerCounterNInputCaptureInterruptEnable` | `ICIE0` | 13 | 13 | `ICIE0`: timerCounternInputCaptureInterruptEnable | `ICIE0`: 2 captions |
-| `timerCounterOutputCompare` | `OCR2` | 1 | 1 | `OCR2`: timerCounterOutputComparebits | - |
-| `timerCounterOutputCompareA` | `OCR0A`, `OCR1A`, `OCR2A`, `OCR3A`, `OCR4A` | 22 | 45 | `OCR0A`: outputCompareAbits; `OCR1A`: timerCounterOutputCompareAbits; +3 more | `OCR0A`: 6 captions, blank caption; `OCR1A`: 6 captions; `OCR2A`: 3 captions |
-| `timerCounterOutputCompareB` | `OCR0B`, `OCR1B`, `OCR2B`, `OCR3B`, `OCR4B` | 19 | 40 | `OCR0B`: timerCounterOutputCompareBbits; `OCR1B`: timerCounterOutputCompareBbits; +3 more | `OCR0B`: 5 captions, blank caption; `OCR1B`: 6 captions |
-| `timerCounterOutputCompareC` | `OCR1C`, `OCR3C`, `OCR4C` | 2 | 4 | `OCR1C`: timerCounterOutputCompareCbits; `OCR3C`: timerCounterOutputCompareCbits; +1 more | - |
+| `timerCounterNInputCaptureInterruptEnable` | `ICIE0` | 13 | 13 | `ICIE0`: timerCounterNInputCaptureInterruptEnable | `ICIE0`: 2 captions |
+| `timerCounterOutputCompare` | `OCR2` | 1 | 1 | `OCR2`: timerCounterOutputCompareBits | - |
+| `timerCounterOutputCompareA` | `OCR0A`, `OCR1A`, `OCR2A`, `OCR3A`, `OCR4A` | 22 | 45 | `OCR0A`: outputCompareABits; `OCR1A`: timerCounterOutputCompareABits; +3 more | `OCR0A`: 6 captions, blank caption; `OCR1A`: 6 captions; `OCR2A`: 3 captions |
+| `timerCounterOutputCompareB` | `OCR0B`, `OCR1B`, `OCR2B`, `OCR3B`, `OCR4B` | 19 | 40 | `OCR0B`: timerCounterOutputCompareBBits; `OCR1B`: timerCounterOutputCompareBBits; +3 more | `OCR0B`: 5 captions, blank caption; `OCR1B`: 6 captions |
+| `timerCounterOutputCompareC` | `OCR1C`, `OCR3C`, `OCR4C` | 2 | 4 | `OCR1C`: timerCounterOutputCompareCBits; `OCR3C`: timerCounterOutputCompareCBits; +1 more | - |
 | `timerCounterOutputCompareCMatchFlag` | `OCF4C`, `OCF5C` | 12 | 24 | `OCF4C`: timerCounterOutputCompareCMatchFlag; `OCF5C`: timerCounterOutputCompareCMatchFlag | `OCF4C`: 2 captions; `OCF5C`: 2 captions |
 | `timerCounterOutputCompareCMatchInterruptEnable` | `OCIE1C`, `OCIE3C`, `OCIE4C`, `OCIE5C` | 31 | 81 | `OCIE1C`: timerCounterOutputCompareCMatchInterruptEnable; `OCIE3C`: timerCounterOutputCompareCMatchInterruptEnable; +2 more | `OCIE1C`: 3 captions; `OCIE3C`: 3 captions |
-| `timerCounterOutputCompareD` | `OCR4D` | 1 | 1 | `OCR4D`: timerCounterOutputCompareDbits | - |
+| `timerCounterOutputCompareD` | `OCR4D` | 1 | 1 | `OCR4D`: timerCounterOutputCompareDBits | - |
 | `timerCounterOutputCompareDMatchInterruptEnable` | `OCIE4D` | 2 | 2 | `OCIE4D`: timerCounterOutputCompareDMatchInterruptEnable | - |
 | `timerCounterOutputCompareFlagD` | `OCF1D` | 6 | 6 | `OCF1D`: timerCounterOutputCompareFlagD | - |
-| `timerCounterOutputCompareMatchInterrupt` | `OCIE0` | 12 | 12 | `OCIE0`: timerCounterOutputCompareMatchInterruptregister | - |
+| `timerCounterOutputCompareMatchInterrupt` | `OCIE0` | 12 | 12 | `OCIE0`: timerCounterOutputCompareMatchInterruptRegister | - |
 | `timerCounterOutputCompareMatchInterruptEnable` | `OCIE2` | 13 | 13 | `OCIE2`: timerCounterOutputCompareMatchInterruptEnable | `OCIE2`: blank caption |
-| `timerCounterOutputCompareUPinEnableForChannelA` | `OC1AU` | 2 | 2 | `OC1AU`: timerCounterOutputCompareUpinEnableforChannelA | - |
-| `timerCounterOutputCompareUPinEnableForChannelB` | `OC1BU` | 2 | 2 | `OC1BU`: timerCounterOutputCompareUpinEnableforChannelB | - |
-| `timerCounterOutputCompareVPinEnableForChannelA` | `OC1AV` | 2 | 2 | `OC1AV`: timerCounterOutputCompareVpinEnableforChannelA | - |
-| `timerCounterOutputCompareVPinEnableForChannelB` | `OC1BV` | 2 | 2 | `OC1BV`: timerCounterOutputCompareVpinEnableforChannelB | - |
-| `timerCounterOutputCompareWPinEnableForChannelA` | `OC1AW` | 2 | 2 | `OC1AW`: timerCounterOutputCompareWpinEnableforChannelA | - |
-| `timerCounterOutputCompareWPinEnableForChannelB` | `OC1BW` | 2 | 2 | `OC1BW`: timerCounterOutputCompareWpinEnableforChannelB | - |
-| `timerCounterOutputCompareXPinEnableForChannelA` | `OC1AX` | 2 | 2 | `OC1AX`: timerCounterOutputCompareXpinEnableforChannelA | - |
-| `timerCounterOutputCompareXPinEnableForChannelB` | `OC1BX` | 2 | 2 | `OC1BX`: timerCounterOutputCompareXpinEnableforChannelB | - |
-| `timerCounterPrescalerReset` | `PSR1` | 13 | 13 | `PSR1`: timerCounterPrescalerreset | `PSR1`: 3 captions |
+| `timerCounterOutputCompareUPinEnableForChannelA` | `OC1AU` | 2 | 2 | `OC1AU`: timerCounterOutputCompareUPinEnableForChannelA | - |
+| `timerCounterOutputCompareUPinEnableForChannelB` | `OC1BU` | 2 | 2 | `OC1BU`: timerCounterOutputCompareUPinEnableForChannelB | - |
+| `timerCounterOutputCompareVPinEnableForChannelA` | `OC1AV` | 2 | 2 | `OC1AV`: timerCounterOutputCompareVPinEnableForChannelA | - |
+| `timerCounterOutputCompareVPinEnableForChannelB` | `OC1BV` | 2 | 2 | `OC1BV`: timerCounterOutputCompareVPinEnableForChannelB | - |
+| `timerCounterOutputCompareWPinEnableForChannelA` | `OC1AW` | 2 | 2 | `OC1AW`: timerCounterOutputCompareWPinEnableForChannelA | - |
+| `timerCounterOutputCompareWPinEnableForChannelB` | `OC1BW` | 2 | 2 | `OC1BW`: timerCounterOutputCompareWPinEnableForChannelB | - |
+| `timerCounterOutputCompareXPinEnableForChannelA` | `OC1AX` | 2 | 2 | `OC1AX`: timerCounterOutputCompareXPinEnableForChannelA | - |
+| `timerCounterOutputCompareXPinEnableForChannelB` | `OC1BX` | 2 | 2 | `OC1BX`: timerCounterOutputCompareXPinEnableForChannelB | - |
+| `timerCounterPrescalerReset` | `PSR1` | 13 | 13 | `PSR1`: timerCounterPrescalerReset | `PSR1`: 3 captions |
 | `timerCounterUpdateBusy` | `TCN0UB` | 7 | 7 | `TCN0UB`: timerCounterUpdateBusy | - |
 | `timerCounterWidth` | `TCW0`, `TCW1` | 14 | 21 | `TCW0`: timerCounterWidth; `TCW1`: timerCounterWidth | `TCW0`: 2 captions; `TCW1`: 2 captions |
 | `timerInputCaptureSelection` | `ICPSEL1` | 12 | 12 | `ICPSEL1`: timerInputCaptureSelectionBit | `ICPSEL1`: 2 captions |
@@ -374,20 +323,20 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 
 | Proposed variableName | Aliases | Chips | Instances | Samples | Notes |
 | --- | --- | ---: | ---: | --- | --- |
-| `autoBaudErrorInterruptEnable` | `ABEIE` | 45 | 45 | `ABEIE`: autobaudErrorInterruptEnable | - |
+| `autoBaudErrorInterruptEnable` | `ABEIE` | 45 | 45 | `ABEIE`: autoBaudErrorInterruptEnable | - |
 | `autoBaudWindow` | `ABW` | 20 | 20 | `ABW`: autoBaudWindow | - |
 | `breakDetectedFlag` | `BDF` | 45 | 45 | `BDF`: breakDetectedFlag | - |
 | `bufferOverflow` | `BUFOVF` | 45 | 45 | `BUFOVF`: bufferOverflow | - |
 | `characterSize` | `CHSIZE`, `UCSZ`, `UCSZ2` | 68 | 88 | `CHSIZE`: characterSize; `UCSZ`: characterSize; +1 more | `UCSZ`: 2 captions; `UCSZ2`: 2 captions |
 | `communicationMode` | `CMODE` | 45 | 45 | `CMODE`: communicationMode | - |
-| `ctsEnable` | `CTSEN` | 7 | 7 | `CTSEN`: cTSEnable | - |
+| `ctsEnable` | `CTSEN` | 7 | 7 | `CTSEN`: ctsEnable | - |
 | `dataRegisterEmptyFlag` | `DREIF` | 45 | 45 | `DREIF`: dataRegisterEmptyFlag | - |
 | `dataRegisterEmptyInterruptEnable` | `DREIE` | 45 | 45 | `DREIE`: dataRegisterEmptyInterruptEnable | - |
 | `debugRun` | `DBGRUN` | 45 | 45 | `DBGRUN`: debugRun | - |
 | `frameError` | `FERR` | 45 | 45 | `FERR`: frameError | - |
 | `inconsistentSyncFieldInterruptFlag` | `ISFIF` | 45 | 45 | `ISFIF`: inconsistentSyncFieldInterruptFlag | - |
-| `irDaEventInputEnable` | `IREI` | 45 | 45 | `IREI`: irDAEventInputEnable | - |
-| `loopBackModeEnable` | `LBME` | 45 | 45 | `LBME`: loopbackModeEnable | - |
+| `irDaEventInputEnable` | `IREI` | 45 | 45 | `IREI`: irdaEventInputEnable | - |
+| `loopBackModeEnable` | `LBME` | 45 | 45 | `LBME`: loopBackModeEnable | - |
 | `openDrainModeEnable` | `ODME` | 45 | 45 | `ODME`: openDrainModeEnable | - |
 | `parityError` | `PERR` | 45 | 45 | `PERR`: parityError | - |
 | `parityMode` | `PMODE` | 45 | 45 | `PMODE`: parityMode | - |
@@ -398,22 +347,22 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 | `receiverStartFrameInterruptEnable` | `RXSIE` | 53 | 53 | `RXSIE`: receiverStartFrameInterruptEnable | `RXSIE`: 4 captions |
 | `receiveStartInterrupt` | `RXSIF` | 45 | 45 | `RXSIF`: receiveStartInterrupt | - |
 | `registerSelect` | `URSEL`, `URSEL0`, `URSEL1` | 9 | 10 | `URSEL`: registerSelect; `URSEL0`: registerSelect; +1 more | - |
-| `rsModeInternalTransmitter` | `RS485` | 45 | 45 | `RS485`: rS8Modeinternaltransmitter | - |
-| `rtsEnable` | `RTSEN` | 7 | 7 | `RTSEN`: rTSEnable | - |
-| `rxData` | `DATA` | 45 | 45 | `DATA`: rXData | - |
-| `rxStart` | `RXS` | 8 | 8 | `RXS`: rXStart | `RXS`: 4 captions |
-| `spiHostModeClockPhase` | `UCPHA` | 45 | 45 | `UCPHA`: sPIHostMode,ClockPhase | - |
-| `spiHostModeDataOrder` | `UDORD` | 45 | 45 | `UDORD`: sPIHostMode,DataOrder | - |
+| `rsModeInternalTransmitter` | `RS485` | 45 | 45 | `RS485`: rsModeInternalTransmitter | - |
+| `rtsEnable` | `RTSEN` | 7 | 7 | `RTSEN`: rtsEnable | - |
+| `rxData` | `DATA` | 45 | 45 | `DATA`: rxData | - |
+| `rxStart` | `RXS` | 8 | 8 | `RXS`: rxStart | `RXS`: 4 captions |
+| `spiHostModeClockPhase` | `UCPHA` | 45 | 45 | `UCPHA`: spiHostModeClockPhase | - |
+| `spiHostModeDataOrder` | `UDORD` | 45 | 45 | `UDORD`: spiHostModeDataOrder | - |
 | `startFrameDetectionEnable` | `SFDE`, `SFDEN` | 53 | 53 | `SFDE`: startFrameDetectionEnable; `SFDEN`: startFrameDetectionEnable | `SFDE`: 2 captions |
 | `stopBitMode` | `SBMODE` | 45 | 45 | `SBMODE`: stopBitMode | - |
 | `transmitInterruptFlag` | `TXCIF` | 45 | 45 | `TXCIF`: transmitInterruptFlag | - |
-| `transmitPulseLength` | `TXPL` | 45 | 45 | `TXPL`: transmitpulselength | - |
-| `usartBaudRate` | `UBRR`, `UBRR0`, `UBRR1` | 14 | 18 | `UBRR`: uSARTBaudRateRegisterBits; `UBRR0`: uSARTBaudRatebits; +1 more | `UBRR`: 2 captions; `UBRR0`: 3 captions; `UBRR1`: 4 captions |
-| `usartIoData` | `UDR`, `UDR0`, `UDR1` | 10 | 12 | `UDR`: uSARTIOData; `UDR0`: uSARTIODatabits; +1 more | `UDR`: 2 captions |
-| `usartPinMapping` | `U0MAP` | 2 | 2 | `U0MAP`: uSARTPinMapping | - |
-| `usartRxStartFlag` | `RXS0`, `RXS1` | 4 | 7 | `RXS0`: uSARTRXStartFlag; `RXS1`: uSARTRXStartFlag | `RXS1`: 2 captions |
-| `usartRxStartFrameDetectionEnable` | `SFDE0`, `SFDE1` | 4 | 7 | `SFDE0`: uSARTRXStartFrameDetectionEnable; `SFDE1`: uSARTRXStartFrameDetectionEnable | `SFDE1`: 2 captions |
-| `usartRxStartInterruptEnable` | `RXSIE0`, `RXSIE1` | 4 | 7 | `RXSIE0`: uSARTRXStartInterruptEnable; `RXSIE1`: uSARTRXStartInterruptEnable | - |
+| `transmitPulseLength` | `TXPL` | 45 | 45 | `TXPL`: transmitPulseLength | - |
+| `usartBaudRate` | `UBRR`, `UBRR0`, `UBRR1` | 14 | 18 | `UBRR`: usartBaudRateRegisterBits; `UBRR0`: usartBaudRateBits; +1 more | `UBRR`: 2 captions; `UBRR0`: 3 captions; `UBRR1`: 4 captions |
+| `usartIoData` | `UDR`, `UDR0`, `UDR1` | 10 | 12 | `UDR`: usartIOData; `UDR0`: usartIODataBits; +1 more | `UDR`: 2 captions |
+| `usartPinMapping` | `U0MAP` | 2 | 2 | `U0MAP`: usartPinMapping | - |
+| `usartRxStartFlag` | `RXS0`, `RXS1` | 4 | 7 | `RXS0`: usartRxStartFlag; `RXS1`: usartRxStartFlag | `RXS1`: 2 captions |
+| `usartRxStartFrameDetectionEnable` | `SFDE0`, `SFDE1` | 4 | 7 | `SFDE0`: usartRxStartFrameDetectionEnable; `SFDE1`: usartRxStartFrameDetectionEnable | `SFDE1`: 2 captions |
+| `usartRxStartInterruptEnable` | `RXSIE0`, `RXSIE1` | 4 | 7 | `RXSIE0`: usartRxStartInterruptEnable; `RXSIE1`: usartRxStartInterruptEnable | - |
 | `waitForBreak` | `WFB` | 45 | 45 | `WFB`: waitForBreak | - |
 
 ## Cross-Peripheral Aliases
@@ -423,9 +372,4 @@ These aliases appeared under more than one peripheral family in the audit.
 - If every row for an alias resolves to the same `variableName`, one shared `general.json` entry is usually enough.
 - If an alias resolves to different names across peripherals, keep it out of `general.json` until you decide how to handle the conflict.
 
-### Registers
-
-| Alias | Peripherals | Proposed variableNames | Suggested action |
-| --- | --- | --- | --- |
-| `CTRLD` | `ADC`, `UART` | `controlD` | shared entry ok |
-| `SFIOR` | `ADC`, `Timer` | `specialFunctionIoRegister` | shared entry ok |
+No cross-peripheral aliases were found.
