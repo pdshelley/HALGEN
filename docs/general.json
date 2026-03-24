@@ -126,7 +126,8 @@
                 "TCCR2A",
                 "TCCR3A",
                 "TCCR4A",
-                "TCCR5A"
+                "TCCR5A",
+                "CTRLA"
             ],
             "variableName": "controlRegisterA"
         },
@@ -136,7 +137,8 @@
                 "UCSR0B",
                 "UCSR1B",
                 "UCSR2B",
-                "UCSR3B"
+                "UCSR3B",
+                "CTRLB"
             ],
             "variableName": "controlRegisterB"
         },
@@ -146,9 +148,19 @@
                 "UCSR0C",
                 "UCSR1C",
                 "UCSR2C",
-                "UCSR3C"
+                "UCSR3C",
+                "CTRLC"
             ],
             "variableName": "controlRegisterC"
+        },
+        {
+            "aliases": [
+                "UCSRD",
+                "UCSR0D",
+                "UCSR1D",
+                "UCSR2D"
+            ],
+            "variableName": "controlRegisterD"
         },
         {
             "aliases": [
@@ -156,9 +168,86 @@
                 "UBRR0",
                 "UBRR1",
                 "UBRR2",
-                "UBRR3"
+                "UBRR3",
+                "BAUD"
             ],
             "variableName": "baudRateRegister"
+        },
+        {
+            "aliases": [
+                "UBRR0H",
+                "UBRR1H",
+                "UBRRH"
+            ],
+            "variableName": "baudRateRegisterHigh"
+        },
+        {
+            "aliases": [
+                "UBRR0L",
+                "UBRR1L",
+                "UBRRL"
+            ],
+            "variableName": "baudRateRegisterHigh"
+        },
+        {
+            "aliases": [
+                "DBGCTRL"
+            ],
+            "variableName": "debugControl"
+        },
+        {
+            "aliases": [
+                "EVCTRL"
+            ],
+            "variableName": "eventControl"
+        },
+        {
+            "aliases": [
+                "RXPLCTRL"
+            ],
+            "variableName": "ircomReceiverPulseLengthControl"
+        },
+        {
+            "aliases": [
+                "TXPLCTRL"
+            ],
+            "variableName": "ircomTransmitterPulseLengthControl"
+        },
+        {
+            "aliases": [
+                "RXDATAH"
+            ],
+            "variableName": "receiveDataHigh"
+        },
+        {
+            "aliases": [
+                "RXDATAL"
+            ],
+            "variableName": "receiveDataLow"
+        },
+        {
+            "aliases": [
+                "REMAP"
+            ],
+            "variableName": "remapPortPins"
+        },
+        {
+            "aliases": [
+                "STATUS"
+            ],
+            "variableName": "status"
+        },
+        {
+            "aliases": [
+                "TXDATAH"
+            ],
+            "variableName": "transmitDataHigh"
+        },
+        {
+            "aliases": [
+                "TXDATAL"
+            ],
+            "variableName": "transmitDataLow"
         },
         {
             "aliases": [
@@ -263,13 +352,13 @@
             "aliases": [
                 "ADSCSRA"
             ],
-            "variableName": "synchronizationControlAndStatusRegisterA"
+            "variableName": "synchronizationControlRegisterA"
         },
         {
             "aliases": [
                 "ADSCSRB"
             ],
-            "variableName": "synchronizationControlAndStatusRegisterB"
+            "variableName": "synchronizationControlRegisterB"
         },
         {
             "aliases": [
@@ -277,7 +366,7 @@
                 "AMP1CSR",
                 "AMP2CSR"
             ],
-            "variableName": "amplifierControlAndStatusRegister"
+            "variableName": "amplifierControlRegister"
         },
         {
             "aliases": [
@@ -412,7 +501,7 @@
             "aliases": [
                 "VADCSR"
             ],
-            "variableName": "vControlAndStatusRegister"
+            "variableName": "vControlRegister"
         },
         {
             "aliases": [

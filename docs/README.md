@@ -13,7 +13,7 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 
 - Exported chips: 13
 - Skipped chips: 200
-- Register groups: 41 from 58 missing aliases
+- Register groups: 24 from 34 missing aliases
 - Bitfield groups: 259 from 388 missing aliases
 
 ## Registers
@@ -50,32 +50,6 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 | `timerCounterOutputCompareRegisterC` | `OCR1C`, `OCR4C`, `OCR5C` | 41 | 67 | `OCR1C`: timerCounterOutputCompareRegisterCBytes; `OCR4C`: timerCounterOutputCompareRegisterCBytes; +1 more | `OCR1C`: 3 captions; `OCR4C`: 3 captions; `OCR5C`: 2 captions |
 | `timerCounterOutputCompareRegisterD` | `OCR4D` | 2 | 2 | `OCR4D`: timerCounterOutputCompareRegisterD | - |
 | `timerCounterRegisterHigh` | `TC1H` | 6 | 6 | `TC1H`: timerCounterRegisterHigh | - |
-
-### UART
-
-- Groups: 17
-- Aliases: 24
-- Chips touched: 82
-
-| Proposed variableName | Aliases | Chips | Instances | Samples | Notes |
-| --- | --- | ---: | ---: | --- | --- |
-| `baudRate` | `BAUD` | 45 | 45 | `BAUD`: baudRate | - |
-| `controlA` | `CTRLA` | 45 | 45 | `CTRLA`: controlA | - |
-| `controlB` | `CTRLB` | 45 | 45 | `CTRLB`: controlB | - |
-| `controlC` | `CTRLC` | 45 | 45 | `CTRLC`: controlC | - |
-| `debugControl` | `DBGCTRL` | 45 | 45 | `DBGCTRL`: debugControl | - |
-| `eventControl` | `EVCTRL` | 45 | 45 | `EVCTRL`: eventControl | - |
-| `ircomReceiverPulseLengthControl` | `RXPLCTRL` | 45 | 45 | `RXPLCTRL`: ircomReceiverPulseLengthControl | - |
-| `ircomTransmitterPulseLengthControl` | `TXPLCTRL` | 45 | 45 | `TXPLCTRL`: ircomTransmitterPulseLengthControl | - |
-| `receiveDataHigh` | `RXDATAH` | 45 | 45 | `RXDATAH`: receiveDataHighByte | - |
-| `receiveDataLow` | `RXDATAL` | 45 | 45 | `RXDATAL`: receiveDataLowByte | - |
-| `remapPortPins` | `REMAP` | 2 | 2 | `REMAP`: remapPortPins | - |
-| `status` | `STATUS` | 45 | 45 | `STATUS`: status | - |
-| `transmitDataHigh` | `TXDATAH` | 45 | 45 | `TXDATAH`: transmitDataHighByte | - |
-| `transmitDataLow` | `TXDATAL` | 45 | 45 | `TXDATAL`: transmitDataLowByte | - |
-| `usartBaudRateRegisterHigh` | `UBRR0H`, `UBRR1H`, `UBRRH` | 19 | 25 | `UBRR0H`: usartBaudRateRegisterHighByte; `UBRR1H`: usartBaudRateRegisterHighByte; +1 more | `UBRRH`: 2 captions |
-| `usartBaudRateRegisterLow` | `UBRR0L`, `UBRR1L`, `UBRRL` | 19 | 25 | `UBRR0L`: usartBaudRateRegisterLowByte; `UBRR1L`: usartBaudRateRegisterLowByte; +1 more | `UBRRL`: 2 captions |
-| `usartControlAndStatusRegisterD` | `UCSR0D`, `UCSR1D`, `UCSR2D`, `UCSRD` | 18 | 24 | `UCSR0D`: usartControlAndStatusRegisterD; `UCSR1D`: usartControlAndStatusRegisterD; +2 more | - |
 
 ## Bitfields
 
