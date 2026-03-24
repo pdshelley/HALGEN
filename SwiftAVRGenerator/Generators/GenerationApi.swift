@@ -39,11 +39,33 @@ private struct FormattedGeneratedFile {
 }
 
 struct Logs: Codable {
+    let exportedChipCount: Int
+    let skippedChipCount: Int
     let chips: [ChipGenerationLog]
+
+    enum CodingKeys: String, CodingKey {
+        case exportedChipCount
+        case skippedChipCount
+        case chips
+    }
+
+    init(chips: [ChipGenerationLog]) {
+        self.chips = chips
+        self.exportedChipCount = chips.filter(\.exported).count
+        self.skippedChipCount = chips.count - exportedChipCount
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(exportedChipCount, forKey: .exportedChipCount)
+        try container.encode(skippedChipCount, forKey: .skippedChipCount)
+        try container.encode(chips, forKey: .chips)
+    }
 
     func saveToFile(toURL: URL) {
         do {
             let jsonString = try prettyPrintedJSONString()
+
             exportFile(toURL: toURL, fileName: "logs.json", fileContents: jsonString)
             print("Saved pretty-printed logs.json")
         } catch {
@@ -61,6 +83,8 @@ struct Logs: Codable {
 
         return """
         {
+          \"exportedChipCount\" : \(exportedChipCount),
+          \"skippedChipCount\" : \(skippedChipCount),
           \"chips\" : [\(chipsBody)  ]
         }
         """
@@ -68,6 +92,25 @@ struct Logs: Codable {
 }
 
 private extension ChipGenerationLog {
+    func prettyPrintedJSONString(indentation: String) throws -> String {
+        let peripheralLines = try peripherals.enumerated().map { index, peripheral in
+            let suffix = index == peripherals.index(before: peripherals.endIndex) ? "" : ","
+            return try peripheral.prettyPrintedJSONString(indentation: indentation + "    ") + suffix
+        }
+
+        let peripheralsBody = peripheralLines.isEmpty ? "" : "\n" + peripheralLines.joined(separator: "\n") + "\n" + indentation + "  "
+
+        return """
+        \(indentation){
+        \(indentation)  \"name\" : \(try jsonStringLiteral(name)),
+        \(indentation)  \"exported\" : \(exported ? "true" : "false"),
+        \(indentation)  \"peripherals\" : [\(peripheralsBody)]
+        \(indentation)}
+        """
+    }
+}
+
+private extension PeripheralGenerationLog {
     func prettyPrintedJSONString(indentation: String) throws -> String {
         let registerLines = try missingRegisters.enumerated().map { index, register in
             let suffix = index == missingRegisters.index(before: missingRegisters.endIndex) ? "" : ","
@@ -84,7 +127,6 @@ private extension ChipGenerationLog {
         return """
         \(indentation){
         \(indentation)  \"name\" : \(try jsonStringLiteral(name)),
-        \(indentation)  \"exported\" : \(exported ? "true" : "false"),
         \(indentation)  \"missingRegisters\" : [\(registersBody)],
         \(indentation)  \"missingBitfields\" : [\(bitfieldsBody)]
         \(indentation)}
@@ -122,7 +164,11 @@ private func jsonStringLiteral(_ value: String) throws -> String {
     let data = try JSONEncoder().encode(value)
 
     guard let encoded = String(data: data, encoding: .utf8) else {
-        throw NSError(domain: "GenerationApi", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not encode JSON string literal"])
+        throw NSError(
+            domain: "GenerationApi",
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "Could not encode JSON string literal"]
+        )
     }
 
     return encoded

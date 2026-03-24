@@ -16,7 +16,10 @@ struct GenerationPipeline {
         documentation.loadGeneral()
         documentation.load(chipName: device.devices.device.name)
         for generator in GeneratorRegistry.allGenerators where generator.supports(device: device) {
-            files.append(contentsOf: generator.generate(device: device, documentation: documentation))
+            let generatedFiles = documentation.withPeripheralContext(named: generator.logName) {
+                generator.generate(device: device, documentation: documentation)
+            }
+            files.append(contentsOf: generatedFiles)
         }
         return files
     }

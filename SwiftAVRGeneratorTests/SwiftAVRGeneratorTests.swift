@@ -50,6 +50,17 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertTrue(result.content.contains("_volatileRegisterWriteUInt8(0x2A, newValue)"))
     }
 
+    func testGetVariableNameRemovesDigitsFromSuggestions() {
+        XCTAssertEqual(
+            getVariableName(caption: "Timer/Counter1 Control Register A"),
+            "timerCounterControlRegisterA"
+        )
+        XCTAssertEqual(
+            getVariableName(caption: "ADC6 Digital input Disable"),
+            "adcDigitalInputDisable"
+        )
+    }
+
     func testChipDocumentationLoaderUsesGeneralAsBaseAndChipOverridesIt() throws {
         let docsDirectory = try makeTemporaryDirectory()
         try write(
@@ -607,12 +618,21 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertFalse(FileManager.default.fileExists(atPath: chipOutputDirectory.path))
 
         let logsData = try Data(contentsOf: logsURL)
+        let logsString = String(decoding: logsData, as: UTF8.self)
         let logs = try JSONDecoder().decode(Logs.self, from: logsData)
         let chipLog = try XCTUnwrap(logs.chips.first(where: { $0.name == "ATmega328P" }))
+        let uartLog = try XCTUnwrap(chipLog.peripherals.first(where: { $0.name == "UART" }))
+        let exportedCountRange = try XCTUnwrap(logsString.range(of: "\"exportedChipCount\""))
+        let skippedCountRange = try XCTUnwrap(logsString.range(of: "\"skippedChipCount\""))
+        let chipsRange = try XCTUnwrap(logsString.range(of: "\"chips\""))
 
+        XCTAssertEqual(logs.exportedChipCount, 0)
+        XCTAssertEqual(logs.skippedChipCount, 1)
+        XCTAssertLessThan(exportedCountRange.lowerBound, chipsRange.lowerBound)
+        XCTAssertLessThan(skippedCountRange.lowerBound, chipsRange.lowerBound)
         XCTAssertFalse(chipLog.exported)
-        XCTAssertTrue(chipLog.missingRegisters.contains(where: { $0.name == "UDR0" }))
-        XCTAssertTrue(chipLog.missingBitfields.contains(where: { $0.name == "RXC0" }))
+        XCTAssertTrue(uartLog.missingRegisters.contains(where: { $0.name == "UDR0" }))
+        XCTAssertTrue(uartLog.missingBitfields.contains(where: { $0.name == "RXC0" }))
     }
 
     private func repositoryRootURL() -> URL {

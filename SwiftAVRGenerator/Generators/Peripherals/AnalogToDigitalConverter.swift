@@ -11,6 +11,7 @@ import SwiftSyntaxBuilder
 
 struct ADCGenerator: PeripheralGenerator {
     let name = "AnalogToDigitalConverter"
+    let logName = "ADC"
     let subdirectory: String = "module"
     
     func supports(device: AVRToolsDeviceFile) -> Bool {

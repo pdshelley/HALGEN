@@ -7,6 +7,7 @@
 
 protocol PeripheralGenerator {
     var name: String { get }
+    var logName: String { get }
     var subdirectory: String { get }
     /// Determines whether this peripheral generator can generate code for the specified device.
     /// - Parameter device: The device file to check support for.
@@ -18,4 +19,10 @@ protocol PeripheralGenerator {
     ///   - documentation: The chip documentation loader containing device specifications.
     /// - Returns: An array of generated code files for the peripheral.
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile]
+}
+
+extension PeripheralGenerator {
+    var logName: String {
+        name
+    }
 }

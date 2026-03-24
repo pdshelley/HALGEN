@@ -93,9 +93,9 @@ Output/
 `-- logs.json
 ```
 
-`logs.json` records missing supplemental documentation for each chip. If a chip
-is missing required register or bitfield metadata, HALGEN skips exporting that
-chip and reports the missing items there.
+`logs.json` records missing supplemental documentation for each chip. It also
+includes top-level exported/skipped chip counts, and any missing items are
+grouped by peripheral so follow-up audit tooling can work directly from the log.
 
 `formatting-report.txt` captures diagnostics from the code formatter that runs on
 every generated file.
@@ -111,6 +111,36 @@ top of the raw ATDF input:
 
 This is the preferred way to improve generated output. Avoid hand-editing files
 under `Output/` unless you are only inspecting generated results.
+
+### Audit Missing `general.json` Entries
+
+Use `Scripts/audit_general_json.py` to regenerate the grouped audit report in
+`docs/README.md`.
+
+Preferred workflow after a full generation pass:
+
+```bash
+./generate.sh --all
+python3 Scripts/audit_general_json.py --logs Output/logs.json
+```
+
+What it does:
+
+- Uses `logs.json` as the source of aliases the generator actually reported as missing
+- Reads the per-peripheral grouping directly from `logs.json`
+- Cleans suggested `variableName` values and groups aliases within the same peripheral family
+- Writes the report to `docs/README.md`
+
+If you do not have a fresh `logs.json`, it can still fall back to a direct scan:
+
+```bash
+python3 Scripts/audit_general_json.py
+```
+
+No script edits or extra flags are needed for new peripherals when you use the
+logs-based workflow. The script reads whatever peripheral names are present in
+`logs.json`. If you use the direct-scan fallback, it groups entries by ATDF
+module name automatically.
 
 ## Repository Layout
 
@@ -138,6 +168,8 @@ HALGEN/
   peripheral generators.
 - `SwiftAVRGenerator/Documentation/` contains the supplemental doc models and
   loader.
+- `Scripts/audit_general_json.py` rebuilds the missing `general.json` audit
+  report.
 - `Scripts/generate_avr_tools_device_file.swift` helps regenerate the ATDF model
   layer when needed.
 
