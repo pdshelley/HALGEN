@@ -111,6 +111,67 @@
         },
         {
             "aliases": [
+                "DTPS"
+            ],
+            "variableName": "deadTimePrescalerRegister"
+        },
+        {
+            "aliases": [
+                "DT1A"
+            ],
+            "variableName": "deadTimeValueRegisterA"
+        },
+        {
+            "aliases": [
+                "DT1B"
+            ],
+            "variableName": "deadTimeValueRegisterB"
+        },
+        {
+            "aliases": [
+                "ETIFR"
+            ],
+            "variableName": "extendedInterruptFlagRegister"
+        },
+        {
+            "aliases": [
+                "ETIMSK"
+            ],
+            "variableName": "extendedInterruptMaskRegister"
+        },
+        {
+            "aliases": [
+                "ICR0"
+            ],
+            "variableName": "inputCaptureRegister"
+        },
+        {
+            "aliases": [
+                "OCR0",
+                "OCR1"
+            ],
+            "variableName": "outputCompareRegister"
+        },
+        {
+            "aliases": [
+                "OCR1D"
+            ],
+            "variableName": "outputCompareRegisterD"
+        },
+        {
+            "aliases": [
+                "OCR1AH"
+            ],
+            "variableName": "outputCompareRegisterAHigh"
+        },
+        {
+            "aliases": [
+                "OCR1AL"
+            ],
+            "variableName": "outputCompareRegisterALow"
+        },
+        {
+            "aliases": [
                 "UDR",
                 "UDR0",
                 "UDR1",

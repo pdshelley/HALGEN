@@ -13,28 +13,20 @@ This audit uses a supplied `logs.json` as the source of missing aliases, includi
 
 - Exported chips: 13
 - Skipped chips: 200
-- Register groups: 24 from 34 missing aliases
+- Register groups: 16 from 25 missing aliases
 - Bitfield groups: 259 from 388 missing aliases
 
 ## Registers
 
 ### Timer
 
-- Groups: 24
-- Aliases: 34
-- Chips touched: 68
+- Groups: 16
+- Aliases: 25
+- Chips touched: 61
 
 | Proposed variableName | Aliases | Chips | Instances | Samples | Notes |
 | --- | --- | ---: | ---: | --- | --- |
-| `deadTimePrescalerRegister` | `DTPS` | 3 | 3 | `DTPS`: deadTimePrescalerRegister | - |
-| `deadTimeValueB` | `DT1B` | 3 | 3 | `DT1B`: deadTimeValueB | - |
-| `deadTimeValueRegister` | `DT1A` | 3 | 3 | `DT1A`: deadTimeValueRegister | - |
-| `extendedTimerCounterInterruptFlagRegister` | `ETIFR` | 6 | 6 | `ETIFR`: extendedTimerCounterInterruptFlagRegister | - |
-| `extendedTimerCounterInterruptMaskRegister` | `ETIMSK` | 6 | 6 | `ETIMSK`: extendedTimerCounterInterruptMaskRegister | - |
-| `inputCaptureRegister` | `ICR0` | 6 | 6 | `ICR0`: inputCaptureRegisterBytes | - |
-| `outputCompareRegister` | `OCR0`, `OCR1D` | 18 | 18 | `OCR0`: outputCompareRegister; `OCR1D`: outputCompareRegister | `OCR0`: 3 captions |
-| `outputCompareRegisterAHigh` | `OCR1AH` | 1 | 1 | `OCR1AH`: outputCompareRegisterAHighByte | - |
-| `outputCompareRegisterALow` | `OCR1AL` | 1 | 1 | `OCR1AL`: outputCompareRegisterALowByte | - |
+| `outputCompareRegister` | `OCR1D` | 6 | 6 | `OCR1D`: outputCompareRegister | - |
 | `pllControlAndStatusRegister` | `PLLCSR` | 1 | 1 | `PLLCSR`: pllControlAndStatusRegister | - |
 | `timerCounter` | `TC4H` | 2 | 2 | `TC4H`: timerCounter | - |
 | `timerCounterControlRegister` | `TCCR0`, `TCCR1`, `TCCR2` | 21 | 35 | `TCCR0`: timerCounterControlRegister; `TCCR1`: timerCounterControlRegister; +1 more | `TCCR0`: 3 captions; `TCCR2`: 2 captions |
