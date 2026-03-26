@@ -1,7 +1,30 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <avr-tools-device-file xmlns:xalan="http://xml.apache.org/xalan" xmlns:NumHelper="NumHelper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
   <variants>
-    <variant tempmin="0" tempmax="0" speedmax="0" package="" ordercode="standard" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="0" tempmax="70" speedmax="8000000" package="TQFP44" ordercode="ATmega8515L-8AC" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="0" tempmax="70" speedmax="8000000" package="PDIP40" ordercode="ATmega8515L-8PC" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="0" tempmax="70" speedmax="8000000" package="PLCC44" ordercode="ATmega8515L-8JC" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="0" tempmax="70" speedmax="8000000" package="QFN44" ordercode="ATmega8515L-8MC" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="8000000" package="TQFP44" ordercode="ATmega8515L-8AI" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="8000000" package="PDIP40" ordercode="ATmega8515L-8PI" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="8000000" package="PLCC44" ordercode="ATmega8515L-8JI" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="8000000" package="QFN44" ordercode="ATmega8515L-8MI" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="8000000" package="TQFP44" ordercode="ATmega8515L-8AU" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="8000000" package="PDIP40" ordercode="ATmega8515L-8PU" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="8000000" package="PLCC44" ordercode="ATmega8515L-8JU" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="8000000" package="QFN44" ordercode="ATmega8515L-8MU" vccmin="2.7" vccmax="5.5"/>
+    <variant tempmin="0" tempmax="70" speedmax="16000000" package="TQFP44" ordercode="ATmega8515-16AC" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="0" tempmax="70" speedmax="16000000" package="PDIP40" ordercode="ATmega8515-16PC" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="0" tempmax="70" speedmax="16000000" package="PLCC44" ordercode="ATmega8515-16JC" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="0" tempmax="70" speedmax="16000000" package="QFN44" ordercode="ATmega8515-16MC" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="TQFP44" ordercode="ATmega8515-16AI" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="PDIP40" ordercode="ATmega8515-16PI" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="PLCC44" ordercode="ATmega8515-16JI" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="QFN44" ordercode="ATmega8515-16MI" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="TQFP44" ordercode="ATmega8515-16AU" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="PDIP40" ordercode="ATmega8515-16PU" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="PLCC44" ordercode="ATmega8515-16JU" vccmin="4.5" vccmax="5.5"/>
+    <variant tempmin="-40" tempmax="85" speedmax="16000000" package="QFN44" ordercode="ATmega8515-16MU" vccmin="4.5" vccmax="5.5"/>
   </variants>
   <devices>
     <device name="ATmega8515" architecture="AVR8" family="megaAVR">
@@ -404,12 +427,12 @@
       <register-group caption="USART" name="USART">
         <register caption="USART I/O Data Register" name="UDR" offset="0x2C" size="1" mask="0xFF"/>
         <register caption="USART Control and Status Register A" name="UCSRA" offset="0x2B" size="1">
-          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC"/>
-          <bitfield caption="USART Transmitt Complete" mask="0x40" name="TXC"/>
-          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE"/>
-          <bitfield caption="Framing Error" mask="0x10" name="FE"/>
-          <bitfield caption="Data overRun" mask="0x08" name="DOR"/>
-          <bitfield caption="Parity Error" mask="0x04" name="UPE"/>
+          <bitfield caption="USART Receive Complete" mask="0x80" name="RXC" rw="R"/>
+          <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC"/>
+          <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE" rw="R"/>
+          <bitfield caption="Framing Error" mask="0x10" name="FE" rw="R"/>
+          <bitfield caption="Data Overrun" mask="0x08" name="DOR" rw="R"/>
+          <bitfield caption="Parity Error" mask="0x04" name="UPE" rw="R"/>
           <bitfield caption="Double the USART transmission speed" mask="0x02" name="U2X"/>
           <bitfield caption="Multi-processor Communication Mode" mask="0x01" name="MPCM"/>
         </register>

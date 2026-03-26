@@ -6,3 +6,5 @@
 *.xcodeproj/project.xcworkspace/
 *.xcodeproj/xcshareddata/
 *.xcscmblueprint
+.build
+Output

@@ -70,7 +70,6 @@
               <signal group="P" function="default" pad="PC0" index="0"/>
               <signal group="P" function="default" pad="PC1" index="1"/>
               <signal group="P" function="default" pad="PC2" index="2"/>
-              <signal group="P" function="default" pad="PC3" index="3"/>
               <signal group="P" function="default" pad="PC4" index="4"/>
               <signal group="P" function="default" pad="PC5" index="5"/>
               <signal group="P" function="default" pad="PC6" index="6"/>
@@ -934,7 +933,7 @@
         <register caption="USART I/O Data Register" name="UDR1" offset="0xCE" size="1" mask="0xFF" ocd-rw="W"/>
         <register caption="USART Control and Status Register A" name="UCSR1A" offset="0xC8" size="1">
           <bitfield caption="USART Receive Complete" mask="0x80" name="RXC1"/>
-          <bitfield caption="USART Transmitt Complete" mask="0x40" name="TXC1"/>
+          <bitfield caption="USART Transmit Complete" mask="0x40" name="TXC1"/>
           <bitfield caption="USART Data Register Empty" mask="0x20" name="UDRE1"/>
           <bitfield caption="Framing Error" mask="0x10" name="FE1"/>
           <bitfield caption="Data overRun" mask="0x08" name="DOR1"/>

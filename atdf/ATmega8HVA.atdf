@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <avr-tools-device-file xmlns:xalan="http://xml.apache.org/xalan" xmlns:NumHelper="NumHelper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schema-version="0.3" xsi:noNamespaceSchemaLocation="../../schema/avr_tools_device_file.xsd">
   <variants>
-    <variant tempmin="0" tempmax="0" speedmax="0" package="" ordercode="standard" vccmin="1.8" vccmax="4.5"/>
+    <variant tempmin="-20" tempmax="85" speedmax="4000000" package="LGA36" ordercode="ATmega8HVA-4CKU" vccmin="1.8" vccmax="4.5"/>
+    <variant tempmin="-20" tempmax="85" speedmax="4000000" package="TSOP28" ordercode="ATmega8HVA-4TU" vccmin="1.8" vccmax="4.5"/>
   </variants>
   <devices>
     <device name="ATmega8HVA" architecture="AVR8" family="megaAVR">
@@ -136,7 +137,7 @@
         <interrupt index="9" name="TIMER1_COMPB" caption="Timer 1 Compare Match B"/>
         <interrupt index="10" name="TIMER1_OVF" caption="Timer 1 overflow"/>
         <interrupt index="11" name="TIMER0_IC" caption="Timer 0 Input Capture"/>
-        <interrupt index="12" name="TIMER0_COMPA" caption="Timer 0 Comapre Match A"/>
+        <interrupt index="12" name="TIMER0_COMPA" caption="Timer 0 Compare Match A"/>
         <interrupt index="13" name="TIMER0_COMPB" caption="Timer 0 Compare Match B"/>
         <interrupt index="14" name="TIMER0_OVF" caption="Timer 0 Overflow"/>
         <interrupt index="15" name="SPI_STC" caption="SPI Serial transfer complete"/>
@@ -490,7 +491,7 @@
           <bitfield caption="Short-circuit Protection Activated Interrupt Flag" mask="0x10" name="SCIF"/>
           <bitfield caption="Discharge Over-current Protection Activated Interrupt Flag" mask="0x08" name="DOCIF"/>
           <bitfield caption="Charge Over-current Protection Activated Interrupt Flag" mask="0x04" name="COCIF"/>
-          <bitfield caption="Disharge High-current Protection Activated Interrupt" mask="0x02" name="DHCIF"/>
+          <bitfield caption="Discharge High-current Protection Activated Interrupt" mask="0x02" name="DHCIF"/>
           <bitfield caption="Charge High-current Protection Activated Interrupt" mask="0x01" name="CHCIF"/>
         </register>
         <register caption="Battery Protection Interrupt Mask Register" name="BPIMSK" offset="0xF2" size="1">
@@ -597,7 +598,7 @@
         <register caption="CC-ADC Control and Status Register B" name="CADCSRB" offset="0xE5" size="1">
           <bitfield mask="0x40" name="CADACIE"/>
           <bitfield caption="Regular Current Interrupt Enable" mask="0x20" name="CADRCIE"/>
-          <bitfield caption="CAD Instantenous Current Interrupt Enable" mask="0x10" name="CADICIE"/>
+          <bitfield caption="CAD Instantaneous Current Interrupt Enable" mask="0x10" name="CADICIE"/>
           <bitfield caption="CC-ADC Accumulate Current Interrupt Flag" mask="0x04" name="CADACIF"/>
           <bitfield caption="CC-ADC Accumulate Current Interrupt Flag" mask="0x02" name="CADRCIF"/>
           <bitfield caption="CC-ADC Instantaneous Current Interrupt Flag" mask="0x01" name="CADICIF"/>

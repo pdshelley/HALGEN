@@ -2,11 +2,8 @@
 //  AVRToolsDeviceFile.swift
 //  SwiftAVRGenerator
 //
-//  Created by Paul Shelley on 7/2/23.
+//  Created by HALGEN on 03/12/2026.
 //
-
-import Foundation
-import XMLCoder
 
 struct AVRToolsDeviceFile: Codable {
     let variants: AVRVariants

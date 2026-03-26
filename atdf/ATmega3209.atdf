@@ -184,7 +184,7 @@
                              index="0"
                              pad="PA3"/>
                      <signal field="PORTMUX.CCLROUTEA.LUT0"
-                             function="CCL_ALT"
+                             function="CCL_ALT1"
                              group="LUT0_OUT"
                              index="0"
                              pad="PA6"/>
@@ -194,7 +194,7 @@
                              index="0"
                              pad="PC3"/>
                      <signal field="PORTMUX.CCLROUTEA.LUT1"
-                             function="CCL_ALT"
+                             function="CCL_ALT1"
                              group="LUT1_OUT"
                              index="0"
                              pad="PC6"/>
@@ -204,7 +204,7 @@
                              index="0"
                              pad="PD3"/>
                      <signal field="PORTMUX.CCLROUTEA.LUT2"
-                             function="CCL_ALT"
+                             function="CCL_ALT1"
                              group="LUT2_OUT"
                              index="1"
                              pad="PD6"/>
@@ -214,7 +214,7 @@
                              index="1"
                              pad="PF3"/>
                      <signal field="PORTMUX.CCLROUTEA.LUT3"
-                             function="CCL_ALT"
+                             function="CCL_ALT1"
                              group="LUT3_OUT"
                              index="1"
                              pad="PF6"/>
@@ -275,7 +275,7 @@
                              index="0"
                              pad="PA2"/>
                      <signal field="PORTMUX.EVSYSROUTEA.EVOUTA"
-                             function="EVSYS_ALT"
+                             function="EVSYS_ALT1"
                              group="EVOUT"
                              index="0"
                              pad="PA7"/>
@@ -290,7 +290,7 @@
                              index="2"
                              pad="PC2"/>
                      <signal field="PORTMUX.EVSYSROUTEA.EVOUTC"
-                             function="EVSYS_ALT"
+                             function="EVSYS_ALT1"
                              group="EVOUT"
                              index="2"
                              pad="PC7"/>
@@ -300,7 +300,7 @@
                              index="3"
                              pad="PD2"/>
                      <signal field="PORTMUX.EVSYSROUTEA.EVOUTD"
-                             function="EVSYS_ALT"
+                             function="EVSYS_ALT1"
                              group="EVOUT"
                              index="3"
                              pad="PD7"/>
@@ -507,19 +507,19 @@
                              group="SS"
                              pad="PA7"/>
                      <signal field="PORTMUX.TWISPIROUTEA.SPI0"
-                             function="SPI_ALT"
+                             function="SPI_ALT1"
                              group="MISO"
                              pad="PC1"/>
                      <signal field="PORTMUX.TWISPIROUTEA.SPI0"
-                             function="SPI_ALT"
+                             function="SPI_ALT1"
                              group="MOSI"
                              pad="PC0"/>
                      <signal field="PORTMUX.TWISPIROUTEA.SPI0"
-                             function="SPI_ALT"
+                             function="SPI_ALT1"
                              group="SCK"
                              pad="PC2"/>
                      <signal field="PORTMUX.TWISPIROUTEA.SPI0"
-                             function="SPI_ALT"
+                             function="SPI_ALT1"
                              group="SS"
                              pad="PC3"/>
                      <signal field="PORTMUX.TWISPIROUTEA.SPI0"
@@ -587,32 +587,32 @@
                              index="5"
                              pad="PA5"/>
                      <signal field="PORTMUX.TCAROUTEA.TCA0"
-                             function="TCA_ALT"
+                             function="TCA_ALT1"
                              group="WO"
                              index="0"
                              pad="PB0"/>
                      <signal field="PORTMUX.TCAROUTEA.TCA0"
-                             function="TCA_ALT"
+                             function="TCA_ALT1"
                              group="WO"
                              index="1"
                              pad="PB1"/>
                      <signal field="PORTMUX.TCAROUTEA.TCA0"
-                             function="TCA_ALT"
+                             function="TCA_ALT1"
                              group="WO"
                              index="2"
                              pad="PB2"/>
                      <signal field="PORTMUX.TCAROUTEA.TCA0"
-                             function="TCA_ALT"
+                             function="TCA_ALT1"
                              group="WO"
                              index="3"
                              pad="PB3"/>
                      <signal field="PORTMUX.TCAROUTEA.TCA0"
-                             function="TCA_ALT"
+                             function="TCA_ALT1"
                              group="WO"
                              index="4"
                              pad="PB4"/>
                      <signal field="PORTMUX.TCAROUTEA.TCA0"
-                             function="TCA_ALT"
+                             function="TCA_ALT1"
                              group="WO"
                              index="5"
                              pad="PB5"/>
@@ -742,7 +742,7 @@
                              index="0"
                              pad="PA2"/>
                      <signal field="PORTMUX.TCBROUTEA.TCB0"
-                             function="TCB0_ALT"
+                             function="TCB0_ALT1"
                              group="WO"
                              index="0"
                              pad="PF4"/>
@@ -760,7 +760,7 @@
                              index="0"
                              pad="PA3"/>
                      <signal field="PORTMUX.TCBROUTEA.TCB1"
-                             function="TCB1_ALT"
+                             function="TCB1_ALT1"
                              group="WO"
                              index="0"
                              pad="PF5"/>
@@ -778,7 +778,7 @@
                              index="0"
                              pad="PC0"/>
                      <signal field="PORTMUX.TCBROUTEA.TCB2"
-                             function="TCB2_ALT"
+                             function="TCB2_ALT1"
                              group="WO"
                              index="0"
                              pad="PB4"/>
@@ -796,7 +796,7 @@
                              index="0"
                              pad="PB5"/>
                      <signal field="PORTMUX.TCBROUTEA.TCB3"
-                             function="TCB3_ALT"
+                             function="TCB3_ALT1"
                              group="WO"
                              index="0"
                              pad="PC1"/>
@@ -819,11 +819,11 @@
                              group="SDA"
                              pad="PA2"/>
                      <signal field="PORTMUX.TWISPIROUTEA.TWI0"
-                             function="I2C_ALT"
+                             function="I2C_ALT1"
                              group="SCL"
                              pad="PC3"/>
                      <signal field="PORTMUX.TWISPIROUTEA.TWI0"
-                             function="I2C_ALT"
+                             function="I2C_ALT1"
                              group="SDA"
                              pad="PC2"/>
                      <signal field="PORTMUX.TWISPIROUTEA.TWI0"
@@ -861,19 +861,19 @@
                              group="XDIR"
                              pad="PA3"/>
                      <signal field="PORTMUX.USARTROUTEA.USART0"
-                             function="USART0_ALT"
+                             function="USART0_ALT1"
                              group="RXD"
                              pad="PA5"/>
                      <signal field="PORTMUX.USARTROUTEA.USART0"
-                             function="USART0_ALT"
+                             function="USART0_ALT1"
                              group="TXD"
                              pad="PA4"/>
                      <signal field="PORTMUX.USARTROUTEA.USART0"
-                             function="USART0_ALT"
+                             function="USART0_ALT1"
                              group="XCK"
                              pad="PA6"/>
                      <signal field="PORTMUX.USARTROUTEA.USART0"
-                             function="USART0_ALT"
+                             function="USART0_ALT1"
                              group="XDIR"
                              pad="PA7"/>
                   </signals>
@@ -901,19 +901,19 @@
                              group="XDIR"
                              pad="PC3"/>
                      <signal field="PORTMUX.USARTROUTEA.USART1"
-                             function="USART1_ALT"
+                             function="USART1_ALT1"
                              group="RXD"
                              pad="PC5"/>
                      <signal field="PORTMUX.USARTROUTEA.USART1"
-                             function="USART1_ALT"
+                             function="USART1_ALT1"
                              group="TXD"
                              pad="PC4"/>
                      <signal field="PORTMUX.USARTROUTEA.USART1"
-                             function="USART1_ALT"
+                             function="USART1_ALT1"
                              group="XCK"
                              pad="PC6"/>
                      <signal field="PORTMUX.USARTROUTEA.USART1"
-                             function="USART1_ALT"
+                             function="USART1_ALT1"
                              group="XDIR"
                              pad="PC7"/>
                   </signals>
@@ -941,15 +941,15 @@
                              group="XDIR"
                              pad="PF3"/>
                      <signal field="PORTMUX.USARTROUTEA.USART2"
-                             function="USART2_ALT"
+                             function="USART2_ALT1"
                              group="RXD"
                              pad="PF5"/>
                      <signal field="PORTMUX.USARTROUTEA.USART2"
-                             function="USART2_ALT"
+                             function="USART2_ALT1"
                              group="TXD"
                              pad="PF4"/>
                      <signal field="PORTMUX.USARTROUTEA.USART2"
-                             function="USART2_ALT"
+                             function="USART2_ALT1"
                              group="XCK"
                              pad="PF6"/>
                   </signals>
@@ -977,11 +977,11 @@
                              group="XDIR"
                              pad="PB3"/>
                      <signal field="PORTMUX.USARTROUTEA.USART3"
-                             function="USART3_ALT"
+                             function="USART3_ALT1"
                              group="RXD"
                              pad="PB5"/>
                      <signal field="PORTMUX.USARTROUTEA.USART3"
-                             function="USART3_ALT"
+                             function="USART3_ALT1"
                              group="TXD"
                              pad="PB4"/>
                   </signals>
@@ -1319,7 +1319,7 @@
                       offset="0x05"
                       rw="RW"
                       size="1">
-               <bitfield caption="Sample lenght" mask="0x1F" name="SAMPLEN" rw="RW"/>
+               <bitfield caption="Sample length" mask="0x1F" name="SAMPLEN" rw="RW"/>
             </register>
             <register caption="Positive mux input"
                       initval="0x00"
@@ -2083,7 +2083,7 @@
                       offset="0x02"
                       rw="RW"
                       size="1">
-               <bitfield caption="lock ebable" mask="0x01" name="LOCKEN" rw="RW"/>
+               <bitfield caption="Lock enable" mask="0x01" name="LOCKEN" rw="RW"/>
             </register>
             <register caption="MCLK Status"
                       name="MCLKSTATUS"
@@ -2159,9 +2159,13 @@
             </register>
          </register-group>
          <value-group caption="Clock select" name="CLKCTRL_CLKSEL">
-            <value caption="20MHz oscillator" name="OSC20M" value="0x00"/>
-            <value caption="32KHz oscillator" name="OSCULP32K" value="0x01"/>
-            <value caption="32.768kHz crystal oscillator" name="XOSC32K" value="0x02"/>
+            <value caption="16/20MHz internal oscillator" name="OSC20M" value="0x00"/>
+            <value caption="32.768kHz internal ultra low-power oscillator"
+                   name="OSCULP32K"
+                   value="0x01"/>
+            <value caption="32.768kHz external crystal oscillator"
+                   name="XOSC32K"
+                   value="0x02"/>
             <value caption="External clock" name="EXTCLK" value="0x03"/>
          </value-group>
          <value-group caption="Prescaler division select" name="CLKCTRL_PDIV">
@@ -4060,7 +4064,7 @@
             <register caption="Revision ID"
                       name="REVID"
                       offset="0x01"
-                      rw="RW"
+                      rw="R"
                       size="1"/>
             <register caption="External Break"
                       initval="0x00"

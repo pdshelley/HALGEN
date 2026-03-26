@@ -1,0 +1,773 @@
+{
+  "registers": [
+    {
+      "aliases": [
+        "UDR",
+        "UDR0",
+        "UDR1",
+        "UDR2",
+        "UDR3"
+      ],
+      "variableName": "dataRegister"
+    },
+    {
+      "aliases": [
+        "UCSRA",
+        "UCSR0A",
+        "UCSR1A",
+        "UCSR2A",
+        "UCSR3A"
+      ],
+      "variableName": "controlRegisterA"
+    },
+    {
+      "aliases": [
+        "UCSRB",
+        "UCSR0B",
+        "UCSR1B",
+        "UCSR2B",
+        "UCSR3B"
+      ],
+      "variableName": "controlRegisterB"
+    },
+    {
+      "aliases": [
+        "UCSRC",
+        "UCSR0C",
+        "UCSR1C",
+        "UCSR2C",
+        "UCSR3C"
+      ],
+      "variableName": "controlRegisterC"
+    },
+    {
+      "aliases": [
+        "UBRR",
+        "UBRR0",
+        "UBRR1",
+        "UBRR2",
+        "UBRR3"
+      ],
+      "variableName": "baudRateRegister"
+    },
+    {
+      "aliases": [
+        "PORTA",
+        "PORTB",
+        "PORTC",
+        "PORTD",
+        "PORTE",
+        "PORTF",
+        "PORTG",
+        "PORTH",
+        "PORTJ",
+        "PORTK",
+        "PORTL"
+      ],
+      "variableName": "dataRegister"
+    },
+    {
+      "aliases": [
+        "DDRA",
+        "DDRB",
+        "DDRC",
+        "DDRD",
+        "DDRE",
+        "DDRF",
+        "DDRG",
+        "DDRH",
+        "DDRJ",
+        "DDRK",
+        "DDRL"
+      ],
+      "variableName": "dataDirection"
+    },
+    {
+      "aliases": [
+        "PINA",
+        "PINB",
+        "PINC",
+        "PIND",
+        "PINE",
+        "PINF",
+        "PING",
+        "PINH",
+        "PINJ",
+        "PINK",
+        "PINL"
+      ],
+      "variableName": "inputAddress"
+    },
+    {
+      "aliases": [
+        "TCCR0A",
+        "TCCR1A",
+        "TCCR2A",
+        "TCCR3A",
+        "TCCR4A",
+        "TCCR5A"
+      ],
+      "variableName": "controlRegisterA"
+    },
+    {
+      "aliases": [
+        "TCCR0B",
+        "TCCR1B",
+        "TCCR2B",
+        "TCCR3B",
+        "TCCR4B",
+        "TCCR5B"
+      ],
+      "variableName": "controlRegisterB"
+    },
+    {
+      "aliases": [
+        "TCCR0C",
+        "TCCR1C",
+        "TCCR2C",
+        "TCCR3C",
+        "TCCR4C",
+        "TCCR5C"
+      ],
+      "variableName": "controlRegisterC"
+    },
+    {
+      "aliases": [
+        "TCNT0",
+        "TCNT1",
+        "TCNT2",
+        "TCNT3",
+        "TCNT4",
+        "TCNT5"
+      ],
+      "variableName": "count"
+    },
+    {
+      "aliases": [
+        "OCR0A",
+        "OCR1A",
+        "OCR2A",
+        "OCR3A",
+        "OCR4A",
+        "OCR5A"
+      ],
+      "variableName": "outputCompareRegisterA"
+    },
+    {
+      "aliases": [
+        "OCR0B",
+        "OCR1B",
+        "OCR2B",
+        "OCR3B",
+        "OCR4B",
+        "OCR5B"
+      ],
+      "variableName": "outputCompareRegisterB"
+    },
+    {
+      "aliases": [
+        "ICR1",
+        "ICR2",
+        "ICR3",
+        "ICR4",
+        "ICR5"
+      ],
+      "variableName": "inputCaptureRegister"
+    },
+    {
+      "aliases": [
+        "TIMSK0",
+        "TIMSK1",
+        "TIMSK2",
+        "TIMSK3",
+        "TIMSK4",
+        "TIMSK5"
+      ],
+      "variableName": "interruptMaskRegister"
+    },
+    {
+      "aliases": [
+        "TIFR0",
+        "TIFR1",
+        "TIFR2",
+        "TIFR3",
+        "TIFR4",
+        "TIFR5"
+      ],
+      "variableName": "interruptFlagRegister"
+    },
+    {
+      "aliases": [
+        "GTCCR"
+      ],
+      "variableName": "generalControlRegister"
+    },
+    {
+      "aliases": [
+        "ASSR"
+      ],
+      "variableName": "asynchronousStatusRegister"
+    },
+    {
+      "aliases": [
+        "ADMUX"
+      ],
+      "variableName": "multiplexerSelectionRegister"
+    },
+    {
+      "aliases": [
+        "ADC"
+      ],
+      "variableName": "dataRegister",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "ADCSR",
+        "ADCSRA"
+      ],
+      "variableName": "controlRegisterA"
+    },
+    {
+      "aliases": [
+        "ADCSRB"
+      ],
+      "variableName": "controlRegisterB"
+    },
+    {
+      "aliases": [
+        "DIDR",
+        "DIDR0",
+        "DIDR1",
+        "DIDR2",
+        "DIDR3"
+      ],
+      "variableName": "digitalInputDisableRegister"
+    }
+  ],
+  "bitfields": [
+    {
+      "aliases": [
+        "RXC",
+        "RXC0",
+        "RXC1",
+        "RXC2",
+        "RXC3"
+      ],
+      "variableName": "rxDataAvailable",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "TXC",
+        "TXC0",
+        "TXC1",
+        "TXC2",
+        "TXC3"
+      ],
+      "variableName": "txComplete",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "UDRE",
+        "UDRE0",
+        "UDRE1",
+        "UDRE2",
+        "UDRE3"
+      ],
+      "variableName": "dataRegisterEmpty",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "FE",
+        "FE0",
+        "FE1",
+        "FE2",
+        "FE3"
+      ],
+      "variableName": "frameError",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "DOR",
+        "DOR0",
+        "DOR1",
+        "DOR2",
+        "DOR3"
+      ],
+      "variableName": "dataOverrun",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "UPE",
+        "UPE0",
+        "UPE1",
+        "UPE2",
+        "UPE3"
+      ],
+      "variableName": "parityError",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "U2X",
+        "U2X0",
+        "U2X1",
+        "U2X2",
+        "U2X3"
+      ],
+      "variableName": "asynchronousDoubleSpeedMode",
+      "valueType": "UART.AsynchronousDoubleSpeedMode",
+      "defaultValue": ".off",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "MPCM",
+        "MPCM0",
+        "MPCM1",
+        "MPCM2",
+        "MPCM3"
+      ],
+      "variableName": "multiProcessorCommunication",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "RXCIE",
+        "RXCIE0",
+        "RXCIE1",
+        "RXCIE2",
+        "RXCIE3"
+      ],
+      "variableName": "rxCompleteInterruptEnable",
+      "valueType": "UART.RXCompleteInterruptEnable",
+      "defaultValue": ".off",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "TXCIE",
+        "TXCIE0",
+        "TXCIE1",
+        "TXCIE2",
+        "TXCIE3"
+      ],
+      "variableName": "txCompleteInterruptEnable",
+      "valueType": "UART.TXCompleteInterruptEnable",
+      "defaultValue": ".off",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "UDRIE",
+        "UDRIE0",
+        "UDRIE1",
+        "UDRIE2",
+        "UDRIE3"
+      ],
+      "variableName": "dataRegisterEmptyInterruptEnable",
+      "valueType": "UART.DRECompleteInterruptEnable",
+      "defaultValue": ".off",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "RXEN",
+        "RXEN0",
+        "RXEN1",
+        "RXEN2",
+        "RXEN3"
+      ],
+      "variableName": "receiverEnable",
+      "valueType": "UART.ReceiverEnable",
+      "defaultValue": ".off",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "TXEN",
+        "TXEN0",
+        "TXEN1",
+        "TXEN2",
+        "TXEN3"
+      ],
+      "variableName": "transmitterEnable",
+      "valueType": "UART.TransmitterEnable",
+      "defaultValue": ".off",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "UCSZ02",
+        "UCSZ12",
+        "UCSZ22",
+        "UCSZ32"
+      ],
+      "variableName": "numberOfDataBits",
+      "valueType": "UART.NumberOfDataBits",
+      "defaultValue": ".eight",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "UCSZ0",
+        "UCSZ1",
+        "UCSZ3"
+      ],
+      "variableName": "numberOfDataBits",
+      "valueType": "UART.NumberOfDataBits",
+      "defaultValue": ".eight",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "RXB8",
+        "RXB80",
+        "RXB81",
+        "RXB82",
+        "RXB83"
+      ],
+      "variableName": "receiveData8thBit",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "TXB8",
+        "TXB80",
+        "TXB81",
+        "TXB82",
+        "TXB83"
+      ],
+      "variableName": "transmitData8thBit",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "UMSEL",
+        "UMSEL0",
+        "UMSEL1",
+        "UMSEL2",
+        "UMSEL3"
+      ],
+      "variableName": "modeSelect",
+      "valueType": "UART.ModeSelect",
+      "defaultValue": ".asynchronous",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "UPM",
+        "UPM0",
+        "UPM1",
+        "UPM2",
+        "UPM3"
+      ],
+      "variableName": "parityMode",
+      "valueType": "UART.ParityMode",
+      "defaultValue": ".disabled",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "USBS",
+        "USBS0",
+        "USBS1",
+        "USBS2",
+        "USBS3"
+      ],
+      "variableName": "numberOfStopBits",
+      "valueType": "UART.NumberOfStopBits",
+      "defaultValue": ".one",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "UCPOL",
+        "UCPOL0",
+        "UCPOL1",
+        "UCPOL2",
+        "UCPOL3"
+      ],
+      "variableName": "clockPolarity",
+      "valueType": "UART.ClockPolarity",
+      "defaultValue": ".rising",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "CS0",
+        "CS1",
+        "CS2",
+        "CS3",
+        "CS4",
+        "CS5"
+      ],
+      "variableName": "prescaler",
+      "valueType": "Prescaling",
+      "defaultValue": ".stopped",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "OCIE0B",
+        "OCIE1B",
+        "OCIE2B",
+        "OCIE3B",
+        "OCIE4B",
+        "OCIE5B"
+      ],
+      "variableName": "outputCompareMatchBInterruptEnable",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "OCIE0A",
+        "OCIE1A",
+        "OCIE2A",
+        "OCIE3A",
+        "OCIE4A",
+        "OCIE5A"
+      ],
+      "variableName": "outputCompareMatchAInterruptEnable",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "TOIE0",
+        "TOIE1",
+        "TOIE2",
+        "TOIE3",
+        "TOIE4",
+        "TOIE5"
+      ],
+      "variableName": "overflowInterruptEnable",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "OCF0B",
+        "OCF1B",
+        "OCF2B",
+        "OCF3B",
+        "OCF4B",
+        "OCF5B"
+      ],
+      "variableName": "outputCompareFlagB",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "OCF0A",
+        "OCF1A",
+        "OCF2A",
+        "OCF3A",
+        "OCF4A",
+        "OCF5A"
+      ],
+      "variableName": "outputCompareFlagA",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "TOV0",
+        "TOV1",
+        "TOV2",
+        "TOV3",
+        "TOV4",
+        "TOV5"
+      ],
+      "variableName": "overflowFlag",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "TSM"
+      ],
+      "variableName": "timerSynchronizationMode",
+      "valueType": "Timer.TimerSynchronizationMode",
+      "defaultValue": ".disabled",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "PSRSYNC"
+      ],
+      "variableName": "prescalerResetSync",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "PSRASY"
+      ],
+      "variableName": "prescalerReset",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "ICIE1",
+        "ICIE2",
+        "ICIE3",
+        "ICIE4",
+        "ICIE5"
+      ],
+      "variableName": "inputCaptureInterruptEnable",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "ICF1",
+        "ICF2",
+        "ICF3",
+        "ICF4",
+        "ICF5"
+      ],
+      "variableName": "inputCaptureFlag",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "EXCLK"
+      ],
+      "variableName": "enableExternalClockInput",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "AS2"
+      ],
+      "variableName": "asynchronousTimerCounter",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "TCN2UB"
+      ],
+      "variableName": "updateBusy",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "OCR2AUB"
+      ],
+      "variableName": "outputCompareRegisterAUpdateBusy",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "OCR2BUB"
+      ],
+      "variableName": "outputCompareRegisterBUpdateBusy",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "TCR2AUB"
+      ],
+      "variableName": "controlRegisterAUpdateBusy",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "TCR2BUB"
+      ],
+      "variableName": "controlRegisterBUpdateBusy",
+      "valueType": "Bool",
+      "access": "R"
+    },
+    {
+      "aliases": [
+        "ADLAR"
+      ],
+      "variableName": "leftAdjust",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "ADEN"
+      ],
+      "variableName": "enabled",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "ADSC"
+      ],
+      "variableName": "converting",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "ADATE"
+      ],
+      "variableName": "autoTriggerEnabled",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "ADIF"
+      ],
+      "variableName": "interruptFlag",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "ADIE"
+      ],
+      "variableName": "interruptEnabled",
+      "valueType": "Bool",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "ADPS"
+      ],
+      "variableName": "prescaler",
+      "valueType": "AnalogPrescalerSelection",
+      "defaultValue": ".divide2",
+      "access": "R/W"
+    },
+    {
+      "aliases": [
+        "ACME"
+      ],
+      "variableName": "multiplexerEnabled",
+      "valueType": "Bool",
+      "access": "R/W"
+    }
+  ]
+}

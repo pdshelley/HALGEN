@@ -594,13 +594,13 @@
           <bitfield caption="Stuff Error General Flag" mask="0x08" name="SERG"/>
           <bitfield caption="CRC Error General Flag" mask="0x04" name="CERG"/>
           <bitfield caption="Form Error General Flag" mask="0x02" name="FERG"/>
-          <bitfield caption="Ackknowledgement Error General Flag" mask="0x01" name="AERG"/>
+          <bitfield caption="Acknowledgement Error General Flag" mask="0x01" name="AERG"/>
         </register>
         <register caption="CAN General Interrupt Enable Register" name="CANGIE" offset="0xDB" size="1">
           <bitfield caption="Enable all Interrupts" mask="0x80" name="ENIT"/>
           <bitfield caption="Enable Bus Off Interrupt" mask="0x40" name="ENBOFF"/>
           <bitfield caption="Enable Receive Interrupt" mask="0x20" name="ENRX"/>
-          <bitfield caption="Enable Transmitt Interrupt" mask="0x10" name="ENTX"/>
+          <bitfield caption="Enable Transmit Interrupt" mask="0x10" name="ENTX"/>
           <bitfield caption="Enable MOb Error Interrupt" mask="0x08" name="ENERR"/>
           <bitfield caption="Enable Burst Receive Interrupt" mask="0x04" name="ENBX"/>
           <bitfield caption="Enable General Error Interrupt" mask="0x02" name="ENERG"/>
@@ -662,7 +662,7 @@
           <bitfield caption="Stuff Error on MOb" mask="0x08" name="SERR"/>
           <bitfield caption="CRC Error on MOb" mask="0x04" name="CERR"/>
           <bitfield caption="Form Error on MOb" mask="0x02" name="FERR"/>
-          <bitfield caption="Ackknowledgement Error on MOb" mask="0x01" name="AERR"/>
+          <bitfield caption="Acknowledgement Error on MOb" mask="0x01" name="AERR"/>
         </register>
         <register caption="MOb Control and DLC Register" name="CANCDMOB" offset="0xEF" size="1">
           <bitfield caption="MOb Config bits" mask="0xC0" name="CONMOB"/>

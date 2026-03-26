@@ -1,0 +1,1190 @@
+{
+    "chip": "ATmega328P",
+    "datasheet": "ATmega328P Datasheet (DS40002061B)",
+    "registers": {
+        "UDR0": {
+            "initialValues": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            "documentation": [
+                "See ATMega328p Datasheet Section 36 Register Summary",
+                "The USART Transmit Data Buffer Register and USART Receive Data Buffer Registers share the same I/O address referred to as",
+                "USART Data Register or UDRn. The Transmit Data Buffer Register (TXB) will be the destination for data written to the UDRn",
+                "Register location. Reading the UDRn Register location will return the contents of the Receive Data Buffer Register (RXB).",
+                "",
+                "For 5-, 6-, or 7-bit characters the upper unused bits will be ignored by the Transmitter and set to zero by the Receiver.",
+                "",
+                "The transmit buffer can only be written when the UDREn Flag in the UCSRnA Register is set. Data written to UDRn when the",
+                "UDREn Flag is not set, will be ignored by the USART Transmitter. When data is written to the transmit buffer, and the",
+                "Transmitter is enabled, the Transmitter will load the data into the Transmit Shift Register when the Shift Register is empty.",
+                "Then the data will be serially transmitted on the TxDn pin.",
+                "",
+                "The receive buffer consists of a two level FIFO. The FIFO will change its state whenever the receive buffer is accessed. Due",
+                "to this behavior of the receive buffer, do not use Read-Modify-Write instructions (SBI and CBI) on this location. Be careful",
+                "when using bit test instructions (SBIC and SBIS), since these also will change the state of the FIFO."
+            ]
+        },
+        "UBRR0": {
+            "initialValuesL": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            "initialValuesH": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+            ],
+            "documentation": [
+                "```",
+                "--------------------------------------------------------------------------------",
+                "| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |",
+                "--------------------------------------------------------------------------------",
+                "|              |   -   |   -   |   -   |   -   |         UBRRn[12:8]           |",
+                "|              |                       UBRRn[7:0]                              |",
+                "--------------------------------------------------------------------------------",
+                "| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |",
+                "--------------------------------------------------------------------------------",
+                "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
+                "--------------------------------------------------------------------------------",
+                "```",
+                "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero",
+                "when UBRRnH is written.",
+                "",
+                "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the",
+                "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receive",
+                "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
+            ],
+            "documentationL": [
+                "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the",
+                "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver",
+                "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
+            ],
+            "documentationH": [
+                "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero",
+                "when UBRRnH is written.",
+                "",
+                "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the",
+                "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver",
+                "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
+            ]
+        },
+        "ADC": {
+            "overrideGeneratedDocumentation": true,
+            "documentation": [
+                "```",
+                "--------------------------------------------------------------------------------",
+                "| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |",
+                "--------------------------------------------------------------------------------",
+                "NORMAL",
+                "| (0x79)       |   -   |   -   |   -   |   -   |   -   |   -   | ADC9  | ADC8  |",
+                "| (0x78)       | ADC7  | ADC6  | ADC5  | ADC4  | ADC3  | ADC2  | ADC1  | ADC0  |",
+                "LEFT-ALIGNED",
+                "| (0x79)       | ADC9  | ADC8  | ADC7  | ADC6  | ADC5  | ADC4  | ADC3  | ADC2  |",
+                "| (0x78)       | ADC1  | ADC0  |   -   |   -   |   -   |   -   |   -   |   -   |",
+                "--------------------------------------------------------------------------------",
+                "| Read/Write   |   R   |   R   |   R   |   R   |   R   |   R   |   R   |   R   |",
+                "| Read/Write   |   R   |   R   |   R   |   R   |   R   |   R   |   R   |   R   |",
+                "--------------------------------------------------------------------------------",
+                "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
+                "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
+                "--------------------------------------------------------------------------------",
+                "```"
+            ],
+            "documentationL": [
+                "ADCL - ADC Data Register (low bits)",
+                "```",
+                "--------------------------------------------------------------------------------",
+                "| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |",
+                "--------------------------------------------------------------------------------",
+                "NORMAL",
+                "| (0x78)       | ADC7  | ADC6  | ADC5  | ADC4  | ADC3  | ADC2  | ADC1  | ADC0  |",
+                "LEFT-ALIGNED",
+                "| (0x78)       | ADC1  | ADC0  |   -   |   -   |   -   |   -   |   -   |   -   |",
+                "--------------------------------------------------------------------------------",
+                "| Read/Write   |   R   |   R   |   R   |   R   |   R   |   R   |   R   |   R   |",
+                "--------------------------------------------------------------------------------",
+                "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
+                "--------------------------------------------------------------------------------",
+                "```"
+            ],
+            "documentationH": [
+                "ADCH - ADC Data Register (high bits)",
+                "```",
+                "--------------------------------------------------------------------------------",
+                "| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |",
+                "--------------------------------------------------------------------------------",
+                "NORMAL",
+                "| (0x79)       |   -   |   -   |   -   |   -   |   -   |   -   | ADC9  | ADC8  |",
+                "LEFT-ALIGNED",
+                "| (0x79)       | ADC9  | ADC8  | ADC7  | ADC6  | ADC5  | ADC4  | ADC3  | ADC2  |",
+                "--------------------------------------------------------------------------------",
+                "| Read/Write   |   R   |   R   |   R   |   R   |   R   |   R   |   R   |   R   |",
+                "--------------------------------------------------------------------------------",
+                "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
+                "--------------------------------------------------------------------------------",
+                "```"
+            ]
+        },
+        "ADMUX": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "ADCSRB": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "DIDR0": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCCR0B": {
+            "initialValues": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+            ]
+        },
+        "OCR0B": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "OCR0A": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCNT0": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCCR0A": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TIMSK0": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TIFR0": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "GTCCR": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TIMSK1": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TIFR1": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCCR1A": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCCR1B": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCCR1C": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCNT1": {
+            "initialValuesL": ["0", "0", "0", "0", "0", "0", "0", "0"],
+            "initialValuesH": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "OCR1A": {
+            "initialValuesL": ["0", "0", "0", "0", "0", "0", "0", "0"],
+            "initialValuesH": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "OCR1B": {
+            "initialValuesL": ["0", "0", "0", "0", "0", "0", "0", "0"],
+            "initialValuesH": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "ICR1": {
+            "initialValuesL": ["0", "0", "0", "0", "0", "0", "0", "0"],
+            "initialValuesH": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TIMSK2": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TIFR2": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCCR2A": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCCR2B": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "TCNT2": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "OCR2B": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "OCR2A": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "ASSR": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "UCSR0A": {
+            "initialValues": ["0", "0", "1", "0", "0", "0", "0", "0"]
+        },
+        "UCSR0B": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "UCSR0C": {
+            "initialValues": ["0", "0", "0", "0", "0", "1", "1", "0"]
+        },
+        "ADCSRA": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        }
+    },
+    "bitfields": {
+        "FOC0A": {
+            "documentation": [
+                "The FOC0A bit is only active when the WGM bits specify a non-PWM mode.",
+                "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR0B is written ",
+                "when operating in PWM mode. When writing a logical one to the FOC0A bit, an immediate Compare Match is ",
+                "forced on the Waveform Generation unit. The OC0A output is changed according to its COM0A bits setting.",
+                "Note that the FOC0A bit is implemented as a strobe. Therefore it is the value present in the COM0A bits that",
+                "determines the effect of the forced compare.",
+                "A FOC0A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR0A as TOP.",
+                "The FOC0A bit is always read as zero."
+            ]
+        },
+        "FOC0B": {
+            "documentation": [
+                "The FOC0B bit is only active when the WGM bits specify a non-PWM mode.",
+                "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR0B is written ",
+                "when operating in PWM mode. When writing a logical one to the FOC0B bit, an immediate Compare Match is ",
+                "forced on the Waveform Generation unit. The OC0B output is changed according to its COM0B bits setting.",
+                "Note that the FOC0B bit is implemented as a strobe. Therefore it is the value present in the COM0B bits that",
+                "determines the effect of the forced compare.",
+                "A FOC0B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR0B as TOP.",
+                "The FOC0B bit is always read as zero."
+            ]
+        },
+        "CS0": {
+            "documentation": [
+                "The three Clock Select bits select the clock source to be used by the Timer/Counter."
+            ]
+        },
+        "COM0A": {
+            "documentation": [
+                "These bits control the Output Compare pin (OC0A) behavior. If one or both of the COM0A1:0 bits are set, the",
+                "OC0A output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+                "Direction Register (DDR) bit corresponding to the OC0A pin must be set in order to enable the output driver.",
+                "When OC0A is connected to the pin, the function of the COM0A1:0 bits depends on the WGM02:0 bit setting.",
+                "Table 1 shows the COM0A1:0 bit functionality when the WGM02:0 bits are set to a normal or CTC mode (non-PWM).",
+                "",
+                "Table 1. Compare Output Mode, non-PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM0A1| COM0A0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC0A disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Toggle OC0A on Compare Match                                     |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC0A on Compare Match                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC0A on Compare Match                                        |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "",
+                "Table 2 shows the COM0A1:0 bit functionality when the WGM01:0 bits are set to fast PWM mode.",
+                "",
+                "Table 2. Compare Output Mode, Fast PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM0A1| COM0A0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC0A disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | WGM02 = 0: Normal Port Operation, OC0A Disconnected.             |",
+                "|        |       |       | WGM02 = 1: Toggle OC0A on Compare Match.                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC0A on Compare Match, set OC0A at BOTTOM,                 |",
+                "|        |       |       | (non-inverting mode).                                            |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC0A on Compare Match, clear OC0A at BOTTOM,                 |",
+                "|        |       |       | (inverting mode).                                                |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR0A equals TOP and COM0A1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+                "",
+                "Table 3 shows the COM0A1:0 bit functionality when the WGM02:0 bits are set to phase correct PWM mode.",
+                "",
+                "Table 3. Compare Output Mode, Phase Correct PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM0A1| COM0A0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC0A disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | WGM02 = 0: Normal Port Operation, OC0A Disconnected.             |",
+                "|        |       |       | WGM02 = 1: Toggle OC0A on Compare Match.                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC0A on Compare Match when up-counting.                    |",
+                "|        |       |       | Set OC0A on Compare Match when down-counting.                    |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC0A on Compare Match when up-counting.                      |",
+                "|        |       |       | Clear OC0A on Compare Match when down-counting.                  |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR0A equals TOP and COM0A1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+            ]
+        },
+        "COM0B": {
+            "documentation": [
+                "See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.",
+                "These bits control the Output Compare pin (OC0B) behavior. If one or both of the COM0B1:0 bits are set, the",
+                "OC0B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+                "Direction Register (DDR) bit corresponding to the OC0B pin must be set in order to enable the output driver.",
+                "When OC0B is connected to the pin, the function of the COM0B1:0 bits depends on the WGM02:0 bit setting.",
+                "Table 18-5 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode (non-PWM)",
+                "",
+                "Table 18-5. Compare Output Mode, non-PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM0B1| COM0B0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC0B disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Toggle OC0B on Compare Match                                     |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC0B on Compare Match                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC0B on Compare Match                                        |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "",
+                "Table 18-6 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to fast PWM mode.",
+                "Table 18-6. Compare Output Mode, Fast PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM0B1| COM0B0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC0B disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Reserved                                                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC0B on Compare Match, set OC0B at BOTTOM,                 |",
+                "|        |       |       | (non-inverting mode).                                            |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC0B on Compare Match, clear OC0B at BOTTOM,                 |",
+                "|        |       |       | (inverting mode).                                                |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR0B equals TOP and COM0B1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+                "",
+                "Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
+                "Table 18-7. Compare Output Mode, Phase Correct PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM0B1| COM0B0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC0B disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Reserved                                                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC0B on Compare Match when up-counting.                    |",
+                "|        |       |       | Set OC0B on Compare Match when down-counting.                    |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC0B on Compare Match when up-counting.                      |",
+                "|        |       |       | Clear OC0B on Compare Match when down-counting.                  |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR0B equals TOP and COM0B1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" on page 157 for more details."
+            ]
+        },
+        "WGM02": {
+            "documentation": [
+                "Combined with the WGM02 bit found in the TCCR0B Register, these bits control the counting sequence of the",
+                "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
+                "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
+                "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes. (see \u201dModes of",
+                "Operation\u201d on page 155).",
+                "",
+                "Table 18-8. Waveform Generation Mode Bit Description",
+                "```",
+                "-----------------------------------------------------------------------------------------------------",
+                "|  Mode  | WGM02 | WGM01 | WGM00 | Mode of Operation  |  TOP  | Update of OCRx at | TOV Flag Set on |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    0   |   0   |   0   |   0   | Normal             | 0xFF  | Immediate         | MAX             |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    1   |   0   |   0   |   1   | PWM, Phase Correct | 0xFF  | TOP               | BOTTOM          |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    2   |   0   |   1   |   0   | CTC                | OCRA  | Immediate         | MAX             |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    3   |   0   |   1   |   1   | Fast PWM           | 0xFF  | BOTTOM            | MAX             |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    4   |   1   |   0   |   0   | Reserved           |   -   |         -         |        -        |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    5   |   1   |   0   |   1   | PWM, Phase Correct | OCRA  | TOP               | BOTTOM          |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    6   |   1   |   1   |   0   | Reserved           |   -   |         -         |        -        |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    7   |   1   |   1   |   1   | Fast PWM           | OCRA  | BOTTOM            | TOP             |",
+                "-----------------------------------------------------------------------------------------------------",
+                "```",
+                "Notes: 1. MAX = 0xFF",
+                "       2. BOTTOM = 0x00"
+            ],
+            "splitTarget": "WGM0"
+        },
+        "TSM": {
+            "documentation": [
+                "Writing the TSM bit to one activates the Timer/Counter Synchronization mode. In this mode, the value that is",
+                "written to the PSRASY and PSRSYNC bits is kept, hence keeping the corresponding prescaler reset signals",
+                "asserted. This ensures that the corresponding Timer/Counters are halted and can be configured to the same",
+                "value without the risk of one of them advancing during configuration. When the TSM bit is written to zero, the",
+                "PSRASY and PSRSYNC bits are cleared by hardware, and the Timer/Counters start counting simultaneously."
+            ]
+        },
+        "PSRASY": {
+            "documentation": [
+                "When this bit is one, the Timer/Counter2 prescaler will be reset. This bit is normally cleared immediately by",
+                "hardware. If the bit is written when Timer/Counter2 is operating in asynchronous mode, the bit will remain one",
+                "until the prescaler has been reset. The bit will not be cleared by hardware if the TSM bit is set. Refer to the",
+                "description of the \"Bit 7 - TSM: Timer/Counter Synchronization Mode\" for a description of the",
+                "Timer/Counter Synchronization mode."
+            ]
+        },
+        "PSRSYNC": {
+            "documentation": [
+                "When this bit is one, Timer/Counter1 and Timer/Counter0 prescaler will be Reset. This bit is normally cleared",
+                "immediately by hardware, except if the TSM bit is set. Note that Timer/Counter1 and Timer/Counter0 share the",
+                "same prescaler and a reset of this prescaler will affect both timers."
+            ]
+        },
+        "ICIE1": {
+            "documentation": [
+                "When this bit is written to one, and the I-flag in the Status Register is set (interrupts globally enabled), the",
+                "Timer/Counter1 Input Capture interrupt is enabled. The corresponding Interrupt Vector is executed",
+                "when the ICF1 Flag, located in TIFR1, is set."
+            ]
+        },
+        "ICF1": {
+            "documentation": [
+                "This flag is set when a capture event occurs on the ICP1 pin. When the Input Capture Register (ICR1) is set by",
+                "the WGM to be used as the TOP value, the ICF1 Flag is set when the counter reaches the TOP value.",
+                "ICF1 is automatically cleared when the Input Capture Interrupt Vector is executed. Alternatively, ICF1 can be",
+                "cleared by writing a logic one to its bit location."
+            ]
+        },
+        "COM1A": {
+            "documentation": [
+                "These bits control the Output Compare pin (OC1A) behavior. If one or both of the COM1A1:0 bits are set, the",
+                "OC1A output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+                "Direction Register (DDR) bit corresponding to the OC1A pin must be set in order to enable the output driver.",
+                "When OC1A is connected to the pin, the function of the COM1A1:0 bits depends on the WGM13:0 bit setting.",
+                "Table 1 shows the COM1A1:0 bit functionality when the WGM13:0 bits are set to a normal or CTC mode (non-PWM).",
+                "",
+                "Table 1. Compare Output Mode, non-PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM1A1| COM1A0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC1A disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Toggle OC1A on Compare Match                                     |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC1A on Compare Match                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC1A on Compare Match                                        |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "",
+                "Table 2 shows the COM1A1:0 bit functionality when the WGM13:0 bits are set to fast PWM mode.",
+                "",
+                "Table 2. Compare Output Mode, Fast PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM1A1| COM1A0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC1A disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | WGM13:0 = 15: Toggle OC1A on Compare Match.                      |",
+                "|        |       |       | For all other WGM1 settings, normal port operation,               |",
+                "|        |       |       | OC1A disconnected.                                               |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC1A on Compare Match, set OC1A at BOTTOM,                 |",
+                "|        |       |       | (non-inverting mode).                                            |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC1A on Compare Match, clear OC1A at BOTTOM,                 |",
+                "|        |       |       | (inverting mode).                                                |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR1A equals TOP and COM1A1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+                "",
+                "Table 3 shows the COM1A1:0 bit functionality when the WGM13:0 bits are set to phase correct or phase and frequency correct PWM mode.",
+                "",
+                "Table 3. Compare Output Mode, Phase Correct and Phase and Frequency Correct PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM1A1| COM1A0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC1A disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | WGM13:0 = 9 or 11: Toggle OC1A on Compare Match.                 |",
+                "|        |       |       | For all other WGM1 settings, normal port operation,               |",
+                "|        |       |       | OC1A disconnected.                                               |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC1A on Compare Match when up-counting.                    |",
+                "|        |       |       | Set OC1A on Compare Match when down-counting.                    |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC1A on Compare Match when up-counting.                      |",
+                "|        |       |       | Clear OC1A on Compare Match when down-counting.                  |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR1A equals TOP and COM1A1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+            ]
+        },
+        "COM1B": {
+            "documentation": [
+                "See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.",
+                "These bits control the Output Compare pin (OC1B) behavior. If one or both of the COM1B1:0 bits are set, the",
+                "OC1B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+                "Direction Register (DDR) bit corresponding to the OC1B pin must be set in order to enable the output driver.",
+                "When OC1B is connected to the pin, the function of the COM1B1:0 bits depends on the WGM13:0 bit setting.",
+                "Table 18-5 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode(non-PWM).",
+                "",
+                "Table 1. Compare Output Mode, non-PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM1B1| COM1B0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC1B disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Toggle OC1B on Compare Match                                     |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC1B on Compare Match                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC1B on Compare Match                                        |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "",
+                "Table 18-6 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to fast PWM mode.",
+                "Table 18-6. Compare Output Mode, Fast PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM1B1| COM1B0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC1B disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Reserved                                                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC1B on Compare Match, set OC1B at BOTTOM,                 |",
+                "|        |       |       | (non-inverting mode).                                            |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC1B on Compare Match, clear OC1B at BOTTOM,                 |",
+                "|        |       |       | (inverting mode).                                                |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR1B equals TOP and COM1B1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Phase Correct PWM Mode\" in datasheet for more details.",
+                "",
+                "Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
+                "Table 18-7. Compare Output Mode, Phase Correct PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM1B1| COM1B0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC1B disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Reserved                                                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC1B on Compare Match when up-counting.                    |",
+                "|        |       |       | Set OC1B on Compare Match when down-counting.                    |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC1B on Compare Match when up-counting.                      |",
+                "|        |       |       | Clear OC1B on Compare Match when down-counting.                  |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR1B equals TOP and COM1B1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" on page 157 for more details."
+            ]
+        },
+        "ICNC1": {
+            "documentation": [
+                "Setting this bit (to true) activates the Input Capture Noise Canceler. When the noise canceler is activated, the",
+                "input from the Input Capture pin (ICP1) is filtered. The filter function requires four successive equal valued",
+                "samples of the ICP1 pin for changing its output. The Input Capture is therefore delayed by four Oscillator cycles",
+                "when the noise canceler is enabled."
+            ]
+        },
+        "ICES1": {
+            "documentation": [
+                "This bit selects which edge on the Input Capture pin (ICP1) that is used to trigger a capture event. When the",
+                "ICES1 bit is written to zero, a falling (negative) edge is used as trigger, and when the ICES1 bit is written to one,",
+                "a rising (positive) edge will trigger the capture.",
+                "When a capture is triggered according to the ICES1 setting, the counter value is copied into the Input Capture",
+                "Register (ICR1). The event will also set the Input Capture Flag (ICF1), and this can be used to cause an Input",
+                "Capture Interrupt, if this interrupt is enabled.",
+                "When the ICR1 is used as TOP value (see description of the WGM bits located in the TCCR1A and the",
+                "TCCR1B Register), the ICP1 is disconnected and consequently the Input Capture function is disabled."
+            ]
+        },
+        "WGM1": {
+            "valueType": "Timer16Bit.WaveformGenerationMode",
+            "documentation": [
+                "Combined with the WGM13:2 bits found in the TCCR1B Register, these bits control the counting sequence of the",
+                "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
+                "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
+                "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see \u201dModes of",
+                "Operation\u201d on page 155).",
+                "",
+                "Table 18-8. Waveform Generation Mode Bit Description",
+                "```",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|  Mode  | WGM13 | WGM12 | WGM11 | WGM10 | Mode of Operation          |  TOP   | Update of OCR1x | TOV1 Flag |",
+                "|        |       | (CTC1)|       |       |                            |        |      at         |  Set on   |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    0   |   0   |   0   |   0   |   0   | Normal                     | 0xFFFF | Immediate       | MAX       |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    1   |   0   |   0   |   0   |   1   | PWM, Phase Correct, 8-bit  | 0x00FF | TOP             | BOTTOM    |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    2   |   0   |   0   |   1   |   0   | PWM, Phase Correct, 9-bit  | 0x01FF | TOP             | BOTTOM    |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    3   |   0   |   0   |   1   |   1   | PWM, Phase Correct, 10-bit | 0x03FF | TOP             | BOTTOM    |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    4   |   0   |   1   |   0   |   0   | CTC                        | OCR1A  | Immediate       | MAX       |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    5   |   0   |   1   |   0   |   1   | Fast PWM, 8-bit            | 0x00FF | BOTTOM          | TOP       |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    6   |   0   |   1   |   1   |   0   | Fast PWM, 9-bit            | 0x01FF | BOTTOM          | TOP       |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    7   |   0   |   1   |   1   |   1   | Fast PWM, 10-bit           | 0x03FF | BOTTOM          | TOP       |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    8   |   1   |   0   |   0   |   0   | PWM, Phase+Freq Correct    | ICR1   | BOTTOM          | BOTTOM    |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|    9   |   1   |   0   |   0   |   1   | PWM, Phase+Freq Correct    | OCR1A  | BOTTOM          | BOTTOM    |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|   10   |   1   |   0   |   1   |   0   | PWM, Phase Correct         | ICR1   | TOP             | BOTTOM    |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|   11   |   1   |   0   |   1   |   1   | PWM, Phase Correct         | OCR1A  | TOP             | BOTTOM    |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|   12   |   1   |   1   |   0   |   0   | CTC                        | ICR1   | Immediate       | MAX       |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|   13   |   1   |   1   |   0   |   1   | Reserved                   |   -    |        -        |     -     |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|   14   |   1   |   1   |   1   |   0   | Fast PWM                   | ICR1   | BOTTOM          | TOP       |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "|   15   |   1   |   1   |   1   |   1   | Fast PWM                   | OCR1A  | BOTTOM          | TOP       |",
+                "--------------------------------------------------------------------------------------------------------------",
+                "```",
+                "Notes: 1. MAX = 0xFFFF",
+                "       2. BOTTOM = 0x0000"
+            ],
+            "splitTarget": "WGM1"
+        },
+        "FOC1A": {
+            "documentation": [
+                "The FOC1A bit is only active when the WGM bits specify a non-PWM mode.",
+                "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR1B is written ",
+                "when operating in PWM mode. When writing a logical one to the FOC1A bit, an immediate Compare Match is ",
+                "forced on the Waveform Generation unit. The OC1A output is changed according to its COM1A bits setting.",
+                "Note that the FOC1A bit is implemented as a strobe. Therefore it is the value present in the COM1A bits that",
+                "determines the effect of the forced compare.",
+                "A FOC1A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR1A as TOP.",
+                "The FOC1A bit is always read as zero."
+            ]
+        },
+        "FOC1B": {
+            "documentation": [
+                "The FOC1B bit is only active when the WGM bits specify a non-PWM mode.",
+                "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR1B is written ",
+                "when operating in PWM mode. When writing a logical one to the FOC1B bit, an immediate Compare Match is ",
+                "forced on the Waveform Generation unit. The OC1B output is changed according to its COM1B bits setting.",
+                "Note that the FOC1B bit is implemented as a strobe. Therefore it is the value present in the COM1B bits that",
+                "determines the effect of the forced compare.",
+                "A FOC1B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR1B as TOP.",
+                "The FOC1B bit is always read as zero."
+            ]
+        },
+        "COM2A": {
+            "documentation": [
+                "These bits control the Output Compare pin (OC2A) behavior. If one or both of the COM2A1:0 bits are set, the",
+                "OC2A output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+                "Direction Register (DDR) bit corresponding to the OC2A pin must be set in order to enable the output driver.",
+                "When OC2A is connected to the pin, the function of the COM2A1:0 bits depends on the WGM22:0 bit setting.",
+                "Table 1 shows the COM2A1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode (non-PWM).",
+                "",
+                "Table 1. Compare Output Mode, non-PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM2A1| COM2A0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC2A disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Toggle OC2A on Compare Match                                     |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC2A on Compare Match                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC2A on Compare Match                                        |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "",
+                "Table 2 shows the COM2A1:0 bit functionality when the WGM21:0 bits are set to fast PWM mode.",
+                "",
+                "Table 2. Compare Output Mode, Fast PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM2A1| COM2A0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC2A disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | WGM22 = 0: Normal Port Operation, OC2A Disconnected.             |",
+                "|        |       |       | WGM22 = 1: Toggle OC2A on Compare Match.                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC2A on Compare Match, set OC2A at BOTTOM,                 |",
+                "|        |       |       | (non-inverting mode).                                            |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC2A on Compare Match, clear OC2A at BOTTOM,                 |",
+                "|        |       |       | (inverting mode).                                                |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR2A equals TOP and COM2A1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+                "",
+                "Table 3 shows the COM2A1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
+                "",
+                "Table 3. Compare Output Mode, Phase Correct PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM2A1| COM2A0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC2A disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | WGM22 = 0: Normal Port Operation, OC2A Disconnected.             |",
+                "|        |       |       | WGM22 = 1: Toggle OC2A on Compare Match.                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC2A on Compare Match when up-counting.                    |",
+                "|        |       |       | Set OC2A on Compare Match when down-counting.                    |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC2A on Compare Match when up-counting.                      |",
+                "|        |       |       | Clear OC2A on Compare Match when down-counting.                  |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR2A equals TOP and COM2A1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+            ]
+        },
+        "COM2B": {
+            "documentation": [
+                "See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.",
+                "",
+                "These bits control the Output Compare pin (OC2B) behavior. If one or both of the COM2B1:0 bits are set, the",
+                "OC2B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
+                "Direction Register (DDR) bit corresponding to the OC2B pin must be set in order to enable the output driver.",
+                "When OC2B is connected to the pin, the function of the COM2B1:0 bits depends on the WGM22:0 bit setting.",
+                "Table 18-5 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode (non-PWM).",
+                "",
+                "Table 18-5. Compare Output Mode, non-PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM2B1| COM2B0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC2B disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Toggle OC2B on Compare Match                                     |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC2B on Compare Match                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC2B on Compare Match                                        |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "",
+                "Table 18-6 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to fast PWM mode.",
+                "",
+                "Table 18-6. Compare Output Mode, Fast PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM2B1| COM2B0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC2B disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Reserved                                                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC2B on Compare Match, set OC2B at BOTTOM,                 |",
+                "|        |       |       | (non-inverting mode).                                            |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC2B on Compare Match, clear OC2B at BOTTOM,                 |",
+                "|        |       |       | (inverting mode).                                                |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Phase Correct PWM Mode\" on page 157 for more details.",
+                "",
+                "Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
+                "",
+                "Table 18-7. Compare Output Mode, Phase Correct PWM Mode",
+                "```",
+                "---------------------------------------------------------------------------------------------",
+                "|  Mode  | COM2B1| COM2B0| Description                                                      |",
+                "---------------------------------------------------------------------------------------------",
+                "| normal |   0   |   0   | Normal port operation, OC2B disconnected.                        |",
+                "---------------------------------------------------------------------------------------------",
+                "| toggle |   0   |   1   | Reserved                                                         |",
+                "---------------------------------------------------------------------------------------------",
+                "| clear  |   1   |   0   | Clear OC2B on Compare Match when up-counting.                    |",
+                "|        |       |       | Set OC2B on Compare Match when down-counting.                    |",
+                "---------------------------------------------------------------------------------------------",
+                "| set    |   1   |   1   | Set OC2B on Compare Match when up-counting.                      |",
+                "|        |       |       | Clear OC2B on Compare Match when down-counting.                  |",
+                "---------------------------------------------------------------------------------------------",
+                "```",
+                "Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is ",
+                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" on page 157 for more details."
+            ]
+        },
+        "FOC2A": {
+            "documentation": [
+                "The FOC2A bit is only active when the WGM bits specify a non-PWM mode.",
+                "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written ",
+                "when operating in PWM mode. When writing a logical one to the FOC2A bit, an immediate Compare Match is ",
+                "forced on the Waveform Generation unit. The OC2A output is changed according to its COM2A bits setting.",
+                "Note that the FOC2A bit is implemented as a strobe. Therefore it is the value present in the COM2A bits that",
+                "determines the effect of the forced compare.",
+                "A FOC2A strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2A as TOP.",
+                "The FOC2A bit is always read as zero."
+            ]
+        },
+        "FOC2B": {
+            "documentation": [
+                "The FOC2B bit is only active when the WGM bits specify a non-PWM mode.",
+                "However, for ensuring compatibility with future devices, this bit must be set to zero when TCCR2B is written ",
+                "when operating in PWM mode. When writing a logical one to the FOC2B bit, an immediate Compare Match is ",
+                "forced on the Waveform Generation unit. The OC2B output is changed according to its COM2B bits setting.",
+                "Note that the FOC2B bit is implemented as a strobe. Therefore it is the value present in the COM2B bits that",
+                "determines the effect of the forced compare.",
+                "A FOC2B strobe will not generate any interrupt, nor will it clear the timer in CTC mode using OCR2B as TOP.",
+                "The FOC2B bit is always read as zero."
+            ]
+        },
+        "WGM2": {
+            "documentation": [
+                "Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the",
+                "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see",
+                "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
+                "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see \u201dModes of",
+                "Operation\u201d on page 155).",
+                "",
+                "Table 18-8. Waveform Generation Mode Bit Description",
+                "```",
+                "-----------------------------------------------------------------------------------------------------",
+                "|  Mode  | WGM22 | WGM21 | WGM20 | Mode of Operation  |  TOP  | Update of OCRx at | TOV Flag Set on |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    0   |   0   |   0   |   0   | Normal             | 0xFF  | Immediate         | MAX             |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    1   |   0   |   0   |   1   | PWM, Phase Correct | 0xFF  | TOP               | BOTTOM          |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    2   |   0   |   1   |   0   | CTC                | OCRA  | Immediate         | MAX             |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    3   |   0   |   1   |   1   | Fast PWM           | 0xFF  | BOTTOM            | MAX             |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    4   |   1   |   0   |   0   | Reserved           |   -   |         -         |        -        |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    5   |   1   |   0   |   1   | PWM, Phase Correct | OCRA  | TOP               | BOTTOM          |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    6   |   1   |   1   |   0   | Reserved           |   -   |         -         |        -        |",
+                "-----------------------------------------------------------------------------------------------------",
+                "|    7   |   1   |   1   |   1   | Fast PWM           | OCRA  | BOTTOM            | TOP             |",
+                "-----------------------------------------------------------------------------------------------------",
+                "```",
+                "Notes: 1. MAX = 0xFF",
+                "       2. BOTTOM = 0x00"
+            ],
+            "splitTarget": "WGM22"
+        },
+        "RXC0": {
+            "inline": "never",
+            "documentation": [
+                "URXCn is Bit 7 on UCSRnA. See Section 20.11.2."
+            ]
+        },
+        "TXC0": {
+            "inline": "never",
+            "documentation": [
+                "UTXCn is Bit 6 on UCSRnA. See Section 20.11.2."
+            ]
+        },
+        "UDRE0": {
+            "inline": "never",
+            "documentation": [
+                "UDREn is Bit 5 on UCSRnA. See Section 20.11.2."
+            ]
+        },
+        "FE0": {
+            "inline": "never",
+            "documentation": [
+                "UFEn is Bit 4 on UCSRnA. See Section 20.11.2."
+            ]
+        },
+        "DOR0": {
+            "inline": "never",
+            "documentation": [
+                "UDROn is Bit 3 on UCSRnA. See Section 20.11.2."
+            ]
+        },
+        "UPE0": {
+            "inline": "never",
+            "documentation": [
+                "UPEn is Bit 2 on UCSRnA. See Section 20.11.2."
+            ]
+        },
+        "U2X0": {
+            "documentation": [
+                "See ATMega328p Datasheet Section 20.",
+                "U2Xn is bit 1 on UCSRnA."
+            ]
+        },
+        "MPCM0": {
+            "documentation": [
+                "See ATMega328p Datasheet Section 20.",
+                "MPCMn is bit 0 on UCSRnA."
+            ]
+        },
+        "RXB80": {
+            "documentation": [
+                "See ATMega328p Datasheet Section 20.11.3",
+                "RXB8n is bit 1 on UCSRnB"
+            ]
+        },
+        "TXB80": {
+            "documentation": [
+                "See ATMega328p Datasheet Section 20.11.3",
+                "TXB8n is bit 0 on UCSRnB"
+            ]
+        },
+        "UMSEL0": {
+            "documentation": [
+                "See ATMega328p Datasheet Section 20.11.4",
+                "UMSELn are bit 7 and 6 on UCSRnC"
+            ]
+        },
+        "UPM0": {
+            "documentation": [
+                "Parity Mode See ATMega328p Datasheet Section 20.11.4.",
+                "UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.",
+                "These bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the",
+                "parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare",
+                "it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.",
+                "| UPMn1 | UPMn0 | Parity Mode          |",
+                "|-------|-------|----------------------|",
+                "| 0     | 0     | Disabled             |",
+                "| 0     | 1     | Reserved             |",
+                "| 1     | 0     | Enabled, Even Parity |",
+                "| 1     | 1     | Enabled, Odd Parity  |"
+            ]
+        },
+        "USBS0": {
+            "documentation": [
+                "See ATMega328p Datasheet Section 20.11.4.",
+                "USBSn is bit 3 on UCSRnC."
+            ]
+        },
+        "UCPOL0": {
+            "documentation": [
+                "See ATMega328p Datasheet Section 20.11.4.",
+                "UCPOLn is bit 0 on UCSRnC."
+            ]
+        },
+        "UCSZ0": {
+            "documentation": [
+                "See ATMega328p Datasheet Section 20.11.3 and Section 20.11.4.",
+                "UCSZn0 and UCSZn1 are bits 1 and 2 on UCSRnC while UCSZn2 is bit 2 on UCSRnB"
+            ]
+        },
+        "UCSZ02": {
+            "documentation": [
+                "See ATMega328p Datasheet Section 20.11.3 and Section 20.11.4.",
+                "UCSZn0 and UCSZn1 are bits 1 and 2 on UCSRnC while UCSZn2 is bit 2 on UCSRnB"
+            ],
+            "splitTarget": "UCSZ0"
+        },
+        "ADLAR": {
+            "documentation": [
+                "The ADLAR bit affects the presentation of the ADC conversion result in the ADC Data Register.",
+                "Write one to ADLAR to left adjust the result.",
+                "Otherwise, the result is right adjusted.",
+                "Changing the ADLAR bit will affect the ADC Data Register immediately, regardless of any ongoing conversions."
+            ]
+        },
+        "MUX": {
+            "documentation": [
+                "The value of these bits select which analog inputs are connected to the ADC. See the table below for details. If these bits are changed during a conversion, the change will not go in effect until this conversion is complete (ADIF in ADCSRA is set).",
+                "",
+                "```",
+                "| MUX3  | MUX2  | MUX1  | MUX0  | Single Ended Input |",
+                "|-------|-------|-------|-------|--------------------|",
+                "|   0   |   0   |   0   |   0   | ADC0               |",
+                "|   0   |   0   |   0   |   1   | ADC1               |",
+                "|   0   |   0   |   1   |   0   | ADC2               |",
+                "|   0   |   0   |   1   |   1   | ADC3               |",
+                "|   0   |   1   |   0   |   0   | ADC4               |",
+                "|   0   |   1   |   0   |   1   | ADC5               |",
+                "|   0   |   1   |   1   |   0   | ADC6               |",
+                "|   0   |   1   |   1   |   1   | ADC7               |",
+                "|   1   |   0   |   0   |   0   | ADC8               |",
+                "|   1   |   0   |   0   |   1   | Reserved           |",
+                "|   1   |   0   |   1   |   0   | Reserved           |",
+                "|   1   |   0   |   1   |   1   | Reserved           |",
+                "|   1   |   1   |   0   |   0   | Reserved           |",
+                "|   1   |   1   |   0   |   1   | Reserved           |",
+                "|   1   |   1   |   1   |   0   | 1.1V (Vbg)         |",
+                "|   1   |   1   |   1   |   1   | 0V (GND)           |",
+                "```"
+            ]
+        },
+        "ADEN": {
+            "documentation": [
+                "Writing this bit to one enables the ADC.",
+                "By writing it to zero, the ADC is turned off.",
+                "Turning off the ADC off while a conversion is in progress, will terminate this conversion."
+            ]
+        },
+        "ADSC": {
+            "documentation": [
+                "In Single Conversion mode, write this bit to one to start each conversion.",
+                "In Free Running mode, write this bit to one to start the first conversion.",
+                "The first conversion after ADSC has been written after the ADC has been enabled, or if ADSC is written at the same time as the ADC is enabled, will take 25 ADC clock cycles instead of the normal 13.",
+                "This first conversion performs initialization of the ADC.",
+                "",
+                "ADSC will read as one as long as a conversion is in progress. When the conversion is complete, it returns to zero.",
+                "Writing zero to this bit has no effect."
+            ]
+        },
+        "ADATE": {
+            "documentation": [
+                "When this bit is written to one, Auto Triggering of the ADC is enabled.",
+                "The ADC will start a conversion on a positive edge of the selected trigger signal. The trigger source is selected by setting the ADC Trigger Select bits, ADTS in ADCSRB."
+            ]
+        },
+        "ADIF": {
+            "documentation": [
+                "This bit is set when an ADC conversion completes and the Data Registers are updated.",
+                "The ADC Conversion Complete Interrupt is executed if the ADIE bit and the I-bit in SREG are set.",
+                "ADIF is cleared by hardware when executing the corresponding interrupt handling vector.",
+                "Alternatively, ADIF is cleared by writing a logical one to the flag.",
+                "Beware that if doing a Read-Modify-Write on ADCSRA, a pending interrupt can be disabled.",
+                "This also applies if the SBI and CBI instructions are used."
+            ]
+        },
+        "ADIE": {
+            "documentation": [
+                "When this bit is written to one and the I-bit in SREG is set, the ADC Conversion Complete Interrupt is activated."
+            ]
+        },
+        "ADPS": {
+            "documentation": [
+                "These bits determine the division factor between the system clock frequency and the input clock to the ADC.",
+                "",
+                "```",
+                "| ADPS2 | ADPS1 | ADPS0 | Division Factor |",
+                "|-------|-------|-------|-----------------|",
+                "|   0   |   0   |   0   | 2               |",
+                "|   0   |   0   |   1   | 2               |",
+                "|   0   |   1   |   0   | 4               |",
+                "|   0   |   1   |   1   | 8               |",
+                "|   1   |   0   |   0   | 16              |",
+                "|   1   |   0   |   1   | 32              |",
+                "|   1   |   1   |   0   | 64              |",
+                "|   1   |   1   |   1   | 128             |",
+                "```"
+            ]
+        },
+        "ACME": {
+            "documentation": [
+                "When this bit is written logic one and the ADC is switched off (ADEN in ADCSRA is zero), the ADC multiplexer selects the negative input to the Analog Comparator.",
+                "When this bit is written logic zero, AIN1 is applied to the negative input of the Analog Comparator."
+            ]
+        },
+        "ADTS": {
+            "documentation": [
+                "If ADATE in ADCSRA is written to one, the value of these bits selects which source will trigger an ADC conversion.",
+                "If ADATE is cleared, the ADTS[2:0] settings will have no effect.",
+                "A conversion will be triggered by the rising edge of the selected Interrupt Flag.",
+                "Note that switching from a trigger source that is cleared to a trigger source that is set, will generate a positive edge on the trigger signal.",
+                "If ADEN in ADCSRA is set, this will start a conversion.",
+                "Switching to Free Running mode (ADTS[2:0] = 0) will not cause a trigger event, even if the ADC Interrupt Flag is set.",
+                "",
+                "```",
+                "| ADTS2 | ADTS1 | ADTS0 | Trigger Source                 |",
+                "|-------|-------|-------|--------------------------------|",
+                "|   0   |   0   |   0   | Free Running mode              |",
+                "|   0   |   0   |   1   | Analog Comparator              |",
+                "|   0   |   1   |   0   | External Interrupt Request 0   |",
+                "|   0   |   1   |   1   | Timer/Counter0 Compare Match A |",
+                "|   1   |   0   |   0   | Timer/Counter0 Overflow        |",
+                "|   1   |   0   |   1   | Timer/Counter1 Compare Match B |",
+                "|   1   |   1   |   0   | Timer/Counter1 Overflow        |",
+                "|   1   |   1   |   1   | Timer/Counter1 Capture Event   |",
+                "```"
+            ]
+        },
+        "ADC5D": {
+            "documentation": [
+                "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
+                "The corresponding PIN Register bit will always read as zero when this bit is set.",
+                "When an analog signal is applied to the ADC5 pin and the digital input from this pin is not needed, this bit should be written to logic one to reduce power consumption in the digital input buffer."
+            ]
+        },
+        "ADC4D": {
+            "documentation": [
+                "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
+                "The corresponding PIN Register bit will always read as zero when this bit is set.",
+                "When an analog signal is applied to the ADC4 pin and the digital input from this pin is not needed, this bit should be written to logic one to reduce power consumption in the digital input buffer."
+            ]
+        },
+        "ADC3D": {
+            "documentation": [
+                "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
+                "The corresponding PIN Register bit will always read as zero when this bit is set.",
+                "When an analog signal is applied to the ADC3 pin and the digital input from this pin is not needed, this bit should be written to logic one to reduce power consumption in the digital input buffer."
+            ]
+        },
+        "ADC2D": {
+            "documentation": [
+                "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
+                "The corresponding PIN Register bit will always read as zero when this bit is set.",
+                "When an analog signal is applied to the ADC2 pin and the digital input from this pin is not needed, this bit should be written to logic one to reduce power consumption in the digital input buffer."
+            ]
+        },
+        "ADC1D": {
+            "documentation": [
+                "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
+                "The corresponding PIN Register bit will always read as zero when this bit is set.",
+                "When an analog signal is applied to the ADC1 pin and the digital input from this pin is not needed, this bit should be written to logic one to reduce power consumption in the digital input buffer."
+            ]
+        },
+        "ADC0D": {
+            "documentation": [
+                "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
+                "The corresponding PIN Register bit will always read as zero when this bit is set.",
+                "When an analog signal is applied to the ADC0 pin and the digital input from this pin is not needed, this bit should be written to logic one to reduce power consumption in the digital input buffer."
+            ]
+        }
+    }
+}

@@ -126,7 +126,7 @@
         <interrupt index="8" name="TIMER1_COMPB" caption="Timer 1 Compare Match B"/>
         <interrupt index="9" name="TIMER1_OVF" caption="Timer 1 overflow"/>
         <interrupt index="10" name="TIMER0_IC" caption="Timer 0 Input Capture"/>
-        <interrupt index="11" name="TIMER0_COMPA" caption="Timer 0 Comapre Match A"/>
+        <interrupt index="11" name="TIMER0_COMPA" caption="Timer 0 Compare Match A"/>
         <interrupt index="12" name="TIMER0_COMPB" caption="Timer 0 Compare Match B"/>
         <interrupt index="13" name="TIMER0_OVF" caption="Timer 0 Overflow"/>
         <interrupt index="14" name="LIN_STATUS" caption="LIN Status Interrupt"/>
@@ -838,8 +838,8 @@
           <bitfield caption="Watch Dog Enable" mask="0x08" name="WDE"/>
         </register>
         <register caption="Watchdog Timer Configuration Lock Register" name="WDTCLR" offset="0x63" size="1">
-          <bitfield caption="Watchdog Timer Comfiguration Lock bits" mask="0x06" name="WDCL"/>
-          <bitfield caption="Watchdog Timer Comfiguration Lock Enable" mask="0x01" name="WDCLE"/>
+          <bitfield caption="Watchdog Timer Configuration Lock bits" mask="0x06" name="WDCL"/>
+          <bitfield caption="Watchdog Timer Configuration Lock Enable" mask="0x01" name="WDCLE"/>
         </register>
       </register-group>
       <value-group name="WDOG_TIMER_PRESCALE_4BITS">
