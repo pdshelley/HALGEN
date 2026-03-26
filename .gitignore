@@ -8,3 +8,4 @@
 *.xcscmblueprint
 .build
 Output
+Scripts/__pycache__
