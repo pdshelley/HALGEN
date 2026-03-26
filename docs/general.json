@@ -738,7 +738,29 @@
             "defaultValue": ".normal",
             "access": "R/W"
         },
-        {"aliases": ["WGM0", "WGM1", "WGM02", "WGM2", "WGM22", "WGM00", "WGM01", "WGM3", "WGM4", "WGM5", "WGM10", "WGM12", "WGM13", "WGM20", "WGM21"], "variableName": "waveformGenerationMode", "valueType": "Timer8Bit.WaveformGenerationMode", "defaultValue": ".normal", "access": "R/W"},
+        {
+            "aliases": [
+                "WGM0",
+                "WGM1",
+                "WGM02",
+                "WGM2",
+                "WGM22",
+                "WGM00",
+                "WGM01",
+                "WGM3",
+                "WGM4",
+                "WGM5",
+                "WGM10",
+                "WGM12",
+                "WGM13",
+                "WGM20",
+                "WGM21"
+            ],
+            "variableName": "waveformGenerationMode",
+            "valueType": "Timer8Bit.WaveformGenerationMode",
+            "defaultValue": ".normal",
+            "access": "R/W"
+        },
         {
             "aliases": [
                 "OCIE0B",
@@ -765,7 +787,20 @@
             "valueType": "Bool",
             "access": "R/W"
         },
-        {"aliases": ["TOIE0", "TOIE1", "TOIE2", "TOIE3", "TOIE4", "TOIE5", "TOIE"], "variableName": "overflowInterruptEnable", "valueType": "Bool", "access": "R/W"},
+        {
+            "aliases": [
+                "TOIE0",
+                "TOIE1",
+                "TOIE2",
+                "TOIE3",
+                "TOIE4",
+                "TOIE5",
+                "TOIE"
+            ],
+            "variableName": "overflowInterruptEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
         {
             "aliases": [
                 "OCF0B",
@@ -848,8 +883,32 @@
             "valueType": "Bool",
             "access": "R/W"
         },
-        {"aliases": ["ICNC1", "ICNC0", "ICNC2", "ICNC3", "ICNC4", "ICNC5"], "variableName": "inputCaptureNoiseCanceler", "valueType": "Bool", "access": "R/W"},
-        {"aliases": ["ICES1", "ICES0", "ICES2", "ICES3", "ICES4", "ICES5"], "variableName": "inputCaptureEdgeSelect", "valueType": "Bool", "access": "R/W"},
+        {
+            "aliases": [
+                "ICNC1",
+                "ICNC0",
+                "ICNC2",
+                "ICNC3",
+                "ICNC4",
+                "ICNC5"
+            ],
+            "variableName": "inputCaptureNoiseCanceler",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "ICES1",
+                "ICES0",
+                "ICES2",
+                "ICES3",
+                "ICES4",
+                "ICES5"
+            ],
+            "variableName": "inputCaptureEdgeSelect",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
         {
             "aliases": [
                 "EXCLK"
@@ -875,7 +934,15 @@
             "valueType": "Bool",
             "access": "R"
         },
-        {"aliases": ["OCR2AUB", "OCR0AUB"], "variableName": "outputCompareRegisterAUpdateBusy", "valueType": "Bool", "access": "R"},
+        {
+            "aliases": [
+                "OCR2AUB",
+                "OCR0AUB"
+            ],
+            "variableName": "outputCompareRegisterAUpdateBusy",
+            "valueType": "Bool",
+            "access": "R"
+        },
         {
             "aliases": [
                 "OCR2BUB"
@@ -968,69 +1035,439 @@
             ],
             "variableName": "compareOutputMode"
         },
-        {"aliases": ["COM1C", "COM3C", "COM4C", "COM5C"], "variableName": "compareOutputModeC"},
-        {"aliases": ["DTPS1", "DTPS4", "DTPS"], "variableName": "deadTimePrescaler"},
-{"aliases": ["DT1H", "DTVH"], "variableName": "deadTimeValueHigh"},
-{"aliases": ["DT1L", "DTVL"], "variableName": "deadTimeValueLow"},
-{"aliases": ["EXCLKAMR"], "variableName": "enableExternalClockInputForAmr"},
-{"aliases": ["ENHC4"], "variableName": "enhancedComparePwmMode"},
-{"aliases": ["FPAC1", "FPAC4"], "variableName": "faultProtectionAnalogComparatorEnable"},
-{"aliases": ["FPES1", "FPES4"], "variableName": "faultProtectionEdgeSelect"},
-{"aliases": ["FPIE1", "FPIE4"], "variableName": "faultProtectionInterruptEnable"},
-{"aliases": ["FPF1", "FPF4"], "variableName": "faultProtectionInterruptFlag"},
-{"aliases": ["FPEN1", "FPEN4"], "variableName": "faultProtectionModeEnable"},
-{"aliases": ["FPNC1", "FPNC4"], "variableName": "faultProtectionNoiseCanceler"},
-{"aliases": ["FOC0", "FOC2"], "variableName": "forceOutputCompare"},
-{"aliases": ["FOC1C", "FOC3C", "FOC4C", "FOC5C"], "variableName": "forceOutputCompareC"},
-{"aliases": ["FOC1D", "FOC4D"], "variableName": "forceOutputCompareMatchD"},
-{"aliases": ["ICEN0", "ICEN1"], "variableName": "inputCaptureModeEnable"},
-{"aliases": ["ICS0", "ICS1"], "variableName": "inputCaptureSelect"},
-	{"aliases": ["OCIE1D"], "variableName": "ocieDTimerCounterOutputCompareInterruptEnable"},
-    {"aliases": ["OCR0"], "variableName": "outputCompare"},
-    {"aliases": ["OCF0", "OCF2"], "variableName": "outputCompareFlag"},
-    {"aliases": ["OCF1C", "OCF3C"], "variableName": "outputCompareFlagC"},
-    {"aliases": ["OCF4D"], "variableName": "outputCompareFlagD"},
-    {"aliases": ["OC1OE", "OC4OE"], "variableName": "outputCompareOverrideEnable"},
-{"aliases": ["OCR0UB", "OCR2UB"], "variableName": "outputCompareRegisterBusy"},
-{"aliases": ["PCKE"], "variableName": "pckEnable"},
-{"aliases": ["PLLE"], "variableName": "pllEnable"},
-{"aliases": ["PLOCK"], "variableName": "pllLockDetector"},
-{"aliases": ["PSR0", "PSR2", "PSR4", "PSR321", "PSR10", "PSR310"], "variableName": "prescalerResetTimerCounter"},
-{"aliases": ["PWM1D", "PWM4D"], "variableName": "pulseWidthModulatorDEnable"},
-{"aliases": ["PWM1"], "variableName": "pulseWidthModulatorEnable"},
-{"aliases": ["PWM1A", "PWM4A"], "variableName": "pulseWidthModulatorAEnable"},
-{"aliases": ["PWM1B", "PWM4B"], "variableName": "pulseWidthModulatorBEnable"},
-{"aliases": ["PWM1X", "PWM4X"], "variableName": "pwmInversionMode"},
-{"aliases": ["TLOCK4"], "variableName": "registerUpdateLock"},
-{"aliases": ["REMAP"], "variableName": "remapBitForPinPart"},
-{"aliases": ["TC4", "TCNT0", "TCNT1", "TCNT2", "TCNT3"], "variableName": "timerCounter"},
-{"aliases": ["DT4L"], "variableName": "timerCounterDeadTimeValue"},
-{"aliases": ["TICIE0", "TICIE1", "TICIE3"], "variableName": "timerCounterInputCaptureInterruptEnable"},
-{"aliases": ["OCR2"], "variableName": "timerCounterOutputCompare"},
-{"aliases": ["OCR0A", "OCR1A", "OCR2A", "OCR3A", "OCR4A"], "variableName": "timerCounterOutputCompareA"},
-{"aliases": ["OCR0B", "OCR1B", "OCR2B", "OCR3B", "OCR4B"], "variableName": "timerCounterOutputCompareB"},
-{"aliases": ["OCR1C", "OCR3C", "OCR4C"], "variableName": "timerCounterOutputCompareC"},
-{"aliases": ["OCF4C", "OCF5C"], "variableName": "timerCounterOutputCompareCMatchFlag"},
-{"aliases": ["OCIE1C", "OCIE3C", "OCIE4C", "OCIE5C"], "variableName": "timerCounterOutputCompareCMatchInterruptEnable"},
-{"aliases": ["OCR4D"], "variableName": "timerCounterOutputCompareD"},
-{"aliases": ["OCIE4D"], "variableName": "timerCounterOutputCompareDMatchInterruptEnable"},
-{"aliases": ["OCF1D"], "variableName": "timerCounterOutputCompareFlagD"},
-{"aliases": ["OCIE0"], "variableName": "timerCounterOutputCompareMatchInterrupt"},
-{"aliases": ["OCIE2"], "variableName": "timerCounterOutputCompareMatchInterruptEnable"},
-{"aliases": ["OC1AU"], "variableName": "timerCounterOutputCompareUPinEnableForChannelA"},
-{"aliases": ["OC1BU"], "variableName": "timerCounterOutputCompareUPinEnableForChannelB"},
-{"aliases": ["OC1AV"], "variableName": "timerCounterOutputCompareVPinEnableForChannelA"},
-{"aliases": ["OC1BV"], "variableName": "timerCounterOutputCompareVPinEnableForChannelB"},
-{"aliases": ["OC1AW"], "variableName": "timerCounterOutputCompareWPinEnableForChannelA"},
-{"aliases": ["OC1BW"], "variableName": "timerCounterOutputCompareWPinEnableForChannelB"},
-{"aliases": ["OC1AX"], "variableName": "timerCounterOutputCompareXPinEnableForChannelA"},
-{"aliases": ["OC1BX"], "variableName": "timerCounterOutputCompareXPinEnableForChannelB"},
-{"aliases": ["PSR1"], "variableName": "timerCounterPrescalerReset"},
-{"aliases": ["TCN0UB"], "variableName": "timerCounterUpdateBusy"},
-{"aliases": ["TCW0", "TCW1"], "variableName": "timerCounterWidth"},
-{"aliases": ["ICPSEL1"], "variableName": "timerInputCaptureSelection"},
-{"aliases": ["TOV"], "variableName": "timerOverflowFlag"},
-{"aliases": ["ICR1", "ICR3"], "variableName": "timerCounterInputCapture"},
+        {
+            "aliases": [
+                "COM1C",
+                "COM3C",
+                "COM4C",
+                "COM5C"
+            ],
+            "variableName": "compareOutputModeC"
+        },
+        {
+            "aliases": [
+                "DTPS1",
+                "DTPS4",
+                "DTPS"
+            ],
+            "variableName": "deadTimePrescaler"
+        },
+        {
+            "aliases": [
+                "DT1H",
+                "DTVH"
+            ],
+            "variableName": "deadTimeValueHigh"
+        },
+        {
+            "aliases": [
+                "DT1L",
+                "DTVL"
+            ],
+            "variableName": "deadTimeValueLow"
+        },
+        {
+            "aliases": [
+                "EXCLKAMR"
+            ],
+            "variableName": "enableExternalClockInputForAmr"
+        },
+        {
+            "aliases": [
+                "ENHC4"
+            ],
+            "variableName": "enhancedComparePwmMode"
+        },
+        {
+            "aliases": [
+                "FPAC1",
+                "FPAC4"
+            ],
+            "variableName": "faultProtectionAnalogComparatorEnable"
+        },
+        {
+            "aliases": [
+                "FPES1",
+                "FPES4"
+            ],
+            "variableName": "faultProtectionEdgeSelect"
+        },
+        {
+            "aliases": [
+                "FPIE1",
+                "FPIE4"
+            ],
+            "variableName": "faultProtectionInterruptEnable"
+        },
+        {
+            "aliases": [
+                "FPF1",
+                "FPF4"
+            ],
+            "variableName": "faultProtectionInterruptFlag"
+        },
+        {
+            "aliases": [
+                "FPEN1",
+                "FPEN4"
+            ],
+            "variableName": "faultProtectionModeEnable"
+        },
+        {
+            "aliases": [
+                "FPNC1",
+                "FPNC4"
+            ],
+            "variableName": "faultProtectionNoiseCanceler"
+        },
+        {
+            "aliases": [
+                "FOC0",
+                "FOC2"
+            ],
+            "variableName": "forceOutputCompare"
+        },
+        {
+            "aliases": [
+                "FOC1C",
+                "FOC3C",
+                "FOC4C",
+                "FOC5C"
+            ],
+            "variableName": "forceOutputCompareC"
+        },
+        {
+            "aliases": [
+                "FOC1D",
+                "FOC4D"
+            ],
+            "variableName": "forceOutputCompareMatchD"
+        },
+        {
+            "aliases": [
+                "ICEN0",
+                "ICEN1"
+            ],
+            "variableName": "inputCaptureModeEnable"
+        },
+        {
+            "aliases": [
+                "ICS0",
+                "ICS1"
+            ],
+            "variableName": "inputCaptureSelect"
+        },
+        {
+            "aliases": [
+                "OCIE1D"
+            ],
+            "variableName": "ocieDTimerCounterOutputCompareInterruptEnable"
+        },
+        {
+            "aliases": [
+                "OCR0"
+            ],
+            "variableName": "outputCompare"
+        },
+        {
+            "aliases": [
+                "OCF0",
+                "OCF2"
+            ],
+            "variableName": "outputCompareFlag"
+        },
+        {
+            "aliases": [
+                "OCF1C",
+                "OCF3C"
+            ],
+            "variableName": "outputCompareFlagC"
+        },
+        {
+            "aliases": [
+                "OCF4D"
+            ],
+            "variableName": "outputCompareFlagD"
+        },
+        {
+            "aliases": [
+                "OC1OE",
+                "OC4OE"
+            ],
+            "variableName": "outputCompareOverrideEnable"
+        },
+        {
+            "aliases": [
+                "OCR0UB",
+                "OCR2UB"
+            ],
+            "variableName": "outputCompareRegisterBusy"
+        },
+        {
+            "aliases": [
+                "PCKE"
+            ],
+            "variableName": "pckEnable"
+        },
+        {
+            "aliases": [
+                "PLLE"
+            ],
+            "variableName": "pllEnable"
+        },
+        {
+            "aliases": [
+                "PLOCK"
+            ],
+            "variableName": "pllLockDetector"
+        },
+        {
+            "aliases": [
+                "PSR0",
+                "PSR2",
+                "PSR4",
+                "PSR321",
+                "PSR10",
+                "PSR310"
+            ],
+            "variableName": "prescalerResetTimerCounter"
+        },
+        {
+            "aliases": [
+                "PWM1D",
+                "PWM4D"
+            ],
+            "variableName": "pulseWidthModulatorDEnable"
+        },
+        {
+            "aliases": [
+                "PWM1"
+            ],
+            "variableName": "pulseWidthModulatorEnable"
+        },
+        {
+            "aliases": [
+                "PWM1A",
+                "PWM4A"
+            ],
+            "variableName": "pulseWidthModulatorAEnable"
+        },
+        {
+            "aliases": [
+                "PWM1B",
+                "PWM4B"
+            ],
+            "variableName": "pulseWidthModulatorBEnable"
+        },
+        {
+            "aliases": [
+                "PWM1X",
+                "PWM4X"
+            ],
+            "variableName": "pwmInversionMode"
+        },
+        {
+            "aliases": [
+                "TLOCK4"
+            ],
+            "variableName": "registerUpdateLock"
+        },
+        {
+            "aliases": [
+                "REMAP"
+            ],
+            "variableName": "remapBitForPinPart"
+        },
+        {
+            "aliases": [
+                "TC4",
+                "TCNT0",
+                "TCNT1",
+                "TCNT2",
+                "TCNT3"
+            ],
+            "variableName": "timerCounter"
+        },
+        {
+            "aliases": [
+                "DT4L"
+            ],
+            "variableName": "timerCounterDeadTimeValue"
+        },
+        {
+            "aliases": [
+                "TICIE0",
+                "TICIE1",
+                "TICIE3"
+            ],
+            "variableName": "timerCounterInputCaptureInterruptEnable"
+        },
+        {
+            "aliases": [
+                "OCR2"
+            ],
+            "variableName": "timerCounterOutputCompare"
+        },
+        {
+            "aliases": [
+                "OCR0A",
+                "OCR1A",
+                "OCR2A",
+                "OCR3A",
+                "OCR4A"
+            ],
+            "variableName": "timerCounterOutputCompareA"
+        },
+        {
+            "aliases": [
+                "OCR0B",
+                "OCR1B",
+                "OCR2B",
+                "OCR3B",
+                "OCR4B"
+            ],
+            "variableName": "timerCounterOutputCompareB"
+        },
+        {
+            "aliases": [
+                "OCR1C",
+                "OCR3C",
+                "OCR4C"
+            ],
+            "variableName": "timerCounterOutputCompareC"
+        },
+        {
+            "aliases": [
+                "OCF4C",
+                "OCF5C"
+            ],
+            "variableName": "timerCounterOutputCompareCMatchFlag"
+        },
+        {
+            "aliases": [
+                "OCIE1C",
+                "OCIE3C",
+                "OCIE4C",
+                "OCIE5C"
+            ],
+            "variableName": "timerCounterOutputCompareCMatchInterruptEnable"
+        },
+        {
+            "aliases": [
+                "OCR4D"
+            ],
+            "variableName": "timerCounterOutputCompareD"
+        },
+        {
+            "aliases": [
+                "OCIE4D"
+            ],
+            "variableName": "timerCounterOutputCompareDMatchInterruptEnable"
+        },
+        {
+            "aliases": [
+                "OCF1D"
+            ],
+            "variableName": "timerCounterOutputCompareFlagD"
+        },
+        {
+            "aliases": [
+                "OCIE0"
+            ],
+            "variableName": "timerCounterOutputCompareMatchInterrupt"
+        },
+        {
+            "aliases": [
+                "OCIE2"
+            ],
+            "variableName": "timerCounterOutputCompareMatchInterruptEnable"
+        },
+        {
+            "aliases": [
+                "OC1AU"
+            ],
+            "variableName": "timerCounterOutputCompareUPinEnableForChannelA"
+        },
+        {
+            "aliases": [
+                "OC1BU"
+            ],
+            "variableName": "timerCounterOutputCompareUPinEnableForChannelB"
+        },
+        {
+            "aliases": [
+                "OC1AV"
+            ],
+            "variableName": "timerCounterOutputCompareVPinEnableForChannelA"
+        },
+        {
+            "aliases": [
+                "OC1BV"
+            ],
+            "variableName": "timerCounterOutputCompareVPinEnableForChannelB"
+        },
+        {
+            "aliases": [
+                "OC1AW"
+            ],
+            "variableName": "timerCounterOutputCompareWPinEnableForChannelA"
+        },
+        {
+            "aliases": [
+                "OC1BW"
+            ],
+            "variableName": "timerCounterOutputCompareWPinEnableForChannelB"
+        },
+        {
+            "aliases": [
+                "OC1AX"
+            ],
+            "variableName": "timerCounterOutputCompareXPinEnableForChannelA"
+        },
+        {
+            "aliases": [
+                "OC1BX"
+            ],
+            "variableName": "timerCounterOutputCompareXPinEnableForChannelB"
+        },
+        {
+            "aliases": [
+                "PSR1"
+            ],
+            "variableName": "timerCounterPrescalerReset"
+        },
+        {
+            "aliases": [
+                "TCN0UB"
+            ],
+            "variableName": "timerCounterUpdateBusy"
+        },
+        {
+            "aliases": [
+                "TCW0",
+                "TCW1"
+            ],
+            "variableName": "timerCounterWidth"
+        },
+        {
+            "aliases": [
+                "ICPSEL1"
+            ],
+            "variableName": "timerInputCaptureSelection"
+        },
+        {
+            "aliases": [
+                "TOV"
+            ],
+            "variableName": "timerOverflowFlag"
+        },
+        {
+            "aliases": [
+                "ICR1",
+                "ICR3"
+            ],
+            "variableName": "timerCounterInputCapture"
+        },
         {
             "aliases": [
                 "RXC",
@@ -1092,7 +1529,19 @@
             "valueType": "Bool",
             "access": "R"
         },
-        {"aliases": ["UPE", "UPE0", "UPE1", "UPE2", "UPE3", "PERR"], "variableName": "parityError", "valueType": "Bool", "access": "R"},
+        {
+            "aliases": [
+                "UPE",
+                "UPE0",
+                "UPE1",
+                "UPE2",
+                "UPE3",
+                "PERR"
+            ],
+            "variableName": "parityError",
+            "valueType": "Bool",
+            "access": "R"
+        },
         {
             "aliases": [
                 "U2X",
@@ -1144,7 +1593,20 @@
             "defaultValue": ".off",
             "access": "R/W"
         },
-        {"aliases": ["UDRIE", "UDRIE0", "UDRIE1", "UDRIE2", "UDRIE3", "DREIE"], "variableName": "dataRegisterEmptyInterruptEnable", "valueType": "UART.DRECompleteInterruptEnable", "defaultValue": ".off", "access": "R/W"},
+        {
+            "aliases": [
+                "UDRIE",
+                "UDRIE0",
+                "UDRIE1",
+                "UDRIE2",
+                "UDRIE3",
+                "DREIE"
+            ],
+            "variableName": "dataRegisterEmptyInterruptEnable",
+            "valueType": "UART.DRECompleteInterruptEnable",
+            "defaultValue": ".off",
+            "access": "R/W"
+        },
         {
             "aliases": [
                 "RXEN",
@@ -1231,7 +1693,20 @@
             "defaultValue": ".asynchronous",
             "access": "R/W"
         },
-        {"aliases": ["UPM", "UPM0", "UPM1", "UPM2", "UPM3", "PMODE"], "variableName": "parityMode", "valueType": "UART.ParityMode", "defaultValue": ".disabled", "access": "R/W"},
+        {
+            "aliases": [
+                "UPM",
+                "UPM0",
+                "UPM1",
+                "UPM2",
+                "UPM3",
+                "PMODE"
+            ],
+            "variableName": "parityMode",
+            "valueType": "UART.ParityMode",
+            "defaultValue": ".disabled",
+            "access": "R/W"
+        },
         {
             "aliases": [
                 "USBS",
@@ -1258,44 +1733,261 @@
             "defaultValue": ".rising",
             "access": "R/W"
         },
-
-{"aliases": ["ABEIE"], "variableName": "autoBaudErrorInterruptEnable", "access": "R/W"},
-{"aliases": ["ABW"], "variableName": "autoBaudWindow", "access": "R/W"},
-{"aliases": ["BDF"], "variableName": "breakDetectedFlag", "access": "R/W"},
-{"aliases": ["BUFOVF"], "variableName": "bufferOverflow"},
-{"aliases": ["CHSIZE", "UCSZ", "UCSZ2"], "variableName": "characterSize", "access": "R/W"},
-{"aliases": ["CMODE"], "variableName": "communicationMode", "access": "R/W"},
-{"aliases": ["CTSEN"], "variableName": "ctsEnable"},
-{"aliases": ["DREIF"], "variableName": "dataRegisterEmptyFlag"},
-{"aliases": ["DBGRUN"], "variableName": "debugRun", "access": "R/W"},
-        {"aliases": ["ISFIF"], "variableName": "inconsistentSyncFieldInterruptFlag", "access": "R/W"},
-        {"aliases": ["IREI"], "variableName": "irDaEventInputEnable", "access": "R/W"},
-        {"aliases": ["LBME"], "variableName": "loopBackModeEnable", "access": "R/W"},
-        {"aliases": ["ODME"], "variableName": "openDrainModeEnable", "access": "R/W"},
-{"aliases": ["RXCIF"], "variableName": "receiveCompleteInterruptFlag"},
-{"aliases": ["DATA8"], "variableName": "receiverData"},
-{"aliases": ["RXMODE"], "variableName": "receiverMode", "access": "R/W"},
-{"aliases": ["RXPL"], "variableName": "receiverPulseLength", "access": "R/W"},
-{"aliases": ["RXSIE"], "variableName": "receiverStartFrameInterruptEnable", "access": "R/W"},
-{"aliases": ["URSEL", "URSEL0", "URSEL1"], "variableName": "registerSelect"},
-{"aliases": ["RS485"], "variableName": "rsModeInternalTransmitter", "access": "R/W"},
-{"aliases": ["RTSEN"], "variableName": "rtsEnable"},
-{"aliases": ["DATA"], "variableName": "rxData"},
-{"aliases": ["RXS"], "variableName": "rxStart"},
-{"aliases": ["UCPHA"], "variableName": "spiHostModeClockPhase", "access": "R/W"},
-{"aliases": ["UDORD"], "variableName": "spiHostModeDataOrder", "access": "R/W"},
-{"aliases": ["SFDE", "SFDEN"], "variableName": "startFrameDetectionEnable", "access": "R/W"},
-{"aliases": ["SBMODE"], "variableName": "stopBitMode", "access": "R/W"},
-{"aliases": ["TXCIF"], "variableName": "transmitInterruptFlag", "access": "R/W"},
-{"aliases": ["TXPL"], "variableName": "transmitPulseLength", "access": "R/W"},
-{"aliases": ["UBRR", "UBRR0", "UBRR1"], "variableName": "usartBaudRate"},
-{"aliases": ["UDR", "UDR0", "UDR1"], "variableName": "usartIoData"},
-{"aliases": ["U0MAP"], "variableName": "usartPinMapping"},
-{"aliases": ["RXS0", "RXS1"], "variableName": "usartRxStartFlag"},
-{"aliases": ["SFDE0", "SFDE1"], "variableName": "usartRxStartFrameDetectionEnable"},
-{"aliases": ["RXSIE0", "RXSIE1"], "variableName": "usartRxStartInterruptEnable"},
-{"aliases": ["WFB"], "variableName": "waitForBreak", "access": "R/W"},
-{"aliases": ["RXSIF"], "variableName": "receiverStartFrameInterruptFlag"},
+        {
+            "aliases": [
+                "ABEIE"
+            ],
+            "variableName": "autoBaudErrorInterruptEnable",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "ABW"
+            ],
+            "variableName": "autoBaudWindow",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "BDF"
+            ],
+            "variableName": "breakDetectedFlag",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "BUFOVF"
+            ],
+            "variableName": "bufferOverflow"
+        },
+        {
+            "aliases": [
+                "CHSIZE",
+                "UCSZ",
+                "UCSZ2"
+            ],
+            "variableName": "characterSize",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "CMODE"
+            ],
+            "variableName": "communicationMode",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "CTSEN"
+            ],
+            "variableName": "ctsEnable"
+        },
+        {
+            "aliases": [
+                "DREIF"
+            ],
+            "variableName": "dataRegisterEmptyFlag"
+        },
+        {
+            "aliases": [
+                "DBGRUN"
+            ],
+            "variableName": "debugRun",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "ISFIF"
+            ],
+            "variableName": "inconsistentSyncFieldInterruptFlag",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "IREI"
+            ],
+            "variableName": "irDaEventInputEnable",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "LBME"
+            ],
+            "variableName": "loopBackModeEnable",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "ODME"
+            ],
+            "variableName": "openDrainModeEnable",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "RXCIF"
+            ],
+            "variableName": "receiveCompleteInterruptFlag"
+        },
+        {
+            "aliases": [
+                "DATA8"
+            ],
+            "variableName": "receiverData"
+        },
+        {
+            "aliases": [
+                "RXMODE"
+            ],
+            "variableName": "receiverMode",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "RXPL"
+            ],
+            "variableName": "receiverPulseLength",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "RXSIE"
+            ],
+            "variableName": "receiverStartFrameInterruptEnable",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "URSEL",
+                "URSEL0",
+                "URSEL1"
+            ],
+            "variableName": "registerSelect"
+        },
+        {
+            "aliases": [
+                "RS485"
+            ],
+            "variableName": "rsModeInternalTransmitter",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "RTSEN"
+            ],
+            "variableName": "rtsEnable"
+        },
+        {
+            "aliases": [
+                "DATA"
+            ],
+            "variableName": "rxData"
+        },
+        {
+            "aliases": [
+                "RXS"
+            ],
+            "variableName": "rxStart"
+        },
+        {
+            "aliases": [
+                "UCPHA"
+            ],
+            "variableName": "spiHostModeClockPhase",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "UDORD"
+            ],
+            "variableName": "spiHostModeDataOrder",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "SFDE",
+                "SFDEN"
+            ],
+            "variableName": "startFrameDetectionEnable",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "SBMODE"
+            ],
+            "variableName": "stopBitMode",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TXCIF"
+            ],
+            "variableName": "transmitInterruptFlag",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TXPL"
+            ],
+            "variableName": "transmitPulseLength",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "UBRR",
+                "UBRR0",
+                "UBRR1"
+            ],
+            "variableName": "usartBaudRate"
+        },
+        {
+            "aliases": [
+                "UDR",
+                "UDR0",
+                "UDR1"
+            ],
+            "variableName": "usartIoData"
+        },
+        {
+            "aliases": [
+                "U0MAP"
+            ],
+            "variableName": "usartPinMapping"
+        },
+        {
+            "aliases": [
+                "RXS0",
+                "RXS1"
+            ],
+            "variableName": "usartRxStartFlag"
+        },
+        {
+            "aliases": [
+                "SFDE0",
+                "SFDE1"
+            ],
+            "variableName": "usartRxStartFrameDetectionEnable"
+        },
+        {
+            "aliases": [
+                "RXSIE0",
+                "RXSIE1"
+            ],
+            "variableName": "usartRxStartInterruptEnable"
+        },
+        {
+            "aliases": [
+                "WFB"
+            ],
+            "variableName": "waitForBreak",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "RXSIF"
+            ],
+            "variableName": "receiverStartFrameInterruptFlag"
+        },
         {
             "aliases": [
                 "REFS"
@@ -1442,7 +2134,15 @@
             "defaultValue": ".freeRunning",
             "access": "R/W"
         },
-        {"aliases": ["PSRASY", "PSR"], "variableName": "prescalerReset", "valueType": "Bool", "access": "R/W"},
+        {
+            "aliases": [
+                "PSRASY",
+                "PSR"
+            ],
+            "variableName": "prescalerReset",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
         {
             "aliases": [
                 "ADADES"
@@ -2162,6 +2862,11 @@
             "variableName": "windowModeSource",
             "access": "R/W"
         },
-        {"aliases": ["VDPD"], "variableName": "voltageDividerPowerDown"}
+        {
+            "aliases": [
+                "VDPD"
+            ],
+            "variableName": "voltageDividerPowerDown"
+        }
     ]
 }
