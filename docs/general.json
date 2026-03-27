@@ -24,6 +24,8 @@
         },
         {
             "aliases": [
+                "OCR0",
+                "OCR1",
                 "OCR2"
             ],
             "variableName": "outputCompareRegister"
@@ -159,13 +161,6 @@
         },
         {
             "aliases": [
-                "OCR0",
-                "OCR1"
-            ],
-            "variableName": "outputCompareRegister"
-        },
-        {
-            "aliases": [
                 "OCR1D",
                 "OCR4D"
             ],
@@ -191,9 +186,10 @@
         },
         {
             "aliases": [
-                "TC4H"
+                "TC4H",
+                "TC1H"
             ],
-            "variableName": "timerCounter"
+            "variableName": "counterRegisterHigh"
         },
         {
             "aliases": [
@@ -201,48 +197,42 @@
                 "TCCR1",
                 "TCCR2"
             ],
-            "variableName": "timerCounterControlRegister"
+            "variableName": "controlRegister"
         },
         {
             "aliases": [
                 "TCCR1D",
                 "TCCR4D"
             ],
-            "variableName": "timerCounterControlRegisterD"
+            "variableName": "controlRegisterD"
         },
         {
             "aliases": [
                 "TCCR1E",
                 "TCCR4E"
             ],
-            "variableName": "timerCounterControlRegisterE"
+            "variableName": "controlRegisterE"
         },
         {
             "aliases": [
                 "DT1",
                 "DT4"
             ],
-            "variableName": "timerCounterDeadTimeValue"
+            "variableName": "deadTimeValueRegister"
         },
         {
             "aliases": [
                 "TCNT0H",
                 "TCNT1H"
             ],
-            "variableName": "timerCounterHigh"
+            "variableName": "countHigh"
         },
         {
             "aliases": [
                 "TCNT0L",
                 "TCNT1L"
             ],
-            "variableName": "timerCounterLow"
-        },
-        {
-            "aliases": [
-                "TC1H"
-            ],
-            "variableName": "counterRegisterHigh"
+            "variableName": "countLow"
         },
         {
             "aliases": [
@@ -322,19 +312,19 @@
                 "UBRR1L",
                 "UBRRL"
             ],
-            "variableName": "baudRateRegisterHigh"
+            "variableName": "baudRateRegisterLow"
         },
         {
             "aliases": [
                 "DBGCTRL"
             ],
-            "variableName": "debugControl"
+            "variableName": "debugControlRegister"
         },
         {
             "aliases": [
                 "EVCTRL"
             ],
-            "variableName": "eventControl"
+            "variableName": "eventControlRegister"
         },
         {
             "aliases": [
@@ -370,7 +360,7 @@
             "aliases": [
                 "STATUS"
             ],
-            "variableName": "status"
+            "variableName": "statusRegister"
         },
         {
             "aliases": [
@@ -528,7 +518,7 @@
             "aliases": [
                 "CALIB"
             ],
-            "variableName": "calibration"
+            "variableName": "calibrationRegister"
         },
         {
             "aliases": [
@@ -540,37 +530,37 @@
             "aliases": [
                 "COMMAND"
             ],
-            "variableName": "command"
+            "variableName": "commandRegister"
         },
         {
             "aliases": [
                 "CTRLD"
             ],
-            "variableName": "controlD"
+            "variableName": "controlRegisterD"
         },
         {
             "aliases": [
                 "CTRLE"
             ],
-            "variableName": "controlE"
+            "variableName": "controlRegisterE"
         },
         {
             "aliases": [
                 "CTRLF"
             ],
-            "variableName": "controlF"
+            "variableName": "controlRegisterF"
         },
         {
             "aliases": [
                 "INTCTRL"
             ],
-            "variableName": "interruptControl"
+            "variableName": "interruptControlRegister"
         },
         {
             "aliases": [
                 "INTFLAGS"
             ],
-            "variableName": "interruptFlags"
+            "variableName": "interruptFlagRegister"
         },
         {
             "aliases": [
@@ -594,19 +584,19 @@
             "aliases": [
                 "RESULT"
             ],
-            "variableName": "result"
+            "variableName": "resultRegister"
         },
         {
             "aliases": [
                 "SAMPLE"
             ],
-            "variableName": "sample"
+            "variableName": "sampleRegister"
         },
         {
             "aliases": [
                 "SAMPCTRL"
             ],
-            "variableName": "sampleControl"
+            "variableName": "sampleControlRegister"
         },
         {
             "aliases": [
@@ -2010,8 +2000,7 @@
             "aliases": [
                 "MUX",
                 "MUX5",
-                "VADMUX",
-                "MUXNEG"
+                "VADMUX"
             ],
             "variableName": "channel",
             "valueType": "AnalogChannelSelection",
@@ -2263,7 +2252,7 @@
             "aliases": [
                 "ADSSEN"
             ],
-            "variableName": "singleShotEnableOnPscSSynchronisationSignals"
+            "variableName": "singleShotEnableOnPscSynchronizationSignals"
         },
         {
             "aliases": [
@@ -2364,7 +2353,7 @@
         },
         {
             "aliases": [
-                "MUXPOS"
+                "MUXNEG"
             ],
             "variableName": "negativeMultiplexerInput"
         },
@@ -2378,7 +2367,7 @@
             "aliases": [
                 "AREFD"
             ],
-            "variableName": "analogReferencePinDisabled"
+            "variableName": "analogReferenceDigitalInputDisabled"
         },
         {
             "aliases": [
@@ -2457,7 +2446,7 @@
             "aliases": [
                 "CADICIE"
             ],
-            "variableName": "instantaneousCurrentInt erruptEnable"
+            "variableName": "instantaneousCurrentInterruptEnable"
         },
         {
             "aliases": [
@@ -2505,7 +2494,7 @@
             "aliases": [
                 "PRESC"
             ],
-            "variableName": "clockPreScaler",
+            "variableName": "clockPrescaler",
             "access": "R/W"
         },
         {
