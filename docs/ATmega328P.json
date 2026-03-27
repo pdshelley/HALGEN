@@ -14,7 +14,7 @@
                 "0"
             ],
             "documentation": [
-                "See ATMega328p Datasheet Section 36 Register Summary",
+                "See ATmega328P Datasheet Section 36 Register Summary",
                 "The USART Transmit Data Buffer Register and USART Receive Data Buffer Registers share the same I/O address referred to as",
                 "USART Data Register or UDRn. The Transmit Data Buffer Register (TXB) will be the destination for data written to the UDRn",
                 "Register location. Reading the UDRn Register location will return the contents of the Receive Data Buffer Register (RXB).",
@@ -65,11 +65,11 @@
                 "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
                 "--------------------------------------------------------------------------------",
                 "```",
-                "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero",
+                "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bits must be written to zero",
                 "when UBRRnH is written.",
                 "",
                 "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the",
-                "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receive",
+                "UBRRnL contains the eight least significant bits of the USART baud rate. Ongoing transmissions by the Transmitter and Receiver",
                 "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
             ],
             "documentationL": [
@@ -78,7 +78,7 @@
                 "will be corrupted if the baud rate is changed. Writing UBRRnL will trigger an immediate update of the baud rate prescaler."
             ],
             "documentationH": [
-                "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bit must be written to zero",
+                "Bits 15 through 12 are reserved for future use. For compatibility with future devices, these bits must be written to zero",
                 "when UBRRnH is written.",
                 "",
                 "This is a 12-bit register which contains the USART baud rate. The UBRRnH contains the four most significant bits, and the",
@@ -326,7 +326,7 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "Note: 1. A special case occurs when OCR0A equals TOP and COM0A1 is set. In this case, the Compare Match is ",
-                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in the datasheet for more details.",
                 "",
                 "Table 3 shows the COM0A1:0 bit functionality when the WGM02:0 bits are set to phase correct PWM mode.",
                 "",
@@ -348,17 +348,17 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "Note: 1. A special case occurs when OCR0A equals TOP and COM0A1 is set. In this case, the Compare Match is ",
-                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in the datasheet for more details."
             ]
         },
         "COM0B": {
             "documentation": [
-                "See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.",
+                "See ATmega328P Datasheet Table 18-5, Table 18-6, and Table 18-7.",
                 "These bits control the Output Compare pin (OC0B) behavior. If one or both of the COM0B1:0 bits are set, the",
                 "OC0B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
                 "Direction Register (DDR) bit corresponding to the OC0B pin must be set in order to enable the output driver.",
                 "When OC0B is connected to the pin, the function of the COM0B1:0 bits depends on the WGM02:0 bit setting.",
-                "Table 18-5 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode (non-PWM)",
+                "Table 18-5 shows the COM0B1:0 bit functionality when the WGM02:0 bits are set to a normal or CTC mode (non-PWM).",
                 "",
                 "Table 18-5. Compare Output Mode, non-PWM Mode",
                 "```",
@@ -375,7 +375,7 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "",
-                "Table 18-6 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to fast PWM mode.",
+                "Table 18-6 shows the COM0B1:0 bit functionality when the WGM02:0 bits are set to fast PWM mode.",
                 "Table 18-6. Compare Output Mode, Fast PWM Mode",
                 "```",
                 "---------------------------------------------------------------------------------------------",
@@ -393,9 +393,9 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "Note: 1. A special case occurs when OCR0B equals TOP and COM0B1 is set. In this case, the Compare Match is ",
-                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in the datasheet for more details.",
                 "",
-                "Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
+                "Table 18-7 shows the COM0B1:0 bit functionality when the WGM02:0 bits are set to phase correct PWM mode.",
                 "Table 18-7. Compare Output Mode, Phase Correct PWM Mode",
                 "```",
                 "---------------------------------------------------------------------------------------------",
@@ -418,11 +418,11 @@
         },
         "WGM02": {
             "documentation": [
-                "Combined with the WGM02 bit found in the TCCR0B Register, these bits control the counting sequence of the",
+                "Combined with the WGM01:0 bits found in the TCCR0A Register, these bits control the counting sequence of the",
                 "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
                 "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
-                "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes. (see \u201dModes of",
-                "Operation\u201d on page 155).",
+                "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see \"Modes of",
+                "Operation\" on page 155).",
                 "",
                 "Table 18-8. Waveform Generation Mode Bit Description",
                 "```",
@@ -535,7 +535,7 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "Note: 1. A special case occurs when OCR1A equals TOP and COM1A1 is set. In this case, the Compare Match is ",
-                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in the datasheet for more details.",
                 "",
                 "Table 3 shows the COM1A1:0 bit functionality when the WGM13:0 bits are set to phase correct or phase and frequency correct PWM mode.",
                 "",
@@ -558,19 +558,19 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "Note: 1. A special case occurs when OCR1A equals TOP and COM1A1 is set. In this case, the Compare Match is ",
-                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in the datasheet for more details."
             ]
         },
         "COM1B": {
             "documentation": [
-                "See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.",
+                "See ATmega328P Datasheet Table 18-5, Table 18-6, and Table 18-7.",
                 "These bits control the Output Compare pin (OC1B) behavior. If one or both of the COM1B1:0 bits are set, the",
                 "OC1B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
                 "Direction Register (DDR) bit corresponding to the OC1B pin must be set in order to enable the output driver.",
                 "When OC1B is connected to the pin, the function of the COM1B1:0 bits depends on the WGM13:0 bit setting.",
-                "Table 18-5 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to a normal or CTC mode(non-PWM).",
+                "Table 18-5 shows the COM1B1:0 bit functionality when the WGM13:0 bits are set to a normal or CTC mode (non-PWM).",
                 "",
-                "Table 1. Compare Output Mode, non-PWM Mode",
+                "Table 18-5. Compare Output Mode, non-PWM Mode",
                 "```",
                 "---------------------------------------------------------------------------------------------",
                 "|  Mode  | COM1B1| COM1B0| Description                                                      |",
@@ -585,7 +585,7 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "",
-                "Table 18-6 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to fast PWM mode.",
+                "Table 18-6 shows the COM1B1:0 bit functionality when the WGM13:0 bits are set to fast PWM mode.",
                 "Table 18-6. Compare Output Mode, Fast PWM Mode",
                 "```",
                 "---------------------------------------------------------------------------------------------",
@@ -603,10 +603,10 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "Note: 1. A special case occurs when OCR1B equals TOP and COM1B1 is set. In this case, the Compare Match is ",
-                "      ignored, but the set or clear is done at BOTTOM. See \"Phase Correct PWM Mode\" in datasheet for more details.",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in the datasheet for more details.",
                 "",
-                "Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
-                "Table 18-7. Compare Output Mode, Phase Correct PWM Mode",
+                "Table 18-7 shows the COM1B1:0 bit functionality when the WGM13:0 bits are set to phase correct or phase and frequency correct PWM mode.",
+                "Table 18-7. Compare Output Mode, Phase Correct and Phase and Frequency Correct PWM Mode",
                 "```",
                 "---------------------------------------------------------------------------------------------",
                 "|  Mode  | COM1B1| COM1B0| Description                                                      |",
@@ -652,8 +652,8 @@
                 "Combined with the WGM13:2 bits found in the TCCR1B Register, these bits control the counting sequence of the",
                 "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used.",
                 "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
-                "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see \u201dModes of",
-                "Operation\u201d on page 155).",
+                "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see \"Modes of",
+                "Operation\" on page 155).",
                 "",
                 "Table 18-8. Waveform Generation Mode Bit Description",
                 "```",
@@ -766,7 +766,7 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "Note: 1. A special case occurs when OCR2A equals TOP and COM2A1 is set. In this case, the Compare Match is ",
-                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in datasheet for more details.",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" in the datasheet for more details.",
                 "",
                 "Table 3 shows the COM2A1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
                 "",
@@ -788,12 +788,12 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "Note: 1. A special case occurs when OCR2A equals TOP and COM2A1 is set. In this case, the Compare Match is ",
-                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in datasheet for more details."
+                "      ignored, but the set or clear is done at TOP. See \"Phase Correct PWM Mode\" in the datasheet for more details."
             ]
         },
         "COM2B": {
             "documentation": [
-                "See ATMega328p Datasheet Table 18-5, Table 18-6, and Table 18-7.",
+                "See ATmega328P Datasheet Table 18-5, Table 18-6, and Table 18-7.",
                 "",
                 "These bits control the Output Compare pin (OC2B) behavior. If one or both of the COM2B1:0 bits are set, the",
                 "OC2B output overrides the normal port functionality of the I/O pin it is connected to. However, note that the Data",
@@ -835,7 +835,7 @@
                 "---------------------------------------------------------------------------------------------",
                 "```",
                 "Note: 1. A special case occurs when OCR2B equals TOP and COM2B1 is set. In this case, the Compare Match is ",
-                "      ignored, but the set or clear is done at BOTTOM. See \"Phase Correct PWM Mode\" on page 157 for more details.",
+                "      ignored, but the set or clear is done at BOTTOM. See \"Fast PWM Mode\" on page 157 for more details.",
                 "",
                 "Table 18-7 shows the COM2B1:0 bit functionality when the WGM22:0 bits are set to phase correct PWM mode.",
                 "",
@@ -888,8 +888,8 @@
                 "Combined with the WGM22 bit found in the TCCR2B Register, these bits control the counting sequence of the",
                 "counter, the source for maximum (TOP) counter value, and what type of waveform generation to be used, see",
                 "Table 18-8. Modes of operation supported by the Timer/Counter unit are: Normal mode (counter), Clear Timer",
-                "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see \u201dModes of",
-                "Operation\u201d on page 155).",
+                "on Compare Match (CTC) mode, and two types of Pulse Width Modulation (PWM) modes (see \"Modes of",
+                "Operation\" on page 155).",
                 "",
                 "Table 18-8. Waveform Generation Mode Bit Description",
                 "```",
@@ -921,13 +921,13 @@
         "RXC0": {
             "inline": "never",
             "documentation": [
-                "URXCn is Bit 7 on UCSRnA. See Section 20.11.2."
+                "RXCn is Bit 7 on UCSRnA. See Section 20.11.2."
             ]
         },
         "TXC0": {
             "inline": "never",
             "documentation": [
-                "UTXCn is Bit 6 on UCSRnA. See Section 20.11.2."
+                "TXCn is Bit 6 on UCSRnA. See Section 20.11.2."
             ]
         },
         "UDRE0": {
@@ -939,13 +939,13 @@
         "FE0": {
             "inline": "never",
             "documentation": [
-                "UFEn is Bit 4 on UCSRnA. See Section 20.11.2."
+                "FEn is Bit 4 on UCSRnA. See Section 20.11.2."
             ]
         },
         "DOR0": {
             "inline": "never",
             "documentation": [
-                "UDROn is Bit 3 on UCSRnA. See Section 20.11.2."
+                "DORn is Bit 3 on UCSRnA. See Section 20.11.2."
             ]
         },
         "UPE0": {
@@ -956,38 +956,38 @@
         },
         "U2X0": {
             "documentation": [
-                "See ATMega328p Datasheet Section 20.",
-                "U2Xn is bit 1 on UCSRnA."
+                "See ATmega328P Datasheet Section 20.",
+                "U2Xn is Bit 1 on UCSRnA."
             ]
         },
         "MPCM0": {
             "documentation": [
-                "See ATMega328p Datasheet Section 20.",
-                "MPCMn is bit 0 on UCSRnA."
+                "See ATmega328P Datasheet Section 20.",
+                "MPCMn is Bit 0 on UCSRnA."
             ]
         },
         "RXB80": {
             "documentation": [
-                "See ATMega328p Datasheet Section 20.11.3",
-                "RXB8n is bit 1 on UCSRnB"
+                "See ATmega328P Datasheet Section 20.11.3.",
+                "RXB8n is Bit 1 on UCSRnB."
             ]
         },
         "TXB80": {
             "documentation": [
-                "See ATMega328p Datasheet Section 20.11.3",
-                "TXB8n is bit 0 on UCSRnB"
+                "See ATmega328P Datasheet Section 20.11.3.",
+                "TXB8n is Bit 0 on UCSRnB."
             ]
         },
         "UMSEL0": {
             "documentation": [
-                "See ATMega328p Datasheet Section 20.11.4",
-                "UMSELn are bit 7 and 6 on UCSRnC"
+                "See ATmega328P Datasheet Section 20.11.4.",
+                "UMSELn1:0 are Bits 7 and 6 on UCSRnC."
             ]
         },
         "UPM0": {
             "documentation": [
-                "Parity Mode See ATMega328p Datasheet Section 20.11.4.",
-                "UPMn0 and UPMn1 are bits 4 & 5 on UCSRnC.",
+                "See ATmega328P Datasheet Section 20.11.4.",
+                "UPMn1:0 are Bits 5 and 4 on UCSRnC.",
                 "These bits enable and set type of parity generation and check. If enabled, the Transmitter will automatically generate and send the",
                 "parity of the transmitted data bits within each frame. The Receiver will generate a parity value for the incoming data and compare",
                 "it to the UPMn setting. If a mismatch is detected, the UPEn Flag in UCSRnA will be set.",
@@ -1001,26 +1001,26 @@
         },
         "USBS0": {
             "documentation": [
-                "See ATMega328p Datasheet Section 20.11.4.",
-                "USBSn is bit 3 on UCSRnC."
+                "See ATmega328P Datasheet Section 20.11.4.",
+                "USBSn is Bit 3 on UCSRnC."
             ]
         },
         "UCPOL0": {
             "documentation": [
-                "See ATMega328p Datasheet Section 20.11.4.",
-                "UCPOLn is bit 0 on UCSRnC."
+                "See ATmega328P Datasheet Section 20.11.4.",
+                "UCPOLn is Bit 0 on UCSRnC."
             ]
         },
         "UCSZ0": {
             "documentation": [
-                "See ATMega328p Datasheet Section 20.11.3 and Section 20.11.4.",
-                "UCSZn0 and UCSZn1 are bits 1 and 2 on UCSRnC while UCSZn2 is bit 2 on UCSRnB"
+                "See ATmega328P Datasheet Section 20.11.3 and Section 20.11.4.",
+                "UCSZn0 and UCSZn1 are Bits 1 and 2 on UCSRnC, while UCSZn2 is Bit 2 on UCSRnB."
             ]
         },
         "UCSZ02": {
             "documentation": [
-                "See ATMega328p Datasheet Section 20.11.3 and Section 20.11.4.",
-                "UCSZn0 and UCSZn1 are bits 1 and 2 on UCSRnC while UCSZn2 is bit 2 on UCSRnB"
+                "See ATmega328P Datasheet Section 20.11.3 and Section 20.11.4.",
+                "UCSZn0 and UCSZn1 are Bits 1 and 2 on UCSRnC, while UCSZn2 is Bit 2 on UCSRnB."
             ],
             "splitTarget": "UCSZ0"
         },
@@ -1047,7 +1047,7 @@
                 "|   0   |   1   |   0   |   1   | ADC5               |",
                 "|   0   |   1   |   1   |   0   | ADC6               |",
                 "|   0   |   1   |   1   |   1   | ADC7               |",
-                "|   1   |   0   |   0   |   0   | ADC8               |",
+                "|   1   |   0   |   0   |   0   | Temperature sensor |",
                 "|   1   |   0   |   0   |   1   | Reserved           |",
                 "|   1   |   0   |   1   |   0   | Reserved           |",
                 "|   1   |   0   |   1   |   1   | Reserved           |",
