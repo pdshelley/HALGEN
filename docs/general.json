@@ -25,7 +25,6 @@
         {
             "aliases": [
                 "OCR0",
-                "OCR1",
                 "OCR2"
             ],
             "variableName": "outputCompareRegister"

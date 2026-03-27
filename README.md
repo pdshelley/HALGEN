@@ -142,6 +142,30 @@ logs-based workflow. The script reads whatever peripheral names are present in
 `logs.json`. If you use the direct-scan fallback, it groups entries by ATDF
 module name automatically.
 
+### Prune Stale `general.json` Aliases
+
+Use `Scripts/prune_general_json_aliases.py` to remove aliases from
+`docs/general.json` that no longer exist in any bundled `atdf/*.atdf` file.
+
+```bash
+python3 Scripts/prune_general_json_aliases.py --dry-run
+python3 Scripts/prune_general_json_aliases.py
+```
+
+What it does:
+
+- Scans every register and bitfield name in `atdf/*.atdf`
+- Compares those names against the aliases in `docs/general.json`
+- Removes only the missing alias when an entry still has other valid aliases
+- Removes the whole JSON object when its only alias is stale
+- Prints each removal exactly as it happens, for example:
+
+```text
+Removed alias: section=registers variableName=outputCompareRegister alias=OCR1
+```
+
+Use `--dry-run` to preview removals without writing back to `docs/general.json`.
+
 ## Repository Layout
 
 ```text
@@ -170,6 +194,8 @@ HALGEN/
   loader.
 - `Scripts/audit_general_json.py` rebuilds the missing `general.json` audit
   report.
+- `Scripts/prune_general_json_aliases.py` removes stale `general.json` aliases
+  that no longer appear in the bundled ATDF files.
 - `Scripts/generate_avr_tools_device_file.swift` helps regenerate the ATDF model
   layer when needed.
 
