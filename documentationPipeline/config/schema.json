@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://halgen.local/documentationPipeline/schema.json",
+  "title": "HALGEN Chip Documentation",
+  "type": "object",
+  "required": [
+    "chip",
+    "datasheet",
+    "registers",
+    "bitfields"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "chip": {
+      "type": "string",
+      "minLength": 1
+    },
+    "datasheet": {
+      "type": "string",
+      "minLength": 1
+    },
+    "registers": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/registerDocumentation"
+      }
+    },
+    "bitfields": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/bitfieldDocumentation"
+      }
+    }
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "bitArray": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "pattern": "^[01?]$"
+      }
+    },
+    "bitfieldDocumentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "variableName": {
+          "type": "string"
+        },
+        "valueType": {
+          "type": "string"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "access": {
+          "type": "string",
+          "enum": [
+            "R",
+            "W",
+            "R/W"
+          ]
+        },
+        "documentation": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "inline": {
+          "type": "string",
+          "enum": [
+            "__always",
+            "never"
+          ]
+        },
+        "splitTarget": {
+          "type": "string"
+        },
+        "overrideGeneratedDocumentation": {
+          "type": "boolean"
+        }
+      }
+    },
+    "registerDocumentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "variableName": {
+          "type": "string"
+        },
+        "valueType": {
+          "type": "string"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "access": {
+          "type": "string",
+          "enum": [
+            "R",
+            "W",
+            "R/W"
+          ]
+        },
+        "documentation": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "documentationL": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "documentationH": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "initialValues": {
+          "$ref": "#/$defs/bitArray"
+        },
+        "initialValuesL": {
+          "$ref": "#/$defs/bitArray"
+        },
+        "initialValuesH": {
+          "$ref": "#/$defs/bitArray"
+        },
+        "bitfields": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/bitfieldDocumentation"
+          }
+        },
+        "overrideGeneratedDocumentation": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

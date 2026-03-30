@@ -1,0 +1,194 @@
+{
+  "defaults": {
+    "minimumScore": 8,
+    "pagePadding": 1,
+    "maxRegisterTerms": 12,
+    "maxBitfieldTerms": 16
+  },
+  "peripherals": {
+    "ADC": {
+      "patterns": [
+        "Analog-to-Digital Converter",
+        "Analog to Digital Converter",
+        "ADC"
+      ],
+      "aliases": [
+        "A/D Converter"
+      ]
+    },
+    "AC": {
+      "patterns": [
+        "Analog Comparator",
+        "Comparator"
+      ],
+      "aliases": []
+    },
+    "SPI": {
+      "patterns": [
+        "Serial Peripheral Interface",
+        "SPI"
+      ],
+      "aliases": []
+    },
+    "TWI": {
+      "patterns": [
+        "Two Wire Interface",
+        "Two-wire Serial Interface",
+        "Two Wire Serial Interface",
+        "TWI"
+      ],
+      "aliases": [
+        "I2C"
+      ]
+    },
+    "USART0": {
+      "patterns": [
+        "USART0",
+        "USART"
+      ],
+      "aliases": []
+    },
+    "USART1": {
+      "patterns": [
+        "USART1",
+        "USART"
+      ],
+      "aliases": []
+    },
+    "WDT": {
+      "patterns": [
+        "Watchdog Timer"
+      ],
+      "aliases": []
+    },
+    "EEPROM": {
+      "patterns": [
+        "EEPROM",
+        "EEPROM Data Memory"
+      ],
+      "aliases": []
+    },
+    "EXINT": {
+      "patterns": [
+        "External Interrupts",
+        "Pin Change Interrupts"
+      ],
+      "aliases": []
+    },
+    "CPU": {
+      "patterns": [
+        "CPU Core",
+        "System Clock",
+        "Power Management"
+      ],
+      "aliases": []
+    },
+    "FUSE": {
+      "patterns": [
+        "Fuse Bits",
+        "Fuses",
+        "Memory Programming"
+      ],
+      "aliases": []
+    },
+    "LOCKBIT": {
+      "patterns": [
+        "Lock Bits",
+        "Lockbits",
+        "Memory Programming"
+      ],
+      "aliases": []
+    }
+  },
+  "modules": {
+    "TC8": {
+      "patterns": [
+        "8-bit Timer/Counter",
+        "Timer/Counter0",
+        "Timer/Counter2"
+      ],
+      "aliases": [
+        "Timer Counter"
+      ]
+    },
+    "TC8_ASYNC": {
+      "patterns": [
+        "8-bit Timer/Counter",
+        "Asynchronous Operation of Timer/Counter2",
+        "Timer/Counter2"
+      ],
+      "aliases": []
+    },
+    "TC16": {
+      "patterns": [
+        "16-bit Timer/Counter",
+        "Timer/Counter1",
+        "Input Capture Unit"
+      ],
+      "aliases": []
+    },
+    "PORT": {
+      "patterns": [
+        "I/O Ports",
+        "Ports as General Digital I/O",
+        "Ports as General Purpose Digital I/O",
+        "Alternate Port Functions"
+      ],
+      "aliases": []
+    },
+    "USART": {
+      "patterns": [
+        "USART",
+        "Universal Synchronous and Asynchronous serial Receiver and Transmitter"
+      ],
+      "aliases": []
+    },
+    "ADC": {
+      "patterns": [
+        "Analog-to-Digital Converter",
+        "ADC"
+      ],
+      "aliases": []
+    },
+    "AC": {
+      "patterns": [
+        "Analog Comparator"
+      ],
+      "aliases": []
+    },
+    "SPI": {
+      "patterns": [
+        "Serial Peripheral Interface"
+      ],
+      "aliases": []
+    },
+    "TWI": {
+      "patterns": [
+        "Two-wire Serial Interface",
+        "TWI"
+      ],
+      "aliases": []
+    },
+    "WDT": {
+      "patterns": [
+        "Watchdog Timer"
+      ],
+      "aliases": []
+    },
+    "CPU": {
+      "patterns": [
+        "System Clock",
+        "Power Management",
+        "CPU Core"
+      ],
+      "aliases": []
+    },
+    "EXINT": {
+      "patterns": [
+        "External Interrupts",
+        "Pin Change Interrupts"
+      ],
+      "aliases": []
+    }
+  }
+}

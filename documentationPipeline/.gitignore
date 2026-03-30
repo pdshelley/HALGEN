@@ -1,0 +1,9 @@
+.DS_Store
+datasheets/*
+!datasheets/.gitkeep
+output/datasheet_sections/*
+!output/datasheet_sections/.gitkeep
+output/drafts/*
+!output/drafts/.gitkeep
+output/skeletons/*
+!output/skeletons/.gitkeep
