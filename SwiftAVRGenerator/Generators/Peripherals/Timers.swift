@@ -221,10 +221,10 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
         case "RUNNING_NO_PRESCALING", "CLK_IO_1_NO_PRESCALING", "CLK_T2S_1_NO_PRESCALING":
             description = "Running, No Prescaling"
             enumValue = "runningWithoutPrescaling"
-        case "RUNNING_CLK_8", "CLK_IO_8_FROM_PRESCALER":
+        case "RUNNING_CLK_8", "CLK_IO_8_FROM_PRESCALER", "CLK_T2S_8_FROM_PRESCALER":
             description = "Running, CLK/8"
             enumValue = "running8"
-        case "RUNNING_CLK_16", "CLK_T2S_8_FROM_PRESCALER":
+        case "RUNNING_CLK_16":
             description = "Running, CLK/16"
             enumValue = "running16"
         case "RUNNING_CLK_32", "CLK_T2S_32_FROM_PRESCALER":
@@ -242,6 +242,27 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
         case "RUNNING_CLK_1024", "CLK_IO_1024_FROM_PRESCALER", "CLK_T2S_1024_FROM_PRESCALER":
             description = "Running, CLK/1024"
             enumValue = "running1024"
+        case "RUNNING_CLK_2":
+            description = "Running, CLK/2"
+            enumValue = "running2"
+        case "RUNNING_CLK_4":
+            description = "Running, CLK/4"
+            enumValue = "running4"
+        case "RUNNING_CLK_512":
+            description = "Running, CLK/512"
+            enumValue = "running512"
+        case "RUNNING_CLK_2048":
+            description = "Running, CLK/2048"
+            enumValue = "running2048"
+        case "RUNNING_CLK_4096":
+            description = "Running, CLK/4096"
+            enumValue = "running4096"
+        case "RUNNING_CLK_8192":
+            description = "Running, CLK/8192"
+            enumValue = "running8192"
+        case "RUNNING_CLK_16384":
+            description = "Running, CLK/16384"
+            enumValue = "running16384"
         case "RUNNING_EXTCLK_TN_FALLING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_TN_PIN_CLOCK_ON_FALLING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_T0_PIN_CLOCK_ON_FALLING_EDGE":
             description = "External clock source. Clock on falling edge."
             enumValue = "runningExternalFallingEdge"
