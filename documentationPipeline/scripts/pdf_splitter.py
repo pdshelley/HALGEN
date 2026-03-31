@@ -222,6 +222,90 @@ def build_search_terms(
     }
 
 
+def is_overview_page(page: dict[str, object]) -> bool:
+    """Detect if a page is a chip overview/features page that should be deprioritized.
+
+    These pages contain generic mentions of peripherals in feature lists but aren't
+    the actual peripheral documentation sections.
+    """
+    text = page["text"]
+    normalized = normalize_text(text)
+
+    # Strong indicators of overview/features pages
+    overview_indicators = [
+        "features",
+        "high performance low power",
+        "advanced risc architecture",
+        "powerful instructions",
+        "general purpose working registers",
+        "non volatile program and data memories",
+        "in system reprogrammable flash",
+        "peripheral features",
+        "special microcontroller features",
+        "i o and packages",
+        "operating voltages",
+        "operating temperature",
+        "maximum frequency",
+        "pin configurations",
+        "block diagram",
+        "architectural overview",
+        "pinout",
+        "pin description",
+        "ordering information",
+        "package information",
+    ]
+
+    indicator_count = sum(
+        1 for indicator in overview_indicators if indicator in normalized
+    )
+
+    # If we find 3+ overview indicators, this is likely an overview page
+    return indicator_count >= 3
+
+
+def is_pin_config_page(page: dict[str, object]) -> bool:
+    """Detect if a page is primarily a pin configuration/pinout page.
+
+    These pages mention peripheral names in the context of pin assignments,
+    not actual peripheral documentation.
+    """
+    text = page["text"]
+    normalized = normalize_text(text)
+
+    pin_indicators = [
+        "pinout",
+        "pin configurations",
+        "pin description",
+        "port a",
+        "port b",
+        "port c",
+        "port d",
+        "port e",
+        "port f",
+        "port g",
+        "bi directional i o port",
+        "alternate function",
+        "tqfp",
+        "qfn",
+        "pdip",
+        "mlf",
+        "internal pull up resistors",
+        "output buffers have symmetrical drive",
+        "tri stated when a reset",
+        "serves the functions of",
+        "serves as an 8 bit",
+        "i o port with internal pull up",
+    ]
+
+    indicator_count = sum(1 for indicator in pin_indicators if indicator in normalized)
+
+    # Check if this looks like a pin table - lots of pin names
+    pin_pattern_count = len(re.findall(r"P[A-G][0-7]", text))
+
+    # If we have strong pin indicators OR many pin references, this is a pin page
+    return indicator_count >= 3 or pin_pattern_count >= 10
+
+
 def score_page(
     page: dict[str, object], terms: dict[str, list[str]]
 ) -> dict[str, object]:
@@ -235,15 +319,25 @@ def score_page(
 
     for phrase in terms["phrases"]:
         normalized_phrase = normalize_text(phrase)
-        if normalized_phrase and normalized_phrase in normalized:
-            score += 8
-            phrase_hits.append(phrase)
+        if normalized_phrase:
+            # Use word boundary matching to avoid matching inside other words
+            # e.g., "AC" shouldn't match "accessible" or "characteristics"
+            phrase_pattern = re.compile(
+                rf"(?<![a-z0-9]){re.escape(normalized_phrase)}(?![a-z0-9])"
+            )
+            if phrase_pattern.search(normalized):
+                score += 8
+                phrase_hits.append(phrase)
 
     for alias in terms["aliases"]:
         normalized_alias = normalize_text(alias)
-        if normalized_alias and normalized_alias in normalized:
-            score += 5
-            alias_hits.append(alias)
+        if normalized_alias:
+            alias_pattern = re.compile(
+                rf"(?<![a-z0-9]){re.escape(normalized_alias)}(?![a-z0-9])"
+            )
+            if alias_pattern.search(normalized):
+                score += 5
+                alias_hits.append(alias)
 
     for register_name in terms["registers"]:
         if compile_word_pattern(register_name).search(raw_text):
@@ -255,6 +349,25 @@ def score_page(
             score += 1
             bitfield_hits.append(bitfield_name)
 
+    # Penalize overview/features pages - they mention peripherals but aren't
+    # the actual documentation sections
+    is_overview = is_overview_page(page)
+    is_pin_config = is_pin_config_page(page)
+
+    if is_overview or is_pin_config:
+        score = score // 4  # Heavily reduce score for these pages
+
+    # Early pages (typically intro, block diagrams, pin configs) often mention
+    # peripheral names generically. Require higher scores for early pages.
+    # Pages 1-15 are typically introduction/overview in Atmel datasheets.
+    page_num = page["page"]
+    is_early_page = page_num <= 15
+    if is_early_page and not (is_overview or is_pin_config):
+        # Apply a penalty for early pages not caught by overview/pin detection
+        # This catches pages like the AVR architecture block diagram that mention
+        # peripherals generically (e.g., "Analog Comparator" in a block diagram)
+        score = score // 2  # Reduce by 50%
+
     return {
         "page": page["page"],
         "score": score,
@@ -262,6 +375,9 @@ def score_page(
         "aliasHits": alias_hits,
         "registerHits": register_hits,
         "bitfieldHits": bitfield_hits,
+        "isOverview": is_overview,
+        "isPinConfig": is_pin_config,
+        "isEarlyPage": is_early_page,
     }
 
 

@@ -1,7 +1,7 @@
 ---
 description: Orchestrates HALGEN documentation generation across all prepared chips
 mode: all
-model: openai/gpt-5.4
+model: github-copilot/gpt-5.3-codex
 temperature: 0.1
 permission:
   edit: allow
