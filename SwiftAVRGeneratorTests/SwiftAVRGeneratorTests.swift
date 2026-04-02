@@ -189,6 +189,24 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertEqual(bitfieldData.documentation, "Chip split bitfield docs")
     }
 
+    func testBoilerplateTemplateUsesDocsOverrideDirectory() throws {
+        let docsDirectory = try makeTemporaryDirectory()
+        let boilerplateDirectory = docsDirectory.appendingPathComponent("boilerplate", isDirectory: true)
+        try FileManager.default.createDirectory(at: boilerplateDirectory, withIntermediateDirectories: true)
+        try write(
+            "override {{VALUE}}",
+            to: boilerplateDirectory.appendingPathComponent("Template.txt")
+        )
+
+        let rendered = BoilerplateTemplate.render(
+            named: "Template.txt",
+            documentationDirectory: docsDirectory,
+            substitutions: ["VALUE": "content"]
+        )
+
+        XCTAssertEqual(rendered, "override content")
+    }
+
     func testUARTNumberOfDataBitsAccessorNormalizesSplitFields() throws {
         let registerGroup = try sampleUARTRegisterGroup()
         let register = try XCTUnwrap(registerGroup.register.first(where: { $0.name == "UCSR0B" }))

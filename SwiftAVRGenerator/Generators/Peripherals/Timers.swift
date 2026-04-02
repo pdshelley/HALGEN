@@ -25,7 +25,17 @@ struct TimerGenerator: PeripheralGenerator {
     }
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
-        buildTimers(file: device, chipDocumentation: documentation)
+        var files = [
+            GeneratedCodeFile(
+                fileName: "Timers.swift",
+                content: buildFileHeader(for: "Timers", generateTypealias: false)
+                    + BoilerplateTemplate.load(named: "Timers.swift.template", documentationDirectory: documentation.directory),
+                subdirectory: subdirectory
+            )
+        ]
+
+        files.append(contentsOf: buildTimers(file: device, chipDocumentation: documentation))
+        return files
     }
 }
 
