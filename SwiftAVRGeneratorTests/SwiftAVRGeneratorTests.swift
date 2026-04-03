@@ -635,6 +635,84 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertTrue(uartLog.missingBitfields.contains(where: { $0.name == "RXC0" }))
     }
 
+    func testSPIGeneratorGeneratesATmega328PConvenienceAPI() throws {
+        let device = try loadDevice(named: "ATmega328P")
+        let loader = makeRepositoryDocsLoader()
+        let generator = SPIGenerator()
+
+        XCTAssertTrue(loader.loadGeneral())
+        XCTAssertTrue(loader.load(chipName: "ATmega328P"))
+
+        let files = loader.withPeripheralContext(named: generator.logName) {
+            generator.generate(device: device, documentation: loader)
+        }
+
+        XCTAssertTrue(loader.generationLog.exported)
+        XCTAssertEqual(Set(files.map(\.fileName)), ["SPI.swift", "SPI0.swift"])
+
+        let spiFile = try XCTUnwrap(files.first(where: { $0.fileName == "SPI.swift" }))
+        let spi0File = try XCTUnwrap(files.first(where: { $0.fileName == "SPI0.swift" }))
+
+        XCTAssertTrue(spiFile.content.contains("public protocol SPIPort"))
+        XCTAssertTrue(spiFile.content.contains("static var mode: SPI.Mode"))
+        XCTAssertTrue(spiFile.content.contains("static var clockRateSelect: SPI.ClockRateSelect"))
+        XCTAssertTrue(spiFile.content.contains("static func transfer(_ byte: UInt8) -> UInt8"))
+
+        XCTAssertTrue(spi0File.content.contains("public struct SPI0: SPIPort"))
+        XCTAssertTrue(spi0File.content.contains("public static var controlRegister: UInt8"))
+        XCTAssertTrue(spi0File.content.contains("public static var statusRegister: UInt8"))
+        XCTAssertTrue(spi0File.content.contains("public static var dataRegister: UInt8"))
+        XCTAssertTrue(spi0File.content.contains("public static var interruptFlag: Bool"))
+        XCTAssertFalse(spi0File.content.contains("public static var spiClockRateSelects"))
+    }
+
+    func testSPIGeneratorDeduplicatesATmega328PBSPI0Registers() throws {
+        let device = try loadDevice(named: "ATmega328PB")
+        let loader = makeRepositoryDocsLoader()
+        let generator = SPIGenerator()
+
+        XCTAssertTrue(loader.loadGeneral())
+        XCTAssertFalse(loader.load(chipName: "ATmega328PB"))
+
+        let files = loader.withPeripheralContext(named: generator.logName) {
+            generator.generate(device: device, documentation: loader)
+        }
+
+        XCTAssertTrue(loader.generationLog.exported)
+        XCTAssertEqual(Set(files.map(\.fileName)), ["SPI.swift", "SPI0.swift", "SPI1.swift"])
+
+        let spi0File = try XCTUnwrap(files.first(where: { $0.fileName == "SPI0.swift" }))
+        let spi1File = try XCTUnwrap(files.first(where: { $0.fileName == "SPI1.swift" }))
+
+        XCTAssertTrue(spi1File.content.contains("public struct SPI1: SPIPort"))
+        XCTAssertEqual(occurrences(of: "public static var controlRegister: UInt8", in: spi0File.content), 1)
+        XCTAssertEqual(occurrences(of: "public static var statusRegister: UInt8", in: spi0File.content), 1)
+        XCTAssertEqual(occurrences(of: "public static var dataRegister: UInt8", in: spi0File.content), 1)
+    }
+
+    func testSPIGeneratorPrefersUnsuffixedRegistersForPlainSPIGroup() throws {
+        let device = try loadDevice(named: "ATmega324P")
+        let loader = makeRepositoryDocsLoader()
+        let generator = SPIGenerator()
+
+        XCTAssertTrue(loader.loadGeneral())
+        XCTAssertFalse(loader.load(chipName: "ATmega324P"))
+
+        let files = loader.withPeripheralContext(named: generator.logName) {
+            generator.generate(device: device, documentation: loader)
+        }
+
+        XCTAssertTrue(loader.generationLog.exported)
+        XCTAssertEqual(Set(files.map(\.fileName)), ["SPI.swift", "SPI0.swift"])
+
+        let spi0File = try XCTUnwrap(files.first(where: { $0.fileName == "SPI0.swift" }))
+
+        XCTAssertEqual(occurrences(of: "public static var controlRegister: UInt8", in: spi0File.content), 1)
+        XCTAssertEqual(occurrences(of: "public static var statusRegister: UInt8", in: spi0File.content), 1)
+        XCTAssertEqual(occurrences(of: "public static var dataRegister: UInt8", in: spi0File.content), 1)
+        XCTAssertFalse(spi0File.content.contains("public static var spiClockRateSelect"))
+    }
+
     private func repositoryRootURL() -> URL {
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
@@ -643,6 +721,17 @@ final class SwiftAVRGeneratorTests: XCTestCase {
 
     private func atdfURL(named chipName: String) -> URL {
         repositoryRootURL().appendingPathComponent("atdf/\(chipName).atdf")
+    }
+
+    private func loadDevice(named chipName: String) throws -> AVRToolsDeviceFile {
+        let data = try Data(contentsOf: atdfURL(named: chipName))
+        return try XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
+    }
+
+    private func makeRepositoryDocsLoader() -> ChipDocumentationLoader {
+        let loader = ChipDocumentationLoader()
+        loader.directory = repositoryRootURL().appendingPathComponent("docs")
+        return loader
     }
 
     private func sampleRegister() throws -> AVRModules.Module.RegisterGroup.Register {
@@ -747,6 +836,18 @@ final class SwiftAVRGeneratorTests: XCTestCase {
 
     private func write(_ contents: String, to url: URL) throws {
         try contents.write(to: url, atomically: true, encoding: .utf8)
+    }
+
+    private func occurrences(of substring: String, in string: String) -> Int {
+        var count = 0
+        var searchRange = string.startIndex..<string.endIndex
+
+        while let range = string.range(of: substring, range: searchRange) {
+            count += 1
+            searchRange = range.upperBound..<string.endIndex
+        }
+
+        return count
     }
 
 }
