@@ -187,7 +187,7 @@ private func jsonStringLiteral(_ value: String) throws -> String {
 /// - Note: This function is responsible for parsing the ATDF format, extracting register and bitfield information,
 ///   and generating Swift code that provides type-safe access to AVR microcontroller hardware registers.
 ///   The generated code includes documentation comments derived from the chip documentation files.
-func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
+func decodeATDF(urls: [URL], docURL: URL, inferValueTypes: Bool = false) -> [GeneratedAVRCore] {
     let pipeline = GenerationPipeline()
     let resultsLock = NSLock()
     var generatedAVRCores = Array<GeneratedAVRCore?>(repeating: nil, count: urls.count)
@@ -198,6 +198,7 @@ func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
         do {
             let documentation = ChipDocumentationLoader()
             documentation.directory = docURL
+            documentation.inferValueTypes = inferValueTypes
 
             let data = try Data(contentsOf: url)
             let atdfObject = try XMLDecoder().decode(AVRToolsDeviceFile.self, from: data)
@@ -243,8 +244,8 @@ func decodeATDF(urls: [URL], docURL: URL) -> [GeneratedAVRCore] {
 ///
 /// - SeeAlso: `decodeATDF(urls:docURL:)` - Decodes ATDF files and generates Swift code modules.
 /// - SeeAlso: `exportFile(toURL:fileName:fileContents:)` - Writes individual file contents to disk.
-func exportAll(fromURLs: [URL], toURL: URL, docURL: URL) {
-    let generatedCores = decodeATDF(urls: fromURLs, docURL: docURL)
+func exportAll(fromURLs: [URL], toURL: URL, docURL: URL, inferValueTypes: Bool = false) {
+    let generatedCores = decodeATDF(urls: fromURLs, docURL: docURL, inferValueTypes: inferValueTypes)
     let skippedChipNames = generatedCores.filter { $0.shouldExport == false }.map { $0.name }.sorted()
     let exportableCores = generatedCores.filter { $0.shouldExport }
     let generatedFiles = exportableCores.flatMap { core in

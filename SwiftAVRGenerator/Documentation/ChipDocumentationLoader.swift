@@ -53,6 +53,7 @@ class ChipDocumentationLoader {
     private var registerCache: [String: SupplementalRegisterData] = [:]
     private var bitfieldCache: [String: SupplementalBitfieldData] = [:]
     var directory: URL?
+    var inferValueTypes: Bool = false
 
     var hasMissingSupplementalData: Bool {
         missingRegistersByPeripheral.values.contains { $0.isEmpty == false }
@@ -192,9 +193,11 @@ class ChipDocumentationLoader {
         }
 
         let fallbackVariableName = getVariableName(caption: bitfield.caption ?? bitfield.name)
+        let rawValueType = chipDocs?.valueType ?? generalDocs?.valueType ?? ""
+        let inferredValueType = inferValueTypeIfNeeded(rawValueType, bitfield: bitfield)
         let resolvedData = SupplementalBitfieldData(
             variableName: preferredVariableName(chipDocs?.variableName, generalDocs?.variableName, fallback: fallbackVariableName),
-            valueType: chipDocs?.valueType ?? generalDocs?.valueType ?? "",
+            valueType: inferredValueType,
             defaultValue: chipDocs?.defaultValue ?? generalDocs?.defaultValue ?? "",
             documentation: formatDocumentation(chipDocs?.documentation),
             access: Access(rawValue: chipDocs?.access ?? generalDocs?.access ?? bitfield.rw ?? "") ?? .readWrite,
@@ -301,5 +304,26 @@ class ChipDocumentationLoader {
             documentation: "",
             access: Access(rawValue: bitfield.rw ?? "") ?? .readWrite
         )
+    }
+
+    private func inferValueTypeIfNeeded(_ valueType: String, bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> String {
+        guard inferValueTypes else { return valueType }
+        guard valueType.isEmpty else { return valueType }
+
+        let mask = bitfield.mask.value
+        let bitCount = mask.nonzeroBitCount
+
+        // Single-bit fields are represented as Bool regardless of bit position.
+        if bitCount == 1 {
+            return "Bool"
+        }
+
+        // Only infer UInt8 for multi-bit fields whose mask fits in the low byte.
+        if mask <= 0xFF {
+            return "UInt8"
+        }
+
+        // For wider masks, do not infer a type yet.
+        return valueType
     }
 }
