@@ -1,9 +1,9 @@
-// This auto compleets very nicely as you get `timer.0` for timer0.
+// This auto completes very nicely as you get `timer.0` for timer0.
 //let timer: (Timer0, Timer1, Timer2) = (timer0, timer1, timer2)
 
-// This is a nice way to get a list of all timers that have a given set of features but the .0 .1 ... will not corrispond to timer0 or timer1.
-// There could be a collision if you wanted to get a timers that was 16 bit, then wanted a second timer that has an external clock, you would need to be more aware that the ATmega328p can do this with timer 1 and timer 0 respectivly.
-// It would be nice to be able to have a list that was sorted from what timers were left avalible without doing runtime checks and allowing compiler errors, warnings, and help, all at compile time or pre-compile.
+// This is a nice way to get a list of all timers that have a given set of features but the .0 .1 ... will not correspond to timer0 or timer1.
+// There could be a collision if you wanted to get a timers that was 16 bit, then wanted a second timer that has an external clock, you would need to be more aware that the ATmega328p can do this with timer 1 and timer 0 respectively.
+// It would be nice to be able to have a list that was sorted from what timers were left available without doing runtime checks and allowing compiler errors, warnings, and help, all at compile time or pre-compile.
 //let timers8Bit: (Timer8Bit, Timer8Bit) = (timer0, timer2)
 //let timers16Bit: (Timer16Bit) = (timer1)
 //let timersWithExternalClock: (HasExternalClock, HasExternalClock) = (timer0, timer1)
