@@ -25,7 +25,17 @@ struct TimerGenerator: PeripheralGenerator {
     }
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
-        buildTimers(file: device, chipDocumentation: documentation)
+        var files = [
+            GeneratedCodeFile(
+                fileName: "Timers.swift",
+                content: buildFileHeader(for: "Timers", generateTypealias: false)
+                    + BoilerplateTemplate.load(named: "Timers.swift.template", documentationDirectory: documentation.directory),
+                subdirectory: subdirectory
+            )
+        ]
+
+        files.append(contentsOf: buildTimers(file: device, chipDocumentation: documentation))
+        return files
     }
 }
 
@@ -212,46 +222,69 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
         var description = ""
         var enumValue = ""
         
+        let number = numberFrom(value: value.value)
+        
         switch value.name {
         case "NO_CLOCK_SOURCE_STOPPED", "NO_CLOCK_SOURCE_TIMER_COUNTER_STOPPED", "NO_CLOCK_SOURCE_TIMER_COUNTER0_STOPPED", "NO_CLOCK_SOURCE_TIMER_COUNTER2_STOPPED":
             description = "No Clock Source (Stopped)"
             enumValue = "stopped"
-        case "RUNNING_NO_PRESCALING":
+        case "RUNNING_NO_PRESCALING", "CLK_IO_1_NO_PRESCALING", "CLK_T2S_1_NO_PRESCALING":
             description = "Running, No Prescaling"
             enumValue = "runningWithoutPrescaling"
-        case "RUNNING_CLK_8":
+        case "RUNNING_CLK_8", "CLK_IO_8_FROM_PRESCALER", "CLK_T2S_8_FROM_PRESCALER":
             description = "Running, CLK/8"
             enumValue = "running8"
         case "RUNNING_CLK_16":
             description = "Running, CLK/16"
             enumValue = "running16"
-        case "RUNNING_CLK_32":
+        case "RUNNING_CLK_32", "CLK_T2S_32_FROM_PRESCALER":
             description = "Running, CLK/32"
             enumValue = "running32"
-        case "RUNNING_CLK_64":
+        case "RUNNING_CLK_64", "CLK_IO_64_FROM_PRESCALER", "CLK_T2S_64_FROM_PRESCALER":
             description = "Running, CLK/64"
             enumValue = "running64"
-        case "RUNNING_CLK_128":
+        case "RUNNING_CLK_128", "CLK_T2S_128_FROM_PRESCALER":
             description = "Running, CLK/128"
             enumValue = "running128"
-        case "RUNNING_CLK_256":
+        case "RUNNING_CLK_256", "CLK_IO_256_FROM_PRESCALER", "CLK_T2S_256_FROM_PRESCALER":
             description = "Running, CLK/256"
             enumValue = "running256"
-        case "RUNNING_CLK_1024":
+        case "RUNNING_CLK_1024", "CLK_IO_1024_FROM_PRESCALER", "CLK_T2S_1024_FROM_PRESCALER":
             description = "Running, CLK/1024"
             enumValue = "running1024"
-        case "RUNNING_EXTCLK_TN_FALLING_EDGE":
+        case "RUNNING_CLK_2":
+            description = "Running, CLK/2"
+            enumValue = "running2"
+        case "RUNNING_CLK_4":
+            description = "Running, CLK/4"
+            enumValue = "running4"
+        case "RUNNING_CLK_512":
+            description = "Running, CLK/512"
+            enumValue = "running512"
+        case "RUNNING_CLK_2048":
+            description = "Running, CLK/2048"
+            enumValue = "running2048"
+        case "RUNNING_CLK_4096":
+            description = "Running, CLK/4096"
+            enumValue = "running4096"
+        case "RUNNING_CLK_8192":
+            description = "Running, CLK/8192"
+            enumValue = "running8192"
+        case "RUNNING_CLK_16384":
+            description = "Running, CLK/16384"
+            enumValue = "running16384"
+        case "RUNNING_EXTCLK_TN_FALLING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_TN_PIN_CLOCK_ON_FALLING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_T0_PIN_CLOCK_ON_FALLING_EDGE":
             description = "External clock source. Clock on falling edge."
             enumValue = "runningExternalFallingEdge"
-        case "RUNNING_EXTCLK_TN_RISING_EDGE":
+        case "RUNNING_EXTCLK_TN_RISING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_TN_PIN_CLOCK_ON_RISING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_T0_PIN_CLOCK_ON_RISING_EDGE":
             description = "External clock source. Clock on rising edge."
             enumValue = "runningExternalRisingEdge"
+        case "RESERVED":
+            description = "Reserved"
+            enumValue = "reserved\(number)"
         default:
             description = ""
         }
-        
-        // Note: Can't Convert in the Codable conversion because there is messy data that is not always numbers.
-        let number = numberFrom(value: value.value)
         
         let documentationRow = """
         

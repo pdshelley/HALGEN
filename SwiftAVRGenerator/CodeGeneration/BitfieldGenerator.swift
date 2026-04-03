@@ -153,7 +153,7 @@ func generateSplitBitfieldAccessor(
         highFragment: highFragment,
         lowFragment: lowFragment
     )
-    let setter = info.access == .read ? nil : splitAccessorSetterSource(highFragment: highFragment, lowFragment: lowFragment)
+    let setter = info.access == .read ? nil : splitAccessorSetterSource(info: info, highFragment: highFragment, lowFragment: lowFragment)
 
     let source = makeAccessorDeclaration(
         bitfieldName: bitfieldA.name,
@@ -354,6 +354,14 @@ private func accessorGetterSource(
         """
     }
 
+    if info.valueType == "UInt8" && info.defaultValue.isEmpty {
+        return """
+        get {
+            (\(parentVariableName) & \(registerMask.binaryString)) >> UInt8(\(bitshift))
+        }
+        """
+    }
+
     return """
     get {
         let mode = (\(parentVariableName) & \(registerMask.binaryString)) >> UInt8(\(bitshift))
@@ -394,6 +402,8 @@ private func accessorSetterSource(
     let assignedValue: String
     if info.valueType == "Bool" {
         assignedValue = "(newValue ? 1 : 0)"
+    } else if info.valueType == "UInt8" && info.defaultValue.isEmpty {
+        assignedValue = "newValue"
     } else {
         assignedValue = "newValue.rawValue"
     }
@@ -473,7 +483,15 @@ private func splitAccessorGetterSource(
     highFragment: SplitBitfieldFragment,
     lowFragment: SplitBitfieldFragment
 ) -> String {
-    """
+    if info.valueType == "UInt8" && info.defaultValue.isEmpty {
+        return """
+        get {
+            \(splitAccessorGetterExpression(for: highFragment)) | \(splitAccessorGetterExpression(for: lowFragment))
+        }
+        """
+    }
+
+    return """
     get {
         let mode = \(splitAccessorGetterExpression(for: highFragment)) | \(splitAccessorGetterExpression(for: lowFragment))
         return \(info.valueType)(rawValue: mode) ?? \(info.defaultValue)
@@ -482,13 +500,14 @@ private func splitAccessorGetterSource(
 }
 
 private func splitAccessorSetterSource(
+    info: SupplementalBitfieldData,
     highFragment: SplitBitfieldFragment,
     lowFragment: SplitBitfieldFragment
 ) -> String {
     return """
     set {
-        \(lowFragment.parentVariableName) = (\(lowFragment.parentVariableName) & ~\(lowFragment.registerMask.binaryString)) | \(splitAccessorSetterExpression(for: lowFragment))
-        \(highFragment.parentVariableName) = (\(highFragment.parentVariableName) & ~\(highFragment.registerMask.binaryString)) | \(splitAccessorSetterExpression(for: highFragment))
+        \(lowFragment.parentVariableName) = (\(lowFragment.parentVariableName) & ~\(lowFragment.registerMask.binaryString)) | \(splitAccessorSetterExpression(for: lowFragment, isRawValue: info.valueType != "UInt8" || !info.defaultValue.isEmpty))
+        \(highFragment.parentVariableName) = (\(highFragment.parentVariableName) & ~\(highFragment.registerMask.binaryString)) | \(splitAccessorSetterExpression(for: highFragment, isRawValue: info.valueType != "UInt8" || !info.defaultValue.isEmpty))
     }
     """
 }
@@ -508,21 +527,22 @@ private func splitAccessorGetterExpression(for fragment: SplitBitfieldFragment) 
     return "((\(maskedRegister)) << UInt8(\(-shiftDelta)))"
 }
 
-private func splitAccessorSetterExpression(for fragment: SplitBitfieldFragment) -> String {
+private func splitAccessorSetterExpression(for fragment: SplitBitfieldFragment, isRawValue: Bool) -> String {
     let rawValueMask = fragment.valueMask << fragment.semanticBitshift
     let shiftDelta = Int(fragment.registerBitshift) - Int(fragment.semanticBitshift)
+    let valueAccessor = isRawValue ? "newValue.rawValue" : "newValue"
 
     if shiftDelta == 0 {
         if fragment.valueMask == 1 && fragment.semanticBitshift > 0 {
-            return "((newValue.rawValue << UInt8(\(fragment.semanticBitshift))) & \(fragment.registerMask.binaryString))"
+            return "((\(valueAccessor) << UInt8(\(fragment.semanticBitshift))) & \(fragment.registerMask.binaryString))"
         }
 
-        return "(newValue.rawValue & \(rawValueMask.binaryString))"
+        return "(\(valueAccessor) & \(rawValueMask.binaryString))"
     }
 
     if shiftDelta > 0 {
-        return "((newValue.rawValue & \(rawValueMask.binaryString)) << UInt8(\(shiftDelta)))"
+        return "((\(valueAccessor) & \(rawValueMask.binaryString)) << UInt8(\(shiftDelta)))"
     }
 
-    return "((newValue.rawValue & \(rawValueMask.binaryString)) >> UInt8(\(-shiftDelta)))"
+    return "((\(valueAccessor) & \(rawValueMask.binaryString)) >> UInt8(\(-shiftDelta)))"
 }

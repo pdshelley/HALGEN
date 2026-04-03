@@ -1,0 +1,58 @@
+public enum VoltageReference: UInt8 {
+    /// AREF, Internal Vref turned off
+    case internalTurnedOff = 0
+    /// AVcc with external capacitor at AREF pin
+    case externalCapacitor = 1
+    // 2 is reserved
+    /// Internal 1.1V Voltage Reference with external capacitor at AREF pin
+    case interval1v1WithExternalReference = 3
+}
+
+public enum AnalogChannel: UInt8 {
+    case adc0 = 0
+    case adc1 = 1
+    case adc2 = 2
+    case adc3 = 3
+    case adc4 = 4
+    case adc5 = 5
+    case adc6 = 6
+    case adc7 = 7
+    case adc8 = 8
+    // 9 through 13 are reserved
+    case vbg = 14
+    case gnd = 15
+}
+
+public enum AnalogPrescaler: UInt8 {
+    case divide2 = 0
+    case divide2x = 1
+    case divide4 = 2
+    case divide8 = 3
+    case divide16 = 4
+    case divide32 = 5
+    case divide64 = 6
+    case divide128 = 7
+}
+
+public enum AutoTriggerSource: UInt8 {
+    /// Free Running mode
+    case freeRunning = 0
+    /// Analog Comparator
+    case analogComparator = 1
+    /// External Interrupt Request 0
+    case externalInterrupt0 = 2
+    /// Timer/Counter0 Compare Match A
+    case timer0CompareMatchA = 3
+    /// Timer/Counter0 Overflow
+    case timer0Overflow = 4
+    /// Timer/Counter1 Compare Match B
+    case timer1CompareMatchB = 5
+    /// Timer/Counter1 Overflow
+    case timer1Overflow = 6
+    /// Timer/Counter1 Capture
+    case timer1Capture = 7
+}
+
+public typealias adc = AnalogToDigitalConverter
+
+{{STRUCT_DECLARATION}}

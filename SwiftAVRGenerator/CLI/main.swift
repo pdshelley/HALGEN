@@ -24,6 +24,7 @@ func projectRoot() -> URL {
 
 var generateAll = false
 var outputOverride: URL? = nil
+var inferValueTypes = false
 
 var args = CommandLine.arguments.dropFirst()
 var argsIterator = args.makeIterator()
@@ -39,14 +40,18 @@ while let arg = argsIterator.next() {
             fputs("error: --output requires a path argument\n", stderr)
             exit(1)
         }
+    case "--infer-value-types":
+        inferValueTypes = true
     case "--help", "-h":
         print("""
-        Usage: SwiftAVRGeneratorCLI [--all] [--output <path>]
+        Usage: SwiftAVRGeneratorCLI [--all] [--output <path>] [--infer-value-types]
 
-          --all            Generate for all chips in atdf/
-                           (default: ATmega328P only)
-          --output <path>  Output directory
-                           (default: <project>/Output/)
+          --all                  Generate for all chips in atdf/
+                                 (default: ATmega328P only)
+          --output <path>        Output directory
+                                 (default: <project>/Output/)
+          --infer-value-types    Infer Bool/UInt8 from bitfield width
+                                 (default: off, requires explicit valueType in docs)
         """)
         exit(0)
     default:
@@ -96,7 +101,7 @@ print("Output dir   : \(outputURL.path)")
 print("Chips        : \(atdfURLs.map { $0.deletingPathExtension().lastPathComponent }.joined(separator: ", "))")
 print()
 
-exportAll(fromURLs: atdfURLs, toURL: outputURL, docURL: docsURL)
+exportAll(fromURLs: atdfURLs, toURL: outputURL, docURL: docsURL, inferValueTypes: inferValueTypes)
 
 print()
 print("Done. Output written to: \(outputURL.path)")
