@@ -313,10 +313,17 @@ class ChipDocumentationLoader {
         let mask = bitfield.mask.value
         let bitCount = mask.nonzeroBitCount
 
+        // Single-bit fields are represented as Bool regardless of bit position.
         if bitCount == 1 {
             return "Bool"
         }
 
-        return "UInt8"
+        // Only infer UInt8 for multi-bit fields whose mask fits in the low byte.
+        if mask <= 0xFF {
+            return "UInt8"
+        }
+
+        // For wider masks, do not infer a type yet.
+        return valueType
     }
 }
