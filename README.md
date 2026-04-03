@@ -1,108 +1,232 @@
-# HALGEN — Swift HAL Generator
+# HALGEN - Swift HAL Generator
 
-Generates Swift Hardware Abstraction Layer (HAL) code for AVR microcontrollers from Atmel `.atdf` device description files.
+HALGEN generates Swift hardware abstraction layers for AVR microcontrollers.
+It reads bundled ATDF (Atmel Device File) XML descriptions, merges them with
+supplemental JSON documentation, and emits formatted Swift source for each chip.
 
-ATDFs are pulled from: http://packs.download.atmel.com
+```text
+atdf/*.atdf + docs/general.json + docs/<Chip>.json
+    -> GenerationPipeline
+    -> Output/<Chip>/...
+```
 
----
+The repository includes both a SwiftUI macOS app target and a command-line
+generator. The CLI is the primary workflow.
+
+Bundled ATDF files originate from: http://packs.download.atmel.com
 
 ## Requirements
 
 - macOS with Xcode installed
-- Xcode command line tools pointing to Xcode (not just CLT):
-  ```
-  sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-  ```
+- Xcode command line tools pointed at the full Xcode app:
 
----
-
-## Usage
-
-### generate.sh
-
-The easiest way to run the generator is via the shell script at the project root. It builds the CLI tool automatically before running it.
-
-```
-./generate.sh [--all] [--output <path>]
+```bash
+sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 ```
 
-**Examples:**
+## Quick Start
 
-Generate HAL for ATmega328P (default) into `Output/`:
-```
+Use the helper script at the project root. It builds the CLI in Release and
+then runs it.
+
+```bash
 ./generate.sh
-```
-
-Generate HAL for all chips in `atdf/` into `Output/`:
-```
 ./generate.sh --all
+./generate.sh --output /tmp/halgen-test
+./generate.sh --all --output /tmp/halgen-test
 ```
 
-Generate HAL for ATmega328P into a custom directory:
+Default behavior:
+
+| Invocation | Result |
+| --- | --- |
+| `./generate.sh` | Generate `ATmega328P` into `Output/` |
+| `./generate.sh --all` | Generate every bundled `.atdf` file in `atdf/` |
+| `./generate.sh --output <path>` | Write output to a custom directory |
+
+Show CLI help:
+
+```bash
+./generate.sh --help
 ```
-./generate.sh --output ~/Desktop/MyHAL
-```
 
-Generate all chips into a custom directory:
-```
-./generate.sh --all --output ~/Desktop/MyHAL
-```
+## Build And Run The CLI Directly
 
-**Parameters:**
+If you want to build and invoke the binary yourself:
 
-| Parameter | Description |
-|---|---|
-| *(none)* | Generate for ATmega328P only, output to `Output/` |
-| `--all` | Generate for every `.atdf` file in `atdf/` |
-| `--output <path>` | Write output to `<path>` instead of `Output/` |
+```bash
+xcodebuild \
+  -project SwiftAVRGenerator.xcodeproj \
+  -scheme SwiftAVRGeneratorCLI \
+  -configuration Release \
+  -destination "platform=macOS,arch=arm64" \
+  -derivedDataPath .build
 
----
-
-### CLI directly
-
-After the project has been built at least once with `generate.sh`, you can invoke the binary directly:
-
-```
 .build/Build/Products/Release/SwiftAVRGeneratorCLI [--all] [--output <path>]
 ```
 
----
+## Generated Output
 
-## Output structure
+HALGEN currently generates these peripheral families:
 
-Generated files are written under the output directory, organized by chip name:
+- GPIO
+- ADC
+- Timers
+- UART
 
-```
+Representative output for `ATmega328P`:
+
+```text
 Output/
-└── ATmega328P/
-    └── module/
-        ├── GPIO.swift
-        ├── AnalogToDigitalConverter.swift
-        ├── Timer/
-        │   ├── Timer0.swift
-        │   ├── Timer1.swift
-        │   └── Timer2.swift
-        └── UART/
-            ├── UART.swift
-            └── UART0.swift
+|-- ATmega328P/
+|   `-- module/
+|       |-- AnalogToDigitalConverter.swift
+|       |-- GPIO.swift
+|       |-- Timer/
+|       |   |-- Timer0.swift
+|       |   |-- Timer1.swift
+|       |   `-- Timer2.swift
+|       `-- UART/
+|           |-- UART.swift
+|           `-- UART0.swift
+|-- formatting-report.txt
+`-- logs.json
 ```
 
----
+`logs.json` records missing supplemental documentation for each chip. It also
+includes top-level exported/skipped chip counts, and any missing items are
+grouped by peripheral so follow-up audit tooling can work directly from the log.
 
-## Project structure
+`formatting-report.txt` captures diagnostics from the code formatter that runs on
+every generated file.
 
+## Supplemental Documentation
+
+The files in `docs/` add naming, access metadata, and richer documentation on
+top of the raw ATDF input:
+
+- `docs/general.json` contains shared aliases and reusable metadata.
+- `docs/<Chip>.json` contains chip-specific register and bitfield details.
+- Missing entries fall back to generated names and are reported in `logs.json`.
+
+This is the preferred way to improve generated output. Avoid hand-editing files
+under `Output/` unless you are only inspecting generated results.
+
+### Audit Missing `general.json` Entries
+
+Use `Scripts/audit_general_json.py` to regenerate the grouped audit report in
+`docs/README.md`.
+
+Preferred workflow after a full generation pass:
+
+```bash
+./generate.sh --all
+python3 Scripts/audit_general_json.py --logs Output/logs.json
 ```
+
+What it does:
+
+- Uses `logs.json` as the source of aliases the generator actually reported as missing
+- Reads the per-peripheral grouping directly from `logs.json`
+- Cleans suggested `variableName` values and groups aliases within the same peripheral family
+- Writes the report to `docs/README.md`
+
+If you do not have a fresh `logs.json`, it can still fall back to a direct scan:
+
+```bash
+python3 Scripts/audit_general_json.py
+```
+
+No script edits or extra flags are needed for new peripherals when you use the
+logs-based workflow. The script reads whatever peripheral names are present in
+`logs.json`. If you use the direct-scan fallback, it groups entries by ATDF
+module name automatically.
+
+### Prune Stale `general.json` Aliases
+
+Use `Scripts/prune_general_json_aliases.py` to remove aliases from
+`docs/general.json` that no longer exist in any bundled `atdf/*.atdf` file.
+
+```bash
+python3 Scripts/prune_general_json_aliases.py --dry-run
+python3 Scripts/prune_general_json_aliases.py
+```
+
+What it does:
+
+- Scans every register and bitfield name in `atdf/*.atdf`
+- Compares those names against the aliases in `docs/general.json`
+- Removes only the missing alias when an entry still has other valid aliases
+- Removes the whole JSON object when its only alias is stale
+- Prints each removal exactly as it happens, for example:
+
+```text
+Removed alias: section=registers variableName=outputCompareRegister alias=OCR1
+```
+
+Use `--dry-run` to preview removals without writing back to `docs/general.json`.
+
+## Repository Layout
+
+```text
 HALGEN/
-├── generate.sh                  — Build and run script
-├── atdf/                        — ATDF source files (one per chip)
-├── docs/                        — Supplemental JSON documentation
-├── Output/                      — Generated Swift files (created on first run)
-└── SwiftAVRGenerator/
-    ├── App/                     — SwiftUI macOS app
-    ├── CLI/                     — Command-line entry point
-    ├── Generators/              — Per-peripheral code generators
-    ├── CodeGeneration/          — Core code generation utilities
-    ├── Documentation/           — Documentation loader
-    ├── Extensions/              — Swift extensions
-    └── AVRToolsDeviceFile/      — ATDF decode models
+|-- generate.sh
+|-- atdf/
+|-- docs/
+|-- Output/
+|-- Scripts/
+|-- SwiftAVRGenerator/
+|   |-- App/
+|   |-- CLI/
+|   |-- Generators/
+|   |-- CodeGeneration/
+|   |-- Documentation/
+|   `-- AVRToolsDeviceFile/
+|-- SwiftAVRGeneratorTests/
+`-- SwiftAVRGeneratorUITests/
+```
+
+- `SwiftAVRGenerator/App/` contains the SwiftUI macOS app target.
+- `SwiftAVRGenerator/CLI/` contains the command-line entry point.
+- `SwiftAVRGenerator/Generators/` contains the generation pipeline and
+  peripheral generators.
+- `SwiftAVRGenerator/Documentation/` contains the supplemental doc models and
+  loader.
+- `Scripts/audit_general_json.py` rebuilds the missing `general.json` audit
+  report.
+- `Scripts/prune_general_json_aliases.py` removes stale `general.json` aliases
+  that no longer appear in the bundled ATDF files.
+- `Scripts/generate_avr_tools_device_file.swift` helps regenerate the ATDF model
+  layer when needed.
+
+## Development
+
+Build the macOS app target:
+
+```bash
+xcodebuild \
+  -project SwiftAVRGenerator.xcodeproj \
+  -scheme SwiftAVRGenerator \
+  -configuration Debug \
+  -destination "platform=macOS,arch=arm64" \
+  -derivedDataPath .build
+```
+
+Run tests:
+
+```bash
+xcodebuild test \
+  -project SwiftAVRGenerator.xcodeproj \
+  -scheme SwiftAVRGenerator \
+  -destination "platform=macOS,arch=arm64"
+```
+
+If local signing blocks test runs, retry with:
+
+```bash
+xcodebuild test \
+  -project SwiftAVRGenerator.xcodeproj \
+  -scheme SwiftAVRGenerator \
+  -destination "platform=macOS,arch=arm64" \
+  CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM=""
 ```

@@ -225,11 +225,29 @@ func getBitAccess(from register: AVRModules.Module.RegisterGroup.Register, paren
 ///   // Returns: "timerControl"
 ///   ```
 func getVariableName(caption: String) -> String {
-    var variableName = caption
-    let charactersToRemove: Set<Character> = [" ", "/", "0", "1", "2", "3", "4", "5", "-"]
-    variableName = variableName.filter { !charactersToRemove.contains($0) }
-    let name = variableName.prefix(1).lowercased() + variableName.dropFirst()
-    return name
+    let rawTokens = caption.components(separatedBy: CharacterSet.alphanumerics.inverted)
+    let tokens = rawTokens.compactMap { rawToken -> String? in
+        let scalars = rawToken.unicodeScalars.filter { CharacterSet.decimalDigits.contains($0) == false }
+        let cleanedToken = String(String.UnicodeScalarView(scalars))
+
+        guard cleanedToken.isEmpty == false else {
+            return nil
+        }
+
+        return cleanedToken
+    }
+
+    guard let firstToken = tokens.first else {
+        return ""
+    }
+
+    let leadingToken = firstToken.lowercased()
+    let remainingTokens = tokens.dropFirst().map { token in
+        let lowercasedToken = token.lowercased()
+        return lowercasedToken.prefix(1).uppercased() + lowercasedToken.dropFirst()
+    }
+
+    return ([leadingToken] + remainingTokens).joined()
 }
 
 /// This function help create what is needed to generate documentation for a register object.

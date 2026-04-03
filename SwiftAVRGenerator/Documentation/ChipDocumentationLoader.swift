@@ -21,25 +21,24 @@ struct MissingBitfieldLog: Codable {
     let suggestedVariableName: String
 }
 
+struct PeripheralGenerationLog: Codable {
+    let name: String
+    let missingRegisters: [MissingRegisterLog]
+    let missingBitfields: [MissingBitfieldLog]
+}
+
 struct ChipGenerationLog: Codable {
     let name: String
     let exported: Bool
-    let missingRegisters: [MissingRegisterLog]
-    let missingBitfields: [MissingBitfieldLog]
 
-    enum CodingKeys: String, CodingKey {
-        case name
-        case exported
-        case missingRegisters
-        case missingBitfields
+    let peripherals: [PeripheralGenerationLog]
+
+    var missingRegisters: [MissingRegisterLog] {
+        peripherals.flatMap { $0.missingRegisters }
     }
 
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(name, forKey: .name)
-        try container.encode(exported, forKey: .exported)
-        try container.encode(missingRegisters, forKey: .missingRegisters)
-        try container.encode(missingBitfields, forKey: .missingBitfields)
+    var missingBitfields: [MissingBitfieldLog] {
+        peripherals.flatMap { $0.missingBitfields }
     }
 }
 
@@ -47,26 +46,51 @@ class ChipDocumentationLoader {
     private var chipDocumentation: ChipDocumentation?
     private var generalDocumentation: GeneralDocumentation?
     private var chipName: String = ""
-    private var missingRegisters: [String: MissingRegisterLog] = [:]
-    private var missingBitfields: [String: MissingBitfieldLog] = [:]
+    private let uncategorizedPeripheralName = "Uncategorized"
+    private var currentPeripheralName: String?
+    private var missingRegistersByPeripheral: [String: [String: MissingRegisterLog]] = [:]
+    private var missingBitfieldsByPeripheral: [String: [String: MissingBitfieldLog]] = [:]
     private var registerCache: [String: SupplementalRegisterData] = [:]
     private var bitfieldCache: [String: SupplementalBitfieldData] = [:]
     var directory: URL?
 
     var hasMissingSupplementalData: Bool {
-        missingRegisters.isEmpty == false || missingBitfields.isEmpty == false
+        missingRegistersByPeripheral.values.contains { $0.isEmpty == false }
+            || missingBitfieldsByPeripheral.values.contains { $0.isEmpty == false }
     }
 
     var generationLog: ChipGenerationLog {
-        let sortedMissingRegisters = missingRegisters.values.sorted { $0.name < $1.name }
-        let sortedMissingBitfields = missingBitfields.values.sorted { $0.name < $1.name }
+        let peripheralNames = Set(missingRegistersByPeripheral.keys).union(missingBitfieldsByPeripheral.keys).sorted()
+        let peripheralLogs: [PeripheralGenerationLog] = peripheralNames.compactMap { peripheralName in
+            let missingRegisters = (missingRegistersByPeripheral[peripheralName] ?? [:]).values.sorted { $0.name < $1.name }
+            let missingBitfields = (missingBitfieldsByPeripheral[peripheralName] ?? [:]).values.sorted { $0.name < $1.name }
+
+            guard missingRegisters.isEmpty == false || missingBitfields.isEmpty == false else {
+                return nil
+            }
+
+            return PeripheralGenerationLog(
+                name: peripheralName,
+                missingRegisters: missingRegisters,
+                missingBitfields: missingBitfields
+            )
+        }
 
         return ChipGenerationLog(
             name: chipName,
-            exported: sortedMissingRegisters.isEmpty && sortedMissingBitfields.isEmpty,
-            missingRegisters: sortedMissingRegisters,
-            missingBitfields: sortedMissingBitfields
+            exported: peripheralLogs.isEmpty,
+            peripherals: peripheralLogs
         )
+    }
+
+    func withPeripheralContext<T>(named peripheralName: String, perform: () throws -> T) rethrows -> T {
+        let previousPeripheralName = currentPeripheralName
+        currentPeripheralName = peripheralName
+        defer {
+            currentPeripheralName = previousPeripheralName
+        }
+
+        return try perform()
     }
     
     @discardableResult
@@ -97,8 +121,9 @@ class ChipDocumentationLoader {
     func load(chipName: String) -> Bool {
         self.chipName = chipName
         chipDocumentation = nil
-        missingRegisters.removeAll()
-        missingBitfields.removeAll()
+        currentPeripheralName = nil
+        missingRegistersByPeripheral.removeAll()
+        missingBitfieldsByPeripheral.removeAll()
         registerCache.removeAll()
         bitfieldCache.removeAll()
 
@@ -227,8 +252,15 @@ class ChipDocumentationLoader {
         return trimmedValue
     }
 
+    private func activePeripheralName() -> String {
+        currentPeripheralName ?? uncategorizedPeripheralName
+    }
+
     private func missingSupplementalData(for register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData {
         let suggestedVariableName = getVariableName(caption: register.caption ?? register.name)
+
+        let peripheralName = activePeripheralName()
+        var missingRegisters = missingRegistersByPeripheral[peripheralName] ?? [:]
 
         missingRegisters[register.name] = MissingRegisterLog(
             name: register.name,
@@ -236,6 +268,7 @@ class ChipDocumentationLoader {
             offset: register.offset,
             suggestedVariableName: suggestedVariableName
         )
+        missingRegistersByPeripheral[peripheralName] = missingRegisters
 
         return SupplementalRegisterData(
             variableName: suggestedVariableName,
@@ -250,12 +283,16 @@ class ChipDocumentationLoader {
     private func missingSupplementalData(for bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData {
         let suggestedVariableName = getVariableName(caption: bitfield.caption ?? bitfield.name)
 
+        let peripheralName = activePeripheralName()
+        var missingBitfields = missingBitfieldsByPeripheral[peripheralName] ?? [:]
+
         missingBitfields[bitfield.name] = MissingBitfieldLog(
             name: bitfield.name,
             caption: bitfield.caption ?? "",
             mask: Int(bitfield.mask.value).toHex(),
             suggestedVariableName: suggestedVariableName
         )
+        missingBitfieldsByPeripheral[peripheralName] = missingBitfields
 
         return SupplementalBitfieldData(
             variableName: suggestedVariableName,
