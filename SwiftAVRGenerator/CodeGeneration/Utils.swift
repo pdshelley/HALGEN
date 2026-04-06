@@ -80,6 +80,15 @@ func joinDocumentationSections(_ sections: [String]) -> String {
         .joined(separator: "\n\n")
 }
 
+func trailingNumericSuffix(in value: String) -> String? {
+    let trailingDigits = String(value.reversed().prefix { $0.isNumber }.reversed())
+    return trailingDigits.isEmpty ? nil : trailingDigits
+}
+
+func peripheralInstanceIndex(for registerGroupName: String) -> String {
+    trailingNumericSuffix(in: registerGroupName) ?? "0"
+}
+
 func makeDocumentationComment(title: String, body: String = "") -> String {
     var lines = ["/// \(title)"]
 

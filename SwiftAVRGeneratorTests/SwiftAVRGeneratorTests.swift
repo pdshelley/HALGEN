@@ -61,6 +61,16 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         )
     }
 
+    func testPeripheralInstanceIndexUsesTrailingNumericSuffix() {
+        XCTAssertNil(trailingNumericSuffix(in: "SPI"))
+        XCTAssertEqual(trailingNumericSuffix(in: "SPI1"), "1")
+        XCTAssertEqual(trailingNumericSuffix(in: "USART12"), "12")
+
+        XCTAssertEqual(peripheralInstanceIndex(for: "SPI"), "0")
+        XCTAssertEqual(peripheralInstanceIndex(for: "SPI1"), "1")
+        XCTAssertEqual(peripheralInstanceIndex(for: "USART12"), "12")
+    }
+
     func testChipDocumentationLoaderUsesGeneralAsBaseAndChipOverridesIt() throws {
         let docsDirectory = try makeTemporaryDirectory()
         try write(

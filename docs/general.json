@@ -239,28 +239,9 @@
                 "UDR0",
                 "UDR1",
                 "UDR2",
-                "UDR3",
-                "SPDR",
-                "SPDR0",
-                "SPDR1"
+                "UDR3"
             ],
             "variableName": "dataRegister"
-        },
-        {
-            "aliases": [
-                "SPCR",
-                "SPCR0",
-                "SPCR1"
-            ],
-            "variableName": "controlRegister"
-        },
-        {
-            "aliases": [
-                "SPSR",
-                "SPSR0",
-                "SPSR1"
-            ],
-            "variableName": "statusRegister"
         },
         {
             "aliases": [
@@ -675,6 +656,30 @@
                 "WINLT"
             ],
             "variableName": "windowComparatorLowThreshold"
+        },
+        {
+            "aliases": [
+                "SPDR",
+                "SPDR0",
+                "SPDR1"
+            ],
+            "variableName": "dataRegister"
+        },
+        {
+            "aliases": [
+                "SPCR",
+                "SPCR0",
+                "SPCR1"
+            ],
+            "variableName": "controlRegister"
+        },
+        {
+            "aliases": [
+                "SPSR",
+                "SPSR0",
+                "SPSR1"
+            ],
+            "variableName": "statusRegister"
         }
     ],
     "bitfields": [
@@ -1739,119 +1744,6 @@
             "variableName": "clockPolarity",
             "valueType": "UART.ClockPolarity",
             "defaultValue": ".rising",
-            "access": "R/W"
-        },
-        {
-            "aliases": [
-                "SPIE",
-                "SPIE0",
-                "SPIE1"
-            ],
-            "variableName": "interruptEnable",
-            "valueType": "Bool",
-            "access": "R/W"
-        },
-        {
-            "aliases": [
-                "SPE",
-                "SPE0",
-                "SPE1"
-            ],
-            "variableName": "enable",
-            "valueType": "Bool",
-            "access": "R/W"
-        },
-        {
-            "aliases": [
-                "DORD",
-                "DORD0",
-                "DORD1"
-            ],
-            "variableName": "dataOrder",
-            "valueType": "SPI.DataOrder",
-            "defaultValue": ".mostSignificantBitFirst",
-            "access": "R/W"
-        },
-        {
-            "aliases": [
-                "MSTR",
-                "MSTR0",
-                "MSTR1"
-            ],
-            "variableName": "masterSlaveSelect",
-            "valueType": "Bool",
-            "access": "R/W"
-        },
-        {
-            "aliases": [
-                "CPOL",
-                "CPOL0",
-                "CPOL1"
-            ],
-            "variableName": "clockPolarity",
-            "valueType": "SPI.ClockPolarity",
-            "defaultValue": ".rising",
-            "access": "R/W"
-        },
-        {
-            "aliases": [
-                "CPHA",
-                "CPHA0",
-                "CPHA1"
-            ],
-            "variableName": "clockPhase",
-            "valueType": "SPI.ClockPhase",
-            "defaultValue": ".sample",
-            "access": "R/W"
-        },
-        {
-            "aliases": [
-                "SPIF",
-                "SPIF0",
-                "SPIF1"
-            ],
-            "variableName": "interruptFlag",
-            "valueType": "Bool",
-            "access": "R"
-        },
-        {
-            "aliases": [
-                "WCOL",
-                "WCOL0",
-                "WCOL1"
-            ],
-            "variableName": "writeCollisionFlag",
-            "valueType": "Bool",
-            "access": "R"
-        },
-        {
-            "aliases": [
-                "SPI2X",
-                "SPI2X0",
-                "SPI2X1"
-            ],
-            "variableName": "doubleSPISpeedBit",
-            "valueType": "Bool",
-            "access": "R/W"
-        },
-        {
-            "aliases": [
-                "SPR",
-                "SPR0",
-                "SPR1",
-                "SPR00",
-                "SPR10"
-            ],
-            "variableName": "clockRateSelectBits",
-            "access": "R/W"
-        },
-        {
-            "aliases": [
-                "SPDR",
-                "SPDR0",
-                "SPDR1"
-            ],
-            "variableName": "dataBits",
             "access": "R/W"
         },
         {
@@ -2987,6 +2879,119 @@
                 "VDPD"
             ],
             "variableName": "voltageDividerPowerDown"
+        },
+        {
+            "aliases": [
+                "SPIE",
+                "SPIE0",
+                "SPIE1"
+            ],
+            "variableName": "interruptEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "SPE",
+                "SPE0",
+                "SPE1"
+            ],
+            "variableName": "enable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "DORD",
+                "DORD0",
+                "DORD1"
+            ],
+            "variableName": "dataOrder",
+            "valueType": "SPI.DataOrder",
+            "defaultValue": ".mostSignificantBitFirst",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "MSTR",
+                "MSTR0",
+                "MSTR1"
+            ],
+            "variableName": "masterSlaveSelect",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "CPOL",
+                "CPOL0",
+                "CPOL1"
+            ],
+            "variableName": "clockPolarity",
+            "valueType": "SPI.ClockPolarity",
+            "defaultValue": ".rising",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "CPHA",
+                "CPHA0",
+                "CPHA1"
+            ],
+            "variableName": "clockPhase",
+            "valueType": "SPI.ClockPhase",
+            "defaultValue": ".sample",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "SPIF",
+                "SPIF0",
+                "SPIF1"
+            ],
+            "variableName": "interruptFlag",
+            "valueType": "Bool",
+            "access": "R"
+        },
+        {
+            "aliases": [
+                "WCOL",
+                "WCOL0",
+                "WCOL1"
+            ],
+            "variableName": "writeCollisionFlag",
+            "valueType": "Bool",
+            "access": "R"
+        },
+        {
+            "aliases": [
+                "SPI2X",
+                "SPI2X0",
+                "SPI2X1"
+            ],
+            "variableName": "doubleSPISpeedBit",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "SPR",
+                "SPR0",
+                "SPR1",
+                "SPR00",
+                "SPR10"
+            ],
+            "variableName": "clockRateSelectBits",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "SPDR",
+                "SPDR0",
+                "SPDR1"
+            ],
+            "variableName": "dataBits",
+            "access": "R/W"
         }
     ]
 }

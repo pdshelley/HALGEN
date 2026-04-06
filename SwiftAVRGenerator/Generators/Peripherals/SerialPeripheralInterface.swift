@@ -32,7 +32,7 @@ struct SPIGenerator: PeripheralGenerator {
         }
 
         for registerGroup in spiModule.registerGroup {
-            let structName = "SPI\(spiInstanceIndex(for: registerGroup))"
+            let structName = "SPI\(peripheralInstanceIndex(for: registerGroup.name))"
             var code = buildFileHeader(for: structName)
             var memberBlockList = MemberBlockItemListSyntax()
 
@@ -85,18 +85,6 @@ struct SPIGenerator: PeripheralGenerator {
     }
 }
 
-/// Extracts the SPI instance number from a register group name.
-///
-/// Used to generate struct names like `SPI0`, `SPI1`, etc. from register group names.
-/// For example, "SPI1" returns "1", while "SPI" returns "0" (default instance).
-///
-/// - Parameter registerGroup: The register group containing SPI registers.
-/// - Returns: The instance number as a string, or "0" if no numeric suffix exists.
-func spiInstanceIndex(for registerGroup: AVRModules.Module.RegisterGroup) -> String {
-    let trailingDigits = String(registerGroup.name.reversed().prefix { $0.isNumber }.reversed())
-    return trailingDigits.isEmpty ? "0" : trailingDigits
-}
-
 /// Deduplicates SPI registers when ATDF contains multiple variants of the same logical register.
 ///
 /// Some ATDF files define multiple register names for the same hardware register
@@ -145,8 +133,7 @@ func canonicalSPIRegisters(in registerGroup: AVRModules.Module.RegisterGroup) ->
 /// - Parameter registerGroupName: The name of the register group (e.g., "SPI1").
 /// - Returns: The trailing digits as a string, or `nil` if no numeric suffix exists.
 private func preferredSPIRegisterSuffix(for registerGroupName: String) -> String? {
-    let trailingDigits = String(registerGroupName.reversed().prefix { $0.isNumber }.reversed())
-    return trailingDigits.isEmpty ? nil : trailingDigits
+    trailingNumericSuffix(in: registerGroupName)
 }
 
 /// Maps SPI register names to their canonical key for deduplication.
@@ -188,7 +175,7 @@ private func normalizedSPIRegisterKey(for registerName: String) -> String {
 ///   - preferredSuffix: The preferred numeric suffix, if any (e.g., "1").
 /// - Returns: A score from 1 to 3, with higher values indicating stronger preference.
 private func spiRegisterSelectionScore(for registerName: String, preferredSuffix: String?) -> Int {
-    let suffix = String(registerName.reversed().prefix { $0.isNumber }.reversed())
+    let suffix = trailingNumericSuffix(in: registerName) ?? ""
 
     if let preferredSuffix {
         if suffix == preferredSuffix {
