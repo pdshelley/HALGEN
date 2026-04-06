@@ -661,7 +661,8 @@
             "aliases": [
                 "SPDR",
                 "SPDR0",
-                "SPDR1"
+                "SPDR1",
+                "DATA"
             ],
             "variableName": "dataRegister"
         },
@@ -2884,7 +2885,8 @@
             "aliases": [
                 "SPIE",
                 "SPIE0",
-                "SPIE1"
+                "SPIE1",
+                "IE"
             ],
             "variableName": "interruptEnable",
             "valueType": "Bool",
@@ -2904,7 +2906,9 @@
             "aliases": [
                 "DORD",
                 "DORD0",
-                "DORD1"
+                "DORD1",
+                "UDORD0",
+                "UDORD1"
             ],
             "variableName": "dataOrder",
             "valueType": "SPI.DataOrder",
@@ -2915,7 +2919,8 @@
             "aliases": [
                 "MSTR",
                 "MSTR0",
-                "MSTR1"
+                "MSTR1",
+                "MASTER"
             ],
             "variableName": "masterSlaveSelect",
             "valueType": "Bool",
@@ -2936,7 +2941,9 @@
             "aliases": [
                 "CPHA",
                 "CPHA0",
-                "CPHA1"
+                "CPHA1",
+                "UCPHA0",
+                "UCPHA1"
             ],
             "variableName": "clockPhase",
             "valueType": "SPI.ClockPhase",
@@ -2947,7 +2954,8 @@
             "aliases": [
                 "SPIF",
                 "SPIF0",
-                "SPIF1"
+                "SPIF1",
+                "IF"
             ],
             "variableName": "interruptFlag",
             "valueType": "Bool",
@@ -2957,7 +2965,8 @@
             "aliases": [
                 "WCOL",
                 "WCOL0",
-                "WCOL1"
+                "WCOL1",
+                "WRCOL"
             ],
             "variableName": "writeCollisionFlag",
             "valueType": "Bool",
@@ -2967,7 +2976,8 @@
             "aliases": [
                 "SPI2X",
                 "SPI2X0",
-                "SPI2X1"
+                "SPI2X1",
+                "CLK2X"
             ],
             "variableName": "doubleSPISpeedBit",
             "valueType": "Bool",
@@ -2979,7 +2989,8 @@
                 "SPR0",
                 "SPR1",
                 "SPR00",
-                "SPR10"
+                "SPR10",
+                "SPR01"
             ],
             "variableName": "clockRateSelectBits",
             "access": "R/W"
@@ -2988,10 +2999,52 @@
             "aliases": [
                 "SPDR",
                 "SPDR0",
-                "SPDR1"
+                "SPDR1",
+                "SPD"
             ],
             "variableName": "dataBits",
             "access": "R/W"
+        },
+        {
+            "aliases": [
+                "BUFEN"
+            ],
+            "variableName": "bufferModeEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "BUFWR"
+            ],
+            "variableName": "bufferWriteMode",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SSD"
+            ],
+            "variableName": "clientSelectDisable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SSIE"
+            ],
+            "variableName": "clientSelectTriggerInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SSIF"
+            ],
+            "variableName": "clientSelectTriggerInterruptFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SPIMAP"
+            ],
+            "variableName": "spiPinMapping"
         }
     ]
 }
