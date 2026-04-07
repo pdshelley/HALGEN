@@ -33,10 +33,12 @@ struct SPIGenerator: PeripheralGenerator {
 
         for registerGroup in spiModule.registerGroup {
             let structName = "SPI\(peripheralInstanceIndex(for: registerGroup.name))"
+            let canonicalRegisters = canonicalSPIRegisters(in: registerGroup)
+            let isClassicSPI = registerGroupUsesClassicSPIRegisters(canonicalRegisters)
             var code = buildFileHeader(for: structName)
             var memberBlockList = MemberBlockItemListSyntax()
 
-            for register in canonicalSPIRegisters(in: registerGroup) {
+            for register in canonicalRegisters {
                 memberBlockList.append(
                     contentsOf: generateRegister(
                         register: register,
@@ -46,6 +48,17 @@ struct SPIGenerator: PeripheralGenerator {
                 )
 
                 for bitfield in register.bitfield {
+                    if isClassicSPI,
+                       let compatibilityAccessor = generateClassicSPICompatibilityAccessor(
+                        bitfield: bitfield,
+                        parentRegister: register,
+                        registerData: documentation.supplementalData(for:),
+                        bitfieldData: documentation.supplementalData(for:)
+                       ) {
+                        memberBlockList.append(compatibilityAccessor)
+                        continue
+                    }
+
                     if let bitfieldAccessor = generateBitfieldAccessor(
                         bitfield: bitfield,
                         parentVariable: register,
@@ -56,6 +69,15 @@ struct SPIGenerator: PeripheralGenerator {
                         memberBlockList.append(bitfieldAccessor)
                     }
                 }
+            }
+
+            if isClassicSPI {
+                memberBlockList.append(
+                    makeClassicSPISetupMethod(
+                        device: device,
+                        registerGroup: registerGroup
+                    )
+                )
             }
 
             memberBlockList = normalizeMemberSpacing(memberBlockList)
@@ -82,6 +104,137 @@ struct SPIGenerator: PeripheralGenerator {
         }
 
         return files
+    }
+}
+
+private func registerGroupUsesClassicSPIRegisters(
+    _ registers: [AVRModules.Module.RegisterGroup.Register]
+) -> Bool {
+    let registerNames = Set(registers.map { normalizedSPIRegisterKey(for: $0.name) })
+    return registerNames.isSuperset(of: ["SPCR", "SPSR", "SPDR"])
+}
+
+private func generateClassicSPICompatibilityAccessor(
+    bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
+    parentRegister: AVRModules.Module.RegisterGroup.Register,
+    registerData: (_ register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData,
+    bitfieldData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData
+) -> MemberBlockItemSyntax? {
+    guard normalizedSPIRegisterKey(for: parentRegister.name) == "SPSR" else {
+        return nil
+    }
+
+    let info = bitfieldData(bitfield)
+    guard info.variableName == "interruptFlag" || info.variableName == "writeCollisionFlag" else {
+        return nil
+    }
+
+    let registerName = registerData(parentRegister).variableName
+    let registerMask = bitfield.mask.value.lowByte
+    let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
+    let caption = bitfield.caption ?? ""
+    let source = """
+    /// \(bitfield.name) - \(caption)
+    @inlinable
+    @inline(__always)
+    public static var \(info.variableName): Bool {
+        get {
+            let flag = (\(registerName) & \(registerMask.binaryString)) >> UInt8(\(bitshift))
+            return flag == 1
+        }
+        set {
+            \(registerName) = (\(registerName) & ~\(registerMask.binaryString)) | (((newValue ? 1 : 0) & 0b00000001) << UInt8(\(bitshift)))
+        }
+    }
+    """
+
+    return MemberBlockItemSyntax(decl: DeclSyntax("\(raw: source)").with(\.trailingTrivia, .newlines(2)))
+}
+
+private func makeClassicSPISetupMethod(
+    device: AVRToolsDeviceFile,
+    registerGroup: AVRModules.Module.RegisterGroup
+) -> MemberBlockItemSyntax {
+    let pinDirectionLines = classicSPIPinDirectionLines(
+        device: device,
+        registerGroup: registerGroup
+    )
+    var sourceLines = [
+        "@inlinable",
+        "@inline(__always)",
+        "public static func setup() {",
+        "    let savedStatus = cpuCore.statusRegister",
+        "    cpuCore.globalInterruptEnable = false",
+        "",
+        "    masterSlaveSelect = true",
+        "    enable = true"
+    ]
+
+    if pinDirectionLines.isEmpty == false {
+        sourceLines.append("")
+        sourceLines.append(contentsOf: pinDirectionLines.map { "    \($0)" })
+    }
+
+    sourceLines.append("")
+    sourceLines.append("    cpuCore.statusRegister = savedStatus")
+    sourceLines.append("}")
+    let source = sourceLines.joined(separator: "\n")
+
+    return MemberBlockItemSyntax(decl: DeclSyntax("\(raw: source)").with(\.trailingTrivia, .newlines(2)))
+}
+
+private func classicSPIPinDirectionLines(
+    device: AVRToolsDeviceFile,
+    registerGroup: AVRModules.Module.RegisterGroup
+) -> [String] {
+    guard let spiModule = device.devices.device.peripherals.module.first(where: { $0.name == "SPI" }) else {
+        return []
+    }
+
+    guard let instance = spiModule.instance.first(where: {
+        $0.registerGroup?.name == registerGroup.name || $0.name == registerGroup.name
+    }) else {
+        return []
+    }
+
+    let orderedSignalGroups = ["SCK", "MISO", "MOSI"]
+
+    return orderedSignalGroups.compactMap { group in
+        guard let pad = preferredClassicSPIPad(
+            for: group,
+            in: instance.signals?.signal ?? []
+        ) else {
+            return nil
+        }
+
+        return "GPIO.\(pad.lowercased()).setDataDirection(.output) // \(group)"
+    }
+}
+
+private func preferredClassicSPIPad(
+    for group: String,
+    in signals: [AVRDevices.Device.Peripherals.Module.Instance.Signals.Signal]
+) -> String? {
+    signals
+        .filter { $0.group == group }
+        .max { lhs, rhs in
+            classicSPISignalPriority(lhs) < classicSPISignalPriority(rhs)
+        }?
+        .pad
+}
+
+private func classicSPISignalPriority(
+    _ signal: AVRDevices.Device.Peripherals.Module.Instance.Signals.Signal
+) -> Int {
+    switch signal.function?.uppercased() {
+    case "DEFAULT":
+        return 4
+    case "SPI":
+        return 3
+    case nil:
+        return 2
+    default:
+        return 1
     }
 }
 
@@ -314,45 +467,35 @@ public extension SPIPort where PortDataType == UInt8 {
     @inline(__always)
     @discardableResult
     static func transmit(_ buffer: UnsafeMutableBufferPointer<UInt8>) -> UnsafeMutableBufferPointer<UInt8> {
+        let recievedBuffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: buffer.count)
+
         for index in 0..<buffer.count {
-            buffer[index] = transfer(buffer[index])
+            dataRegister = buffer[index]
+            noOpperation()
+            while !interruptFlag { }
+            noOpperation()
+            recievedBuffer[index] = dataRegister
         }
 
-        return buffer
+        return recievedBuffer
     }
 
     @inlinable
     @inline(__always)
     static func write16(_ value: UInt16) -> UInt16 {
-        switch dataOrder {
-        case .mostSignificantBitFirst:
-            let highByte = transfer(UInt8((value & 0xFF00) >> 8))
-            let lowByte = transfer(UInt8(value & 0x00FF))
-            return (UInt16(highByte) << 8) | UInt16(lowByte)
-        case .leastSignificantBitFirst:
-            let lowByte = transfer(UInt8(value & 0x00FF))
-            let highByte = transfer(UInt8((value & 0xFF00) >> 8))
-            return UInt16(lowByte) | (UInt16(highByte) << 8)
-        }
+        let highByte = transfer(UInt8((value & 0xFF00) >> 8))
+        let lowByte = transfer(UInt8(value & 0x00FF))
+        return (UInt16(highByte) << 8) | UInt16(lowByte)
     }
 
     @inlinable
     @inline(__always)
     static func write32(_ value: UInt32) -> UInt32 {
-        switch dataOrder {
-        case .mostSignificantBitFirst:
-            let byte1 = transfer(UInt8((value & 0xFF000000) >> 24))
-            let byte2 = transfer(UInt8((value & 0x00FF0000) >> 16))
-            let byte3 = transfer(UInt8((value & 0x0000FF00) >> 8))
-            let byte4 = transfer(UInt8(value & 0x000000FF))
-            return (UInt32(byte1) << 24) | (UInt32(byte2) << 16) | (UInt32(byte3) << 8) | UInt32(byte4)
-        case .leastSignificantBitFirst:
-            let byte4 = transfer(UInt8(value & 0x000000FF))
-            let byte3 = transfer(UInt8((value & 0x0000FF00) >> 8))
-            let byte2 = transfer(UInt8((value & 0x00FF0000) >> 16))
-            let byte1 = transfer(UInt8((value & 0xFF000000) >> 24))
-            return UInt32(byte4) | (UInt32(byte3) << 8) | (UInt32(byte2) << 16) | (UInt32(byte1) << 24)
-        }
+        let byte1 = transfer(UInt8((value & 0xFF000000) >> 24))
+        let byte2 = transfer(UInt8((value & 0x00FF0000) >> 16))
+        let byte3 = transfer(UInt8((value & 0x0000FF00) >> 8))
+        let byte4 = transfer(UInt8(value & 0x000000FF))
+        return (UInt32(byte1) << 24) | (UInt32(byte2) << 16) | (UInt32(byte3) << 8) | UInt32(byte4)
     }
 }
 """
