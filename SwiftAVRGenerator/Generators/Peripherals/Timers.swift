@@ -217,6 +217,7 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
     """
     
     var enumValues = ""
+    var generatedValues: [(baseName: String, number: UInt8, caption: String)] = []
     
     for value in ValueGroup.value {
         var description = ""
@@ -291,10 +292,34 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
             /// |    \(number)   |   \((number & 0b00000100) >> 2)   |   \((number & 0b00000010) >> 1)   |   \(number & 0b00000001)   | \(description.padding(toLength: 64, withPad: " ", startingAt: 0))|
             /// |--------|-------|-------|-------|-----------------------------------------------------------------|
         """
-        
-        let enumValueRow = "        case \(enumValue) = \(number)\n"
-        
+
         documentationTable.append(documentationRow)
+        generatedValues.append((baseName: enumValue, number: number, caption: value.caption))
+    }
+
+    let duplicateNames = Set(
+        Dictionary(grouping: generatedValues, by: \.baseName)
+            .filter { !$0.key.isEmpty && $0.value.count > 1 }
+            .map(\.key)
+    )
+
+    var seenCounts: [String: Int] = [:]
+
+    for generatedValue in generatedValues {
+        let enumValue: String
+        if duplicateNames.contains(generatedValue.baseName) {
+            let nextCount = seenCounts[generatedValue.baseName, default: 0] + 1
+            seenCounts[generatedValue.baseName] = nextCount
+            enumValue = nextCount == 1 ? generatedValue.baseName : "\(generatedValue.baseName)_\(nextCount)"
+        } else {
+            enumValue = generatedValue.baseName
+        }
+
+        let sanitizedCaption = generatedValue.caption
+            .replacingOccurrences(of: "\n", with: " ")
+            .replacingOccurrences(of: "\r", with: " ")
+        let enumValueRow = "        case \(enumValue) = \(generatedValue.number) // \(sanitizedCaption)\n"
+
         enumValues.append(enumValueRow)
     }
     

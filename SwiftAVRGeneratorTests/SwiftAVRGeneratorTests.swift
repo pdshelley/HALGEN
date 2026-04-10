@@ -526,6 +526,25 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertTrue(result.content.contains("@inline(__never)"))
     }
 
+    func testGenerateEnumSuffixesDuplicateCasesAndIncludesCaptionComments() throws {
+        let valueGroup = try sampleTimerPrescalingValueGroup()
+
+        let generated = generateEnum(from: valueGroup, bitfieldName: "CS1")
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum Timer1 {
+        \(indent(generated.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("case running4_3 = 3 // Running, CLK*4"))
+        XCTAssertTrue(result.content.contains("case running2_4 = 4 // Running, CLK*2"))
+        XCTAssertTrue(result.content.contains("case running2_6 = 6 // Running, CLK/2"))
+        XCTAssertTrue(result.content.contains("case running4_7 = 7 // Running, CLK/4"))
+        XCTAssertTrue(result.content.contains("case runningWithoutPrescaling = 5 // Running, No Prescaling"))
+    }
+
     func testRegisterDocumentationOverrideSuppressesGeneratedTitleAndTable() throws {
         let register = try sampleRegister()
 
@@ -753,6 +772,26 @@ final class SwiftAVRGeneratorTests: XCTestCase {
 
         return try XMLDecoder().decode(
             AVRModules.Module.RegisterGroup.self,
+            from: Data(xml.utf8)
+        )
+    }
+
+    private func sampleTimerPrescalingValueGroup() throws -> AVRModules.Module.ValueGroup {
+        let xml = """
+        <value-group name="CLK_SEL_4BIT_FAST">
+            <value caption="No Clock Source (Stopped)" name="NO_CLOCK_SOURCE_STOPPED" value="0x00"/>
+            <value caption="Running, CLK*16" name="RUNNING_CLK_16" value="0x01"/>
+            <value caption="Running, CLK*8" name="RUNNING_CLK_8" value="0x02"/>
+            <value caption="Running, CLK*4" name="RUNNING_CLK_4" value="0x03"/>
+            <value caption="Running, CLK*2" name="RUNNING_CLK_2" value="0x04"/>
+            <value caption="Running, No Prescaling" name="RUNNING_NO_PRESCALING" value="0x05"/>
+            <value caption="Running, CLK/2" name="RUNNING_CLK_2" value="0x06"/>
+            <value caption="Running, CLK/4" name="RUNNING_CLK_4" value="0x07"/>
+        </value-group>
+        """
+
+        return try XMLDecoder().decode(
+            AVRModules.Module.ValueGroup.self,
             from: Data(xml.utf8)
         )
     }
