@@ -37,7 +37,7 @@ class AliasObservation:
     value_types: Counter[str] = field(default_factory=Counter)
     default_values: Counter[str] = field(default_factory=Counter)
     accesses: Counter[str] = field(default_factory=Counter)
-    split_targets: Counter[str] = field(default_factory=Counter)
+    split_target_lsbs: Counter[str] = field(default_factory=Counter)
 
 
 @dataclass(frozen=True)
@@ -45,7 +45,7 @@ class BitfieldMetadata:
     value_type: str = ""
     default_value: str = ""
     access: str = ""
-    split_target: str = ""
+    split_target_lsb: str = ""
 
 
 @dataclass(frozen=True)
@@ -63,7 +63,7 @@ class GeneralJsonEntry:
     value_type: str = ""
     default_value: str = ""
     access: str = ""
-    split_target: str = ""
+    split_target_lsb: str = ""
 
 
 @dataclass(frozen=True)
@@ -301,8 +301,8 @@ def general_json_entry_from_mapping(
         value_type=normalized_string(entry.get("valueType")),
         default_value=normalized_string(entry.get("defaultValue")),
         access=normalize_access_value(entry.get("access")),
-        split_target=(
-            normalized_string(entry.get("splitTarget")) if kind == "bitfields" else ""
+        split_target_lsb=(
+            normalized_string(entry.get("splitTargetLSB")) if kind == "bitfields" else ""
         ),
     )
 
@@ -412,7 +412,7 @@ def bitfield_metadata_from_mapping(entry: dict[str, object]) -> BitfieldMetadata
         value_type=normalized_string(entry.get("valueType")),
         default_value=normalized_string(entry.get("defaultValue")),
         access=normalize_access_value(entry.get("access")),
-        split_target=normalized_string(entry.get("splitTarget")),
+        split_target_lsb=normalized_string(entry.get("splitTargetLSB")),
     )
 
 
@@ -484,7 +484,7 @@ def collect_missing_aliases_from_logs(
                     value_type=metadata.value_type,
                     default_value=metadata.default_value,
                     access=metadata.access,
-                    split_target=metadata.split_target,
+                    split_target_lsb=metadata.split_target_lsb,
                 )
 
     exported_chip_count = logs.get("exportedChipCount")
@@ -608,7 +608,7 @@ def scan_module(
                         default_value=metadata.default_value,
                         access=metadata.access
                         or normalize_access_value(bitfield.get("rw")),
-                        split_target=metadata.split_target,
+                        split_target_lsb=metadata.split_target_lsb,
                     )
 
 
@@ -632,7 +632,7 @@ def add_observation(
     value_type: str = "",
     default_value: str = "",
     access: str = "",
-    split_target: str = "",
+    split_target_lsb: str = "",
 ) -> None:
     if alias == "":
         return
@@ -650,7 +650,7 @@ def add_observation(
         observation.value_types[value_type] += 1
         observation.default_values[default_value] += 1
         observation.accesses[access] += 1
-        observation.split_targets[split_target] += 1
+        observation.split_target_lsbs[split_target_lsb] += 1
 
 
 def resolve_exact_bitfield_metadata(
@@ -674,8 +674,8 @@ def resolve_exact_bitfield_metadata(
         access=first_unique_metadata_value(chip_entries, "access")
         or first_unique_metadata_value(general_entries, "access")
         or unique_non_empty_value(atdf_accesses),
-        split_target=first_unique_metadata_value(chip_entries, "split_target")
-        or first_unique_metadata_value(general_entries, "split_target"),
+        split_target_lsb=first_unique_metadata_value(chip_entries, "split_target_lsb")
+        or first_unique_metadata_value(general_entries, "split_target_lsb"),
     )
 
 
@@ -896,7 +896,7 @@ def render_markdown(
         "- `Action` shows whether a row should update an existing `general.json` object or become a new one.",
         "- Each row is a starting point for one `general.json` object; review notes when bitfield metadata is partial or conflicting.",
         "- The script is fully data-driven in logs mode: peripheral names come straight from `logs.json`.",
-        "- Bitfield rows include best-effort `valueType`, `defaultValue`, `access`, and `splitTarget` suggestions when the script can infer them.",
+        "- Bitfield rows include best-effort `valueType`, `defaultValue`, `access`, and `splitTargetLSB` suggestions when the script can infer them.",
         "- `JSON` is a ready-to-paste object when the match is unambiguous.",
         "- Review `Cross-Peripheral Aliases` before copying rows into `docs/general.json`, because `general.json` is global while this report is peripheral-aware.",
         "",
@@ -969,7 +969,7 @@ def render_kind_sections(
                 f"- Chips touched: {len(chips_in_section)}",
                 "",
                 (
-                    "| Proposed variableName | Aliases | valueType | defaultValue | access | splitTarget | Action | JSON | Chips | Instances | Samples | Notes |"
+                    "| Proposed variableName | Aliases | valueType | defaultValue | access | splitTargetLSB | Action | JSON | Chips | Instances | Samples | Notes |"
                     if kind == "bitfields"
                     else "| Proposed variableName | Aliases | Action | JSON | Chips | Instances | Samples | Notes |"
                 ),
@@ -1005,13 +1005,13 @@ def render_kind_sections(
                     general_json_indexes=general_json_indexes,
                 )
                 lines.append(
-                    "| `{variable_name}` | {aliases_cell} | {value_type} | {default_value} | {access} | {split_target} | {action} | {json_cell} | {chip_count} | {instances} | {samples} | {notes} |".format(
+                    "| `{variable_name}` | {aliases_cell} | {value_type} | {default_value} | {access} | {split_target_lsb} | {action} | {json_cell} | {chip_count} | {instances} | {samples} | {notes} |".format(
                         variable_name=variable_name,
                         aliases_cell=format_alias_list(aliases),
                         value_type=metadata_summary.cells["valueType"],
                         default_value=metadata_summary.cells["defaultValue"],
                         access=metadata_summary.cells["access"],
-                        split_target=metadata_summary.cells["splitTarget"],
+                        split_target_lsb=metadata_summary.cells["splitTargetLSB"],
                         action=json_suggestion.action,
                         json_cell=json_suggestion.json_cell,
                         chip_count=len(chip_names),
@@ -1155,7 +1155,7 @@ def summarize_bitfield_metadata(
         ("valueType", "value_types", "value_type"),
         ("defaultValue", "default_values", "default_value"),
         ("access", "accesses", "access"),
-        ("splitTarget", "split_targets", "split_target"),
+        ("splitTargetLSB", "split_target_lsbs", "split_target_lsb"),
     ]
 
     for label, counter_name, attribute_name in field_specs:
@@ -1253,7 +1253,7 @@ def general_json_entry_matches_row(
         "valueType": entry.value_type,
         "defaultValue": entry.default_value,
         "access": entry.access,
-        "splitTarget": entry.split_target,
+        "splitTargetLSB": entry.split_target_lsb,
     }
 
     for label, entry_value in field_to_entry_value.items():
@@ -1271,7 +1271,7 @@ def suggested_general_json_entry(
     bitfield_summary: BitfieldRowSummary | None,
 ) -> GeneralJsonEntry:
     field_values = {
-        label: "" for label in ("valueType", "defaultValue", "access", "splitTarget")
+        label: "" for label in ("valueType", "defaultValue", "access", "splitTargetLSB")
     }
 
     if bitfield_summary is not None:
@@ -1286,7 +1286,7 @@ def suggested_general_json_entry(
         value_type=field_values["valueType"],
         default_value=field_values["defaultValue"],
         access=field_values["access"],
-        split_target=field_values["splitTarget"] if kind == "bitfields" else "",
+        split_target_lsb=field_values["splitTargetLSB"] if kind == "bitfields" else "",
     )
 
 
@@ -1307,7 +1307,7 @@ def merge_general_json_entry_aliases(
         value_type=entry.value_type,
         default_value=entry.default_value,
         access=entry.access,
-        split_target=entry.split_target,
+        split_target_lsb=entry.split_target_lsb,
     )
 
 
@@ -1323,8 +1323,8 @@ def general_json_object(entry: GeneralJsonEntry, kind: str) -> dict[str, object]
         data["defaultValue"] = entry.default_value
     if entry.access:
         data["access"] = entry.access
-    if kind == "bitfields" and entry.split_target:
-        data["splitTarget"] = entry.split_target
+    if kind == "bitfields" and entry.split_target_lsb:
+        data["splitTargetLSB"] = entry.split_target_lsb
 
     return data
 

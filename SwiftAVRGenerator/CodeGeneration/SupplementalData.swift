@@ -28,7 +28,7 @@ struct SupplementalBitfieldData {
     let documentation: String
     let access: Access
     var inline: String = "__always"
-    var splitTarget: String? = nil
+    var splitTargetLSB: String? = nil
     var overrideGeneratedDocumentation: Bool = false
 }
 
