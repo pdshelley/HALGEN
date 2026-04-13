@@ -7,6 +7,14 @@
 
 import Foundation
 
+struct BoardConfiguration: Equatable {
+    let ramSize: Int
+    let flashSize: Int
+    let eepromSize: Int?
+    let baud: Int
+    let cpuFrequency: Int
+}
+
 struct CoreAVRPackageSupportFile {
     let relativePath: String
     let content: String
@@ -22,7 +30,7 @@ enum CoreAVRPackageSupport {
 
         return staticSupportFiles(documentationDirectory: documentationDirectory) + [
             CoreAVRPackageSupportFile(relativePath: "README.md", content: readme(for: core, generatedSourcePaths: generatedSourcePaths)),
-            CoreAVRPackageSupportFile(relativePath: "board.include", content: boardInclude(for: core.device)),
+            CoreAVRPackageSupportFile(relativePath: "board.include", content: boardInclude(for: core.device, configuration: core.boardConfiguration)),
             CoreAVRPackageSupportFile(relativePath: "CoreAVR.swift4p", content: swift4p(generatedSourcePaths: generatedSourcePaths))
         ]
     }
@@ -115,16 +123,14 @@ enum CoreAVRPackageSupport {
         return modules.sorted()
     }
 
-    private static func boardInclude(for device: AVRToolsDeviceFile) -> String {
+    private static func boardInclude(for device: AVRToolsDeviceFile, configuration: BoardConfiguration) -> String {
         let chipName = device.devices.device.name
-        let flashSize = device.memorySegmentSize(named: "FLASH", type: "flash") ?? 0
-        let ramSize = device.memorySegmentSize(named: "IRAM", type: "ram") ?? 0
 
         return """
-        RAM_SIZE=\(ramSize)
-        FLASH_SIZE=\(flashSize)
-        BAUD=115200
-        CPU_FREQUENCY=16000000
+        RAM_SIZE=\(configuration.ramSize)
+        FLASH_SIZE=\(configuration.flashSize)
+        BAUD=\(configuration.baud)
+        CPU_FREQUENCY=\(configuration.cpuFrequency)
         PROGRAMMER=arduino
         MCUMACRO=__AVR_\(chipName)__
         ARCH=\(device.devices.device.architecture.hasPrefix("AVR") ? "AVR" : device.devices.device.architecture)
@@ -182,7 +188,7 @@ enum CoreAVRPackageSupport {
     }
 }
 
-private extension AVRToolsDeviceFile {
+extension AVRToolsDeviceFile {
     func memorySegmentSize(named segmentName: String, type segmentType: String) -> Int? {
         for addressSpace in devices.device.addressSpaces.addressSpace {
             for segment in addressSpace.memorySegment {
@@ -202,9 +208,16 @@ private extension AVRToolsDeviceFile {
 
         return devices.device.parameters?.param.value
     }
+
+    var maximumClockFrequency: Int? {
+        variants.variant
+            .compactMap { integerValue(from: $0.speedmax) }
+            .filter { $0 > 0 }
+            .max()
+    }
 }
 
-private func integerValue(from string: String) -> Int? {
+func integerValue(from string: String) -> Int? {
     let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
 
     if trimmedString.hasPrefix("0x") {

@@ -19,6 +19,7 @@ struct GeneratedAVRCore {
     let name: String
     let atdfFileName: String
     let device: AVRToolsDeviceFile
+    let boardConfiguration: BoardConfiguration
     let files: [GeneratedCodeFile]
     let log: ChipGenerationLog
 
@@ -209,6 +210,7 @@ func decodeATDF(urls: [URL], docURL: URL, inferValueTypes: Bool = false) -> [Gen
                 name: atdfObject.devices.device.name,
                 atdfFileName: url.lastPathComponent,
                 device: atdfObject,
+                boardConfiguration: documentation.boardConfiguration(for: atdfObject),
                 files: generatedFiles,
                 log: documentation.generationLog
             )

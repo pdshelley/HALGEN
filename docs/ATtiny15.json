@@ -1,0 +1,9 @@
+{
+    "chip": "ATtiny15",
+    "datasheet": "ATtiny15/L Datasheet",
+    "board": {
+        "ramSize": 64
+    },
+    "registers": {},
+    "bitfields": {}
+}
