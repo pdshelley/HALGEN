@@ -190,15 +190,45 @@ enum CoreAVRPackageSupport {
 
 extension AVRToolsDeviceFile {
     func memorySegmentSize(named segmentName: String, type segmentType: String) -> Int? {
-        for addressSpace in devices.device.addressSpaces.addressSpace {
-            for segment in addressSpace.memorySegment {
-                if segment.name == segmentName || segment.type == segmentType {
-                    return integerValue(from: segment.size)
-                }
-            }
+        let segments = devices.device.addressSpaces.addressSpace.flatMap(\.memorySegment)
+
+        if let exactNameMatch = segments.first(where: { $0.name == segmentName }) {
+            return integerValue(from: exactNameMatch.size)
         }
 
-        return nil
+        let typeMatches = segments.compactMap { segment -> (segment: AVRDevices.Device.AddressSpaces.AddressSpace.MemorySegment, size: Int)? in
+            guard segment.type == segmentType,
+                  let size = integerValue(from: segment.size) else {
+                return nil
+            }
+
+            return (segment, size)
+        }
+
+        let preferredMatches: [(segment: AVRDevices.Device.AddressSpaces.AddressSpace.MemorySegment, size: Int)]
+        if segmentType == "ram" {
+            let internalMatches = typeMatches.filter { $0.segment.external != true }
+            preferredMatches = internalMatches.isEmpty ? typeMatches : internalMatches
+        } else {
+            preferredMatches = typeMatches
+        }
+
+        return preferredMatches
+            .sorted { lhs, rhs in
+                if lhs.size != rhs.size {
+                    return lhs.size > rhs.size
+                }
+
+                let lhsStart = integerValue(from: lhs.segment.start) ?? .max
+                let rhsStart = integerValue(from: rhs.segment.start) ?? .max
+                if lhsStart != rhsStart {
+                    return lhsStart < rhsStart
+                }
+
+                return lhs.segment.name < rhs.segment.name
+            }
+            .first?
+            .size
     }
 
     func deviceParameter(named parameterName: String) -> String? {

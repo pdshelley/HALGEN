@@ -254,6 +254,45 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertEqual(configuration.cpuFrequency, 10000000)
     }
 
+    func testMemorySegmentSizePrefersExactNameOverEarlierTypeMatch() throws {
+        let device = try makeDevice(
+            withMemorySegmentsXML: """
+            <address-space endianness="little" name="prog" id="prog" start="0x0000" size="0x0200">
+                <memory-segment start="0x0100" size="0x0010" type="flash" rw="RW" exec="1" name="BOOT_SECTION_1"/>
+                <memory-segment start="0x0000" size="0x0100" type="flash" rw="RW" exec="1" name="FLASH"/>
+            </address-space>
+            """
+        )
+
+        XCTAssertEqual(device.memorySegmentSize(named: "FLASH", type: "flash"), 0x0100)
+    }
+
+    func testMemorySegmentSizePrefersInternalRAMWhenNameFallbackIsNeeded() throws {
+        let device = try makeDevice(
+            withMemorySegmentsXML: """
+            <address-space endianness="little" name="data" id="data" start="0x0000" size="0x1000">
+                <memory-segment start="0x0200" size="0x0800" type="ram" name="XRAM" external="true"/>
+                <memory-segment start="0x0100" size="0x0100" type="ram" name="SRAM" external="false"/>
+            </address-space>
+            """
+        )
+
+        XCTAssertEqual(device.memorySegmentSize(named: "IRAM", type: "ram"), 0x0100)
+    }
+
+    func testMemorySegmentSizeUsesLargestFlashSegmentForTypeFallback() throws {
+        let device = try makeDevice(
+            withMemorySegmentsXML: """
+            <address-space endianness="little" name="prog" id="prog" start="0x0000" size="0x0200">
+                <memory-segment start="0x0100" size="0x0010" type="flash" rw="RW" exec="1" name="BOOT_SECTION_1"/>
+                <memory-segment start="0x0000" size="0x0100" type="flash" rw="RW" exec="1" name="APP_FLASH"/>
+            </address-space>
+            """
+        )
+
+        XCTAssertEqual(device.memorySegmentSize(named: "FLASH", type: "flash"), 0x0100)
+    }
+
     func testBoilerplateTemplateUsesDocsOverrideDirectory() throws {
         let docsDirectory = try makeTemporaryDirectory()
         let boilerplateDirectory = docsDirectory.appendingPathComponent("boilerplate", isDirectory: true)
@@ -823,6 +862,30 @@ final class SwiftAVRGeneratorTests: XCTestCase {
 
     private func atdfURL(named chipName: String) -> URL {
         repositoryRootURL().appendingPathComponent("atdf/\(chipName).atdf")
+    }
+
+    private func makeDevice(withMemorySegmentsXML addressSpacesXML: String) throws -> AVRToolsDeviceFile {
+        let xml = """
+        <avr-tools-device-file>
+            <variants>
+                <variant ordercode="TEST" tempmin="0" tempmax="0" speedmax="1" package="TEST" vccmin="1.8" vccmax="5.5"/>
+            </variants>
+            <devices>
+                <device name="TestDevice" architecture="AVR8" family="test">
+                    <peripherals />
+                    <address-spaces>
+        \(indent(addressSpacesXML, by: 6))
+                    </address-spaces>
+                    <interfaces />
+                    <property-groups />
+                    <interrupts />
+                </device>
+            </devices>
+            <modules />
+        </avr-tools-device-file>
+        """
+
+        return try XMLDecoder().decode(AVRToolsDeviceFile.self, from: Data(xml.utf8))
     }
 
     private func sampleRegister() throws -> AVRModules.Module.RegisterGroup.Register {
