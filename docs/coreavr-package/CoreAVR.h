@@ -51,10 +51,14 @@ static inline void _volatileRegisterWriteUInt16(uintptr_t address, uint16_t valu
 }
 
 
-static inline void _noOpperation() {
+static inline void _noOperation() {
     asm volatile("nop");
 }
 
+__attribute__((deprecated("Use _noOperation instead")))
+static inline void _noOpperation() {
+    _noOperation();
+}
 /**
  * @brief Inserts a "Global Interrupt Enable" (`sei`) instruction at the current location.
  */
