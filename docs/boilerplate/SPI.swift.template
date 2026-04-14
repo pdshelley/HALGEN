@@ -110,17 +110,17 @@ public extension SPIPort where PortDataType == UInt8 {
     @inline(__always)
     @discardableResult
     static func transmit(_ buffer: UnsafeMutableBufferPointer<UInt8>) -> UnsafeMutableBufferPointer<UInt8> {
-        let recievedBuffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: buffer.count)
+        let receivedBuffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: buffer.count)
 
         for index in 0..<buffer.count {
             dataRegister = buffer[index]
             noOpperation()
             while !interruptFlag { }
             noOpperation()
-            recievedBuffer[index] = dataRegister
+            receivedBuffer[index] = dataRegister
         }
 
-        return recievedBuffer
+        return receivedBuffer
     }
 
     @inlinable
