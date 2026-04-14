@@ -177,7 +177,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
               "bitfields": {
                 "UCSZ02": {
                   "documentation": ["Chip split bitfield docs"],
-                  "splitTarget": "UCSZ0"
+                  "splitTargetLSB": "UCSZ0"
                 }
               }
             }
@@ -195,7 +195,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         let bitfieldData = loader.supplementalData(for: bitfield)
         XCTAssertEqual(bitfieldData.variableName, "numberOfDataBits")
         XCTAssertEqual(bitfieldData.valueType, "UART.NumberOfDataBits")
-        XCTAssertEqual(bitfieldData.splitTarget, "UCSZ0")
+        XCTAssertEqual(bitfieldData.splitTargetLSB, "UCSZ0")
         XCTAssertEqual(bitfieldData.documentation, "Chip split bitfield docs")
     }
 
@@ -263,7 +263,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
                             defaultValue: ".eight",
                             documentation: "",
                             access: .readWrite,
-                            splitTarget: "UCSZ0"
+                            splitTargetLSB: "UCSZ0"
                         )
                     }
 
@@ -337,7 +337,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
                             defaultValue: ".normal",
                             documentation: "",
                             access: .readWrite,
-                            splitTarget: "WGM22"
+                            splitTargetLSB: "WGM22"
                         )
                     }
 
@@ -534,6 +534,29 @@ final class SwiftAVRGeneratorTests: XCTestCase {
 
         XCTAssertTrue(result.diagnostics.isEmpty)
         XCTAssertTrue(result.content.contains("@inline(__never)"))
+    }
+
+    func testGenerateEnumBuildsFourBitDocumentationTableAndUsesCaptions() throws {
+        let valueGroup = try sampleTimerPrescalingValueGroup()
+
+        let generated = generateEnum(from: valueGroup, bitfieldName: "CS1", bitWidth: 4)
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public enum Timer1 {
+        \(indent(generated.description, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("| Mode | CS13 | CS12 | CS11 | CS10 | Description"))
+        XCTAssertTrue(result.content.contains("|  4   |  0   |  1   |  0   |  0   | Running, CLK*2"))
+        XCTAssertTrue(result.content.contains("|  10  |  1   |  0   |  1   |  0   | Running, CLK/32"))
+        XCTAssertTrue(result.content.contains("|  15  |  1   |  1   |  1   |  1   | Running, CLK/1024"))
+        XCTAssertTrue(result.content.contains("case running4 = 3 // Running, CLK*4"))
+        XCTAssertTrue(result.content.contains("case running2 = 4 // Running, CLK*2"))
+        XCTAssertTrue(result.content.contains("case running2_2 = 6 // Running, CLK/2"))
+        XCTAssertTrue(result.content.contains("case running4_2 = 7 // Running, CLK/4"))
+        XCTAssertTrue(result.content.contains("case runningWithoutPrescaling = 5 // Running, No Prescaling"))
     }
 
     func testRegisterDocumentationOverrideSuppressesGeneratedTitleAndTable() throws {
@@ -852,6 +875,34 @@ final class SwiftAVRGeneratorTests: XCTestCase {
 
         return try XMLDecoder().decode(
             AVRModules.Module.RegisterGroup.self,
+            from: Data(xml.utf8)
+        )
+    }
+
+    private func sampleTimerPrescalingValueGroup() throws -> AVRModules.Module.ValueGroup {
+        let xml = """
+        <value-group name="CLK_SEL_4BIT_FAST">
+            <value caption="No Clock Source (Stopped)" name="NO_CLOCK_SOURCE_STOPPED" value="0x00"/>
+            <value caption="Running, CLK*16" name="RUNNING_CLK_16" value="0x01"/>
+            <value caption="Running, CLK*8" name="RUNNING_CLK_8" value="0x02"/>
+            <value caption="Running, CLK*4" name="RUNNING_CLK_4" value="0x03"/>
+            <value caption="Running, CLK*2" name="RUNNING_CLK_2" value="0x04"/>
+            <value caption="Running, No Prescaling" name="RUNNING_NO_PRESCALING" value="0x05"/>
+            <value caption="Running, CLK/2" name="RUNNING_CLK_2" value="0x06"/>
+            <value caption="Running, CLK/4" name="RUNNING_CLK_4" value="0x07"/>
+            <value caption="Running, CLK/8" name="RUNNING_CLK_8" value="0x08"/>
+            <value caption="Running, CLK/16" name="RUNNING_CLK_16" value="0x09"/>
+            <value caption="Running, CLK/32" name="RUNNING_CLK_32" value="0x0A"/>
+            <value caption="Running, CLK/64" name="RUNNING_CLK_64" value="0x0B"/>
+            <value caption="Running, CLK/128" name="RUNNING_CLK_128" value="0x0C"/>
+            <value caption="Running, CLK/256" name="RUNNING_CLK_256" value="0x0D"/>
+            <value caption="Running, CLK/512" name="RUNNING_CLK_512" value="0x0E"/>
+            <value caption="Running, CLK/1024" name="RUNNING_CLK_1024" value="0x0F"/>
+        </value-group>
+        """
+
+        return try XMLDecoder().decode(
+            AVRModules.Module.ValueGroup.self,
             from: Data(xml.utf8)
         )
     }

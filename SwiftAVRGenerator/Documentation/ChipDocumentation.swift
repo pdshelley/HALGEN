@@ -51,7 +51,7 @@ struct ChipDocumentation: Codable {
         let access: String?
         let documentation: [String]?
         let inline: String?
-        let splitTarget: String?
+        let splitTargetLSB: String?
         let overrideGeneratedDocumentation: Bool?
         
         func toSupplementalData() -> SupplementalBitfieldData {
@@ -62,7 +62,7 @@ struct ChipDocumentation: Codable {
                 documentation: formatDocumentation(documentation),
                 access: Access(rawValue: access ?? "") ?? .readWrite,
                 inline: inline ?? "__always",
-                splitTarget: splitTarget,
+                splitTargetLSB: splitTargetLSB,
                 overrideGeneratedDocumentation: overrideGeneratedDocumentation ?? false
             )
         }
