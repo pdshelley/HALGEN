@@ -715,6 +715,17 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertTrue(spi0File.content.contains("public static var dataRegister: UInt8"))
         XCTAssertTrue(spi0File.content.contains("public static var interruptFlag: Bool"))
         XCTAssertFalse(spi0File.content.contains("public static var spiClockRateSelects"))
+
+        let ssDirectionRange = try XCTUnwrap(spi0File.content.range(of: "GPIO.pb2.setDataDirection(.output) // SS"))
+        let sckDirectionRange = try XCTUnwrap(spi0File.content.range(of: "GPIO.pb5.setDataDirection(.output) // SCK"))
+        let mosiDirectionRange = try XCTUnwrap(spi0File.content.range(of: "GPIO.pb3.setDataDirection(.output) // MOSI"))
+        let misoDirectionRange = try XCTUnwrap(spi0File.content.range(of: "GPIO.pb4.setDataDirection(.input) // MISO"))
+        let masterModeRange = try XCTUnwrap(spi0File.content.range(of: "masterSlaveSelect = true"))
+
+        XCTAssertLessThan(ssDirectionRange.lowerBound, masterModeRange.lowerBound)
+        XCTAssertLessThan(sckDirectionRange.lowerBound, masterModeRange.lowerBound)
+        XCTAssertLessThan(mosiDirectionRange.lowerBound, masterModeRange.lowerBound)
+        XCTAssertLessThan(misoDirectionRange.lowerBound, masterModeRange.lowerBound)
     }
 
     func testSPIGeneratorDeduplicatesATmega328PBSPI0Registers() throws {

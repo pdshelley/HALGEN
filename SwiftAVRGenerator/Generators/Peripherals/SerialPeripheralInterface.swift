@@ -166,16 +166,16 @@ private func makeClassicSPISetupMethod(
         "public static func setup() {",
         "    let savedStatus = cpuCore.statusRegister",
         "    cpuCore.globalInterruptEnable = false",
-        "",
-        "    masterSlaveSelect = true",
-        "    enable = true"
+        ""
     ]
 
     if pinDirectionLines.isEmpty == false {
-        sourceLines.append("")
         sourceLines.append(contentsOf: pinDirectionLines.map { "    \($0)" })
+        sourceLines.append("")
     }
 
+    sourceLines.append("    masterSlaveSelect = true")
+    sourceLines.append("    enable = true")
     sourceLines.append("")
     sourceLines.append("    cpuCore.statusRegister = savedStatus")
     sourceLines.append("}")
@@ -198,17 +198,22 @@ private func classicSPIPinDirectionLines(
         return []
     }
 
-    let orderedSignalGroups = ["SCK", "MISO", "MOSI"]
+    let orderedSignalGroups: [(group: String, direction: String)] = [
+        ("SS", ".output"),
+        ("SCK", ".output"),
+        ("MOSI", ".output"),
+        ("MISO", ".input")
+    ]
 
-    return orderedSignalGroups.compactMap { group in
+    return orderedSignalGroups.compactMap { signal in
         guard let pad = preferredClassicSPIPad(
-            for: group,
+            for: signal.group,
             in: instance.signals?.signal ?? []
         ) else {
             return nil
         }
 
-        return "GPIO.\(pad.lowercased()).setDataDirection(.output) // \(group)"
+        return "GPIO.\(pad.lowercased()).setDataDirection(\(signal.direction)) // \(signal.group)"
     }
 }
 
