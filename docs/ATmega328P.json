@@ -449,7 +449,7 @@
                 "Notes: 1. MAX = 0xFF",
                 "       2. BOTTOM = 0x00"
             ],
-            "splitTarget": "WGM0"
+            "splitTargetLSB": "WGM0"
         },
         "TSM": {
             "documentation": [
@@ -697,7 +697,7 @@
                 "Notes: 1. MAX = 0xFFFF",
                 "       2. BOTTOM = 0x0000"
             ],
-            "splitTarget": "WGM1"
+            "splitTargetLSB": "WGM1"
         },
         "FOC1A": {
             "documentation": [
@@ -916,7 +916,7 @@
                 "Notes: 1. MAX = 0xFF",
                 "       2. BOTTOM = 0x00"
             ],
-            "splitTarget": "WGM22"
+            "splitTargetLSB": "WGM22"
         },
         "RXC0": {
             "inline": "never",
@@ -1022,7 +1022,7 @@
                 "See ATmega328P Datasheet Section 20.11.3 and Section 20.11.4.",
                 "UCSZn0 and UCSZn1 are Bits 1 and 2 on UCSRnC, while UCSZn2 is Bit 2 on UCSRnB."
             ],
-            "splitTarget": "UCSZ0"
+            "splitTargetLSB": "UCSZ0"
         },
         "ADLAR": {
             "documentation": [

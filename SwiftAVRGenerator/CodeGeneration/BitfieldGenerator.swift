@@ -46,9 +46,9 @@ func generateBitfieldAccessor(
         return nil
     }
 
-    if let splitTarget = info.splitTarget {
+    if let splitTargetLSB = info.splitTargetLSB {
         guard let splitPair = resolveSplitBitfieldPair(
-            splitTarget: splitTarget,
+            splitTargetLSB: splitTargetLSB,
             in: registerGroup
         ) else {
             return nil
@@ -182,7 +182,7 @@ func generateSplitBitfieldAccessor(
 ///   - registerGroup: The register group containing the parent register, used to
 ///     search for other registers that may reference this bitfield as a split target.
 ///   - bitfieldData: A closure that retrieves supplemental bitfield metadata,
-///     including the `splitTarget` property that indicates if this bitfield is
+///     including the `splitTargetLSB` property that indicates if this bitfield is
 ///     part of a split accessor configuration.
 /// - Returns: `true` if the bitfield should be skipped (it's the secondary half of a
 ///   split accessor), `false` if a standalone accessor should be generated.
@@ -197,12 +197,12 @@ private func shouldSkipBitfieldAccessor(
     in registerGroup: AVRModules.Module.RegisterGroup,
     bitfieldData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData
 ) -> Bool {
-    if bitfieldData(bitfield).splitTarget != nil {
+    if bitfieldData(bitfield).splitTargetLSB != nil {
         return false
     }
 
     for register in registerGroup.register where register.name != parentVariable.name {
-        if register.bitfield.contains(where: { bitfieldData($0).splitTarget == bitfield.name }) {
+        if register.bitfield.contains(where: { bitfieldData($0).splitTargetLSB == bitfield.name }) {
             return true
         }
     }
@@ -217,19 +217,19 @@ private func shouldSkipBitfieldAccessor(
 /// the provided register group.
 ///
 /// - Parameters:
-///   - splitTarget: The name of the bitfield that completes the split pair.
+///   - splitTargetLSB: The name of the bitfield that completes the split pair.
 ///   - registerGroup: The register group to search within for the matching bitfield.
 /// - Returns: A tuple containing the register and bitfield that complete the split pair,
 ///   or `nil` if no matching bitfield is found in the register group.
 private func resolveSplitBitfieldPair(
-    splitTarget: String,
+    splitTargetLSB: String,
     in registerGroup: AVRModules.Module.RegisterGroup
 ) -> (
     register: AVRModules.Module.RegisterGroup.Register,
     bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield
 )? {
     for register in registerGroup.register {
-        if let bitfield = register.bitfield.first(where: { $0.name == splitTarget }) {
+        if let bitfield = register.bitfield.first(where: { $0.name == splitTargetLSB }) {
             return (register, bitfield)
         }
     }

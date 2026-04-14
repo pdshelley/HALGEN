@@ -167,7 +167,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
               "bitfields": {
                 "UCSZ02": {
                   "documentation": ["Chip split bitfield docs"],
-                  "splitTarget": "UCSZ0"
+                  "splitTargetLSB": "UCSZ0"
                 }
               }
             }
@@ -185,7 +185,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         let bitfieldData = loader.supplementalData(for: bitfield)
         XCTAssertEqual(bitfieldData.variableName, "numberOfDataBits")
         XCTAssertEqual(bitfieldData.valueType, "UART.NumberOfDataBits")
-        XCTAssertEqual(bitfieldData.splitTarget, "UCSZ0")
+        XCTAssertEqual(bitfieldData.splitTargetLSB, "UCSZ0")
         XCTAssertEqual(bitfieldData.documentation, "Chip split bitfield docs")
     }
 
@@ -253,7 +253,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
                             defaultValue: ".eight",
                             documentation: "",
                             access: .readWrite,
-                            splitTarget: "UCSZ0"
+                            splitTargetLSB: "UCSZ0"
                         )
                     }
 
@@ -327,7 +327,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
                             defaultValue: ".normal",
                             documentation: "",
                             access: .readWrite,
-                            splitTarget: "WGM22"
+                            splitTargetLSB: "WGM22"
                         )
                     }
 

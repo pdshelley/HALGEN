@@ -202,7 +202,7 @@ class ChipDocumentationLoader {
             documentation: formatDocumentation(chipDocs?.documentation),
             access: Access(rawValue: chipDocs?.access ?? generalDocs?.access ?? bitfield.rw ?? "") ?? .readWrite,
             inline: preferredInline(chipDocs?.inline, generalDocs?.inline),
-            splitTarget: chipDocs?.splitTarget,
+            splitTargetLSB: chipDocs?.splitTargetLSB,
             overrideGeneratedDocumentation: chipDocs?.overrideGeneratedDocumentation ?? false
         )
 
