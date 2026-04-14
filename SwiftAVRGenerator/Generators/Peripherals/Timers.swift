@@ -168,7 +168,15 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String, 
                         for valueGroup in module.valueGroup {
                             // Make sure that the name of the valueGroup matches
                             if valueGroup.name == valueGroupName {
-                                let bitfieldMemberBlock = generateEnum(from: valueGroup, bitfieldName: bitfield.name)
+                                let bitfieldWidth = max(
+                                    significantBitWidth(of: bitfield.mask.value),
+                                    significantBitWidth(of: UInt16(valueGroup.value.map { numberFrom(value: $0.value) }.max() ?? 0))
+                                )
+                                let bitfieldMemberBlock = generateEnum(
+                                    from: valueGroup,
+                                    bitfieldName: bitfield.name,
+                                    bitWidth: bitfieldWidth
+                                )
                                 memberBlockList.append(bitfieldMemberBlock)
                             }
                         }
@@ -208,93 +216,116 @@ func buildTimer(module: AVRModules.Module, timerName: String, chipName: String, 
     return GeneratedCodeFile(fileName: fileName, content: code, subdirectory: TimerGenerator().subdirectory)
 }
 
-func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: String) -> MemberBlockItemSyntax {
-    
-    var documentationTable = """
-        /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-        /// |  Mode  | \(bitfieldName)2  | \(bitfieldName)1  | \(bitfieldName)0  | Description                                                     |
-        /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-    """
-    
+func generateEnum(
+    from ValueGroup: AVRModules.Module.ValueGroup,
+    bitfieldName: String,
+    bitWidth: Int
+) -> MemberBlockItemSyntax {
     var enumValues = ""
+    var generatedValues: [(baseName: String, number: UInt8, caption: String, description: String)] = []
     
     for value in ValueGroup.value {
-        var description = ""
+        var fallbackDescription = ""
         var enumValue = ""
         
         let number = numberFrom(value: value.value)
         
         switch value.name {
         case "NO_CLOCK_SOURCE_STOPPED", "NO_CLOCK_SOURCE_TIMER_COUNTER_STOPPED", "NO_CLOCK_SOURCE_TIMER_COUNTER0_STOPPED", "NO_CLOCK_SOURCE_TIMER_COUNTER2_STOPPED":
-            description = "No Clock Source (Stopped)"
+            fallbackDescription = "No Clock Source (Stopped)"
             enumValue = "stopped"
         case "RUNNING_NO_PRESCALING", "CLK_IO_1_NO_PRESCALING", "CLK_T2S_1_NO_PRESCALING":
-            description = "Running, No Prescaling"
+            fallbackDescription = "Running, No Prescaling"
             enumValue = "runningWithoutPrescaling"
         case "RUNNING_CLK_8", "CLK_IO_8_FROM_PRESCALER", "CLK_T2S_8_FROM_PRESCALER":
-            description = "Running, CLK/8"
+            fallbackDescription = "Running, CLK/8"
             enumValue = "running8"
         case "RUNNING_CLK_16":
-            description = "Running, CLK/16"
+            fallbackDescription = "Running, CLK/16"
             enumValue = "running16"
         case "RUNNING_CLK_32", "CLK_T2S_32_FROM_PRESCALER":
-            description = "Running, CLK/32"
+            fallbackDescription = "Running, CLK/32"
             enumValue = "running32"
         case "RUNNING_CLK_64", "CLK_IO_64_FROM_PRESCALER", "CLK_T2S_64_FROM_PRESCALER":
-            description = "Running, CLK/64"
+            fallbackDescription = "Running, CLK/64"
             enumValue = "running64"
         case "RUNNING_CLK_128", "CLK_T2S_128_FROM_PRESCALER":
-            description = "Running, CLK/128"
+            fallbackDescription = "Running, CLK/128"
             enumValue = "running128"
         case "RUNNING_CLK_256", "CLK_IO_256_FROM_PRESCALER", "CLK_T2S_256_FROM_PRESCALER":
-            description = "Running, CLK/256"
+            fallbackDescription = "Running, CLK/256"
             enumValue = "running256"
         case "RUNNING_CLK_1024", "CLK_IO_1024_FROM_PRESCALER", "CLK_T2S_1024_FROM_PRESCALER":
-            description = "Running, CLK/1024"
+            fallbackDescription = "Running, CLK/1024"
             enumValue = "running1024"
         case "RUNNING_CLK_2":
-            description = "Running, CLK/2"
+            fallbackDescription = "Running, CLK/2"
             enumValue = "running2"
         case "RUNNING_CLK_4":
-            description = "Running, CLK/4"
+            fallbackDescription = "Running, CLK/4"
             enumValue = "running4"
         case "RUNNING_CLK_512":
-            description = "Running, CLK/512"
+            fallbackDescription = "Running, CLK/512"
             enumValue = "running512"
         case "RUNNING_CLK_2048":
-            description = "Running, CLK/2048"
+            fallbackDescription = "Running, CLK/2048"
             enumValue = "running2048"
         case "RUNNING_CLK_4096":
-            description = "Running, CLK/4096"
+            fallbackDescription = "Running, CLK/4096"
             enumValue = "running4096"
         case "RUNNING_CLK_8192":
-            description = "Running, CLK/8192"
+            fallbackDescription = "Running, CLK/8192"
             enumValue = "running8192"
         case "RUNNING_CLK_16384":
-            description = "Running, CLK/16384"
+            fallbackDescription = "Running, CLK/16384"
             enumValue = "running16384"
         case "RUNNING_EXTCLK_TN_FALLING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_TN_PIN_CLOCK_ON_FALLING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_T0_PIN_CLOCK_ON_FALLING_EDGE":
-            description = "External clock source. Clock on falling edge."
+            fallbackDescription = "External clock source. Clock on falling edge."
             enumValue = "runningExternalFallingEdge"
         case "RUNNING_EXTCLK_TN_RISING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_TN_PIN_CLOCK_ON_RISING_EDGE", "EXTERNAL_CLOCK_SOURCE_ON_T0_PIN_CLOCK_ON_RISING_EDGE":
-            description = "External clock source. Clock on rising edge."
+            fallbackDescription = "External clock source. Clock on rising edge."
             enumValue = "runningExternalRisingEdge"
         case "RESERVED":
-            description = "Reserved"
+            fallbackDescription = "Reserved"
             enumValue = "reserved\(number)"
         default:
-            description = ""
+            fallbackDescription = ""
         }
-        
-        let documentationRow = """
-        
-            /// |    \(number)   |   \((number & 0b00000100) >> 2)   |   \((number & 0b00000010) >> 1)   |   \(number & 0b00000001)   | \(description.padding(toLength: 64, withPad: " ", startingAt: 0))|
-            /// |--------|-------|-------|-------|-----------------------------------------------------------------|
-        """
-        
-        let enumValueRow = "        case \(enumValue) = \(number)\n"
-        
-        documentationTable.append(documentationRow)
+
+        let sanitizedCaption = sanitizeDocumentationTableText(value.caption)
+        let description = sanitizedCaption.isEmpty ? fallbackDescription : sanitizedCaption
+        generatedValues.append(
+            (baseName: enumValue, number: number, caption: sanitizedCaption, description: description)
+        )
+    }
+
+    let documentationTable = makePrescalingDocumentationTable(
+        rows: generatedValues.map { (number: $0.number, description: $0.description) },
+        bitfieldName: bitfieldName,
+        bitWidth: bitWidth
+    )
+
+    let duplicateNames = Set(
+        Dictionary(grouping: generatedValues, by: \.baseName)
+            .filter { !$0.key.isEmpty && $0.value.count > 1 }
+            .map(\.key)
+    )
+
+    var seenCounts: [String: Int] = [:]
+
+    for generatedValue in generatedValues {
+        let enumValue: String
+        if duplicateNames.contains(generatedValue.baseName) {
+            let nextCount = seenCounts[generatedValue.baseName, default: 0] + 1
+            seenCounts[generatedValue.baseName] = nextCount
+            enumValue = nextCount == 1 ? generatedValue.baseName : "\(generatedValue.baseName)_\(nextCount)"
+        } else {
+            enumValue = generatedValue.baseName
+        }
+
+        let sanitizedCaption = generatedValue.caption.isEmpty ? generatedValue.description : generatedValue.caption
+        let enumValueRow = "        case \(enumValue) = \(generatedValue.number) // \(sanitizedCaption)\n"
+
         enumValues.append(enumValueRow)
     }
     
@@ -312,4 +343,102 @@ func generateEnum(from ValueGroup: AVRModules.Module.ValueGroup, bitfieldName: S
     ).with(\.trailingTrivia, .newlines(2))
     
     return MemberBlockItemSyntax(decl: source)
+}
+
+private func significantBitWidth(of value: UInt16) -> Int {
+    guard value > 0 else {
+        return 1
+    }
+
+    return UInt16.bitWidth - value.leadingZeroBitCount
+}
+
+private func sanitizeDocumentationTableText(_ text: String) -> String {
+    text
+        .replacingOccurrences(of: "\n", with: " ")
+        .replacingOccurrences(of: "\r", with: " ")
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+private func makePrescalingDocumentationTable(
+    rows: [(number: UInt8, description: String)],
+    bitfieldName: String,
+    bitWidth: Int
+) -> String {
+    let normalizedBitWidth = max(bitWidth, 1)
+    let bitHeaders = stride(from: normalizedBitWidth - 1, through: 0, by: -1).map { "\(bitfieldName)\($0)" }
+    let modeWidth = max("Mode".count, rows.map { String($0.number).count }.max() ?? 1)
+    let bitWidths = bitHeaders.map { max($0.count, 1) }
+    let descriptionWidth = max("Description".count, rows.map(\.description.count).max() ?? 1)
+    let widths = [modeWidth] + bitWidths + [descriptionWidth]
+
+    let divider = makeMarkdownTableDivider(widths: widths)
+    let header = makeMarkdownTableRow(
+        contents: ["Mode"] + bitHeaders + ["Description"],
+        widths: widths
+    )
+
+    var lines = [
+        "/// \(divider)",
+        "/// \(header)",
+        "/// \(divider)"
+    ]
+
+    for row in rows {
+        let bitValues = stride(from: normalizedBitWidth - 1, through: 0, by: -1).map {
+            String((row.number >> UInt8($0)) & 0x01)
+        }
+        let rowText = makeMarkdownTableRow(
+            contents: [String(row.number)] + bitValues + [row.description],
+            widths: widths
+        )
+
+        lines.append("/// \(rowText)")
+        lines.append("/// \(divider)")
+    }
+
+    return lines.joined(separator: "\n")
+}
+
+private func makeMarkdownTableDivider(widths: [Int]) -> String {
+    "|" + widths
+        .map { String(repeating: "-", count: $0 + 2) }
+        .joined(separator: "|") + "|"
+}
+
+private func makeMarkdownTableRow(contents: [String], widths: [Int]) -> String {
+    let descriptionIndex = contents.count - 1
+    let cells = zip(contents, widths).enumerated().map { index, pair in
+        let (content, width) = pair
+        let alignment: MarkdownTableAlignment = index == descriptionIndex ? .leading : .centered
+        return makeMarkdownTableCell(content: content, width: width, alignment: alignment)
+    }
+
+    return "|" + cells.joined(separator: "|") + "|"
+}
+
+private func makeMarkdownTableCell(
+    content: String,
+    width: Int,
+    alignment: MarkdownTableAlignment
+) -> String {
+    let padding = max(width - content.count, 0)
+
+    switch alignment {
+    case .centered:
+        let leadingPadding = padding / 2
+        let trailingPadding = padding - leadingPadding
+        return " "
+            + String(repeating: " ", count: leadingPadding)
+            + content
+            + String(repeating: " ", count: trailingPadding)
+            + " "
+    case .leading:
+        return " " + content + String(repeating: " ", count: padding) + " "
+    }
+}
+
+private enum MarkdownTableAlignment {
+    case centered
+    case leading
 }
