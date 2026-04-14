@@ -11,8 +11,8 @@
 #include <stdint.h>
 
 /**
- * @brief Read a 32-bit value from a volatile pointer.
- * @param ptr The pointer to read from.
+ * @brief Read an 8-bit value from a volatile register address.
+ * @param address The register address to read from.
  * @return The value read.
  */
 static inline uint8_t _volatileRegisterReadUInt8(uintptr_t address) {
@@ -21,8 +21,8 @@ static inline uint8_t _volatileRegisterReadUInt8(uintptr_t address) {
 }
 
 /**
- * @brief Write a 32-bit value to a volatile pointer.
- * @param ptr The pointer to write to.
+ * @brief Write an 8-bit value to a volatile register address.
+ * @param address The register address to write to.
  * @param value The value to write.
  */
 static inline void _volatileRegisterWriteUInt8(uintptr_t address, uint8_t value) {
@@ -31,8 +31,8 @@ static inline void _volatileRegisterWriteUInt8(uintptr_t address, uint8_t value)
 }
 
 /**
- * @brief Read a 32-bit value from a volatile pointer.
- * @param ptr The pointer to read from.
+ * @brief Read a 16-bit value from a volatile register address.
+ * @param address The register address to read from.
  * @return The value read.
  */
 static inline uint16_t _volatileRegisterReadUInt16(uintptr_t address) {
@@ -41,8 +41,8 @@ static inline uint16_t _volatileRegisterReadUInt16(uintptr_t address) {
 }
 
 /**
- * @brief Write a 32-bit value to a volatile pointer.
- * @param ptr The pointer to write to.
+ * @brief Write a 16-bit value to a volatile register address.
+ * @param address The register address to write to.
  * @param value The value to write.
  */
 static inline void _volatileRegisterWriteUInt16(uintptr_t address, uint16_t value) {
