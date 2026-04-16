@@ -1,0 +1,127 @@
+public enum TwoWire {
+    /// TWI bit rate prescaler selection.
+    public enum Prescaler: UInt8 {
+        case one = 1
+        case four = 2
+        case sixteen = 3
+        case sixtyFour = 4
+    }
+}
+
+public protocol TwoWireInterfacePort {
+    associatedtype PortDataType: BinaryInteger
+
+    static var TWIBitRateRegister: PortDataType { get set }
+    static var TWIControlRegister: UInt8 { get set }
+    static var TWIStatusRegister: UInt8 { get set }
+    static var TWIDataRegister: UInt8 { get set }
+    static var TWISlaveAddressRegister: UInt8 { get set }
+    static var TWISlaveAddressMaskRegister: UInt8 { get set }
+}
+
+public extension TwoWireInterfacePort {
+    /// TWI interrupt flag.
+    @inlinable
+    @inline(__always)
+    static var interruptFlag: Bool {
+        get { return getRegisterBit(TWIControlRegister, bit: 7) }
+        set { setRegisterBit(TWIControlRegister, bit: 7, value: newValue) }
+    }
+
+    /// Enable acknowledge generation.
+    @inlinable
+    @inline(__always)
+    static var enableAcknowledge: Bool {
+        get { return getRegisterBit(TWIControlRegister, bit: 6) }
+        set { setRegisterBit(TWIControlRegister, bit: 6, value: newValue) }
+    }
+
+    /// Request a START condition.
+    @inlinable
+    @inline(__always)
+    static var startCondition: Bool {
+        get { return getRegisterBit(TWIControlRegister, bit: 5) }
+        set { setRegisterBit(TWIControlRegister, bit: 5, value: newValue) }
+    }
+
+    /// Request a STOP condition.
+    @inlinable
+    @inline(__always)
+    static var stopCondition: Bool {
+        get { return getRegisterBit(TWIControlRegister, bit: 4) }
+        set { setRegisterBit(TWIControlRegister, bit: 4, value: newValue) }
+    }
+
+    /// Write collision flag.
+    @inlinable
+    @inline(__always)
+    static var writeCollisionFlag: Bool {
+        get { return getRegisterBit(TWIControlRegister, bit: 3) }
+        set { setRegisterBit(TWIControlRegister, bit: 3, value: newValue) }
+    }
+
+    /// Enable the TWI peripheral.
+    @inlinable
+    @inline(__always)
+    static var enable: Bool {
+        get { return getRegisterBit(TWIControlRegister, bit: 2) }
+        set { setRegisterBit(TWIControlRegister, bit: 2, value: newValue) }
+    }
+
+    /// Enable TWI interrupts.
+    @inlinable
+    @inline(__always)
+    static var interruptEnable: Bool {
+        get { return getRegisterBit(TWIControlRegister, bit: 0) }
+        set { setRegisterBit(TWIControlRegister, bit: 0, value: newValue) }
+    }
+
+    /// Current TWI status code with the prescaler bits masked out.
+    @inlinable
+    @inline(__always)
+    static var status: UInt8 {
+        get { return TWIStatusRegister & 0b11111000 }
+        set { TWIStatusRegister |= (newValue & 0b11111000) }
+    }
+
+    /// Current TWI bit rate prescaler.
+    @inlinable
+    @inline(__always)
+    static var prescaler: TwoWire.Prescaler {
+        get {
+            let value = TWIStatusRegister & 0b00000011
+            return TwoWire.Prescaler(rawValue: value) ?? .one
+        }
+        set { TWIStatusRegister |= (newValue.rawValue & 0b00000011) }
+    }
+
+    /// Seven-bit slave address.
+    @inlinable
+    @inline(__always)
+    static var slaveAddress: UInt8 {
+        get { return (TWISlaveAddressRegister & 0b11111110) >> 1 }
+        set {
+            let shiftedAddress = newValue << 1
+            TWISlaveAddressRegister |= (shiftedAddress & 0b11111110)
+        }
+    }
+
+    /// Enable general call recognition.
+    @inlinable
+    @inline(__always)
+    static var generalCallRecognitionEnable: Bool {
+        get { return getRegisterBit(TWISlaveAddressRegister, bit: 0b00000001) }
+        set { setRegisterBit(TWISlaveAddressRegister, bit: 0b00000001, value: newValue) }
+    }
+
+    /// Seven-bit slave address mask.
+    @inlinable
+    @inline(__always)
+    static var slaveAddressMask: UInt8 {
+        get { return (TWISlaveAddressMaskRegister & 0b11111110) >> 1 }
+        set {
+            let shiftedAddress = newValue << 1
+            TWISlaveAddressMaskRegister |= (shiftedAddress & 0b11111110)
+        }
+    }
+}

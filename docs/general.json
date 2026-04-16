@@ -681,6 +681,54 @@
                 "SPSR1"
             ],
             "variableName": "statusRegister"
+        },
+        {
+            "aliases": [
+                "TWBR",
+                "TWBR0",
+                "TWBR1"
+            ],
+            "variableName": "TWIBitRateRegister"
+        },
+        {
+            "aliases": [
+                "TWCR",
+                "TWCR0",
+                "TWCR1"
+            ],
+            "variableName": "TWIControlRegister"
+        },
+        {
+            "aliases": [
+                "TWSR",
+                "TWSR0",
+                "TWSR1"
+            ],
+            "variableName": "TWIStatusRegister"
+        },
+        {
+            "aliases": [
+                "TWDR",
+                "TWDR0",
+                "TWDR1"
+            ],
+            "variableName": "TWIDataRegister"
+        },
+        {
+            "aliases": [
+                "TWAR",
+                "TWAR0",
+                "TWAR1"
+            ],
+            "variableName": "TWISlaveAddressRegister"
+        },
+        {
+            "aliases": [
+                "TWAMR",
+                "TWAMR0",
+                "TWAMR1"
+            ],
+            "variableName": "TWISlaveAddressMaskRegister"
         }
     ],
     "bitfields": [
@@ -3045,6 +3093,126 @@
                 "SPIMAP"
             ],
             "variableName": "spiPinMapping"
+        },
+        {
+            "aliases": [
+                "TWINT",
+                "TWINT0",
+                "TWINT1"
+            ],
+            "variableName": "interruptFlag",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWEA",
+                "TWEA0",
+                "TWEA1"
+            ],
+            "variableName": "enableAcknowledge",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWSTA",
+                "TWSTA0",
+                "TWSTA1"
+            ],
+            "variableName": "startCondition",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWSTO",
+                "TWSTO0",
+                "TWSTO1"
+            ],
+            "variableName": "stopCondition",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWWC",
+                "TWWC0",
+                "TWWC1"
+            ],
+            "variableName": "writeCollisionFlag",
+            "valueType": "Bool",
+            "access": "R"
+        },
+        {
+            "aliases": [
+                "TWEN",
+                "TWEN0",
+                "TWEN1"
+            ],
+            "variableName": "enable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWIE",
+                "TWIE0",
+                "TWIE1"
+            ],
+            "variableName": "interruptEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWS",
+                "TWS0",
+                "TWS1"
+            ],
+            "variableName": "status",
+            "valueType": "UInt8",
+            "access": "R"
+        },
+        {
+            "aliases": [
+                "TWPS",
+                "TWPS0",
+                "TWPS1"
+            ],
+            "variableName": "prescaler",
+            "valueType": "TwoWire.Prescaler",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWA",
+                "TWA0",
+                "TWA1"
+            ],
+            "variableName": "slaveAddress",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWGCE",
+                "TWGCE0",
+                "TWGCE1"
+            ],
+            "variableName": "generalCallRecognitionEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWAM",
+                "TWAM0",
+                "TWAM1"
+            ],
+            "variableName": "slaveAddressMask",
+            "valueType": "UInt8",
+            "access": "R/W"
         }
     ]
 }
