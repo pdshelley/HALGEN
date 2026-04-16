@@ -210,6 +210,18 @@ class ChipDocumentationLoader {
         return resolvedData
     }
 
+    func boardConfiguration(for device: AVRToolsDeviceFile) -> BoardConfiguration {
+        let boardOverrides = chipDocumentation?.board
+
+        return BoardConfiguration(
+            ramSize: boardOverrides?.ramSize ?? device.memorySegmentSize(named: "IRAM", type: "ram") ?? 0,
+            flashSize: boardOverrides?.flashSize ?? device.memorySegmentSize(named: "FLASH", type: "flash") ?? 0,
+            eepromSize: boardOverrides?.eepromSize ?? device.memorySegmentSize(named: "EEPROM", type: "eeprom"),
+            baud: boardOverrides?.baud ?? 115200,
+            cpuFrequency: boardOverrides?.cpuFrequency ?? device.maximumClockFrequency ?? 16000000
+        )
+    }
+
     private func generalRegister(for alias: String) -> GeneralRegister? {
         generalDocumentation?.registers.first { $0.aliases.contains(alias) }
     }

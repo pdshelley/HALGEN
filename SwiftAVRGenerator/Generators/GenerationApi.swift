@@ -17,6 +17,9 @@ struct GeneratedCodeFile {
 
 struct GeneratedAVRCore {
     let name: String
+    let atdfFileName: String
+    let device: AVRToolsDeviceFile
+    let boardConfiguration: BoardConfiguration
     let files: [GeneratedCodeFile]
     let log: ChipGenerationLog
 
@@ -205,6 +208,9 @@ func decodeATDF(urls: [URL], docURL: URL, inferValueTypes: Bool = false) -> [Gen
             let generatedFiles = pipeline.run(device: atdfObject, documentation: documentation)
             let generatedCore = GeneratedAVRCore(
                 name: atdfObject.devices.device.name,
+                atdfFileName: url.lastPathComponent,
+                device: atdfObject,
+                boardConfiguration: documentation.boardConfiguration(for: atdfObject),
                 files: generatedFiles,
                 log: documentation.generationLog
             )
@@ -286,8 +292,21 @@ func exportAll(fromURLs: [URL], toURL: URL, docURL: URL, inferValueTypes: Bool =
 
         let folder = toURL
             .appendingPathComponent(formattedFile.chipName, isDirectory: true)
+            .appendingPathComponent("Sources", isDirectory: true)
+            .appendingPathComponent("CoreAVR", isDirectory: true)
             .appendingPathComponent(formattedFile.subdirectory, isDirectory: true)
         exportFile(toURL: folder, fileName: formattedFile.fileName, fileContents: formattedFile.content)
+    }
+
+    for core in exportableCores {
+        let packageDirectory = toURL.appendingPathComponent(core.name, isDirectory: true)
+        for supportFile in CoreAVRPackageSupport.files(for: core, documentationDirectory: docURL) {
+            exportFile(
+                toURL: packageDirectory.appendingRelativeDirectory(for: supportFile.relativePath),
+                fileName: supportFile.fileName,
+                fileContents: supportFile.content
+            )
+        }
     }
 
     if skippedChipNames.isEmpty == false {
@@ -324,6 +343,17 @@ func exportFile(toURL: URL, fileName: String, fileContents: String) {
 }
 
 var listOfValues: [String] = []
+
+private extension URL {
+    func appendingRelativeDirectory(for relativePath: String) -> URL {
+        relativePath
+            .split(separator: "/")
+            .dropLast()
+            .reduce(self) { url, component in
+                url.appendingPathComponent(String(component), isDirectory: true)
+            }
+    }
+}
 
 extension Sequence where Iterator.Element: Hashable {
     func unique() -> [Iterator.Element] {

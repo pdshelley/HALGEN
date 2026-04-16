@@ -1,6 +1,10 @@
 {
     "chip": "ATmega328P",
     "datasheet": "ATmega328P Datasheet (DS40002061B)",
+    "board": {
+        "baud": 115200,
+        "cpuFrequency": 16000000
+    },
     "registers": {
         "UDR0": {
             "initialValues": [

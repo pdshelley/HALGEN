@@ -10,8 +10,17 @@ import Foundation
 struct ChipDocumentation: Codable {
     let chip: String
     let datasheet: String
+    let board: Board?
     let registers: [String: Register]
     let bitfields: [String: Bitfield]
+
+    struct Board: Codable {
+        let ramSize: Int?
+        let flashSize: Int?
+        let eepromSize: Int?
+        let baud: Int?
+        let cpuFrequency: Int?
+    }
     
     struct Register: Codable {
         let variableName: String?

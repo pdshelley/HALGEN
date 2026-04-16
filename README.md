@@ -107,10 +107,15 @@ top of the raw ATDF input:
 
 - `docs/general.json` contains shared aliases and reusable metadata.
 - `docs/<Chip>.json` contains chip-specific register and bitfield details.
+- `docs/SUPPLEMENTAL_DOCUMENTATION.md` documents the expected shape, precedence,
+  and fallback behavior for these JSON files.
 - Missing entries fall back to generated names and are reported in `logs.json`.
 
 This is the preferred way to improve generated output. Avoid hand-editing files
 under `Output/` unless you are only inspecting generated results.
+
+Use `docs/SUPPLEMENTAL_DOCUMENTATION.md` for stable contributor guidance.
+`docs/README.md` is reserved for generated audit output.
 
 ### Audit Missing `general.json` Entries
 

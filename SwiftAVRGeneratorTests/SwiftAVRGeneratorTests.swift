@@ -199,6 +199,110 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertEqual(bitfieldData.documentation, "Chip split bitfield docs")
     }
 
+    func testBoardConfigurationUsesChipOverridesBeforeATDFDefaults() throws {
+        let docsDirectory = try makeTemporaryDirectory()
+        try write(
+            """
+            {
+              "registers": [],
+              "bitfields": []
+            }
+            """,
+            to: docsDirectory.appendingPathComponent("general.json")
+        )
+        try write(
+            """
+            {
+              "chip": "ATmega328P",
+              "datasheet": "Test Datasheet",
+              "board": {
+                "ramSize": 4096,
+                "flashSize": 65536,
+                "eepromSize": 2048,
+                "baud": 57600,
+                "cpuFrequency": 8000000
+              },
+              "registers": {},
+              "bitfields": {}
+            }
+            """,
+            to: docsDirectory.appendingPathComponent("ATmega328P.json")
+        )
+
+        let loader = ChipDocumentationLoader()
+        loader.directory = docsDirectory
+
+        XCTAssertTrue(loader.loadGeneral())
+        XCTAssertTrue(loader.load(chipName: "ATmega328P"))
+
+        let atdfData = try Data(contentsOf: atdfURL(named: "ATmega328P"))
+        let device = try XMLDecoder().decode(AVRToolsDeviceFile.self, from: atdfData)
+        let configuration = loader.boardConfiguration(for: device)
+
+        XCTAssertEqual(configuration.ramSize, 4096)
+        XCTAssertEqual(configuration.flashSize, 65536)
+        XCTAssertEqual(configuration.eepromSize, 2048)
+        XCTAssertEqual(configuration.baud, 57600)
+        XCTAssertEqual(configuration.cpuFrequency, 8000000)
+    }
+
+    func testBoardConfigurationFallsBackToATDFAndDefaults() throws {
+        let loader = ChipDocumentationLoader()
+        loader.directory = repositoryRootURL().appendingPathComponent("docs", isDirectory: true)
+
+        XCTAssertTrue(loader.loadGeneral())
+        XCTAssertFalse(loader.load(chipName: "ATtiny85"))
+
+        let atdfData = try Data(contentsOf: atdfURL(named: "ATtiny85"))
+        let device = try XMLDecoder().decode(AVRToolsDeviceFile.self, from: atdfData)
+        let configuration = loader.boardConfiguration(for: device)
+
+        XCTAssertEqual(configuration.ramSize, 512)
+        XCTAssertEqual(configuration.flashSize, 8192)
+        XCTAssertEqual(configuration.eepromSize, 512)
+        XCTAssertEqual(configuration.baud, 115200)
+        XCTAssertEqual(configuration.cpuFrequency, 10000000)
+    }
+
+    func testMemorySegmentSizePrefersExactNameOverEarlierTypeMatch() throws {
+        let device = try makeDevice(
+            withMemorySegmentsXML: """
+            <address-space endianness="little" name="prog" id="prog" start="0x0000" size="0x0200">
+                <memory-segment start="0x0100" size="0x0010" type="flash" rw="RW" exec="1" name="BOOT_SECTION_1"/>
+                <memory-segment start="0x0000" size="0x0100" type="flash" rw="RW" exec="1" name="FLASH"/>
+            </address-space>
+            """
+        )
+
+        XCTAssertEqual(device.memorySegmentSize(named: "FLASH", type: "flash"), 0x0100)
+    }
+
+    func testMemorySegmentSizePrefersInternalRAMWhenNameFallbackIsNeeded() throws {
+        let device = try makeDevice(
+            withMemorySegmentsXML: """
+            <address-space endianness="little" name="data" id="data" start="0x0000" size="0x1000">
+                <memory-segment start="0x0200" size="0x0800" type="ram" name="XRAM" external="true"/>
+                <memory-segment start="0x0100" size="0x0100" type="ram" name="SRAM" external="false"/>
+            </address-space>
+            """
+        )
+
+        XCTAssertEqual(device.memorySegmentSize(named: "IRAM", type: "ram"), 0x0100)
+    }
+
+    func testMemorySegmentSizeUsesLargestFlashSegmentForTypeFallback() throws {
+        let device = try makeDevice(
+            withMemorySegmentsXML: """
+            <address-space endianness="little" name="prog" id="prog" start="0x0000" size="0x0200">
+                <memory-segment start="0x0100" size="0x0010" type="flash" rw="RW" exec="1" name="BOOT_SECTION_1"/>
+                <memory-segment start="0x0000" size="0x0100" type="flash" rw="RW" exec="1" name="APP_FLASH"/>
+            </address-space>
+            """
+        )
+
+        XCTAssertEqual(device.memorySegmentSize(named: "FLASH", type: "flash"), 0x0100)
+    }
+
     func testBoilerplateTemplateUsesDocsOverrideDirectory() throws {
         let docsDirectory = try makeTemporaryDirectory()
         let boilerplateDirectory = docsDirectory.appendingPathComponent("boilerplate", isDirectory: true)
@@ -655,6 +759,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
             """,
             to: docsDirectory.appendingPathComponent("general.json")
         )
+        try writeMinimalBoilerplateTemplates(to: docsDirectory)
 
         exportAll(
             fromURLs: [atdfURL(named: "ATmega328P")],
@@ -684,6 +789,79 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertFalse(chipLog.exported)
         XCTAssertTrue(uartLog.missingRegisters.contains(where: { $0.name == "UDR0" }))
         XCTAssertTrue(uartLog.missingBitfields.contains(where: { $0.name == "RXC0" }))
+    }
+
+    func testExportAllWritesCoreAVRPackageShape() throws {
+        let outputDirectory = try makeTemporaryDirectory()
+
+        exportAll(
+            fromURLs: [atdfURL(named: "ATmega328P")],
+            toURL: outputDirectory,
+            docURL: repositoryRootURL().appendingPathComponent("docs", isDirectory: true)
+        )
+
+        let chipOutputDirectory = outputDirectory.appendingPathComponent("ATmega328P", isDirectory: true)
+        let sourceDirectory = chipOutputDirectory.appendingPathComponent("Sources/CoreAVR", isDirectory: true)
+        let swift4pURL = chipOutputDirectory.appendingPathComponent("CoreAVR.swift4p")
+        let boardIncludeURL = chipOutputDirectory.appendingPathComponent("board.include")
+        let readmeURL = chipOutputDirectory.appendingPathComponent("README.md")
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: chipOutputDirectory.appendingPathComponent("Package.swift").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: chipOutputDirectory.appendingPathComponent("CoreAVR.h").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: chipOutputDirectory.appendingPathComponent("module.modulemap").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: sourceDirectory.appendingPathComponent("CoreAVR.swift").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: sourceDirectory.appendingPathComponent("DigitalValue.swift").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: sourceDirectory.appendingPathComponent("Utilities.swift").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: sourceDirectory.appendingPathComponent("module/GPIO.swift").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: sourceDirectory.appendingPathComponent("module/UART/UART0.swift").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: sourceDirectory.appendingPathComponent("module/Timer/Timer1.swift").path))
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: chipOutputDirectory.appendingPathComponent(".project/board.include").path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: sourceDirectory.appendingPathComponent("module/CPUCore.swift").path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: sourceDirectory.appendingPathComponent("module/Interrupts.swift").path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: sourceDirectory.appendingPathComponent("module/EEPROM.swift").path))
+
+        let swift4p = try String(contentsOf: swift4pURL, encoding: .utf8)
+        XCTAssertTrue(swift4p.contains("- Sources/CoreAVR/module/GPIO.swift"))
+        XCTAssertTrue(swift4p.contains("- Sources/CoreAVR/module/UART/UART0.swift"))
+        XCTAssertFalse(swift4p.contains("CPUCore.swift"))
+        XCTAssertFalse(swift4p.contains(".project/board.include"))
+
+        let boardInclude = try String(contentsOf: boardIncludeURL, encoding: .utf8)
+        XCTAssertTrue(boardInclude.contains("RAM_SIZE=2048"))
+        XCTAssertTrue(boardInclude.contains("FLASH_SIZE=32768"))
+        XCTAssertTrue(boardInclude.contains("BAUD=115200"))
+        XCTAssertTrue(boardInclude.contains("CPU_FREQUENCY=16000000"))
+        XCTAssertTrue(boardInclude.contains("MCUMACRO=__AVR_ATmega328P__"))
+        XCTAssertTrue(boardInclude.contains("CORE=avr5"))
+
+        let tinyDocsDirectory = repositoryRootURL().appendingPathComponent("docs", isDirectory: true)
+        let tinyLoader = ChipDocumentationLoader()
+        tinyLoader.directory = tinyDocsDirectory
+        XCTAssertTrue(tinyLoader.loadGeneral())
+        XCTAssertTrue(tinyLoader.load(chipName: "ATtiny15"))
+        let tinyData = try Data(contentsOf: atdfURL(named: "ATtiny15"))
+        let tinyDevice = try XMLDecoder().decode(AVRToolsDeviceFile.self, from: tinyData)
+        let tinyCore = GeneratedAVRCore(
+            name: tinyDevice.devices.device.name,
+            atdfFileName: "ATtiny15.atdf",
+            device: tinyDevice,
+            boardConfiguration: tinyLoader.boardConfiguration(for: tinyDevice),
+            files: [],
+            log: tinyLoader.generationLog
+        )
+        let tinyBoardInclude = try XCTUnwrap(
+            CoreAVRPackageSupport.files(for: tinyCore, documentationDirectory: tinyDocsDirectory)
+                .first(where: { $0.relativePath == "board.include" })?
+                .content
+        )
+
+        XCTAssertTrue(tinyBoardInclude.contains("RAM_SIZE=64"))
+        XCTAssertTrue(tinyBoardInclude.contains("FLASH_SIZE=1024"))
+
+        let readme = try String(contentsOf: readmeURL, encoding: .utf8)
+        XCTAssertTrue(readme.contains("Generated by HALGEN from `ATmega328P.atdf`."))
+        XCTAssertTrue(readme.contains("CPUCore, Interrupts, EEPROM"))
     }
 
     func testSPIGeneratorGeneratesATmega328PConvenienceAPI() throws {
@@ -819,6 +997,30 @@ final class SwiftAVRGeneratorTests: XCTestCase {
 
     private func atdfURL(named chipName: String) -> URL {
         repositoryRootURL().appendingPathComponent("atdf/\(chipName).atdf")
+    }
+
+    private func makeDevice(withMemorySegmentsXML addressSpacesXML: String) throws -> AVRToolsDeviceFile {
+        let xml = """
+        <avr-tools-device-file>
+            <variants>
+                <variant ordercode="TEST" tempmin="0" tempmax="0" speedmax="1" package="TEST" vccmin="1.8" vccmax="5.5"/>
+            </variants>
+            <devices>
+                <device name="TestDevice" architecture="AVR8" family="test">
+                    <peripherals />
+                    <address-spaces>
+        \(indent(addressSpacesXML, by: 6))
+                    </address-spaces>
+                    <interfaces />
+                    <property-groups />
+                    <interrupts />
+                </device>
+            </devices>
+            <modules />
+        </avr-tools-device-file>
+        """
+
+        return try XMLDecoder().decode(AVRToolsDeviceFile.self, from: Data(xml.utf8))
     }
 
     private func loadDevice(named chipName: String) throws -> AVRToolsDeviceFile {
@@ -962,6 +1164,14 @@ final class SwiftAVRGeneratorTests: XCTestCase {
 
     private func write(_ contents: String, to url: URL) throws {
         try contents.write(to: url, atomically: true, encoding: .utf8)
+    }
+
+    private func writeMinimalBoilerplateTemplates(to docsDirectory: URL) throws {
+        let boilerplateDirectory = docsDirectory.appendingPathComponent("boilerplate", isDirectory: true)
+        try FileManager.default.createDirectory(at: boilerplateDirectory, withIntermediateDirectories: true)
+        try write("", to: boilerplateDirectory.appendingPathComponent("UART.swift.template"))
+        try write("", to: boilerplateDirectory.appendingPathComponent("Timers.swift.template"))
+        try write("{{STRUCT_DECLARATION}}", to: boilerplateDirectory.appendingPathComponent("AnalogToDigitalConverter.swift.template"))
     }
 
     private func occurrences(of substring: String, in string: String) -> Int {
