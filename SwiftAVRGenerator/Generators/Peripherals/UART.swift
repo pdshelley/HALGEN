@@ -29,7 +29,9 @@ struct UARTGenerator: PeripheralGenerator {
         )
         
         for registerGroup in device.modules.module.first(where: { $0.name == "USART" })!.registerGroup {
-            var code = buildFileHeader(for: "UART\(registerGroup.name.first(where: { $0.isNumber }) ?? "0")")
+            let instanceIndex = peripheralInstanceIndex(for: registerGroup.name)
+            let structName = "UART\(instanceIndex)"
+            var code = buildFileHeader(for: structName)
             var memberBlockList = MemberBlockItemListSyntax()
             for register in registerGroup.register {
                 memberBlockList.append(
@@ -65,13 +67,13 @@ struct UARTGenerator: PeripheralGenerator {
             code.append(SourceFileSyntax {
                 StructDeclSyntax(
                     modifiers: DeclModifierListSyntax(arrayLiteral: DeclModifierSyntax(name: "public")),
-                    name: "\(raw: "UART\(registerGroup.name.first(where: { $0.isNumber }) ?? "0")")",
+                    name: "\(raw: structName)",
                     inheritanceClause: inheritanceClause,
                     memberBlock: memberBlock
                 )
             }.formatted().description)
             
-            files.append(GeneratedCodeFile(fileName: "UART\(registerGroup.name.first(where: { $0.isNumber }) ?? "0").swift", content: code, subdirectory: subdirectory))
+            files.append(GeneratedCodeFile(fileName: "\(structName).swift", content: code, subdirectory: subdirectory))
         }
         
         return files
