@@ -134,22 +134,45 @@ private func generateClassicSPICompatibilityAccessor(
     let registerMask = bitfield.mask.value.lowByte
     let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
     let caption = bitfield.caption ?? ""
-    let source = """
-    /// \(bitfield.name) - \(caption)
-    @inlinable
-    @inline(__always)
-    public static var \(info.variableName): Bool {
-        get {
-            let flag = (\(registerName) & \(registerMask.binaryString)) >> UInt8(\(bitshift))
-            return flag == 1
-        }
-        set {
-            \(registerName) = (\(registerName) & ~\(registerMask.binaryString)) | (((newValue ? 1 : 0) & 0b00000001) << UInt8(\(bitshift)))
-        }
+    let documentationComment: String
+    if info.overrideGeneratedDocumentation {
+        documentationComment = makeDocumentationComment(body: info.documentation)
+    } else {
+        documentationComment = makeDocumentationComment(
+            title: "\(bitfield.name) - \(caption)",
+            body: info.documentation
+        )
     }
-    """
 
-    return MemberBlockItemSyntax(decl: DeclSyntax("\(raw: source)").with(\.trailingTrivia, .newlines(2)))
+    var declarationLines: [String] = []
+    if documentationComment.isEmpty == false {
+        declarationLines.append(documentationComment)
+    }
+
+    declarationLines.append(contentsOf: [
+        "@inlinable",
+        "@inline(\(info.inline))",
+        "public static var \(info.variableName): Bool {",
+        "    get {",
+        "        let flag = (\(registerName) & \(registerMask.binaryString)) >> UInt8(\(bitshift))",
+        "        return flag == 1",
+        "    }"
+    ])
+
+    if info.access != .read {
+        declarationLines.append(contentsOf: [
+            "    set {",
+            "        \(registerName) = (\(registerName) & ~\(registerMask.binaryString)) | (((newValue ? 1 : 0) & 0b00000001) << UInt8(\(bitshift)))",
+            "    }"
+        ])
+    }
+
+    declarationLines.append("}")
+    let source = declarationLines.joined(separator: "\n")
+
+    return MemberBlockItemSyntax(
+        decl: DeclSyntax("\(raw: source)").with(\.trailingTrivia, .newlines(2))
+    )
 }
 
 private func makeClassicSPISetupMethod(

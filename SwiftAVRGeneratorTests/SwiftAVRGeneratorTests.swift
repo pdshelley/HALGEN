@@ -728,6 +728,42 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertLessThan(misoDirectionRange.lowerBound, masterModeRange.lowerBound)
     }
 
+    func testSPIGeneratorGeneratesSettersForClassicSPIFlagsWhenSupplementalAccessAllowsWrite() throws {
+        let device = try loadDevice(named: "ATmega328P")
+        let loader = makeRepositoryDocsLoader()
+        let generator = SPIGenerator()
+
+        XCTAssertTrue(loader.loadGeneral())
+        XCTAssertTrue(loader.load(chipName: "ATmega328P"))
+
+        let files = loader.withPeripheralContext(named: generator.logName) {
+            generator.generate(device: device, documentation: loader)
+        }
+
+        let spi0File = try XCTUnwrap(files.first(where: { $0.fileName == "SPI0.swift" }))
+
+        XCTAssertTrue(spi0File.content.contains(
+            """
+            public static var interruptFlag: Bool {
+                get {
+                    let flag = (statusRegister & 0b10000000) >> UInt8(7)
+                    return flag == 1
+                }
+                set {
+            """
+        ))
+        XCTAssertTrue(spi0File.content.contains(
+            """
+            public static var writeCollisionFlag: Bool {
+                get {
+                    let flag = (statusRegister & 0b01000000) >> UInt8(6)
+                    return flag == 1
+                }
+                set {
+            """
+        ))
+    }
+
     func testSPIGeneratorDeduplicatesATmega328PBSPI0Registers() throws {
         let device = try loadDevice(named: "ATmega328PB")
         let loader = makeRepositoryDocsLoader()

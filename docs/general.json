@@ -2959,7 +2959,7 @@
             ],
             "variableName": "interruptFlag",
             "valueType": "Bool",
-            "access": "R"
+            "access": "R/W"
         },
         {
             "aliases": [
@@ -2970,7 +2970,7 @@
             ],
             "variableName": "writeCollisionFlag",
             "valueType": "Bool",
-            "access": "R"
+            "access": "R/W"
         },
         {
             "aliases": [
