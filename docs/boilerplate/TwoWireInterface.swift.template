@@ -1,10 +1,10 @@
 public enum TwoWire {
     /// TWI bit rate prescaler selection.
     public enum Prescaler: UInt8 {
-        case one = 1
-        case four = 2
-        case sixteen = 3
-        case sixtyFour = 4
+        case one = 0
+        case four = 1
+        case sixteen = 2
+        case sixtyFour = 3
     }
 }
 
