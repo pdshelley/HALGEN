@@ -11,6 +11,7 @@ struct GeneratorRegistry {
         SPIGenerator(),
         TimerGenerator(),
         ADCGenerator(),
-        GPIOGenerator()
+        GPIOGenerator(),
+        CPUCoreGenerator()
     ]
 }
