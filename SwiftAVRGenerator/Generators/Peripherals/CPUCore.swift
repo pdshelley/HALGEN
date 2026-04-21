@@ -31,7 +31,16 @@ struct CPUCoreGenerator: PeripheralGenerator {
         for registerGroup in device.modules.module.first(where: { $0.name == "CPU" })!.registerGroup {
 //            let instanceIndex = peripheralInstanceIndex(for: registerGroup.name)
             let structName = "CPUCore"
-            var code = buildFileHeader(for: structName)
+            var code = buildFileHeader(for: structName, generateTypealias: false)
+            code.append(
+                """
+                public protocol AVRCPUCore {
+                    static var statusRegister: UInt8 { get set }
+                }
+
+                """
+            )
+            code.append("public typealias cpuCore = CPUCore\n\n")
             var memberBlockList = MemberBlockItemListSyntax()
             for register in registerGroup.register {
                 memberBlockList.append(
