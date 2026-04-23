@@ -1070,6 +1070,19 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertEqual(occurrences(of: "public static var TWISlaveAddressMaskRegister: UInt8", in: twi1File.content), 1)
     }
 
+    func testTwoWireInterfaceTemplateStatusIsReadOnly() throws {
+        let templateURL = repositoryRootURL()
+            .appendingPathComponent("docs", isDirectory: true)
+            .appendingPathComponent("boilerplate", isDirectory: true)
+            .appendingPathComponent("TwoWireInterface.swift.template")
+
+        let template = try String(contentsOf: templateURL, encoding: .utf8)
+
+        XCTAssertTrue(template.contains("static var status: UInt8 {"))
+        XCTAssertTrue(template.contains("get { return TWIStatusRegister & 0b11111000 }"))
+        XCTAssertFalse(template.contains("set { TWIStatusRegister |= (newValue & 0b11111000) }"))
+    }
+
     func testTwoWireInterfaceGeneratorSkipsNonClassicTWIModules() throws {
         let classicGenerator = TwoWireInterfaceGenerator()
 

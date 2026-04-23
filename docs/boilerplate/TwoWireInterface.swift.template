@@ -81,7 +81,6 @@ public extension TwoWireInterfacePort {
     @inline(__always)
     static var status: UInt8 {
         get { return TWIStatusRegister & 0b11111000 }
-        set { TWIStatusRegister |= (newValue & 0b11111000) }
     }
 
     /// Current TWI bit rate prescaler.
