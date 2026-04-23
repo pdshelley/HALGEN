@@ -989,6 +989,119 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertFalse(spi0File.content.contains("public static var spiClockRateSelect"))
     }
 
+    func testTwoWireInterfaceGeneratorGeneratesATmega328PConvenienceAPI() throws {
+        let device = try loadDevice(named: "ATmega328P")
+        let loader = makeRepositoryDocsLoader()
+        let generator = TwoWireInterfaceGenerator()
+
+        XCTAssertTrue(generator.supports(device: device))
+        XCTAssertTrue(loader.loadGeneral())
+        XCTAssertTrue(loader.load(chipName: "ATmega328P"))
+
+        let files = loader.withPeripheralContext(named: generator.logName) {
+            generator.generate(device: device, documentation: loader)
+        }
+
+        XCTAssertTrue(loader.generationLog.exported)
+        XCTAssertEqual(Set(files.map(\.fileName)), ["TwoWireInterface.swift", "TwoWireInterface0.swift"])
+
+        let sharedFile = try XCTUnwrap(files.first(where: { $0.fileName == "TwoWireInterface.swift" }))
+        let twi0File = try XCTUnwrap(files.first(where: { $0.fileName == "TwoWireInterface0.swift" }))
+
+        XCTAssertTrue(sharedFile.content.contains("public enum TwoWire"))
+        XCTAssertTrue(sharedFile.content.contains("public protocol TwoWireInterfacePort"))
+        XCTAssertTrue(sharedFile.content.contains("static var TWIBitRateRegister: PortDataType"))
+        XCTAssertTrue(sharedFile.content.contains("static var TWIControlRegister: UInt8"))
+        XCTAssertTrue(sharedFile.content.contains("static var TWIStatusRegister: UInt8"))
+        XCTAssertTrue(sharedFile.content.contains("static var TWIDataRegister: UInt8"))
+        XCTAssertTrue(sharedFile.content.contains("static var TWISlaveAddressRegister: UInt8"))
+        XCTAssertTrue(sharedFile.content.contains("static var TWISlaveAddressMaskRegister: UInt8"))
+        XCTAssertTrue(sharedFile.content.contains("static var interruptFlag: Bool"))
+        XCTAssertTrue(sharedFile.content.contains("static var prescaler: TwoWire.Prescaler"))
+        XCTAssertTrue(sharedFile.content.contains("static var generalCallRecognitionEnable: Bool"))
+        XCTAssertTrue(sharedFile.content.contains("static var slaveAddressMask: UInt8"))
+        XCTAssertTrue(sharedFile.content.contains("case one = 0"))
+        XCTAssertTrue(sharedFile.content.contains("case sixtyFour = 3"))
+        XCTAssertFalse(sharedFile.content.contains("TwoWireInterfaceAddressMaskPort"))
+        XCTAssertFalse(sharedFile.content.contains("static var bitRateRegister"))
+        XCTAssertFalse(sharedFile.content.contains("static var controlRegister"))
+        XCTAssertFalse(sharedFile.content.contains("static var statusRegister"))
+        XCTAssertFalse(sharedFile.content.contains("static var dataRegister"))
+        XCTAssertFalse(sharedFile.content.contains("static var slaveAddressRegister"))
+        XCTAssertFalse(sharedFile.content.contains("static var slaveAddressMaskRegister"))
+
+        XCTAssertTrue(twi0File.content.contains("public typealias TwoWireInterface = TwoWireInterface0"))
+        XCTAssertTrue(twi0File.content.contains("public struct TwoWireInterface0: TwoWireInterfacePort"))
+        XCTAssertTrue(twi0File.content.contains("public static var TWIBitRateRegister: UInt8"))
+        XCTAssertTrue(twi0File.content.contains("public static var TWIControlRegister: UInt8"))
+        XCTAssertTrue(twi0File.content.contains("public static var TWIStatusRegister: UInt8"))
+        XCTAssertTrue(twi0File.content.contains("public static var TWIDataRegister: UInt8"))
+        XCTAssertTrue(twi0File.content.contains("public static var TWISlaveAddressRegister: UInt8"))
+        XCTAssertTrue(twi0File.content.contains("public static var TWISlaveAddressMaskRegister: UInt8"))
+        XCTAssertFalse(twi0File.content.contains("public typealias twowireinterface0"))
+    }
+
+    func testTwoWireInterfaceGeneratorGeneratesMultipleClassicInstances() throws {
+        let device = try loadDevice(named: "ATmega328PB")
+        let loader = makeRepositoryDocsLoader()
+        let generator = TwoWireInterfaceGenerator()
+
+        XCTAssertTrue(generator.supports(device: device))
+        XCTAssertTrue(loader.loadGeneral())
+        XCTAssertFalse(loader.load(chipName: "ATmega328PB"))
+
+        let files = loader.withPeripheralContext(named: generator.logName) {
+            generator.generate(device: device, documentation: loader)
+        }
+
+        XCTAssertTrue(loader.generationLog.exported)
+        XCTAssertEqual(
+            Set(files.map(\.fileName)),
+            ["TwoWireInterface.swift", "TwoWireInterface0.swift", "TwoWireInterface1.swift"]
+        )
+
+        let twi1File = try XCTUnwrap(files.first(where: { $0.fileName == "TwoWireInterface1.swift" }))
+
+        XCTAssertFalse(twi1File.content.contains("public typealias TwoWireInterface = TwoWireInterface1"))
+        XCTAssertTrue(twi1File.content.contains("public struct TwoWireInterface1: TwoWireInterfacePort"))
+        XCTAssertEqual(occurrences(of: "public static var TWIBitRateRegister: UInt8", in: twi1File.content), 1)
+        XCTAssertEqual(occurrences(of: "public static var TWIControlRegister: UInt8", in: twi1File.content), 1)
+        XCTAssertEqual(occurrences(of: "public static var TWIStatusRegister: UInt8", in: twi1File.content), 1)
+        XCTAssertEqual(occurrences(of: "public static var TWIDataRegister: UInt8", in: twi1File.content), 1)
+        XCTAssertEqual(occurrences(of: "public static var TWISlaveAddressRegister: UInt8", in: twi1File.content), 1)
+        XCTAssertEqual(occurrences(of: "public static var TWISlaveAddressMaskRegister: UInt8", in: twi1File.content), 1)
+    }
+
+    func testTwoWireInterfaceTemplateStatusIsReadOnly() throws {
+        let templateURL = repositoryRootURL()
+            .appendingPathComponent("docs", isDirectory: true)
+            .appendingPathComponent("boilerplate", isDirectory: true)
+            .appendingPathComponent("TwoWireInterface.swift.template")
+
+        let template = try String(contentsOf: templateURL, encoding: .utf8)
+
+        XCTAssertTrue(template.contains("static var status: UInt8 {"))
+        XCTAssertTrue(template.contains("get { return TWIStatusRegister & 0b11111000 }"))
+        XCTAssertFalse(template.contains("set { TWIStatusRegister |= (newValue & 0b11111000) }"))
+        XCTAssertTrue(template.contains("get { return getRegisterBit(TWISlaveAddressRegister, bit: 0) }"))
+        XCTAssertTrue(template.contains("set { setRegisterBit(TWISlaveAddressRegister, bit: 0, value: newValue) }"))
+        XCTAssertFalse(template.contains("bit: 0b00000001"))
+    }
+
+    func testTwoWireInterfaceGeneratorSkipsNonClassicTWIModules() throws {
+        let generator = TwoWireInterfaceGenerator()
+
+        for chipName in ["ATmega4809", "ATtiny816", "ATtiny1634"] {
+            let device = try loadDevice(named: chipName)
+
+            XCTAssertFalse(generator.supports(device: device), chipName)
+            XCTAssertTrue(
+                generator.generate(device: device, documentation: makeRepositoryDocsLoader()).isEmpty,
+                chipName
+            )
+        }
+    }
+
     private func repositoryRootURL() -> URL {
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
@@ -1170,7 +1283,9 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         let boilerplateDirectory = docsDirectory.appendingPathComponent("boilerplate", isDirectory: true)
         try FileManager.default.createDirectory(at: boilerplateDirectory, withIntermediateDirectories: true)
         try write("", to: boilerplateDirectory.appendingPathComponent("UART.swift.template"))
+        try write("", to: boilerplateDirectory.appendingPathComponent("SPI.swift.template"))
         try write("", to: boilerplateDirectory.appendingPathComponent("Timers.swift.template"))
+        try write("", to: boilerplateDirectory.appendingPathComponent("TwoWireInterface.swift.template"))
         try write("{{STRUCT_DECLARATION}}", to: boilerplateDirectory.appendingPathComponent("AnalogToDigitalConverter.swift.template"))
     }
 
