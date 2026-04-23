@@ -1081,6 +1081,9 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertTrue(template.contains("static var status: UInt8 {"))
         XCTAssertTrue(template.contains("get { return TWIStatusRegister & 0b11111000 }"))
         XCTAssertFalse(template.contains("set { TWIStatusRegister |= (newValue & 0b11111000) }"))
+        XCTAssertTrue(template.contains("get { return getRegisterBit(TWISlaveAddressRegister, bit: 0) }"))
+        XCTAssertTrue(template.contains("set { setRegisterBit(TWISlaveAddressRegister, bit: 0, value: newValue) }"))
+        XCTAssertFalse(template.contains("bit: 0b00000001"))
     }
 
     func testTwoWireInterfaceGeneratorSkipsNonClassicTWIModules() throws {

@@ -109,8 +109,8 @@ public extension TwoWireInterfacePort {
     @inlinable
     @inline(__always)
     static var generalCallRecognitionEnable: Bool {
-        get { return getRegisterBit(TWISlaveAddressRegister, bit: 0b00000001) }
-        set { setRegisterBit(TWISlaveAddressRegister, bit: 0b00000001, value: newValue) }
+        get { return getRegisterBit(TWISlaveAddressRegister, bit: 0) }
+        set { setRegisterBit(TWISlaveAddressRegister, bit: 0, value: newValue) }
     }
 
     /// Seven-bit slave address mask.
