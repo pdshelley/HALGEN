@@ -681,6 +681,180 @@
                 "SPSR1"
             ],
             "variableName": "statusRegister"
+        },
+        {
+            "aliases": [
+                "TWBR",
+                "TWBR0",
+                "TWBR1"
+            ],
+            "variableName": "TWIBitRateRegister"
+        },
+        {
+            "aliases": [
+                "TWCR",
+                "TWCR0",
+                "TWCR1"
+            ],
+            "variableName": "TWIControlRegister"
+        },
+        {
+            "aliases": [
+                "TWSR",
+                "TWSR0",
+                "TWSR1"
+            ],
+            "variableName": "TWIStatusRegister"
+        },
+        {
+            "aliases": [
+                "TWDR",
+                "TWDR0",
+                "TWDR1"
+            ],
+            "variableName": "TWIDataRegister"
+        },
+        {
+            "aliases": [
+                "TWAR",
+                "TWAR0",
+                "TWAR1"
+            ],
+            "variableName": "TWISlaveAddressRegister"
+        },
+        {
+            "aliases": [
+                "TWAMR",
+                "TWAMR0",
+                "TWAMR1"
+            ],
+            "variableName": "TWISlaveAddressMaskRegister"
+        },
+        {
+            "aliases": [
+                "DUALCTRL"
+            ],
+            "variableName": "dualControl"
+        },
+        {
+            "aliases": [
+                "MADDR"
+            ],
+            "variableName": "hostAddress"
+        },
+        {
+            "aliases": [
+                "MBAUD"
+            ],
+            "variableName": "hostBaudRateControl"
+        },
+        {
+            "aliases": [
+                "MCTRLA"
+            ],
+            "variableName": "hostControlA"
+        },
+        {
+            "aliases": [
+                "MCTRLB"
+            ],
+            "variableName": "hostControlB"
+        },
+        {
+            "aliases": [
+                "MDATA"
+            ],
+            "variableName": "hostData"
+        },
+        {
+            "aliases": [
+                "MSTATUS"
+            ],
+            "variableName": "hostStatus"
+        },
+        {
+            "aliases": [
+                "SADDR"
+            ],
+            "variableName": "clientAddress"
+        },
+        {
+            "aliases": [
+                "SADDRMASK"
+            ],
+            "variableName": "clientAddressMask"
+        },
+        {
+            "aliases": [
+                "SCTRLA"
+            ],
+            "variableName": "clientControlA"
+        },
+        {
+            "aliases": [
+                "SCTRLB"
+            ],
+            "variableName": "clientControlB"
+        },
+        {
+            "aliases": [
+                "SDATA"
+            ],
+            "variableName": "clientData"
+        },
+        {
+            "aliases": [
+                "SSTATUS"
+            ],
+            "variableName": "clientStatus"
+        },
+        {
+            "aliases": [
+                "TWBCSR"
+            ],
+            "variableName": "TWIBusControlAndStatusRegister"
+        },
+        {
+            "aliases": [
+                "TWHSR"
+            ],
+            "variableName": "TWIHighSpeedRegister"
+        },
+        {
+            "aliases": [
+                "TWSA"
+            ],
+            "variableName": "TWISlaveAddressRegister"
+        },
+        {
+            "aliases": [
+                "TWSAM"
+            ],
+            "variableName": "TWISlaveAddressMaskRegister"
+        },
+        {
+            "aliases": [
+                "TWSCRA"
+            ],
+            "variableName": "TWISlaveControlRegisterA"
+        },
+        {
+            "aliases": [
+                "TWSCRB"
+            ],
+            "variableName": "TWISlaveControlRegisterB"
+        },
+        {
+            "aliases": [
+                "TWSD"
+            ],
+            "variableName": "TWISlaveDataRegister"
+        },
+        {
+            "aliases": [
+                "TWSSRA"
+            ],
+            "variableName": "TWISlaveStatusRegisterA"
         }
     ],
     "bitfields": [
@@ -3045,6 +3219,526 @@
                 "SPIMAP"
             ],
             "variableName": "spiPinMapping"
+        },
+        {
+            "aliases": [
+                "TWINT",
+                "TWINT0",
+                "TWINT1"
+            ],
+            "variableName": "interruptFlag",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWEA",
+                "TWEA0",
+                "TWEA1"
+            ],
+            "variableName": "enableAcknowledge",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWSTA",
+                "TWSTA0",
+                "TWSTA1"
+            ],
+            "variableName": "startCondition",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWSTO",
+                "TWSTO0",
+                "TWSTO1"
+            ],
+            "variableName": "stopCondition",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWWC",
+                "TWWC0",
+                "TWWC1"
+            ],
+            "variableName": "writeCollisionFlag",
+            "valueType": "Bool",
+            "access": "R"
+        },
+        {
+            "aliases": [
+                "TWEN",
+                "TWEN0",
+                "TWEN1"
+            ],
+            "variableName": "enable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWIE",
+                "TWIE0",
+                "TWIE1"
+            ],
+            "variableName": "interruptEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWS",
+                "TWS0",
+                "TWS1"
+            ],
+            "variableName": "status",
+            "valueType": "UInt8",
+            "access": "R"
+        },
+        {
+            "aliases": [
+                "TWPS",
+                "TWPS0",
+                "TWPS1"
+            ],
+            "variableName": "prescaler",
+            "valueType": "TwoWire.Prescaler",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWA",
+                "TWA0",
+                "TWA1"
+            ],
+            "variableName": "slaveAddress",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWGCE",
+                "TWGCE0",
+                "TWGCE1"
+            ],
+            "variableName": "generalCallRecognitionEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "TWAM",
+                "TWAM0",
+                "TWAM1"
+            ],
+            "variableName": "slaveAddressMask",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "ACKACT"
+            ],
+            "variableName": "acknowledgeAction",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "ADDREN"
+            ],
+            "variableName": "addressEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "ADDRMASK"
+            ],
+            "variableName": "addressMask",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "AP"
+            ],
+            "variableName": "clientAddressOrStop",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "APIEN"
+            ],
+            "variableName": "addressStopInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "APIF"
+            ],
+            "variableName": "addressStopInterruptFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "ARBLOST"
+            ],
+            "variableName": "arbitrationLost",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "BUSERR"
+            ],
+            "variableName": "busError",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "BUSSTATE"
+            ],
+            "variableName": "busState",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "CLKHOLD"
+            ],
+            "variableName": "clockHold",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "COLL"
+            ],
+            "variableName": "collision",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "DIEN"
+            ],
+            "variableName": "dataInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "DIF"
+            ],
+            "variableName": "dataInterruptFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "DIR"
+            ],
+            "variableName": "readWriteDirection",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "FLUSH"
+            ],
+            "variableName": "flush",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "FMPEN"
+            ],
+            "variableName": "fmPlusEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "MCMD"
+            ],
+            "variableName": "command",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "PIEN"
+            ],
+            "variableName": "stopInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PMEN"
+            ],
+            "variableName": "promiscuousModeEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "QCEN"
+            ],
+            "variableName": "quickCommandEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "RIEN"
+            ],
+            "variableName": "readInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "RIF"
+            ],
+            "variableName": "readInterruptFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "RXACK"
+            ],
+            "variableName": "receivedAcknowledge",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SDAHOLD"
+            ],
+            "variableName": "sdaHoldTime",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "SDASETUP"
+            ],
+            "variableName": "sdaSetupTime",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SMEN"
+            ],
+            "variableName": "smartModeEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TIMEOUT"
+            ],
+            "variableName": "inactiveBusTimeout",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "TWAA"
+            ],
+            "variableName": "TWIAcknowledgeAction",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWAE"
+            ],
+            "variableName": "TWIAddressEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWAS"
+            ],
+            "variableName": "TWIAddressOrStop",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWASIE"
+            ],
+            "variableName": "TWIAddressStopInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWASIF"
+            ],
+            "variableName": "TWIAddressStopInterruptFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWBCIE"
+            ],
+            "variableName": "TWIBusConnectDisconnectInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWBCIF"
+            ],
+            "variableName": "TWIBusConnectDisconnectInterruptFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWBCIP"
+            ],
+            "variableName": "TWIBusConnectDisconnectInterruptPolarity",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWBDT"
+            ],
+            "variableName": "TWIBusDisconnectTimeOutPeriod",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "TWBE"
+            ],
+            "variableName": "TWIBusError",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWBR"
+            ],
+            "variableName": "TWIBitRateBits",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "TWC"
+            ],
+            "variableName": "TWICollision",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWCH"
+            ],
+            "variableName": "TWIClockHold",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWCMD"
+            ],
+            "variableName": "TWICommand",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "TWD",
+                "TWDR"
+            ],
+            "variableName": "TWIDataBits",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "TWDIE"
+            ],
+            "variableName": "TWIDataInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWDIF"
+            ],
+            "variableName": "TWIDataInterruptFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWDIR"
+            ],
+            "variableName": "TWIReadWriteDirection",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWHNM"
+            ],
+            "variableName": "TWIHighNoiseMode",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWHS"
+            ],
+            "variableName": "TWIHighSpeed",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWPME"
+            ],
+            "variableName": "TWIPromiscuousModeEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWRA"
+            ],
+            "variableName": "TWIReceiveAcknowledge",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWSA"
+            ],
+            "variableName": "TWISlaveAddressBits",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "TWSAM"
+            ],
+            "variableName": "TWIAddressMaskBits",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "TWSD"
+            ],
+            "variableName": "TWISlaveDataBits",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "TWSHE"
+            ],
+            "variableName": "TWISdaHoldTimeEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWSIE"
+            ],
+            "variableName": "TWIStopInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "TWSME"
+            ],
+            "variableName": "TWISmartModeEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "WIEN"
+            ],
+            "variableName": "writeInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "WIF"
+            ],
+            "variableName": "writeInterruptFlag",
+            "valueType": "Bool"
         }
     ]
 }
