@@ -57,7 +57,6 @@ public extension TwoWireInterfacePort {
     @inline(__always)
     static var writeCollisionFlag: Bool {
         get { return getRegisterBit(TWIControlRegister, bit: 3) }
-        set { setRegisterBit(TWIControlRegister, bit: 3, value: newValue) }
     }
 
     /// Enable the TWI peripheral.
