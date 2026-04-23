@@ -994,6 +994,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         let loader = makeRepositoryDocsLoader()
         let generator = TwoWireInterfaceGenerator()
 
+        XCTAssertTrue(generator.supports(device: device))
         XCTAssertTrue(loader.loadGeneral())
         XCTAssertTrue(loader.load(chipName: "ATmega328P"))
 
@@ -1019,8 +1020,8 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertTrue(sharedFile.content.contains("static var prescaler: TwoWire.Prescaler"))
         XCTAssertTrue(sharedFile.content.contains("static var generalCallRecognitionEnable: Bool"))
         XCTAssertTrue(sharedFile.content.contains("static var slaveAddressMask: UInt8"))
-        XCTAssertTrue(sharedFile.content.contains("case one = 1"))
-        XCTAssertTrue(sharedFile.content.contains("case sixtyFour = 4"))
+        XCTAssertTrue(sharedFile.content.contains("case one = 0"))
+        XCTAssertTrue(sharedFile.content.contains("case sixtyFour = 3"))
         XCTAssertFalse(sharedFile.content.contains("TwoWireInterfaceAddressMaskPort"))
         XCTAssertFalse(sharedFile.content.contains("static var bitRateRegister"))
         XCTAssertFalse(sharedFile.content.contains("static var controlRegister"))
@@ -1045,6 +1046,7 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         let loader = makeRepositoryDocsLoader()
         let generator = TwoWireInterfaceGenerator()
 
+        XCTAssertTrue(generator.supports(device: device))
         XCTAssertTrue(loader.loadGeneral())
         XCTAssertFalse(loader.load(chipName: "ATmega328PB"))
 
@@ -1087,10 +1089,17 @@ final class SwiftAVRGeneratorTests: XCTestCase {
     }
 
     func testTwoWireInterfaceGeneratorSkipsNonClassicTWIModules() throws {
-        let classicGenerator = TwoWireInterfaceGenerator()
+        let generator = TwoWireInterfaceGenerator()
 
-        XCTAssertFalse(classicGenerator.supports(device: try loadDevice(named: "ATtiny816")))
-        XCTAssertFalse(classicGenerator.supports(device: try loadDevice(named: "ATtiny1634")))
+        for chipName in ["ATmega4809", "ATtiny816", "ATtiny1634"] {
+            let device = try loadDevice(named: chipName)
+
+            XCTAssertFalse(generator.supports(device: device), chipName)
+            XCTAssertTrue(
+                generator.generate(device: device, documentation: makeRepositoryDocsLoader()).isEmpty,
+                chipName
+            )
+        }
     }
 
     private func repositoryRootURL() -> URL {

@@ -15,11 +15,12 @@ struct TwoWireInterfaceGenerator: PeripheralGenerator {
     let subdirectory: String = "module/TwoWireInterface"
 
     func supports(device: AVRToolsDeviceFile) -> Bool {
-        device.modules.module.contains { $0.name == "TWI" }
+        classicTWIRegisterGroups(in: device).isEmpty == false
     }
 
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
-        guard let twiModule = device.modules.module.first(where: { $0.name == "TWI" }) else {
+        let registerGroups = classicTWIRegisterGroups(in: device)
+        guard registerGroups.isEmpty == false else {
             return []
         }
 
@@ -35,11 +36,11 @@ struct TwoWireInterfaceGenerator: PeripheralGenerator {
             )
         ]
 
-        for registerGroup in twiModule.registerGroup {
+        for registerGroup in registerGroups {
             let structName = "TwoWireInterface\(peripheralInstanceIndex(for: registerGroup.name))"
             var code = buildFileHeader(for: structName, generateTypealias: false)
 
-            if twiModule.registerGroup.count == 1 {
+            if registerGroups.count == 1 {
                 code.append("public typealias TwoWireInterface = \(structName)\n\n\n")
             }
             var memberBlockList = MemberBlockItemListSyntax()
@@ -95,4 +96,37 @@ struct TwoWireInterfaceGenerator: PeripheralGenerator {
 
         return files
     }
+}
+
+private let classicTWIRegisterNames: Set<String> = [
+    "TWBR",
+    "TWCR",
+    "TWSR",
+    "TWDR",
+    "TWAR",
+    "TWAMR"
+]
+
+private func classicTWIRegisterGroups(in device: AVRToolsDeviceFile) -> [AVRModules.Module.RegisterGroup] {
+    guard let twiModule = device.modules.module.first(where: { $0.name == "TWI" }) else {
+        return []
+    }
+
+    return twiModule.registerGroup.filter(registerGroupUsesClassicTWIRegisters)
+}
+
+private func registerGroupUsesClassicTWIRegisters(_ registerGroup: AVRModules.Module.RegisterGroup) -> Bool {
+    let registerNames = Set(registerGroup.register.map { normalizedClassicTWIRegisterName(for: $0.name) })
+    return registerNames.isSuperset(of: classicTWIRegisterNames)
+}
+
+private func normalizedClassicTWIRegisterName(for registerName: String) -> String {
+    let baseName: String
+    if let suffix = trailingNumericSuffix(in: registerName) {
+        baseName = String(registerName.dropLast(suffix.count))
+    } else {
+        baseName = registerName
+    }
+
+    return classicTWIRegisterNames.contains(baseName) ? baseName : registerName
 }
