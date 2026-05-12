@@ -15,6 +15,19 @@ generator. The CLI is the primary workflow.
 
 Bundled ATDF files originate from: http://packs.download.atmel.com
 
+## Contributing
+
+Start with `CONTRIBUTING.md` if you are changing generator behavior, adding a
+peripheral, updating supplemental documentation, or preparing a contribution for
+review.
+
+The deeper contributor guides live under `DeveloperDocs/`:
+
+- `DeveloperDocs/ARCHITECTURE.md` explains the generator pipeline and codebase layout.
+- `DeveloperDocs/DOCUMENTATION_SYSTEM.md` explains `docs/general.json`, chip JSON files, templates, and missing-data logs.
+- `DeveloperDocs/ADDING_PERIPHERALS.md` explains how to add or change peripheral generators.
+- `DeveloperDocs/TESTING_AND_GENERATION.md` collects build, generation, and test commands.
+
 ## Requirements
 
 - macOS with Xcode installed
@@ -69,9 +82,11 @@ xcodebuild \
 
 HALGEN currently generates these peripheral families:
 
-- GPIO
 - ADC
+- GPIO
+- SPI
 - Timers
+- TWI
 - UART
 
 Representative output for `ATmega328P`:
@@ -82,10 +97,16 @@ Output/
 |   `-- module/
 |       |-- AnalogToDigitalConverter.swift
 |       |-- GPIO.swift
+|       |-- SPI/
+|       |   |-- SPI.swift
+|       |   `-- SPI0.swift
 |       |-- Timer/
 |       |   |-- Timer0.swift
 |       |   |-- Timer1.swift
 |       |   `-- Timer2.swift
+|       |-- TwoWireInterface/
+|       |   |-- TwoWireInterface.swift
+|       |   `-- TwoWireInterface0.swift
 |       `-- UART/
 |           |-- UART.swift
 |           `-- UART0.swift
@@ -201,9 +222,6 @@ HALGEN/
   report.
 - `Scripts/prune_general_json_aliases.py` removes stale `general.json` aliases
   that no longer appear in the bundled ATDF files.
-- `Scripts/generate_avr_tools_device_file.swift` helps regenerate the ATDF model
-  layer when needed.
-
 ## Development
 
 Build the macOS app target:
