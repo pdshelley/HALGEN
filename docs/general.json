@@ -753,6 +753,9 @@
                 "SREG"
             ],
             "variableName": "statusRegister"
+        },
+        {
+            "aliases": [
                 "TWBR",
                 "TWBR0",
                 "TWBR1"
@@ -3546,6 +3549,11 @@
                 "Z"
             ],
             "variableName": "zeroFlag",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
                 "TWINT",
                 "TWINT0",
                 "TWINT1"
