@@ -12,6 +12,7 @@ struct GeneratorRegistry {
         TwoWireInterfaceGenerator(),
         TimerGenerator(),
         ADCGenerator(),
-        GPIOGenerator()
+        GPIOGenerator(),
+        EEPROMGenerator()
     ]
 }
