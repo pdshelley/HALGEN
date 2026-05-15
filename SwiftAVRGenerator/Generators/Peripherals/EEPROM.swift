@@ -12,14 +12,14 @@ import SwiftSyntaxBuilder
 struct EEPROMGenerator: PeripheralGenerator {
     let name: String = "EEPROM"
     let subdirectory: String = "module"
-    
+
     func supports(device: AVRToolsDeviceFile) -> Bool {
         device.modules.module.contains { $0.name == "EEPROM" }
     }
-    
+
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
         var files: [GeneratedCodeFile] = []
-        
+
         for registerGroup in device.modules.module.first(where: { $0.name == "EEPROM" })!.registerGroup {
             let instanceIndex = peripheralInstanceIndex(for: registerGroup.name)
             var code = buildFileHeader(for: name)
@@ -47,9 +47,9 @@ struct EEPROMGenerator: PeripheralGenerator {
             }
 
             memberBlockList = normalizeMemberSpacing(memberBlockList)
-             
+
             let memberBlock = MemberBlockSyntax(leftBrace: .leftBraceToken(), members: memberBlockList, rightBrace: .rightBraceToken())
-            
+
             code.append(SourceFileSyntax {
                 StructDeclSyntax(
                     modifiers: DeclModifierListSyntax(arrayLiteral: DeclModifierSyntax(name: "public")),
@@ -57,10 +57,19 @@ struct EEPROMGenerator: PeripheralGenerator {
                     memberBlock: memberBlock
                 )
             }.formatted().description)
-            
+
+            // Append the EEPROM helper template inside the generated struct.
+            let helperTemplate = BoilerplateTemplate.load(
+                named: "EEPROM.swift.template",
+                documentationDirectory: documentation.directory
+            )
+            if let lastBrace = code.lastIndex(of: "}") {
+                code.insert(contentsOf: helperTemplate, at: lastBrace)
+            }
+
             files.append(GeneratedCodeFile(fileName: "\(name).swift", content: code, subdirectory: subdirectory))
         }
-        
+
         return files
     }
 }

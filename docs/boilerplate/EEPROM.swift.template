@@ -1,0 +1,96 @@
+    /// An interal read function that does not turn off interrupts. This can be used to loop though multiple memory locations to write larger chunks of data.
+    /// - Parameter address: EEPROM Memory Address to be read.
+    /// - Returns: Uint8 representation of data.
+    private static func rawRead(address: UInt16) -> UInt8 {
+        while writeEnable { }                    // Wait for completion of previous write
+        addressRegister = address                // Set up address register
+        readEnable = true                        // Start eeprom read by writing EERE
+        let data = dataRegister                  // Get Data
+        return data
+    }
+
+    /// EEPROM Read function that reads a single bytes of data. This temporarily turns off interrupts so the read is not corrupted.
+    /// - Parameter address: EEPROM Memory Address to be read.
+    /// - Returns: Uint8 representation of data.
+    public static func read(address: UInt16) -> UInt8 {
+        let savedStatus = cpuCore.statusRegister // Save AVR Status Register (SREG) state so it can be restored later.
+        cpuCore.globalInterruptEnable = false    // Turn off interrupts.
+        let data = rawRead(address: address)     // Get Data
+        cpuCore.statusRegister = savedStatus     // Restore Interrupts
+        return data
+    }
+
+    /// EEPROM Read function that reads two bytes of data and returns them as a single UInt16. This temporarily turns off interrupts so the read is not corrupted.
+    /// - Parameter address: The start EEPROM Memory Address to be read, then incremented to read a second address.
+    /// - Returns: Uint16 representation of data from two 8 bit memory addresses.
+    public static func read16(address: UInt16) -> UInt16 {
+        let savedStatus = cpuCore.statusRegister // Save AVR Status Register (SREG) state so it can be restored later.
+        cpuCore.globalInterruptEnable = false    // Turn off interrupts.
+        let byte0 = rawRead(address: address)
+        let byte1 = rawRead(address: address + 1)
+        cpuCore.statusRegister = savedStatus     // Restore Interrupts
+        return (UInt16(byte1) << 8) | UInt16(byte0)
+    }
+
+    /// EEPROM Read function that reads four bytes of data and returns them as a single UInt32. This temporarily turns off interrupts so the read is not corrupted.
+    /// - Parameter address: The start EEPROM Memory Address to be read, then incremented to read a second, third, and fourth addresses.
+    /// - Returns: Uint32 representation of data from four 8 bit memory addresses.
+    public static func read32(address: UInt16) -> UInt32 {
+        let savedStatus = cpuCore.statusRegister // Save AVR Status Register (SREG) state so it can be restored later.
+        cpuCore.globalInterruptEnable = false    // Turn off interrupts.
+        let byte0 = rawRead(address: address)
+        let byte1 = rawRead(address: address + 1)
+        let byte2 = rawRead(address: address + 2)
+        let byte3 = rawRead(address: address + 3)
+        cpuCore.statusRegister = savedStatus     // Restore Interrupts
+        return (UInt32(byte3) << 24) | (UInt32(byte2) << 16) | (UInt32(byte1) << 8) | UInt32(byte0)
+    }
+
+    /// An interal write function that does not turn off interrupts. This can be used to loop though multiple memory locations to write larger chunks of data.
+    /// - Parameters:
+    ///   - address: EEPROM Memory Address to be written.
+    ///   - data: Byte of data to be written.
+    private static func rawWrite(address: UInt16, data: UInt8) {
+        while writeEnable { }                    // Wait for completion of previous write
+        addressRegister = address                // Set up address and Data Registers
+        dataRegister = data                      // Write Data
+        masterWriteEnable = true                 // Write logical one to EEMPE
+        writeEnable = true                       // Start eeprom write by setting EEPE
+    }
+
+    /// EEPROM Read function that writes a single bytes of data. This temporarily turns off interrupts so the read is not corrupted.
+    /// - Parameters:
+    ///   - address: EEPROM Memory Address to be written.
+    ///   - data: Byte of data to be written.
+    public static func write(address: UInt16, data: UInt8) {
+        let savedStatus = cpuCore.statusRegister // Save AVR Status Register (SREG) state so it can be restored later.
+        cpuCore.globalInterruptEnable = false    // Turn off interrupts.
+        rawWrite(address: address, data: data)   // Write Data
+        cpuCore.statusRegister = savedStatus     // Restore Interrupts
+    }
+
+    /// EEPROM Write function that writes two bytes of data and returns them as a single UInt16. This temporarily turns off interrupts so the read is not corrupted.
+    /// - Parameters:
+    ///   - address: The start EEPROM Memory Address to be written, then incremented to read a second address.
+    ///   - data:Two bytes of data writted over two memory addresses.
+    public static func write(address: UInt16, data: UInt16) {
+        let savedStatus = cpuCore.statusRegister                  // Save AVR Status Register (SREG) state so it can be restored later.
+        cpuCore.globalInterruptEnable = false                     // Turn off interrupts.
+        rawWrite(address: address, data: UInt8(data))
+        rawWrite(address: (address + 1), data: UInt8(data >> 8))
+        cpuCore.statusRegister = savedStatus                      // Restore Interrupts
+    }
+
+    /// EEPROM Write function that writes four bytes of data and returns them as a single UInt32. This temporarily turns off interrupts so the read is not corrupted.
+    /// - Parameters:
+    ///   - address: The start EEPROM Memory Address to be written, then incremented to read a second, third, and fourth addresses.
+    ///   - data:Four bytes of data writted over four memory addresses.
+    public static func write(address: UInt16, data: UInt32) {
+        let savedStatus = cpuCore.statusRegister                  // Save AVR Status Register (SREG) state so it can be restored later.
+        cpuCore.globalInterruptEnable = false                     // Turn off interrupts.
+        rawWrite(address: address, data: UInt8(data))
+        rawWrite(address: (address + 1), data: UInt8(data >> 8))
+        rawWrite(address: (address + 2), data: UInt8(data >> 16))
+        rawWrite(address: (address + 3), data: UInt8(data >> 24))
+        cpuCore.statusRegister = savedStatus                      // Restore Interrupts
+    }
