@@ -21,7 +21,6 @@ struct EEPROMGenerator: PeripheralGenerator {
         var files: [GeneratedCodeFile] = []
 
         for registerGroup in device.modules.module.first(where: { $0.name == "EEPROM" })!.registerGroup {
-            let instanceIndex = peripheralInstanceIndex(for: registerGroup.name)
             var code = buildFileHeader(for: name)
             var memberBlockList = MemberBlockItemListSyntax()
             for register in registerGroup.register {
