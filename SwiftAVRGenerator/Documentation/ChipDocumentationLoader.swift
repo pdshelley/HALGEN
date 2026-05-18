@@ -171,7 +171,9 @@ class ChipDocumentationLoader {
             initialValues: formatInitialValues(chipDocs?.initialValues),
             initialValuesL: formatInitialValues(chipDocs?.initialValuesL),
             initialValuesH: formatInitialValues(chipDocs?.initialValuesH),
-            overrideGeneratedDocumentation: chipDocs?.overrideGeneratedDocumentation ?? false
+            overrideGeneratedDocumentation: chipDocs?.overrideGeneratedDocumentation ?? false,
+            overrideGeneratedDocumentationL: chipDocs?.overrideGeneratedDocumentationL ?? false,
+            overrideGeneratedDocumentationH: chipDocs?.overrideGeneratedDocumentationH ?? false
         )
 
         registerCache[register.name] = resolvedData
