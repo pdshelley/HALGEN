@@ -114,7 +114,7 @@ every generated file.
 
 CoreAVR is the handwritten HAL project used as the reference implementation for
 HALGEN output. This table tracks what is still missing or incomplete compared to
-`https://github.com/pdshelley/CoreAVR`.
+[CoreAVR](https://github.com/pdshelley/CoreAVR).
 
 | CoreAVR area | HALGEN status |
 | --- | --- |
