@@ -19,17 +19,8 @@ struct CPUCoreGenerator: PeripheralGenerator {
     
     func generate(device: AVRToolsDeviceFile, documentation: ChipDocumentationLoader) -> [GeneratedCodeFile] {
         var files: [GeneratedCodeFile] = []
-//        files.append(
-//            GeneratedCodeFile(
-//                fileName: "\(name).swift",
-//                content: buildFileHeader(for: name, generateTypealias: false)
-//                    + BoilerplateTemplate.load(named: "UART.swift.template", documentationDirectory: documentation.directory),
-//                subdirectory: subdirectory
-//            )
-//        )
         
         for registerGroup in device.modules.module.first(where: { $0.name == "CPU" })!.registerGroup {
-//            let instanceIndex = peripheralInstanceIndex(for: registerGroup.name)
             let structName = "CPUCore"
             var code = buildFileHeader(for: structName, generateTypealias: false)
             code.append(
