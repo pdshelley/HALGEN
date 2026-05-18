@@ -362,18 +362,6 @@
                 "The device is a complex microcontroller with more peripheral units than can be supported within the 64",
                 "locations reserved in Opcode for the IN and OUT instructions. For the extend",
                 "",
-                "```",
-                "--------------------------------------------------------------------------------",
-                "| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |",
-                "--------------------------------------------------------------------------------",
-                "| EEDR         |                          EEDR [7:0]                           |",
-                "--------------------------------------------------------------------------------",
-                "| Read/Write   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |",
-                "--------------------------------------------------------------------------------",
-                "| InitialValue |   0   |   0   |   0   |   0   |   0   |   0   |   0   |   0   |",
-                "--------------------------------------------------------------------------------",
-                "```",
-                "",
                 "For the EEPROM write operation, the EEDR register contains the data to be written to the EEPROM in",
                 "the address given by the EEAR register. For the EEPROM read operation, the EEDR contains the data",
                 "read out from the EEPROM at the address given by EEAR."
@@ -392,14 +380,15 @@
                 "--------------------------------------------------------------------------------",
                 "| Bit          |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |",
                 "--------------------------------------------------------------------------------",
-                "| EECR         |   -   |   -   | EEPM [1:0]  | EERIE | EEMPE |  EEPE |  EERE |",
+                "| EECR         |   -   |   -   |   EEPM [1:0]  | EERIE | EEMPE |  EEPE |  EERE |",
                 "--------------------------------------------------------------------------------",
                 "| Read/Write   |   -   |   -   |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |  R/W  |",
                 "--------------------------------------------------------------------------------",
                 "| InitialValue |   -   |   -   |   x   |   x   |   0   |   0   |   x   |   0   |",
                 "--------------------------------------------------------------------------------",
                 "```"
-            ]
+            ],
+            "overrideGeneratedDocumentation": true
         }
     },
     "bitfields": {
@@ -1395,7 +1384,19 @@
                 "EEPROM is read, the CPU is halted for four cycles before the next instruction is executed.",
                 "",
                 "The user should poll the EEPE bit before starting the read operation. If a write operation is in progress, it",
-                "is neither possible to read the EEPROM, nor to change the EEAR register."
+                "is neither possible to read the EEPROM, nor to change the EEAR register.",
+                "",
+                "The calibrated oscillator is used to time the EEPROM accesses. See the following table for typical",
+                "programming times for EEPROM access from the CPU.",
+                "",
+                "Table 10-2. EEPROM Programming Time",
+                "```",
+                "--------------------------------------------------------------------------------------------------",
+                "| Symbol                  | Number of Calibrated RC Oscillator Cycles | Typical Programming Time |",
+                "--------------------------------------------------------------------------------------------------",
+                "| EEPROM write (from CPU) |                   26,368                  |          3.3 ms          |",
+                "--------------------------------------------------------------------------------------------------",
+                "```"
             ]
         },
         "EERIE": {

@@ -1,3 +1,29 @@
+    /// EEPROM Programming Mode
+    ///
+    /// The EEPROM Programming mode bit setting defines which programming action will be triggered when
+    /// writing EEPE. It is possible to program data in one atomic operation (erase the old value and program the
+    /// new value) or to split the erase and write operations into two different operations.
+    ///
+    /// Table 10-1. EEPROM Mode Bits
+    /// ```
+    /// -------------------------------------------------------------------------------------
+    /// | EEPM [1:0]   | Typical Programming Time | Operation                               |
+    /// -------------------------------------------------------------------------------------
+    /// |      00      |          3.4 ms          | Erase and Write in one Atomic operation |
+    /// -------------------------------------------------------------------------------------
+    /// |      01      |          1.8 ms          | Erase Only                              |
+    /// -------------------------------------------------------------------------------------
+    /// |      10      |          1.8 ms          | Write Only                              |
+    /// -------------------------------------------------------------------------------------
+    /// |      11      |                          | Reserved for future use                 |
+    /// -------------------------------------------------------------------------------------
+    /// ```
+    public enum Mode: UInt8 {
+        case eraseAndWrite = 0
+        case eraseOnly = 1
+        case writeOnly = 2
+    }
+
     /// An interal read function that does not turn off interrupts. This can be used to loop though multiple memory locations to write larger chunks of data.
     /// - Parameter address: EEPROM Memory Address to be read.
     /// - Returns: Uint8 representation of data.
