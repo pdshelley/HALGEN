@@ -113,6 +113,9 @@ enum CoreAVRPackageSupport {
         if files.contains(where: { $0.fileName == "GPIO.swift" }) {
             modules.append("GPIO")
         }
+        if files.contains(where: { $0.fileName == "Interrupts.swift" }) {
+            modules.append("Interrupts")
+        }
         if files.contains(where: { $0.subdirectory == "module/Timer" }) {
             modules.append("Timer")
         }
