@@ -69,6 +69,11 @@ func generateBitfieldAccessor(
     }
 
     let parentVariableName = registerData(parentVariable).variableName
+    let variableName = disambiguatedBitfieldVariableName(
+        baseName: info.variableName,
+        bitfield: bitfield,
+        in: registerGroup
+    )
     let caption = bitfield.caption ?? ""
     let registerMask = bitfield.mask.value.lowByte
     let bitshift = UInt8(bitfield.mask.value.trailingZeroBitCount)
@@ -92,6 +97,7 @@ func generateBitfieldAccessor(
         bitfieldName: bitfield.name,
         caption: caption,
         info: info,
+        variableName: variableName,
         getter: getter,
         setter: setter
     )
@@ -210,6 +216,22 @@ private func shouldSkipBitfieldAccessor(
     return false
 }
 
+private func disambiguatedBitfieldVariableName(
+    baseName: String,
+    bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield,
+    in registerGroup: AVRModules.Module.RegisterGroup
+) -> String {
+    let matchingBitfieldCount = registerGroup.register.reduce(0) { count, register in
+        count + register.bitfield.filter { $0.name == bitfield.name }.count
+    }
+
+    guard matchingBitfieldCount > 1 else {
+        return baseName
+    }
+
+    return "\(baseName)\(bitfield.lsb ?? 0)"
+}
+
 /// Searches a register group to find the corresponding bitfield pair for a split bitfield accessor.
 ///
 /// When a bitfield is split across multiple registers, this function locates the register
@@ -241,6 +263,7 @@ private func makeAccessorDeclaration(
     bitfieldName: String,
     caption: String,
     info: SupplementalBitfieldData,
+    variableName: String? = nil,
     getter: String?,
     setter: String?
 ) -> DeclSyntax {
@@ -259,7 +282,7 @@ private func makeAccessorDeclaration(
     declarationLines.append(contentsOf: [
         "@inlinable",
         "@inline(\(info.inline))",
-        "public static var \(info.variableName): \(info.valueType) {"
+        "public static var \(variableName ?? info.variableName): \(info.valueType) {"
     ])
 
     if let getter {

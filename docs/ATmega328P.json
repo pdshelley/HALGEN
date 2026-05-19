@@ -255,6 +255,30 @@
         },
         "ADCSRA": {
             "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "EICRA": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "EIMSK": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "EIFR": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "PCICR": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "PCMSK2": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "PCMSK1": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "PCMSK0": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
+        },
+        "PCIFR": {
+            "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"]
         }
     },
     "bitfields": {
@@ -1188,6 +1212,55 @@
                 "When this bit is written to a logic one, the digital input buffer on the corresponding ADC pin is disabled.",
                 "The corresponding PIN Register bit will always read as zero when this bit is set.",
                 "When an analog signal is applied to the ADC0 pin and the digital input from this pin is not needed, this bit should be written to logic one to reduce power consumption in the digital input buffer."
+            ]
+        },
+        "ISC1": {
+            "documentation": [
+                "The External Interrupt 1 is activated by the external pin INT1 if the SREG I-flag and the corresponding interrupt mask are set.",
+                "The level and edges on the external INT1 pin that activate the interrupt are defined by these bits.",
+                "If edge or toggle interrupt is selected, pulses longer than one clock period generate an interrupt. If low level interrupt is selected, the low level must be held until the completion of the currently executing instruction."
+            ]
+        },
+        "ISC0": {
+            "documentation": [
+                "The External Interrupt 0 is activated by the external pin INT0 if the SREG I-flag and the corresponding interrupt mask are set.",
+                "The level and edges on the external INT0 pin that activate the interrupt are defined by these bits.",
+                "If edge or toggle interrupt is selected, pulses longer than one clock period generate an interrupt. If low level interrupt is selected, the low level must be held until the completion of the currently executing instruction."
+            ]
+        },
+        "INT": {
+            "documentation": [
+                "When an INT bit is set and the I-bit in SREG is set, the corresponding external pin interrupt is enabled.",
+                "The Interrupt Sense Control bits in EICRA define whether the external interrupt is activated on rising edge, falling edge, logical change, or level sense.",
+                "Activity on an INT pin causes an interrupt request even if that pin is configured as an output."
+            ]
+        },
+        "INTF": {
+            "documentation": [
+                "When an edge or logic change on an INT pin triggers an interrupt request, the corresponding INTF bit becomes set.",
+                "If the I-bit in SREG and the corresponding INT bit in EIMSK are set, the MCU jumps to the corresponding interrupt vector.",
+                "The flag is cleared when the interrupt routine is executed, or alternatively by writing a logical one to it."
+            ]
+        },
+        "PCIE": {
+            "documentation": [
+                "When a PCIE bit is set and the I-bit in SREG is set, the corresponding pin change interrupt group is enabled.",
+                "Any change on an enabled PCINT pin in that group causes an interrupt request.",
+                "Individual PCINT pins are enabled by the corresponding PCMSK register."
+            ]
+        },
+        "PCIF": {
+            "documentation": [
+                "When a logic change on an enabled PCINT pin triggers an interrupt request, the corresponding PCIF bit becomes set.",
+                "If the I-bit in SREG and the corresponding PCIE bit in PCICR are set, the MCU jumps to the corresponding interrupt vector.",
+                "The flag is cleared when the interrupt routine is executed, or alternatively by writing a logical one to it."
+            ]
+        },
+        "PCINT": {
+            "documentation": [
+                "Each PCINT bit selects whether pin change interrupt detection is enabled on the corresponding I/O pin.",
+                "If a PCINT bit is set and the corresponding PCIE bit in PCICR is set, pin change interrupt detection is enabled on that pin.",
+                "If a PCINT bit is cleared, pin change interrupt detection is disabled on that pin."
             ]
         }
     }

@@ -469,6 +469,52 @@ final class SwiftAVRGeneratorTests: XCTestCase {
         XCTAssertTrue(result.content.contains("controlRegisterB = (controlRegisterB & ~0b00001000) | ((newValue.rawValue & 0b00000100) << UInt8(1))"))
     }
 
+    func testRepeatedBitfieldNamesUseLSBToDisambiguateAccessors() throws {
+        let registerGroup = try samplePinChangeRegisterGroup()
+        let accessors = try registerGroup.register.map { register in
+            let bitfield = try XCTUnwrap(register.bitfield.first)
+
+            return try XCTUnwrap(
+                generateBitfieldAccessor(
+                    bitfield: bitfield,
+                    parentVariable: register,
+                    registerGroup: registerGroup,
+                    registerData: { register in
+                        SupplementalRegisterData(
+                            variableName: register.name.lowercased(),
+                            valueType: "UInt8",
+                            defaultValue: "0",
+                            documentation: "",
+                            access: "R/W"
+                        )
+                    },
+                    bitfieldData: { _ in
+                        SupplementalBitfieldData(
+                            variableName: "pinChangeEnableMasks",
+                            valueType: "UInt8",
+                            defaultValue: "",
+                            documentation: "",
+                            access: .readWrite
+                        )
+                    }
+                )
+            ).description
+        }.joined(separator: "\n")
+
+        let formatter = CodeFormatter()
+        let result = formatter.format(source: """
+        public struct Interrupts {
+        \(indent(accessors, by: 4))
+        }
+        """)
+
+        XCTAssertTrue(result.diagnostics.isEmpty)
+        XCTAssertTrue(result.content.contains("public static var pinChangeEnableMasks16: UInt8"))
+        XCTAssertTrue(result.content.contains("public static var pinChangeEnableMasks8: UInt8"))
+        XCTAssertTrue(result.content.contains("public static var pinChangeEnableMasks0: UInt8"))
+        XCTAssertEqual(occurrences(of: "public static var pinChangeEnableMasks: UInt8", in: result.content), 0)
+    }
+
     func testWriteOnlyBitfieldGeneratesValidComputedProperty() throws {
         let registerGroup = try sampleWriteOnlyRegisterGroup()
         let register = try XCTUnwrap(registerGroup.register.first)
@@ -1201,6 +1247,27 @@ final class SwiftAVRGeneratorTests: XCTestCase {
             </register>
             <register name="TCCR2B" offset="0x0B" size="1" caption="Timer/Counter2 Control Register B" rw="R/W">
                 <bitfield name="WGM22" mask="0x08" caption="Waveform Generation Mode" rw="R/W"/>
+            </register>
+        </register-group>
+        """
+
+        return try XMLDecoder().decode(
+            AVRModules.Module.RegisterGroup.self,
+            from: Data(xml.utf8)
+        )
+    }
+
+    private func samplePinChangeRegisterGroup() throws -> AVRModules.Module.RegisterGroup {
+        let xml = """
+        <register-group name="EXINT">
+            <register name="PCMSK2" offset="0x6D" size="1" caption="Pin Change Mask Register 2" rw="R/W">
+                <bitfield name="PCINT" mask="0xFF" caption="Pin Change Enable Masks" lsb="16" rw="R/W"/>
+            </register>
+            <register name="PCMSK1" offset="0x6C" size="1" caption="Pin Change Mask Register 1" rw="R/W">
+                <bitfield name="PCINT" mask="0x7F" caption="Pin Change Enable Masks" lsb="8" rw="R/W"/>
+            </register>
+            <register name="PCMSK0" offset="0x6B" size="1" caption="Pin Change Mask Register 0" rw="R/W">
+                <bitfield name="PCINT" mask="0xFF" caption="Pin Change Enable Masks" rw="R/W"/>
             </register>
         </register-group>
         """

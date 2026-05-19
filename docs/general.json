@@ -855,9 +855,113 @@
                 "TWSSRA"
             ],
             "variableName": "TWISlaveStatusRegisterA"
+        },
+        {
+            "aliases": [
+                "EICRA"
+            ],
+            "variableName": "externalInterruptControlRegisterA"
+        },
+        {
+            "aliases": [
+                "EIMSK"
+            ],
+            "variableName": "externalInterruptMaskRegister"
+        },
+        {
+            "aliases": [
+                "EIFR"
+            ],
+            "variableName": "externalInterruptFlagRegister"
+        },
+        {
+            "aliases": [
+                "PCICR"
+            ],
+            "variableName": "pinChangeInterruptControlRegister"
+        },
+        {
+            "aliases": [
+                "PCIFR"
+            ],
+            "variableName": "pinChangeInterruptFlagRegister"
+        },
+        {
+            "aliases": [
+                "PCMSK0"
+            ],
+            "variableName": "pinChangeMaskRegister0"
+        },
+        {
+            "aliases": [
+                "PCMSK1"
+            ],
+            "variableName": "pinChangeMaskRegister1"
+        },
+        {
+            "aliases": [
+                "PCMSK2"
+            ],
+            "variableName": "pinChangeMaskRegister2"
         }
     ],
     "bitfields": [
+        {
+            "aliases": [
+                "ISC0"
+            ],
+            "variableName": "interruptSenseControl0",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "ISC1"
+            ],
+            "variableName": "interruptSenseControl1",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "INT"
+            ],
+            "variableName": "externalInterruptRequestEnable",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "INTF"
+            ],
+            "variableName": "externalInterruptFlags",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "PCIE"
+            ],
+            "variableName": "pinChangeInterruptEnables",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "PCIF"
+            ],
+            "variableName": "pinChangeInterruptFlags",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "PCINT"
+            ],
+            "variableName": "pinChangeEnableMasks",
+            "valueType": "UInt8",
+            "access": "R/W"
+        },
         {
             "aliases": [
                 "FOC0A",
@@ -3167,6 +3271,7 @@
                 "SPR01"
             ],
             "variableName": "clockRateSelectBits",
+            "valueType": "UInt8",
             "access": "R/W"
         },
         {
