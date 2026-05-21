@@ -38,8 +38,9 @@ private enum RegisterByteWidth: String {
 func generateRegister(
     register: AVRModules.Module.RegisterGroup.Register,
     variableName externalVariableName: String = "",
-    optionalDocumentation: String = "",
+    optionalDocumentation: String? = nil,
     optionalInitialValues: [String]? = nil,
+    overrideGeneratedDocumentation externalOverrideGeneratedDocumentation: Bool? = nil,
     registerData: (_ register: AVRModules.Module.RegisterGroup.Register) -> SupplementalRegisterData,
     bitfieldData: (_ bitfield: AVRModules.Module.RegisterGroup.Register.Bitfield) -> SupplementalBitfieldData,
     generateRegisterTable: Bool = true
@@ -54,9 +55,10 @@ func generateRegister(
     var registerName = ""
     var readWrite = ""
     let registerAccess = supplementalRegisterData.access
-    let documentation = (optionalDocumentation.isEmpty == false) ? optionalDocumentation : supplementalRegisterData.documentation
+    let documentation = optionalDocumentation ?? supplementalRegisterData.documentation
     let initialValues = optionalInitialValues ?? supplementalRegisterData.initialValues
     let variableName = (externalVariableName.isEmpty == false) ? externalVariableName : supplementalRegisterData.variableName
+    let overrideGeneratedDocumentation = externalOverrideGeneratedDocumentation ?? supplementalRegisterData.overrideGeneratedDocumentation
     var memberBlockList = MemberBlockItemListSyntax()
     var generateRegisterTableDoc = generateRegisterTable
     
@@ -68,8 +70,9 @@ func generateRegister(
             contentsOf: generateRegister(
                 register: customRegisterL,
                 variableName: "\(supplementalRegisterData.variableName)L",
-                optionalDocumentation: "\(supplementalRegisterData.documentationL ?? "")",
+                optionalDocumentation: supplementalRegisterData.documentationL ?? "",
                 optionalInitialValues: supplementalRegisterData.initialValuesL,
+                overrideGeneratedDocumentation: supplementalRegisterData.overrideGeneratedDocumentationL,
                 registerData: registerData,
                 bitfieldData: bitfieldData
             )
@@ -83,8 +86,9 @@ func generateRegister(
             contentsOf: generateRegister(
                 register: customRegisterH,
                 variableName: "\(supplementalRegisterData.variableName)H",
-                optionalDocumentation: "\(supplementalRegisterData.documentationH ?? "")",
+                optionalDocumentation: supplementalRegisterData.documentationH ?? "",
                 optionalInitialValues: supplementalRegisterData.initialValuesH,
+                overrideGeneratedDocumentation: supplementalRegisterData.overrideGeneratedDocumentationH,
                 registerData: registerData,
                 bitfieldData: bitfieldData
             )
@@ -131,7 +135,7 @@ func generateRegister(
     """
 
     let documentationComment: String
-    if supplementalRegisterData.overrideGeneratedDocumentation {
+    if overrideGeneratedDocumentation {
         documentationComment = makeDocumentationComment(body: documentation)
     } else {
         documentationComment = makeDocumentationComment(

@@ -927,6 +927,25 @@
                 "TWSSRA"
             ],
             "variableName": "TWISlaveStatusRegisterA"
+        },
+        {
+            "aliases": [
+                "EEAR",
+                "EEARL"
+            ],
+            "variableName": "addressRegister"
+        },
+        {
+            "aliases": [
+                "EEDR"
+            ],
+            "variableName": "dataRegister"
+        },
+        {
+            "aliases": [
+                "EECR"
+            ],
+            "variableName": "controlRegister"
         }
     ],
     "bitfields": [
@@ -4071,6 +4090,47 @@
             ],
             "variableName": "writeInterruptFlag",
             "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "EEMPE"
+            ],
+            "variableName": "masterWriteEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "EEPE"
+            ],
+            "variableName": "writeEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "EERE"
+            ],
+            "variableName": "readEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "EERIE"
+            ],
+            "variableName": "readyInterruptEnable",
+            "valueType": "Bool",
+            "access": "R/W"
+        },
+        {
+            "aliases": [
+                "EEPM"
+            ],
+            "variableName": "mode",
+            "valueType": "EEPROM.Mode",
+            "defaultValue": ".eraseAndWrite",
+            "access": "R/W"
         }
     ]
 }

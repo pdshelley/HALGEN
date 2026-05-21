@@ -35,6 +35,8 @@ struct ChipDocumentation: Codable {
         let initialValuesH: [String]?
         let bitfields: [String: Bitfield]?
         let overrideGeneratedDocumentation: Bool?
+        let overrideGeneratedDocumentationL: Bool?
+        let overrideGeneratedDocumentationH: Bool?
         
         func toSupplementalData() -> SupplementalRegisterData {
             return SupplementalRegisterData(
@@ -48,7 +50,9 @@ struct ChipDocumentation: Codable {
                 initialValues: formatInitialValues(initialValues),
                 initialValuesL: formatInitialValues(initialValuesL),
                 initialValuesH: formatInitialValues(initialValuesH),
-                overrideGeneratedDocumentation: overrideGeneratedDocumentation ?? false
+                overrideGeneratedDocumentation: overrideGeneratedDocumentation ?? false,
+                overrideGeneratedDocumentationL: overrideGeneratedDocumentationL ?? false,
+                overrideGeneratedDocumentationH: overrideGeneratedDocumentationH ?? false
             )
         }
     }

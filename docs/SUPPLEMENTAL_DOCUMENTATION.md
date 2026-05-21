@@ -67,6 +67,7 @@ Current behavior:
 - `documentationL` and `documentationH`: chip file only
 - `initialValues`, `initialValuesL`, `initialValuesH`: chip file only
 - `overrideGeneratedDocumentation`: chip file only
+- `overrideGeneratedDocumentationL` and `overrideGeneratedDocumentationH`: chip file only
 
 If neither chip nor general docs define a register alias, HALGEN still
 generates code, uses a generated variable name, and records the missing alias
@@ -180,7 +181,9 @@ Shape:
       "initialValues": ["0", "0", "0", "0", "0", "0", "0", "0"],
       "initialValuesL": ["0", "0", "0", "0", "0", "0", "0", "0"],
       "initialValuesH": ["0", "0", "0", "0", "0", "0", "0", "0"],
-      "overrideGeneratedDocumentation": true
+      "overrideGeneratedDocumentation": true,
+      "overrideGeneratedDocumentationL": true,
+      "overrideGeneratedDocumentationH": true
     }
   },
   "bitfields": {
