@@ -13,6 +13,7 @@ struct GeneratorRegistry {
         TimerGenerator(),
         ADCGenerator(),
         GPIOGenerator(),
+        CPUCoreGenerator(),
         EEPROMGenerator()
     ]
 }

@@ -15,6 +15,19 @@ generator. The CLI is the primary workflow.
 
 Bundled ATDF files originate from: http://packs.download.atmel.com
 
+## Contributing
+
+Start with `CONTRIBUTING.md` if you are changing generator behavior, adding a
+peripheral, updating supplemental documentation, or preparing a contribution for
+review.
+
+The deeper contributor guides live under `DeveloperDocs/`:
+
+- `DeveloperDocs/ARCHITECTURE.md` explains the generator pipeline and codebase layout.
+- `DeveloperDocs/DOCUMENTATION_SYSTEM.md` explains `docs/general.json`, chip JSON files, templates, and missing-data logs.
+- `DeveloperDocs/ADDING_PERIPHERALS.md` explains how to add or change peripheral generators.
+- `DeveloperDocs/TESTING_AND_GENERATION.md` collects build, generation, and test commands.
+
 ## Requirements
 
 - macOS with Xcode installed
@@ -69,10 +82,13 @@ xcodebuild \
 
 HALGEN currently generates these peripheral families:
 
+- CPUCore
 - GPIO
 - ADC
 - Timers
 - UART
+- SPI
+- TWI
 
 Representative output for `ATmega328P`:
 
@@ -81,11 +97,18 @@ Output/
 |-- ATmega328P/
 |   `-- module/
 |       |-- AnalogToDigitalConverter.swift
+|       |-- CPUCore.swift
 |       |-- GPIO.swift
+|       |-- SPI/
+|       |   |-- SPI.swift
+|       |   `-- SPI0.swift
 |       |-- Timer/
 |       |   |-- Timer0.swift
 |       |   |-- Timer1.swift
 |       |   `-- Timer2.swift
+|       |-- TwoWireInterface/
+|       |   |-- TwoWireInterface.swift
+|       |   `-- TwoWireInterface0.swift
 |       `-- UART/
 |           |-- UART.swift
 |           `-- UART0.swift
@@ -99,6 +122,29 @@ grouped by peripheral so follow-up audit tooling can work directly from the log.
 
 `formatting-report.txt` captures diagnostics from the code formatter that runs on
 every generated file.
+
+## CoreAVR Parity Tracker
+
+CoreAVR is the handwritten HAL project used as the reference implementation for
+HALGEN output. This table tracks what is still missing or incomplete compared to
+[CoreAVR](https://github.com/pdshelley/CoreAVR).
+
+| CoreAVR area | HALGEN status |
+| --- | --- |
+| GPIO | Generated |
+| ADC | Generated |
+| Timers | Generated |
+| UART | Generated |
+| SPI | Generated |
+| TWI / TwoWireInterface | Generated |
+| CPUCore | Partial |
+| EEPROM | Missing |
+| Interrupts / EXINT | Missing |
+| InterruptHandler | Missing |
+| Power management / sleep | Partial |
+| `atomic` critical sections | Partial |
+| Generated package README | Partial |
+| S4A/package support files | Partial |
 
 ## Supplemental Documentation
 
@@ -201,9 +247,6 @@ HALGEN/
   report.
 - `Scripts/prune_general_json_aliases.py` removes stale `general.json` aliases
   that no longer appear in the bundled ATDF files.
-- `Scripts/generate_avr_tools_device_file.swift` helps regenerate the ATDF model
-  layer when needed.
-
 ## Development
 
 Build the macOS app target:

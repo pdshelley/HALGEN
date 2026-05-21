@@ -90,7 +90,7 @@ Current behavior:
 - `access`: chip value, else general value, else ATDF `rw`, else read/write
 - `inline`: chip value, else general value, else `"__always"`
 - `documentation`: chip file only
-- `splitTarget`: chip file only
+- `splitTargetLSB`: chip file only
 - `overrideGeneratedDocumentation`: chip file only
 
 If neither chip nor general docs define a bitfield alias, HALGEN still
@@ -151,7 +151,7 @@ Notes:
 - `aliases` is required and should include every ATDF alias that maps to the same concept.
 - `variableName` is required in practice and should be the canonical generated Swift name.
 - `documentation` does not belong in `general.json` today.
-- `splitTarget` does not belong in `general.json` today.
+- `splitTargetLSB` does not belong in `general.json` today.
 - Keep entries semantic. Prefer one shared concept with several aliases over many duplicate objects.
 
 ## `docs/<Chip>.json`
@@ -194,7 +194,7 @@ Shape:
       "access": "R",
       "documentation": ["Chip-specific bitfield documentation paragraph."],
       "inline": "__always",
-      "splitTarget": "UCSZ0",
+      "splitTargetLSB": "UCSZ0",
       "overrideGeneratedDocumentation": true
     }
   }

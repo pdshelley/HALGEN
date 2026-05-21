@@ -392,6 +392,27 @@
         }
     },
     "bitfields": {
+        "PUD": {
+            "documentation": [
+                "See ATmega328P Datasheet Section 14.4.1.",
+                "When this bit is written to one, the pull-ups in the I/O ports are disabled even if the DDxn and PORTxn registers are configured to enable them.",
+                "Writing zero allows individual port pull-ups to be enabled by their PORTxn bits when the pins are configured as inputs."
+            ]
+        },
+        "IVSEL": {
+            "documentation": [
+                "See ATmega328P Datasheet Section 12.5.1.",
+                "When this bit is cleared, the Interrupt Vectors are placed at the start of Flash memory. When set, the Interrupt Vectors are moved to the beginning of the Boot Loader section.",
+                "Changing this bit requires the timed IVCE sequence: write IVCE to one, then within four cycles write IVSEL to the desired value while writing IVCE to zero."
+            ]
+        },
+        "IVCE": {
+            "documentation": [
+                "See ATmega328P Datasheet Section 12.5.1.",
+                "Writing this bit to one enables changing IVSEL. The bit is cleared by hardware four cycles after it is written or when IVSEL is written.",
+                "Interrupts are automatically disabled during this sequence; the I-bit in SREG is not affected."
+            ]
+        },
         "FOC0A": {
             "documentation": [
                 "The FOC0A bit is only active when the WGM bits specify a non-PWM mode.",
