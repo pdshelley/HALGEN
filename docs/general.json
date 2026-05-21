@@ -684,6 +684,78 @@
         },
         {
             "aliases": [
+                "CLKPR"
+            ],
+            "variableName": "clockPrescaleRegister"
+        },
+        {
+            "aliases": [
+                "GPIOR0"
+            ],
+            "variableName": "generalPurposeIORegister0"
+        },
+        {
+            "aliases": [
+                "GPIOR1"
+            ],
+            "variableName": "generalPurposeIORegister1"
+        },
+        {
+            "aliases": [
+                "GPIOR2"
+            ],
+            "variableName": "generalPurposeIORegister2"
+        },
+        {
+            "aliases": [
+                "MCUCR"
+            ],
+            "variableName": "mcuControlRegister"
+        },
+        {
+            "aliases": [
+                "MCUSR"
+            ],
+            "variableName": "mcuStatusRegister"
+        },
+        {
+            "aliases": [
+                "OSCCAL"
+            ],
+            "variableName": "oscillatorCalibrationValue"
+        },
+        {
+            "aliases": [
+                "PRR"
+            ],
+            "variableName": "powerReductionRegister"
+        },
+        {
+            "aliases": [
+                "SMCR"
+            ],
+            "variableName": "sleepModeControlRegister"
+        },
+        {
+            "aliases": [
+                "SP"
+            ],
+            "variableName": "stackPointer"
+        },
+        {
+            "aliases": [
+                "SPMCSR"
+            ],
+            "variableName": "storeProgramMemoryControlAndStatusRegister"
+        },
+        {
+            "aliases": [
+                "SREG"
+            ],
+            "variableName": "statusRegister"
+        },
+        {
+            "aliases": [
                 "TWBR",
                 "TWBR0",
                 "TWBR1"
@@ -3219,6 +3291,266 @@
                 "SPIMAP"
             ],
             "variableName": "spiPinMapping"
+        },
+        {
+            "aliases": [
+                "BLBSET"
+            ],
+            "variableName": "bootLockBitSet",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "BODS"
+            ],
+            "variableName": "bodSleep",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "BODSE"
+            ],
+            "variableName": "bodSleepEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "BORF"
+            ],
+            "variableName": "brownOutResetFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "C"
+            ],
+            "variableName": "carryFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "CLKPCE"
+            ],
+            "variableName": "clockPrescalerChangeEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "CLKPS"
+            ],
+            "variableName": "clockPrescalerSelectBits",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "EXTRF"
+            ],
+            "variableName": "externalResetFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "H"
+            ],
+            "variableName": "halfCarryFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "I"
+            ],
+            "variableName": "globalInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "IVCE"
+            ],
+            "variableName": "interruptVectorChangeEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "IVSEL"
+            ],
+            "variableName": "interruptVectorSelect",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "N"
+            ],
+            "variableName": "negativeFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "OSCCAL"
+            ],
+            "variableName": "oscillatorCalibration",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "PGERS"
+            ],
+            "variableName": "pageErase",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PGWRT"
+            ],
+            "variableName": "pageWrite",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PORF"
+            ],
+            "variableName": "powerOnResetFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PRADC"
+            ],
+            "variableName": "powerReductionAnalogToDigitalConverter",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PRSPI"
+            ],
+            "variableName": "powerReductionSerialPeripheralInterface",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PRTIM0"
+            ],
+            "variableName": "powerReductionTimerCounter0",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PRTIM1"
+            ],
+            "variableName": "powerReductionTimerCounter1",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PRTIM2"
+            ],
+            "variableName": "powerReductionTimerCounter2",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PRTWI"
+            ],
+            "variableName": "powerReductionTwoWireInterface",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PRUSART0"
+            ],
+            "variableName": "powerReductionUSART0",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "PUD"
+            ],
+            "variableName": "pullUpDisable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "RWWSB"
+            ],
+            "variableName": "readWhileWriteSectionBusy",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "RWWSRE"
+            ],
+            "variableName": "readWhileWriteSectionReadEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "S"
+            ],
+            "variableName": "signBit",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SE"
+            ],
+            "variableName": "sleepEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SIGRD"
+            ],
+            "variableName": "signatureRowRead",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SM"
+            ],
+            "variableName": "sleepModeSelectBits",
+            "valueType": "UInt8"
+        },
+        {
+            "aliases": [
+                "SPMEN"
+            ],
+            "variableName": "storeProgramMemory",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "SPMIE"
+            ],
+            "variableName": "storeProgramMemoryInterruptEnable",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "T"
+            ],
+            "variableName": "bitCopyStorage",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "V"
+            ],
+            "variableName": "twosComplementOverflowFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "WDRF"
+            ],
+            "variableName": "watchdogResetFlag",
+            "valueType": "Bool"
+        },
+        {
+            "aliases": [
+                "Z"
+            ],
+            "variableName": "zeroFlag",
+            "valueType": "Bool",
+            "access": "R/W"
         },
         {
             "aliases": [
