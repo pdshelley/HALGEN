@@ -10,7 +10,6 @@ Key paths:
 - `atdf/` - source ATDF device descriptions
 - `docs/` - supplemental JSON docs (`general.json` plus per-chip files)
 - `Output/` - generated Swift output
-- `Scripts/generate_avr_tools_device_file.swift` - ATDF model regeneration helper
 Data flow: `atdf/*.atdf` -> `XMLDecoder` -> `AVRToolsDeviceFile` -> `GenerationPipeline` -> peripheral generators -> formatted Swift output in `Output/<ChipName>/...`
 
 ## Extra Rule Files
@@ -95,7 +94,6 @@ Add new tests under `SwiftAVRGeneratorTests/` unless the work is specifically UI
 - Prefer changing generator code or documentation inputs over hand-editing generated files.
 - Do not edit `Output/` unless the task is specifically about generated output inspection.
 - When changing docs behavior, check both `docs/general.json` and `docs/<Chip>.json`.
-- If you need to update the ATDF decode layer, inspect `Scripts/generate_avr_tools_device_file.swift` first.
 - Keep changes scoped; generator logic is shared across many chips.
 - Match local style in the file you touch; newer code uses `SwiftSyntaxBuilder`, older files sometimes build strings directly.
 
