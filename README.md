@@ -82,12 +82,13 @@ xcodebuild \
 
 HALGEN currently generates these peripheral families:
 
-- ADC
+- CPUCore
 - GPIO
-- SPI
+- ADC
 - Timers
-- TWI
 - UART
+- SPI
+- TWI
 
 Representative output for `ATmega328P`:
 
@@ -96,6 +97,7 @@ Output/
 |-- ATmega328P/
 |   `-- module/
 |       |-- AnalogToDigitalConverter.swift
+|       |-- CPUCore.swift
 |       |-- GPIO.swift
 |       |-- SPI/
 |       |   |-- SPI.swift
@@ -120,6 +122,29 @@ grouped by peripheral so follow-up audit tooling can work directly from the log.
 
 `formatting-report.txt` captures diagnostics from the code formatter that runs on
 every generated file.
+
+## CoreAVR Parity Tracker
+
+CoreAVR is the handwritten HAL project used as the reference implementation for
+HALGEN output. This table tracks what is still missing or incomplete compared to
+[CoreAVR](https://github.com/pdshelley/CoreAVR).
+
+| CoreAVR area | HALGEN status |
+| --- | --- |
+| GPIO | Generated |
+| ADC | Generated |
+| Timers | Generated |
+| UART | Generated |
+| SPI | Generated |
+| TWI / TwoWireInterface | Generated |
+| CPUCore | Partial |
+| EEPROM | Missing |
+| Interrupts / EXINT | Missing |
+| InterruptHandler | Missing |
+| Power management / sleep | Partial |
+| `atomic` critical sections | Partial |
+| Generated package README | Partial |
+| S4A/package support files | Partial |
 
 ## Supplemental Documentation
 
